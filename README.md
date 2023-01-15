@@ -10,7 +10,7 @@
 ## ★リリース
 
 AmongUsバージョン : **2022.12.14(15)**<br>
-**v402.3.9(最新バージョン)は[こちら](https://github.com/Yumenopai/TownOfHost_Y/releases/tag/v402.3.9)から**<br>
+**v402.4.1(最新バージョン)は[こちら](https://github.com/Yumenopai/TownOfHost_Y/releases/tag/v402.4)から**<br>
 本家TOHの対応バージョンは[こちら](https://github.com/tukasa0001/TownOfHost/releases/tag/v4.0.2)<br>
 
 本家TOHの説明は全てカットします。本家TOHの[GitHub](https://github.com/tukasa0001/TownOfHost#readme)からReadMeをご覧ください。<br>
