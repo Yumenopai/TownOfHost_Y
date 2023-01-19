@@ -7,6 +7,13 @@
 
 基本、このMODの情報・バグ報告などは[Discord](https://discord.gg/PekjJscTT6)でのみ対応しております。<br>
 
+### English
+This Readme is basically for Japanese only, and you may not be able to read it even though you came to this, sorry.<br>
+
+We also use a translator for all in-game translations into English. If there is something wrong, please write in discord with the changed words and sentences and we may be able to help.<br>
+
+Thank you for finding and using TOH_Y!<br>
+
 ## ★リリース
 
 AmongUsバージョン : **2022.12.14(15)**<br>
