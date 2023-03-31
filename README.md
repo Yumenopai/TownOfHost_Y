@@ -16,9 +16,9 @@ Thank you for finding and using TOH_Y!<br>
 
 ## ★リリース
 
-AmongUsバージョン : **2023.2.28**<br>
+AmongUsバージョン : **2023.3.28**<br>
 **最新バージョンは[こちら](https://github.com/Yumenopai/TownOfHost_Y/releases/latest)から**<br>
-本家TOHの対応バージョンは[こちら](https://github.com/tukasa0001/TownOfHost/releases/tag/v4.1.1)<br>
+本家TOHの対応バージョンは[こちら](https://github.com/tukasa0001/TownOfHost/releases/tag/v4.1.2)<br>
 
 本家TOHの説明は全てカットします。本家TOHの[GitHub](https://github.com/tukasa0001/TownOfHost#readme)からReadMeをご覧ください。<br>
 
