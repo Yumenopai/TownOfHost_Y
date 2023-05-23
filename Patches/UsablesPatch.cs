@@ -1,3 +1,4 @@
+using AmongUs.GameOptions;
 using HarmonyLib;
 using UnityEngine;
 
@@ -13,14 +14,14 @@ namespace TownOfHost
             return __instance.AllowImpostor || Utils.HasTasks(PlayerControl.LocalPlayer.Data, false);
         }
     }
-    [HarmonyPatch(typeof(EmergencyMinigame), nameof(EmergencyMinigame.Update))]
-    class EmergencyMinigamePatch
-    {
-        public static void Postfix(EmergencyMinigame __instance)
-        {
-            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) __instance.Close();
-        }
-    }
+    //[HarmonyPatch(typeof(EmergencyMinigame), nameof(EmergencyMinigame.Update))]
+    //class EmergencyMinigamePatch
+    //{
+    //    public static void Postfix(EmergencyMinigame __instance)
+    //    {
+    //        if (Options.CurrentGameMode == CustomGameMode.CatchCat) __instance.Close();
+    //    }
+    //}
     [HarmonyPatch(typeof(Vent), nameof(Vent.CanUse))]
     class CanUseVentPatch
     {
@@ -43,23 +44,20 @@ namespace TownOfHost
 
             if (pc.IsDead) return false; //死んでる人は強制的にfalseに。
 
+            canUse = couldUse = pc.Object.CanUseImpostorVentButton();
+
             switch (pc.GetCustomRole())
             {
-                case CustomRoles.Sheriff:
-                    return false;
                 case CustomRoles.Arsonist:
                     if (pc.Object.IsDouseDone())
-                        canUse = couldUse = VentForTrigger = true;
-                    else return false;
-                    break;
-                case CustomRoles.Jackal:
-                    canUse = couldUse = Options.JackalCanVent.GetBool();
+                        VentForTrigger = true;
                     break;
                 default:
-                    if (pc.Role.TeamType == RoleTeamTypes.Impostor || pc.Role.Role == RoleTypes.Engineer) // インポスター陣営ベースの役職とエンジニアベースの役職は常にtrue
+                    if (pc.Role.Role == RoleTypes.Engineer) // インポスター陣営ベースの役職とエンジニアベースの役職は常にtrue
                         canUse = couldUse = true;
-                    break;
+                        break;
             }
+            if (!canUse) return false;
 
             canUse = couldUse = (pc.Object.inVent || canUse) && (pc.Object.CanMove || pc.Object.inVent);
 

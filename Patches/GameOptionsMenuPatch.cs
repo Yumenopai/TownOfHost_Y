@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using AmongUs.GameOptions;
 using HarmonyLib;
 using UnhollowerBaseLib;
 using UnityEngine;
+using static TownOfHost.Translator;
 using Object = UnityEngine.Object;
 
 namespace TownOfHost
@@ -22,14 +25,15 @@ namespace TownOfHost
     [HarmonyPriority(Priority.First)]
     public static class GameOptionsMenuPatch
     {
-        public const string TownOfHostObjectName = "TOHSettings";
-
         public static void Postfix(GameOptionsMenu __instance)
         {
             foreach (var ob in __instance.Children)
             {
                 switch (ob.Title)
                 {
+                    case StringNames.GameVotingTime:
+                        ob.Cast<NumberOption>().ValidRange = new FloatRange(0, 600);
+                        break;
                     case StringNames.GameShortTasks:
                     case StringNames.GameLongTasks:
                     case StringNames.GameCommonTasks:
@@ -42,105 +46,99 @@ namespace TownOfHost
                         break;
                 }
             }
-
-            if (GameObject.Find(TownOfHostObjectName) != null)
-            {
-                GameObject.Find(TownOfHostObjectName)
-                    .transform
-                    .FindChild("GameGroup")
-                    .FindChild("Text")
-                    .GetComponent<TMPro.TextMeshPro>()
-                    .SetText("TownOfHost Settings");
-
-                return;
-            }
-
             var template = Object.FindObjectsOfType<StringOption>().FirstOrDefault();
             if (template == null) return;
 
             var gameSettings = GameObject.Find("Game Settings");
+            if (gameSettings == null) return;
+            gameSettings.transform.FindChild("GameGroup").GetComponent<Scroller>().ScrollWheelSpeed = 1f;
+
             var gameSettingMenu = Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
             if (gameSettingMenu == null) return;
-
-            var tohSettings = Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var tohMenu = tohSettings.transform
-                .FindChild("GameGroup")
-                .FindChild("SliderInner")
-                .GetComponent<GameOptionsMenu>();
-            tohSettings.name = TownOfHostObjectName;
+            List<GameObject> menus = new() { gameSettingMenu.RegularGameSettings, gameSettingMenu.RolesSettings.gameObject };
+            List<SpriteRenderer> highlights = new() { gameSettingMenu.GameSettingsHightlight, gameSettingMenu.RolesSettingsHightlight };
 
             var roleTab = GameObject.Find("RoleTab");
             var gameTab = GameObject.Find("GameTab");
+            List<GameObject> tabs = new() { gameTab, roleTab };
 
-            var tohTab = Object.Instantiate(roleTab, roleTab.transform.parent);
-            var tohTabHighlight = tohTab.transform.FindChild("Hat Button").FindChild("Tab Background")
-                .GetComponent<SpriteRenderer>();
-            tohTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.LoadSpriteFromResources("TownOfHost.Resources.TabIcon.png", 100f);
-
-            gameTab.transform.position += Vector3.left * 0.5f;
-            tohTab.transform.position += Vector3.right * 0.5f;
-            roleTab.transform.position += Vector3.left * 0.5f;
-
-            var tabs = new[] { gameTab, roleTab, tohTab };
-            for (var i = 0; i < tabs.Length; i++)
+            foreach (var tab in Enum.GetValues(typeof(TabGroup)))
             {
+                var obj = gameSettings.transform.parent.Find(tab + "Tab");
+                if (obj != null)
+                {
+                    obj.transform.FindChild("../../GameGroup/Text").GetComponent<TMPro.TextMeshPro>().SetText(GetString("TabGroup." + tab));
+                    continue;
+                }
+
+                var tohSettings = Object.Instantiate(gameSettings, gameSettings.transform.parent);
+                tohSettings.name = tab + "Tab";
+                tohSettings.transform.FindChild("BackPanel").transform.localScale =
+                tohSettings.transform.FindChild("Bottom Gradient").transform.localScale = new Vector3(1.6f, 1f, 1f);
+                tohSettings.transform.FindChild("BackPanel").transform.localPosition += new Vector3(0.2f, 0f, 0f);
+                tohSettings.transform.FindChild("Bottom Gradient").transform.localPosition += new Vector3(0.2f, 0f, 0f);
+                tohSettings.transform.FindChild("Background").transform.localScale = new Vector3(1.8f, 1f, 1f);
+                tohSettings.transform.FindChild("UI_Scrollbar").transform.localPosition += new Vector3(1.4f, 0f, 0f);
+                tohSettings.transform.FindChild("UI_ScrollbarTrack").transform.localPosition += new Vector3(1.4f, 0f, 0f);
+                tohSettings.transform.FindChild("GameGroup/SliderInner").transform.localPosition += new Vector3(-0.3f, 0f, 0f);
+                var tohMenu = tohSettings.transform.FindChild("GameGroup/SliderInner").GetComponent<GameOptionsMenu>();
+
+                //OptionBehaviourを破棄
+                tohMenu.GetComponentsInChildren<OptionBehaviour>().Do(x => Object.Destroy(x.gameObject));
+
+                var scOptions = new List<OptionBehaviour>();
+                foreach (var option in OptionItem.AllOptions)
+                {
+                    if (option.Tab != (TabGroup)tab) continue;
+                    if (option.OptionBehaviour == null)
+                    {
+                        var stringOption = Object.Instantiate(template, tohMenu.transform);
+                        scOptions.Add(stringOption);
+                        stringOption.OnValueChanged = new System.Action<OptionBehaviour>((o) => { });
+                        stringOption.TitleText.text = option.Name;
+                        stringOption.Value = stringOption.oldValue = option.CurrentValue;
+                        stringOption.ValueText.text = option.GetString();
+                        stringOption.name = option.Name;
+                        stringOption.transform.FindChild("Background").localScale = new Vector3(1.6f, 1f, 1f);
+                        stringOption.transform.FindChild("Plus_TMP").localPosition += new Vector3(1.4f, 0f, 0f);
+                        stringOption.transform.FindChild("Minus_TMP").localPosition += new Vector3(1.0f, 0f, 0f);
+                        stringOption.transform.FindChild("Value_TMP").localPosition += new Vector3(1.2f, 0f, 0f);
+                        stringOption.transform.FindChild("Value_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(1.6f, 0.26f);
+                        stringOption.transform.FindChild("Title_TMP").localPosition += new Vector3(0.1f, 0f, 0f);
+                        stringOption.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(5.5f, 0.37f);
+
+                        option.OptionBehaviour = stringOption;
+                    }
+                    option.OptionBehaviour.gameObject.SetActive(true);
+                }
+                tohMenu.Children = scOptions.ToArray();
+                tohSettings.gameObject.SetActive(false);
+                menus.Add(tohSettings.gameObject);
+
+                var tohTab = Object.Instantiate(roleTab, roleTab.transform.parent);
+                tohTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Utils.LoadSprite($"TownOfHost.Resources.TabIcon_{tab}.png", 100f);
+                tabs.Add(tohTab);
+                var tohTabHighlight = tohTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+                highlights.Add(tohTabHighlight);
+            }
+
+            for (var i = 0; i < tabs.Count; i++)
+            {
+                tabs[i].transform.position = new(0.7f * (i - 0.5f) - tabs.Count / 2f, tabs[i].transform.position.y, tabs[i].transform.position.z);
                 var button = tabs[i].GetComponentInChildren<PassiveButton>();
                 if (button == null) continue;
                 var copiedIndex = i;
                 button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-                button.OnClick.AddListener((UnityEngine.Events.UnityAction)(() =>
+                Action value = () =>
                 {
-                    gameSettingMenu.RegularGameSettings.SetActive(false);
-                    gameSettingMenu.RolesSettings.gameObject.SetActive(false);
-                    tohSettings.gameObject.SetActive(false);
-                    gameSettingMenu.GameSettingsHightlight.enabled = false;
-                    gameSettingMenu.RolesSettingsHightlight.enabled = false;
-                    tohTabHighlight.enabled = false;
-
-                    switch (copiedIndex)
+                    for (var j = 0; j < menus.Count; j++)
                     {
-                        case 0:
-                            gameSettingMenu.RegularGameSettings.SetActive(true);
-                            gameSettingMenu.GameSettingsHightlight.enabled = true;
-                            break;
-                        case 1:
-                            gameSettingMenu.RolesSettings.gameObject.SetActive(true);
-                            gameSettingMenu.RolesSettingsHightlight.enabled = true;
-                            break;
-                        case 2:
-                            tohSettings.gameObject.SetActive(true);
-                            tohTabHighlight.enabled = true;
-                            break;
+                        menus[j].SetActive(j == copiedIndex);
+                        highlights[j].enabled = j == copiedIndex;
                     }
-                }));
+                };
+                button.OnClick.AddListener(value);
             }
-
-            foreach (var option in tohMenu.GetComponentsInChildren<OptionBehaviour>())
-            {
-                Object.Destroy(option.gameObject);
-            }
-
-
-            var scOptions = new System.Collections.Generic.List<OptionBehaviour>();
-            foreach (var option in CustomOption.Options)
-            {
-                if (option.OptionBehaviour == null)
-                {
-                    var stringOption = Object.Instantiate(template, tohMenu.transform);
-                    scOptions.Add(stringOption);
-                    stringOption.OnValueChanged = new System.Action<OptionBehaviour>((o) => { });
-                    stringOption.TitleText.text = option.Name;
-                    stringOption.Value = stringOption.oldValue = option.Selection;
-                    stringOption.ValueText.text = option.Selections[option.Selection].ToString();
-
-                    option.OptionBehaviour = stringOption;
-                }
-
-                option.OptionBehaviour.gameObject.SetActive(true);
-            }
-
-            tohMenu.Children = scOptions.ToArray();
-            tohSettings.gameObject.SetActive(false);
         }
     }
 
@@ -151,62 +149,80 @@ namespace TownOfHost
 
         public static void Postfix(GameOptionsMenu __instance)
         {
-            if (__instance.Children.Length != CustomOption.Options.Count)
+            if (__instance.transform.parent.parent.name == "Game Settings") return;
+            foreach (var tab in Enum.GetValues(typeof(TabGroup)))
             {
-                return;
-            }
+                if (__instance.transform.parent.parent.name != tab + "Tab") continue;
+                __instance.transform.FindChild("../../GameGroup/Text").GetComponent<TMPro.TextMeshPro>().SetText(GetString("TabGroup." + tab));
 
-            _timer += Time.deltaTime;
-            if (_timer < 0.1f) return;
-            _timer = 0f;
+                _timer += Time.deltaTime;
+                if (_timer < 0.1f) return;
+                _timer = 0f;
 
-            float numItems = __instance.Children.Length;
-            var offset = 2.75f;
+                float numItems = __instance.Children.Length;
+                var offset = 2.7f;
 
-            foreach (var option in CustomOption.Options)
-            {
-                if (option?.OptionBehaviour == null || option.OptionBehaviour.gameObject == null) continue;
-
-                var enabled = true;
-                var parent = option.Parent;
-
-                if (AmongUsClient.Instance.AmHost == false)
+                foreach (var option in OptionItem.AllOptions)
                 {
-                    enabled = false;
-                }
+                    if ((TabGroup)tab != option.Tab) continue;
+                    if (option?.OptionBehaviour == null || option.OptionBehaviour.gameObject == null) continue;
 
-                if (option.IsHidden(Options.CurrentGameMode))
-                {
-                    enabled = false;
-                }
+                    var enabled = true;
+                    var parent = option.Parent;
 
-                while (parent != null && enabled)
-                {
-                    enabled = parent.Enabled;
-                    parent = parent.Parent;
-                }
+                    enabled = AmongUsClient.Instance.AmHost &&
+                        !option.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode);
 
-                option.OptionBehaviour.gameObject.SetActive(enabled);
-                if (enabled)
-                {
-                    offset -= option.isHeader ? 0.75f : 0.5f;
-                    option.OptionBehaviour.transform.localPosition = new Vector3(
-                        option.OptionBehaviour.transform.localPosition.x,
-                        offset,
-                        option.OptionBehaviour.transform.localPosition.z);
-
-                    if (option.isHeader)
+                    var opt = option.OptionBehaviour.transform.Find("Background").GetComponent<SpriteRenderer>();
+                    opt.size = new(5.0f, 0.45f);
+                    while (parent != null && enabled)
                     {
-                        numItems += 0.5f;
+                        enabled = parent.GetBool() && !parent.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode);
+                        parent = parent.Parent;
+                        opt.color = new(0f, 1f, 0f);
+                        opt.size = new(4.8f, 0.45f);
+                        opt.transform.localPosition = new Vector3(0.11f, 0f);
+                        option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-1.08f, 0f);
+                        option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(5.1f, 0.28f);
+                        if (option.Parent?.Parent != null)
+                        {
+                            opt.color = new(0f, 0f, 1f);
+                            opt.size = new(4.6f, 0.45f);
+                            opt.transform.localPosition = new Vector3(0.24f, 0f);
+                            option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-0.88f, 0f);
+                            option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(4.9f, 0.28f);
+                            if (option.Parent?.Parent?.Parent != null)
+                            {
+                                opt.color = new(1f, 0f, 0f);
+                                opt.size = new(4.4f, 0.45f);
+                                opt.transform.localPosition = new Vector3(0.37f, 0f);
+                                option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-0.68f, 0f);
+                                option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(4.7f, 0.28f);
+                            }
+                        }
+                    }
+
+                    option.OptionBehaviour.gameObject.SetActive(enabled);
+                    if (enabled)
+                    {
+                        offset -= option.IsHeader ? 0.7f : 0.5f;
+                        option.OptionBehaviour.transform.localPosition = new Vector3(
+                            option.OptionBehaviour.transform.localPosition.x,
+                            offset,
+                            option.OptionBehaviour.transform.localPosition.z);
+
+                        if (option.IsHeader)
+                        {
+                            numItems += 0.3f;
+                        }
+                    }
+                    else
+                    {
+                        numItems -= 10f;
                     }
                 }
-                else
-                {
-                    numItems--;
-                }
+                __instance.GetComponentInParent<Scroller>().ContentYBounds.max = (-offset) - 1.5f;
             }
-
-            __instance.GetComponentInParent<Scroller>().ContentYBounds.max = (-offset) - 1.5f;
         }
     }
 
@@ -215,15 +231,13 @@ namespace TownOfHost
     {
         public static bool Prefix(StringOption __instance)
         {
-            var option = CustomOption.Options.FirstOrDefault(opt => opt.OptionBehaviour == __instance);
+            var option = OptionItem.AllOptions.FirstOrDefault(opt => opt.OptionBehaviour == __instance);
             if (option == null) return true;
 
             __instance.OnValueChanged = new Action<OptionBehaviour>((o) => { });
             __instance.TitleText.text = option.GetName();
-            __instance.Value = __instance.oldValue = option.Selection;
+            __instance.Value = __instance.oldValue = option.CurrentValue;
             __instance.ValueText.text = option.GetString();
-            if (option.Id == Options.PresetId)
-                option.SetPresetName(__instance);
 
             return false;
         }
@@ -234,12 +248,10 @@ namespace TownOfHost
     {
         public static bool Prefix(StringOption __instance)
         {
-            var option = CustomOption.Options.FirstOrDefault(opt => opt.OptionBehaviour == __instance);
+            var option = OptionItem.AllOptions.FirstOrDefault(opt => opt.OptionBehaviour == __instance);
             if (option == null) return true;
 
-            option.UpdateSelection(option.Selection + 1);
-            if (option.Id == Options.PresetId)
-                option.SetPresetName(__instance);
+            option.SetValue(option.CurrentValue + 1);
             return false;
         }
     }
@@ -249,12 +261,10 @@ namespace TownOfHost
     {
         public static bool Prefix(StringOption __instance)
         {
-            var option = CustomOption.Options.FirstOrDefault(opt => opt.OptionBehaviour == __instance);
+            var option = OptionItem.AllOptions.FirstOrDefault(opt => opt.OptionBehaviour == __instance);
             if (option == null) return true;
 
-            option.UpdateSelection(option.Selection - 1);
-            if (option.Id == Options.PresetId)
-                option.SetPresetName(__instance);
+            option.SetValue(option.CurrentValue - 1);
             return false;
         }
     }
@@ -264,7 +274,7 @@ namespace TownOfHost
     {
         public static void Postfix()
         {
-            CustomOption.ShareOptionSelections();
+            OptionItem.SyncAllOptions();
         }
     }
     [HarmonyPatch(typeof(RolesSettingsMenu), nameof(RolesSettingsMenu.Start))]
@@ -288,48 +298,61 @@ namespace TownOfHost
             }
         }
     }
-    [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.SetRecommendations))]
+    [HarmonyPatch(typeof(NormalGameOptionsV07), nameof(NormalGameOptionsV07.SetRecommendations))]
     public static class SetRecommendationsPatch
     {
-        public static bool Prefix(GameOptionsData __instance, int numPlayers, GameModes modes)
+        public static bool Prefix(NormalGameOptionsV07 __instance, int numPlayers, bool isOnline)
         {
             numPlayers = Mathf.Clamp(numPlayers, 4, 15);
             __instance.PlayerSpeedMod = __instance.MapId == 4 ? 1.25f : 1f; //AirShipなら1.25、それ以外は1
             __instance.CrewLightMod = 0.5f;
-            __instance.ImpostorLightMod = 1.75f;
+            __instance.ImpostorLightMod = 1.5f;
             __instance.KillCooldown = 25f;
             __instance.NumCommonTasks = 2;
             __instance.NumLongTasks = 4;
             __instance.NumShortTasks = 6;
             __instance.NumEmergencyMeetings = 1;
-            if (modes != GameModes.OnlineGame)
-                __instance.NumImpostors = GameOptionsData.RecommendedImpostors[numPlayers];
+            if (!isOnline)
+                __instance.NumImpostors = NormalGameOptionsV07.RecommendedImpostors[numPlayers];
             __instance.KillDistance = 0;
             __instance.DiscussionTime = 0;
             __instance.VotingTime = 150;
-            __instance.isDefaults = true;
+            __instance.IsDefaults = true;
             __instance.ConfirmImpostor = false;
             __instance.VisualTasks = false;
-            __instance.RoleOptions.ShapeshifterCooldown = 10f;
-            __instance.RoleOptions.ShapeshifterDuration = 30f;
-            __instance.RoleOptions.ShapeshifterLeaveSkin = false;
-            __instance.RoleOptions.ImpostorsCanSeeProtect = false;
-            __instance.RoleOptions.ScientistCooldown = 15f;
-            __instance.RoleOptions.ScientistBatteryCharge = 5f;
-            __instance.RoleOptions.GuardianAngelCooldown = 60f;
-            __instance.RoleOptions.ProtectionDurationSeconds = 10f;
-            __instance.RoleOptions.EngineerCooldown = 30f;
-            __instance.RoleOptions.EngineerInVentMaxTime = 15f;
-            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) //HideAndSeek
+            __instance.roleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
+            __instance.roleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
+            __instance.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
+            __instance.roleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);
+            __instance.roleOptions.SetRoleRecommended(RoleTypes.Shapeshifter);
+            __instance.roleOptions.SetRoleRecommended(RoleTypes.Scientist);
+            __instance.roleOptions.SetRoleRecommended(RoleTypes.GuardianAngel);
+            __instance.roleOptions.SetRoleRecommended(RoleTypes.Engineer);
+            if (Options.CurrentGameMode.IsCatMode())
             {
-                __instance.PlayerSpeedMod = 1.75f;
-                __instance.CrewLightMod = 5f;
-                __instance.ImpostorLightMod = 0.25f;
+                __instance.PlayerSpeedMod = 1.5f;
+                __instance.CrewLightMod = 0.5f;
+                __instance.ImpostorLightMod = 0.75f;
                 __instance.NumImpostors = 1;
                 __instance.NumCommonTasks = 0;
                 __instance.NumLongTasks = 0;
-                __instance.NumShortTasks = 10;
-                __instance.KillCooldown = 10f;
+                __instance.NumShortTasks = 1;
+                __instance.KillCooldown = 20f;
+                __instance.NumEmergencyMeetings = 1;
+                __instance.KillDistance = 0;
+                __instance.DiscussionTime = 0;
+                __instance.VotingTime = 60;
+            }
+            if (Options.CurrentGameMode.IsOneNightMode())
+            {
+                __instance.NumCommonTasks = 1;
+                __instance.NumLongTasks = 0;
+                __instance.NumShortTasks = 1;
+                __instance.KillCooldown = 20f;
+                __instance.NumEmergencyMeetings = 0;
+                __instance.KillDistance = 0;
+                __instance.DiscussionTime = 0;
+                __instance.VotingTime = 300;
             }
             if (Options.IsStandardHAS) //StandardHAS
             {

@@ -1,5 +1,9 @@
+using System.Linq;
 using AmongUs.Data;
 using HarmonyLib;
+
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 
 namespace TownOfHost
 {
@@ -44,96 +48,181 @@ namespace TownOfHost
                 exiled = AntiBlackout_LastExiled;
             }
 
-            Main.witchMeeting = false;
             bool DecidedWinner = false;
             if (!AmongUsClient.Instance.AmHost) return; //ホスト以外はこれ以降の処理を実行しません
             AntiBlackout.RestoreIsDead(doSend: false);
-            if (exiled != null)
+
+            if (Options.CurrentGameMode.IsOneNightMode())
             {
-                exiled.IsDead = true;
-                PlayerState.SetDeathReason(exiled.PlayerId, PlayerState.DeathReason.Vote);
-                var role = exiled.GetCustomRole();
-                if (role == CustomRoles.Jester && AmongUsClient.Instance.AmHost)
+                int WinNumber = 0;
+                byte IsWinONHangedManId = 255;
+
+                if (exiled != null)
                 {
-                    CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Jester);
-                    CustomWinnerHolder.WinnerIds.Add(exiled.PlayerId);
-                    //吊られたJesterをターゲットにしているExecutionerも追加勝利
-                    foreach (var executioner in Executioner.playerIdList)
+                    //霊界用暗転バグ対処
+                    if (!AntiBlackout.OverrideExiledPlayer && Main.ResetCamPlayerList.Contains(exiled.PlayerId))
+                        exiled.Object?.ResetPlayerCam(1f);
+
+                    exiled.IsDead = true;
+                    if (Main.PlayerStates[exiled.PlayerId].deathReason != PlayerState.DeathReason.Execution)
                     {
-                        var GetValue = Executioner.Target.TryGetValue(executioner, out var targetId);
-                        if (GetValue && exiled.PlayerId == targetId)
+                        Main.PlayerStates[exiled.PlayerId].deathReason = PlayerState.DeathReason.Vote;
+                        Main.PlayerStates[exiled.PlayerId].SetDead();
+                    }
+                    var role = exiled.GetCustomRole();
+
+                    if (role == CustomRoles.ONHangedMan && AmongUsClient.Instance.AmHost)
+                    {
+                        WinNumber = 2;
+                        IsWinONHangedManId = exiled.PlayerId;
+                    }
+                    else if (role.IsONImpostor() && AmongUsClient.Instance.AmHost)
+                    {
+                        WinNumber = 1;
+                    }
+                }
+                //ONMeetingExiledPlayersの処理
+                {
+                    byte HunterPlayerId = 255;
+                    foreach(var exiledPlayer in Main.ONMeetingExiledPlayers)
+                    {
+                        var role = Utils.GetPlayerById(exiledPlayer).GetCustomRole();
+
+                        if (role == CustomRoles.ONHunter && AmongUsClient.Instance.AmHost)
                         {
-                            CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.Executioner);
-                            CustomWinnerHolder.WinnerIds.Add(executioner);
+                            WinNumber = -1;
+                            HunterPlayerId = exiledPlayer;
                         }
                     }
-                    DecidedWinner = true;
-                }
-                if (role == CustomRoles.Terrorist && AmongUsClient.Instance.AmHost)
-                {
-                    Utils.CheckTerroristWin(exiled);
-                    DecidedWinner = true;
-                }
-                Executioner.CheckExileTarget(exiled, DecidedWinner);
-                if (exiled.Object.Is(CustomRoles.TimeThief))
-                    exiled.Object.ResetVotingTime();
-                if (exiled.Object.Is(CustomRoles.SchrodingerCat) && Options.SchrodingerCatExiledTeamChanges.GetBool())
-                    exiled.Object.ExiledSchrodingerCatTeamChange();
+                    if (WinNumber == -1)
+                    {
+                        Main.ONMeetingExiledPlayers.Remove(HunterPlayerId);
+                        HunterPlayerId = 255;
+                    }
+                    else if (WinNumber != 1)
+                    {
+                        foreach (var exiledPlayerId in Main.ONMeetingExiledPlayers)
+                        {
+                            var role = Utils.GetPlayerById(exiledPlayerId).GetCustomRole();
 
+                            if (role == CustomRoles.ONHangedMan && AmongUsClient.Instance.AmHost)
+                            {
+                                WinNumber = 2;
+                                IsWinONHangedManId = exiledPlayerId;
+                                break;
+                            }
+                            else if (role.IsONImpostor() && AmongUsClient.Instance.AmHost)
+                            {
+                                WinNumber = 1;
+                            }
+                        }
+                    }
+                }
+                if (WinNumber == -1)
+                {
+                    WinNumber = 0;
+                }
+                else if (WinNumber == 2)
+                {
+                    CustomWinnerHolder.ResetAndSetWinner(CustomWinner.HangedMan);
+                    CustomWinnerHolder.WinnerIds.Add(IsWinONHangedManId);
+                }
+                else if (WinNumber == 1)
+                {
+                    CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Crewmate);
+                }
+                else
+                {
+                    CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Impostor);
+                }
+            }
+            else
+            {
+                if (exiled != null)
+                {
+                    //霊界用暗転バグ対処
+                    if (!AntiBlackout.OverrideExiledPlayer && Main.ResetCamPlayerList.Contains(exiled.PlayerId))
+                        exiled.Object?.ResetPlayerCam(1f);
 
-                if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.SetDead(exiled.PlayerId);
-            }
-            if (AmongUsClient.Instance.AmHost && Main.IsFixedCooldown)
-                Main.RefixCooldownDelay = Options.DefaultKillCooldown - 3f;
-            Main.SpelledPlayer.RemoveAll(pc => pc == null || pc.Data == null || pc.Data.IsDead || pc.Data.Disconnected);
-            foreach (var pc in PlayerControl.AllPlayerControls)
-            {
-                pc.ResetKillCooldown();
-                if (Options.MayorHasPortableButton.GetBool() && pc.Is(CustomRoles.Mayor))
-                    pc.RpcResetAbilityCooldown();
-                if (pc.Is(CustomRoles.Warlock))
-                {
-                    Main.CursedPlayers[pc.PlayerId] = null;
-                    Main.isCurseAndKill[pc.PlayerId] = false;
+                    exiled.IsDead = true;
+                    var role = exiled.GetCustomRole();
+
+                    if (Main.PlayerStates[exiled.PlayerId].deathReason == PlayerState.DeathReason.win)
+                    {
+                        CustomWinnerHolder.ResetAndSetWinner(CustomWinner.AntiComplete);
+                        CustomWinnerHolder.WinnerIds.Add(exiled.PlayerId);
+                        DecidedWinner = true;
+                    }
+                    if (role != CustomRoles.AntiComplete)
+                        Main.PlayerStates[exiled.PlayerId].deathReason = PlayerState.DeathReason.Vote;
+
+                    if (role == CustomRoles.Jester && AmongUsClient.Instance.AmHost)
+                    {
+                        CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Jester);
+                        CustomWinnerHolder.WinnerIds.Add(exiled.PlayerId);
+                        //吊られたJesterをターゲットにしているExecutionerも追加勝利
+                        foreach (var executioner in Executioner.playerIdList)
+                        {
+                            var GetValue = Executioner.Target.TryGetValue(executioner, out var targetId);
+                            if (GetValue && exiled.PlayerId == targetId)
+                            {
+                                CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.Executioner);
+                                CustomWinnerHolder.WinnerIds.Add(executioner);
+                            }
+                        }
+                        DecidedWinner = true;
+                    }
+                    if (role == CustomRoles.Terrorist && AmongUsClient.Instance.AmHost)
+                    {
+                        Utils.CheckTerroristWin(exiled);
+                        DecidedWinner = true;
+                    }
+                    Executioner.CheckExileTarget(exiled, DecidedWinner);
+                    Lawyer.CheckExileTarget(exiled.PlayerId);
+                    SchrodingerCat.ChangeTeam(exiled.Object);
+
+                    Main.ExiledPlayer = exiled.PlayerId;
+
+                    if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) Main.PlayerStates[exiled.PlayerId].SetDead();
                 }
-                if (pc.Is(CustomRoles.EvilTracker)) EvilTracker.EnableResetTargetAfterMeeting(pc);
-            }
-            Main.AfterMeetingDeathPlayers.Do(x =>
-            {
-                var player = Utils.GetPlayerById(x.Key);
-                Logger.Info($"{player.GetNameWithRole()}を{x.Value}で死亡させました", "AfterMeetingDeath");
-                PlayerState.SetDeathReason(x.Key, x.Value);
-                PlayerState.SetDead(x.Key);
-                player?.RpcExileV2();
-                if (player.Is(CustomRoles.TimeThief) && x.Value == PlayerState.DeathReason.FollowingSuicide)
-                    player?.ResetVotingTime();
-                if (Executioner.Target.ContainsValue(x.Key))
-                    Executioner.ChangeRoleByTarget(player);
-            });
-            Main.AfterMeetingDeathPlayers.Clear();
-            if (Options.RandomSpawn.GetBool())
-            {
-                RandomSpawn.SpawnMap map;
-                switch (PlayerControl.GameOptions.MapId)
+                if (AmongUsClient.Instance.AmHost && Main.IsFixedCooldown)
+                    Main.RefixCooldownDelay = Options.DefaultKillCooldown - 3f;
+
+                Witch.RemoveSpelledPlayer();
+
+                foreach (var pc in Main.AllPlayerControls)
                 {
-                    case 0:
-                        map = new RandomSpawn.SkeldSpawnMap();
-                        PlayerControl.AllPlayerControls.ToArray().Do(map.RandomTeleport);
-                        break;
-                    case 1:
-                        map = new RandomSpawn.MiraHQSpawnMap();
-                        PlayerControl.AllPlayerControls.ToArray().Do(map.RandomTeleport);
-                        break;
-                    case 2:
-                        map = new RandomSpawn.PolusSpawnMap();
-                        PlayerControl.AllPlayerControls.ToArray().Do(map.RandomTeleport);
-                        break;
+                    pc.ResetKillCooldown();
+                    if ((Options.MayorHasPortableButton.GetBool() && pc.Is(CustomRoles.Mayor)) || pc.Is(CustomRoles.Chairman) || pc.Is(CustomRoles.GrudgeSheriff) || pc.Is(CustomRoles.Psychic))
+                        pc.RpcResetAbilityCooldown();
+                    if (pc.Is(CustomRoles.Warlock))
+                    {
+                        Main.CursedPlayers[pc.PlayerId] = null;
+                        Main.isCurseAndKill[pc.PlayerId] = false;
+                    }
                 }
+                if (Options.RandomSpawn.GetBool())
+                {
+                    RandomSpawn.SpawnMap map;
+                    switch (Main.NormalOptions.MapId)
+                    {
+                        case 0:
+                            map = new RandomSpawn.SkeldSpawnMap();
+                            Main.AllPlayerControls.Do(map.RandomTeleport); break;
+                        case 1:
+                            map = new RandomSpawn.MiraHQSpawnMap();
+                            Main.AllPlayerControls.Do(map.RandomTeleport); break;
+                        case 2:
+                            map = new RandomSpawn.PolusSpawnMap();
+                            Main.AllPlayerControls.Do(map.RandomTeleport); break;
+                    }
+                }
+                FallFromLadder.Reset();
             }
-            FallFromLadder.Reset();
-            Utils.CountAliveImpostors();
+
+            Utils.CountAlivePlayers(true);
             Utils.AfterMeetingTasks();
-            Utils.CustomSyncAllSettings();
+            Utils.SyncAllSettings();
             Utils.NotifyRoles();
         }
 
@@ -141,6 +230,7 @@ namespace TownOfHost
         {
             //WrapUpPostfixで例外が発生しても、この部分だけは確実に実行されます。
             if (AmongUsClient.Instance.AmHost)
+            {
                 new LateTask(() =>
                 {
                     exiled = AntiBlackout_LastExiled;
@@ -152,8 +242,41 @@ namespace TownOfHost
                         exiled.Object.RpcExileV2();
                     }
                 }, 0.5f, "Restore IsDead Task");
-            SoundManager.Instance.ChangeMusicVolume(DataManager.Settings.Audio.MusicVolume);
+                new LateTask(() =>
+                {
+                    Main.AfterMeetingDeathPlayers.Do(x =>
+                    {
+                        var player = Utils.GetPlayerById(x.Key);
+                        Logger.Info($"{player.GetNameWithRole()}を{x.Value}で死亡させました", "AfterMeetingDeath");
+                        Main.PlayerStates[x.Key].deathReason = x.Value;
+                        Main.PlayerStates[x.Key].SetDead();
+                        player?.RpcExileV2();
+                        if (x.Value == PlayerState.DeathReason.Suicide)
+                            player?.SetRealKiller(player, true);
+                        if (Main.ResetCamPlayerList.Contains(x.Key))
+                            player?.ResetPlayerCam(1f);
+                        if (Executioner.Target.ContainsValue(x.Key))
+                            Executioner.ChangeRoleByTarget(player);
+                        if (Lawyer.Target.ContainsValue(x.Key))
+                            Lawyer.ChangeRoleByTarget(player);
+                    });
+                    Main.AfterMeetingDeathPlayers.Clear();
+                }, 0.5f, "AfterMeetingDeathPlayers Task");
+            }
+
+            GameStates.AlreadyDied |= !Utils.IsAllAlive;
+            RemoveDisableDevicesPatch.UpdateDisableDevices();
+            SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
             Logger.Info("タスクフェイズ開始", "Phase");
+        }
+    }
+
+    [HarmonyPatch(typeof(PbExileController), nameof(PbExileController.PlayerSpin))]
+    class PolusExileHatFixPatch
+    {
+        public static void Prefix(PbExileController __instance)
+        {
+            __instance.Player.cosmetics.hat.transform.localPosition = new(-0.2f, 0.6f, 1.1f);
         }
     }
 }
