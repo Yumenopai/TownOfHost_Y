@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using AmongUs.GameOptions;
 using HarmonyLib;
-
-using TownOfHost.Roles.AddOns;
 
 namespace TownOfHost
 {
@@ -12,8 +9,6 @@ namespace TownOfHost
         public static void Prefix(ShipStatus __instance,
             [HarmonyArgument(4)] Il2CppSystem.Collections.Generic.List<NormalPlayerTask> unusedTasks)
         {
-            if (!AmongUsClient.Instance.AmHost) return;
-
             if (!Options.DisableTasks.GetBool()) return;
             List<NormalPlayerTask> disabledTasks = new();
             for (var i = 0; i < unusedTasks.Count; i++)
@@ -50,31 +45,24 @@ namespace TownOfHost
                 return;
             }
 
-            var pc = Utils.GetPlayerById(playerId);
-            CustomRoles? RoleNullable = pc?.GetCustomRole();
+            CustomRoles? RoleNullable = Utils.GetPlayerById(playerId)?.GetCustomRole();
             if (RoleNullable == null) return;
             CustomRoles role = RoleNullable.Value;
 
-            //デフォルトのタスク数
-            bool hasCommonTasks = true;
-            int NumLongTasks = Main.NormalOptions.NumLongTasks;
-            int NumShortTasks = Main.NormalOptions.NumShortTasks;
+            if (!Options.OverrideTasksData.AllData.ContainsKey(role)) return;
+            var data = Options.OverrideTasksData.AllData[role];
 
-            if (Options.OverrideTasksData.AllData.TryGetValue(role, out var data) && data.doOverride.GetBool())
-            {
-                hasCommonTasks = data.assignCommonTasks.GetBool(); // コモンタスク(通常タスク)を割り当てるかどうか
-                                                                   // 割り当てる場合でも再割り当てはされず、他のクルーと同じコモンタスクが割り当てられる。
-                NumLongTasks = data.numLongTasks.GetInt(); // 割り当てるロングタスクの数
-                NumShortTasks = data.numShortTasks.GetInt(); // 割り当てるショートタスクの数
-                                                             // ロングとショートは常時再割り当てが行われる。
-            }
-            if (pc.Is(CustomRoles.Workhorse))
-                (hasCommonTasks, NumLongTasks, NumShortTasks) = Workhorse.TaskData;
+            bool doOverride = data.doOverride.GetBool(); // タスク数を上書きするかどうか
+                                                         // falseの時、タスクの内容が変更される前にReturnされる。
 
-            if (taskTypeIds.Count == 0) hasCommonTasks = false; //タスク再配布時はコモンを0に
-            if (!hasCommonTasks && NumLongTasks == 0 && NumShortTasks == 0) NumShortTasks = 1; //タスク0対策
-            if (hasCommonTasks && NumLongTasks == Main.NormalOptions.NumLongTasks && NumShortTasks == Main.NormalOptions.NumShortTasks) return; //変更点がない場合
+            bool hasCommonTasks = data.assignCommonTasks.GetBool(); // コモンタスク(通常タスク)を割り当てるかどうか
+                                                                    // 割り当てる場合でも再割り当てはされず、他のクルーと同じコモンタスクが割り当てられる。
 
+            int NumLongTasks = (int)data.numLongTasks.GetFloat(); // 割り当てるロングタスクの数
+            int NumShortTasks = (int)data.numShortTasks.GetFloat(); // 割り当てるショートタスクの数
+                                                                    // ロングとショートは常時再割り当てが行われる。
+
+            if (!doOverride) return;
             //割り当て可能なタスクのIDが入ったリスト
             //本来のRpcSetTasksの第二引数のクローン
             Il2CppSystem.Collections.Generic.List<byte> TasksList = new();
@@ -85,8 +73,7 @@ namespace TownOfHost
             //不要な割り当て済みのタスクを削除する処理
             //コモンタスクを割り当てる設定ならコモンタスク以外を削除
             //コモンタスクを割り当てない設定ならリストを空にする
-            int defaultCommonTasksNum = Main.RealOptionsData.GetInt(Int32OptionNames.NumCommonTasks);
-            if (hasCommonTasks) TasksList.RemoveRange(defaultCommonTasksNum, TasksList.Count - defaultCommonTasksNum);
+            if (hasCommonTasks) TasksList.RemoveRange(Main.RealOptionsData.NumCommonTasks, TasksList.Count - Main.RealOptionsData.NumCommonTasks);
             else TasksList.Clear();
 
             //割り当て済みのタスクが入れられるHashSet

@@ -19,7 +19,7 @@ namespace TownOfHost
                 if (position == new Vector2(-25f, 40f)) return; //最初の湧き地点ならreturn
                 if (GameStates.IsInTask)
                 {
-                    var player = Main.AllPlayerControls.Where(p => p.NetTransform == __instance).FirstOrDefault();
+                    var player = PlayerControl.AllPlayerControls.ToArray().Where(p => p.NetTransform == __instance).FirstOrDefault();
                     if (player == null)
                     {
                         Logger.Warn("プレイヤーがnullです", "RandomSpawn");
@@ -31,9 +31,9 @@ namespace TownOfHost
 
                     if (NumOfTP[player.PlayerId] == 2)
                     {
-                        if (Main.NormalOptions.MapId != 4) return; //マップがエアシップじゃなかったらreturn
+                        if (PlayerControl.GameOptions.MapId != 4) return; //マップがエアシップじゃなかったらreturn
                         player.RpcResetAbilityCooldown();
-                        if ((Options.FixFirstKillCooldown.GetBool() || Options.CurrentGameMode.IsOneNightMode()) && !MeetingStates.MeetingCalled) player.SetKillCooldown(Main.AllPlayerKillCooldown[player.PlayerId]);
+                        if (Options.FixFirstKillCooldown.GetBool() && !GameStates.MeetingCalled) player.SetKillCooldown(Main.AllPlayerKillCooldown[player.PlayerId]);
                         if (!Options.RandomSpawn.GetBool()) return; //ランダムスポーンが無効ならreturn
                         new AirshipSpawnMap().RandomTeleport(player);
                     }
@@ -44,7 +44,7 @@ namespace TownOfHost
         {
             if (AmongUsClient.Instance.AmHost) nt.SnapTo(location);
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(nt.NetId, (byte)RpcCalls.SnapTo, SendOption.None);
-            NetHelpers.WriteVector2(location, writer);
+            nt.WriteVector2(location, writer);
             writer.Write(nt.lastSequenceId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }

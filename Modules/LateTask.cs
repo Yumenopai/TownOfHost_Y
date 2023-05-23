@@ -24,8 +24,7 @@ namespace TownOfHost
             this.timer = time;
             this.name = name;
             Tasks.Add(this);
-            if (name != "")
-                Logger.Info("\"" + name + "\" is created", "LateTask");
+            Logger.Info("\"" + name + "\" is created", "LateTask");
         }
         public static void Update(float deltaTime)
         {
@@ -37,14 +36,13 @@ namespace TownOfHost
                 {
                     if (task.Run(deltaTime))
                     {
-                        if (task.name != "")
-                            Logger.Info($"\"{task.name}\" is finished", "LateTask");
+                        Logger.Info($"\"{task.name}\" is finished", "LateTask");
                         TasksToRemove.Add(task);
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error($"{ex.GetType()}: {ex.Message}  in \"{task.name}\"\n{ex.StackTrace}", "LateTask.Error", false);
+                    Logger.Error($"{ex.GetType()}: {ex.Message}  in \"{task.name}\"\n{ex.StackTrace}", "LateTask.Error");
                     TasksToRemove.Add(task);
                 }
             }

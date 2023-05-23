@@ -4,9 +4,6 @@ using System.Linq;
 using HarmonyLib;
 using UnityEngine;
 
-using TownOfHost.Roles.Crewmate;
-using TownOfHost.Roles.Neutral;
-
 namespace TownOfHost
 {
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.FixedUpdate))]
@@ -23,11 +20,11 @@ namespace TownOfHost
             }
             else if (!float.IsNaN(Main.RefixCooldownDelay))
             {
-                Utils.MarkEveryoneDirtySettings();
+                Utils.CustomSyncAllSettings();
                 Main.RefixCooldownDelay = float.NaN;
                 Logger.Info("Refix Cooldown", "CoolDown");
             }
-            if (Options.IsStandardHAS && Main.introDestroyed)
+            if ((Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) && Main.introDestroyed)
             {
                 if (Options.HideAndSeekKillDelayTimer > 0)
                 {
@@ -35,7 +32,7 @@ namespace TownOfHost
                 }
                 else if (!float.IsNaN(Options.HideAndSeekKillDelayTimer))
                 {
-                    Utils.MarkEveryoneDirtySettings();
+                    Utils.CustomSyncAllSettings();
                     Options.HideAndSeekKillDelayTimer = float.NaN;
                     Logger.Info("キル能力解禁", "HideAndSeek");
                 }
@@ -52,7 +49,7 @@ namespace TownOfHost
             [HarmonyArgument(2)] byte amount)
         {
             Logger.Msg("SystemType: " + systemType.ToString() + ", PlayerName: " + player.GetNameWithRole() + ", amount: " + amount, "RepairSystem");
-            if (RepairSender.enabled && AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
+            if (RepairSender.enabled && AmongUsClient.Instance.GameMode != GameModes.OnlineGame)
             {
                 Logger.SendInGame("SystemType: " + systemType.ToString() + ", PlayerName: " + player.GetNameWithRole() + ", amount: " + amount);
             }
@@ -61,43 +58,34 @@ namespace TownOfHost
                 if (task.TaskType == TaskTypes.FixComms) IsComms = true;
 
             if (!AmongUsClient.Instance.AmHost) return true; //以下、ホストのみ実行
-            if ((Options.CurrentGameMode.IsCatMode()
-                || (Options.CurrentGameMode.IsOneNightMode() && Main.ONKillCount < Main.AllAlivePlayerControls.Count(pc => pc.Is(CustomRoleTypes.Impostor))) || Options.IsStandardHAS) && systemType == SystemTypes.Sabotage) return false;
+            if ((Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) && systemType == SystemTypes.Sabotage) return false;
             //SabotageMaster
             if (player.Is(CustomRoles.SabotageMaster))
                 SabotageMaster.RepairSystem(__instance, systemType, amount);
 
-            if (systemType == SystemTypes.Electrical && 0 <= amount && amount <= 4)
-            {
-                if (!Options.MadmateCanFixLightsOut.GetBool() && player.Is(CustomRoles.SKMadmate)) return false; //Madmateが停電を直せる設定がオフ
-                if (player.Is(CustomRoles.Clumsy) || (player.Is(CustomRoles.Sheriff)&&Sheriff.IsClumsy.GetBool())) return false;
-                switch (Main.NormalOptions.MapId)
-                {
-                    case 4:
-                        if (Options.DisableAirshipViewingDeckLightsPanel.GetBool() && Vector2.Distance(player.transform.position, new(-12.93f, -11.28f)) <= 2f) return false;
-                        if (Options.DisableAirshipGapRoomLightsPanel.GetBool() && Vector2.Distance(player.transform.position, new(13.92f, 6.43f)) <= 2f) return false;
-                        if (Options.DisableAirshipCargoLightsPanel.GetBool() && Vector2.Distance(player.transform.position, new(30.56f, 2.12f)) <= 2f) return false;
-                        break;
-                }
-            }
-
-            if (!Options.MadmateCanFixComms.GetBool() && player.Is(CustomRoles.SKMadmate) //Madmateがコミュサボを直せる設定がオフ
+            if (!Options.MadmateCanFixLightsOut.GetBool() && player.GetCustomRole().IsMadmate() //Madmateが停電を直せる設定がオフ
+               && systemType == SystemTypes.Electrical //システムタイプが電気室
+               && 0 <= amount && amount <= 4) //配電盤操作のamount
+                return false;
+            if (!Options.MadmateCanFixComms.GetBool() && player.GetCustomRole().IsMadmate() //Madmateがコミュサボを直せる設定がオフ
                 && systemType == SystemTypes.Comms //システムタイプが通信室
                 && amount is 0 or 16 or 17)
                 return false;
-            if ((player.Is(CustomRoles.Clumsy) || (player.Is(CustomRoles.Sheriff) && Sheriff.IsClumsy.GetBool()))
-                && systemType == SystemTypes.Comms //システムタイプが通信室
-                && amount is 0 or 16 or 17)
-                return false;
-            if (!player.Is(CustomRoleTypes.Impostor) && !player.Is(CustomRoles.Egoist) && !(player.Is(CustomRoles.Jackal) && Jackal.CanUseSabotage.GetBool()))
+            if (player.Is(CustomRoles.Sheriff) || player.Is(CustomRoles.Arsonist) || (player.Is(CustomRoles.Jackal) && !Options.JackalCanUseSabotage.GetBool()))
             {
-                if (systemType == SystemTypes.Sabotage && AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay) return false; //シェリフにサボタージュをさせない ただしフリープレイは例外
+                if (systemType == SystemTypes.Sabotage && AmongUsClient.Instance.GameMode != GameModes.FreePlay) return false; //シェリフにサボタージュをさせない ただしフリープレイは例外
             }
             return true;
         }
         public static void Postfix(ShipStatus __instance)
         {
-            Camouflage.CheckCamouflage();
+            Utils.CustomSyncAllSettings();
+            new LateTask(
+                () =>
+                {
+                    if (!GameStates.IsMeeting)
+                        Utils.NotifyRoles(ForceLoop: true);
+                }, 0.1f, "RepairSystem NotifyRoles");
         }
         public static void CheckAndOpenDoorsRange(ShipStatus __instance, int amount, int min, int max)
         {
@@ -121,7 +109,7 @@ namespace TownOfHost
     {
         public static bool Prefix(ShipStatus __instance)
         {
-            return !(Options.CurrentGameMode.IsCatMode() || Options.IsStandardHAS);
+            return !(Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) || Options.AllowCloseDoors.GetBool();
         }
     }
     [HarmonyPatch(typeof(SwitchSystem), nameof(SwitchSystem.RepairDamage))]
@@ -141,16 +129,7 @@ namespace TownOfHost
             Logger.CurrentMethod();
             Logger.Info("-----------ゲーム開始-----------", "Phase");
 
-            Utils.CountAlivePlayers(true);
-        }
-    }
-    [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartMeeting))]
-    class StartMeetingPatch
-    {
-        public static void Prefix(ShipStatus __instance, PlayerControl reporter, GameData.PlayerInfo target)
-        {
-            MeetingStates.ReportTarget = target;
-            MeetingStates.DeadBodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+            Utils.CountAliveImpostors();
         }
     }
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Begin))]
@@ -163,12 +142,12 @@ namespace TownOfHost
             //ホストの役職初期設定はここで行うべき？
         }
     }
-    [HarmonyPatch(typeof(GameManager), nameof(GameManager.CheckTaskCompletion))]
+    [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CheckTaskCompletion))]
     class CheckTaskCompletionPatch
     {
         public static bool Prefix(ref bool __result)
         {
-            if (Options.DisableTaskWin.GetBool() || Options.NoGameEnd.GetBool() || TaskState.InitialTotalTasks == 0 || Options.CurrentGameMode.IsCatMode()|| Options.CurrentGameMode.IsOneNightMode())
+            if (Options.DisableTaskWin.GetBool())
             {
                 __result = false;
                 return false;

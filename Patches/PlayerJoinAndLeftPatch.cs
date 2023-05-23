@@ -1,11 +1,7 @@
 using System.Collections.Generic;
 using AmongUs.Data;
-using AmongUs.GameOptions;
 using HarmonyLib;
 using InnerNet;
-
-using TownOfHost.Modules;
-using TownOfHost.Roles.Neutral;
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -15,32 +11,19 @@ namespace TownOfHost
     {
         public static void Postfix(AmongUsClient __instance)
         {
-            while (!Options.IsLoaded) System.Threading.Tasks.Task.Delay(1);
             Logger.Info($"{__instance.GameId}に参加", "OnGameJoined");
             Main.playerVersion = new Dictionary<byte, PlayerVersion>();
             RPC.RpcVersionCheck();
-            SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
+            SoundManager.Instance.ChangeMusicVolume(DataManager.Settings.Audio.MusicVolume);
 
-            ChatUpdatePatch.DoBlockChat = false;
             GameStates.InGame = false;
-            ErrorText.Instance.Clear();
+            NameColorManager.Begin();
+            Options.Load();
             if (AmongUsClient.Instance.AmHost) //以下、ホストのみ実行
             {
-                if (Main.NormalOptions.KillCooldown == 0f)
-                    Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
-
-                AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
-                if (AURoleOptions.ShapeshifterCooldown == 0f)
-                    AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
+                if (PlayerControl.GameOptions.killCooldown == 0.1f)
+                    PlayerControl.GameOptions.killCooldown = Main.LastKillCooldown.Value;
             }
-        }
-    }
-    [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.DisconnectInternal))]
-    class DisconnectInternalPatch
-    {
-        public static void Prefix(InnerNetClient __instance, DisconnectReasons reason, string stringReason)
-        {
-            Logger.Info($"切断(理由:{reason}:{stringReason}, ping:{__instance.Ping})", "Session");
         }
     }
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
@@ -49,20 +32,22 @@ namespace TownOfHost
         public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
         {
             Logger.Info($"{client.PlayerName}(ClientID:{client.Id})が参加", "Session");
-            if (AmongUsClient.Instance.AmHost && client.FriendCode == "" && Options.KickPlayerFriendCodeNotExist.GetBool())
-            {
-                AmongUsClient.Instance.KickPlayer(client.Id, false);
-                Logger.SendInGame(string.Format(GetString("Message.KickedByNoFriendCode"), client.PlayerName));
-                Logger.Info($"フレンドコードがないプレイヤーを{client?.PlayerName}をキックしました。", "Kick");
-            }
             if (DestroyableSingleton<FriendsListManager>.Instance.IsPlayerBlockedUsername(client.FriendCode) && AmongUsClient.Instance.AmHost)
             {
                 AmongUsClient.Instance.KickPlayer(client.Id, true);
                 Logger.Info($"ブロック済みのプレイヤー{client?.PlayerName}({client.FriendCode})をBANしました。", "BAN");
             }
-            BanManager.CheckBanPlayer(client);
-            BanManager.CheckDenyNamePlayer(client);
+            Main.playerVersion = new Dictionary<byte, PlayerVersion>();
             RPC.RpcVersionCheck();
+            if (AmongUsClient.Instance.AmHost)
+            {
+                new LateTask(() =>
+                {
+                    if (client.Character == null) return;
+                    if (AmongUsClient.Instance.IsGamePublic) Utils.SendMessage(string.Format(GetString("Message.AnnounceUsingTOH"), Main.PluginVersion), client.Character.PlayerId);
+                    ChatCommands.SendTemplate("welcome", client.Character.PlayerId, true);
+                }, 3f, "Welcome Message");
+            }
         }
     }
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
@@ -74,70 +59,27 @@ namespace TownOfHost
             //            main.RealNames.Remove(data.Character.PlayerId);
             if (GameStates.IsInGame)
             {
+                if (data.Character.Is(CustomRoles.TimeThief))
+                    data.Character.ResetVotingTime();
                 if (data.Character.Is(CustomRoles.Lovers) && !data.Character.Data.IsDead)
                     foreach (var lovers in Main.LoversPlayers.ToArray())
                     {
                         Main.isLoversDead = true;
                         Main.LoversPlayers.Remove(lovers);
-                        Main.PlayerStates[lovers.PlayerId].RemoveSubRole(CustomRoles.Lovers);
+                        Main.AllPlayerCustomSubRoles[lovers.PlayerId] = CustomRoles.NoSubRoleAssigned;
                     }
                 if (data.Character.Is(CustomRoles.Executioner) && Executioner.Target.ContainsKey(data.Character.PlayerId))
                     Executioner.ChangeRole(data.Character);
                 if (Executioner.Target.ContainsValue(data.Character.PlayerId))
                     Executioner.ChangeRoleByTarget(data.Character);
-                if (data.Character.Is(CustomRoles.Lawyer) && Lawyer.Target.ContainsKey(data.Character.PlayerId))
-                    Lawyer.ChangeRole(data.Character);
-                if (Lawyer.Target.ContainsValue(data.Character.PlayerId))
-                    Lawyer.ChangeRoleByTarget(data.Character);
-                if (Main.PlayerStates[data.Character.PlayerId].deathReason == PlayerState.DeathReason.etc) //死因が設定されていなかったら
+                if (PlayerState.GetDeathReason(data.Character.PlayerId) == PlayerState.DeathReason.etc) //死因が設定されていなかったら
                 {
-                    Main.PlayerStates[data.Character.PlayerId].deathReason = PlayerState.DeathReason.Disconnected;
-                    Main.PlayerStates[data.Character.PlayerId].SetDead();
+                    PlayerState.SetDeathReason(data.Character.PlayerId, PlayerState.DeathReason.Disconnected);
+                    PlayerState.SetDead(data.Character.PlayerId);
                 }
                 AntiBlackout.OnDisconnect(data.Character.Data);
-
-                PlayerGameOptionsSender.RemoveSender(data.Character);
             }
-            Logger.Info($"{data.PlayerName}(ClientID:{data.Id})が切断(理由:{reason}, ping:{AmongUsClient.Instance.Ping})", "Session");
-        }
-    }
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-    class CreatePlayerPatch
-    {
-        public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
-        {
-            if (AmongUsClient.Instance.AmHost)
-            {
-                OptionItem.SyncAllOptions();
-                new LateTask(() =>
-                {
-                    if (client.Character == null) return;
-                    if (AmongUsClient.Instance.IsGamePublic) Utils.SendMessage(string.Format(GetString("Message.AnnounceUsingTOH"), Main.PluginVersion), client.Character.PlayerId);
-                    TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
-                }, 3f, "Welcome Message");
-                if (Options.AutoDisplayLastResult.GetBool() && Main.PlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
-                {
-                    new LateTask(() =>
-                    {
-                        if (!AmongUsClient.Instance.IsGameStarted && client.Character != null)
-                        {
-                            Main.isChatCommand = true;
-                            Utils.ShowLastResult(client.Character.PlayerId);
-                        }
-                    }, 3f, "DisplayLastRoles");
-                }
-                if (Options.AutoDisplayKillLog.GetBool() && Main.PlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
-                {
-                    new LateTask(() =>
-                    {
-                        if (!GameStates.IsInGame && client.Character != null)
-                        {
-                            Main.isChatCommand = true;
-                            Utils.ShowKillLog(client.Character.PlayerId);
-                        }
-                    }, 3f, "DisplayKillLog");
-                }
-            }
+            Logger.Info($"{data.PlayerName}(ClientID:{data.Id})が切断(理由:{reason})", "Session");
         }
     }
 }
