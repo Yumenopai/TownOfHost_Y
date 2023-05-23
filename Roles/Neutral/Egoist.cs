@@ -18,12 +18,13 @@ namespace TownOfHost.Roles.Neutral
 
         private static float KillCooldown;
         public static bool CanCreateMadmate;
+
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.Egoist);
-            OptionKillCooldown = FloatOptionItem.Create(Id + 10, "KillCooldown", new(2.5f, 180f, 2.5f), 20f, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Egoist])
+            OptionKillCooldown = FloatOptionItem.Create(Id + 10, "KillCooldown", new(2.5f, 180f, 2.5f), 20f, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Egoist])
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionCanCreateMadmate = BooleanOptionItem.Create(Id + 11, "CanCreateMadmate", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Egoist]);
+            OptionCanCreateMadmate = BooleanOptionItem.Create(Id + 11, "CanCreateMadmate", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Egoist]);
         }
         public static void Init()
         {
@@ -39,7 +40,7 @@ namespace TownOfHost.Roles.Neutral
             TeamEgoist.Add(ego);
             foreach (var impostor in Main.AllPlayerControls.Where(pc => pc.Is(CustomRoleTypes.Impostor)))
             {
-                NameColorManager.Add(impostor.PlayerId, ego);
+                NameColorManager.Add(impostor.PlayerId, ego, RoleColorCode);
             }
         }
         public static bool IsEnable = false;

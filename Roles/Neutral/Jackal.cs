@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using Hazel;
-
 using static TownOfHost.Options;
 
 namespace TownOfHost.Roles.Neutral
@@ -20,11 +19,11 @@ namespace TownOfHost.Roles.Neutral
         {
             //Jackalは1人固定
             SetupSingleRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.Jackal, 1);
-            KillCooldown = FloatOptionItem.Create(Id + 10, "KillCooldown", new(2.5f, 180f, 2.5f), 30f, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Jackal])
+            KillCooldown = FloatOptionItem.Create(Id + 10, "KillCooldown", new(2.5f, 180f, 2.5f), 30f, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Jackal])
                 .SetValueFormat(OptionFormat.Seconds);
-            CanVent = BooleanOptionItem.Create(Id + 11, "CanVent", true, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Jackal]);
-            CanUseSabotage = BooleanOptionItem.Create(Id + 12, "CanUseSabotage", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Jackal]);
-            HasImpostorVision = BooleanOptionItem.Create(Id + 13, "ImpostorVision", true, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Jackal]);
+            CanVent = BooleanOptionItem.Create(Id + 11, "CanVent", true, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Jackal]);
+            CanUseSabotage = BooleanOptionItem.Create(Id + 12, "CanUseSabotage", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Jackal]);
+            HasImpostorVision = BooleanOptionItem.Create(Id + 13, "ImpostorVision", true, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Jackal]);
         }
         public static void Init()
         {
@@ -47,7 +46,9 @@ namespace TownOfHost.Roles.Neutral
         {
         }
         public static void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = KillCooldown.GetFloat();
+
         public static void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision.GetBool());
+
         public static void CanUseVent(PlayerControl player)
         {
             bool jackal_canUse = CanVent.GetBool();

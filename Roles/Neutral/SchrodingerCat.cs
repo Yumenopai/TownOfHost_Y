@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 using TownOfHost.Roles.Impostor;
 using static TownOfHost.Options;
 
@@ -25,9 +24,9 @@ namespace TownOfHost.Roles.Neutral
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.NeutralRoles, CustomRoles.SchrodingerCat);
-            OptionCanWinTheCrewmateBeforeChange = BooleanOptionItem.Create(Id + 10, "CanBeforeSchrodingerCatWinTheCrewmate", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SchrodingerCat]);
-            OptionChangeTeamWhenExile = BooleanOptionItem.Create(Id + 11, "SchrodingerCatExiledTeamChanges", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SchrodingerCat]);
-            OptionCanSeeKillableTeammate = BooleanOptionItem.Create(Id + 12, "SchrodingerCatCanSeeKillableTeammate", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SchrodingerCat]);
+            OptionCanWinTheCrewmateBeforeChange = BooleanOptionItem.Create(Id + 10, "CanBeforeSchrodingerCatWinTheCrewmate", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SchrodingerCat]);
+            OptionChangeTeamWhenExile = BooleanOptionItem.Create(Id + 11, "SchrodingerCatExiledTeamChanges", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SchrodingerCat]);
+            OptionCanSeeKillableTeammate = BooleanOptionItem.Create(Id + 12, "SchrodingerCatCanSeeKillableTeammate", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SchrodingerCat]);
         }
         public static void Init()
         {
@@ -47,12 +46,13 @@ namespace TownOfHost.Roles.Neutral
         public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
         public static bool OnCheckMurder(PlayerControl killer, PlayerControl target)
         {
-            //シュレディンガーの猫が切られた場合の役職変化スタート
-            //直接キル出来る役職チェック
+            // シュレディンガーの猫が切られた場合の役職変化スタート
+            // 直接キル出来る役職チェック
             // Sniperなど自殺扱いのものもあるので追加するときは注意
-            if (killer.Is(CustomRoles.Arsonist)) return true;
+            if (killer.Is(CustomRoles.Arsonist) || killer.Is(CustomRoles.PlatonicLover) || killer.Is(CustomRoles.Totocalcio) || killer.Is(CustomRoles.MadSheriff)) return true;
 
             killer.RpcGuardAndKill(target);
+            target.RpcGuardAndKill(target);
 
             switch (killer.GetCustomRole())
             {
@@ -63,20 +63,23 @@ namespace TownOfHost.Roles.Neutral
                 case CustomRoles.SerialKiller:
                     SerialKiller.OnCheckMurder(killer, false);
                     break;
-                case CustomRoles.Sheriff:
-                    target.RpcSetCustomRole(CustomRoles.CSchrodingerCat);
-                    break;
                 case CustomRoles.Egoist:
-                    TeamEgoist.Add(target.PlayerId);
-                    target.RpcSetCustomRole(CustomRoles.EgoSchrodingerCat);
-                    break;
-                case CustomRoles.Jackal:
-                    target.RpcSetCustomRole(CustomRoles.JSchrodingerCat);
-                    break;
+                        TeamEgoist.Add(target.PlayerId);
+                        target.RpcSetCustomRole(CustomRoles.EgoSchrodingerCat);
+                        break;
+
+                case CustomRoles.Sheriff:       target.RpcSetCustomRole(CustomRoles.CSchrodingerCat);   break;
+                case CustomRoles.Jackal:        target.RpcSetCustomRole(CustomRoles.JSchrodingerCat);   break;
+                    //TOH_Y
+                case CustomRoles.SillySheriff:  target.RpcSetCustomRole(CustomRoles.CSchrodingerCat);   break;
+                case CustomRoles.Hunter:        target.RpcSetCustomRole(CustomRoles.CSchrodingerCat);   break;
+                case CustomRoles.Opportunist:   target.RpcSetCustomRole(CustomRoles.OSchrodingerCat);   break;
+                case CustomRoles.DarkHide:      target.RpcSetCustomRole(CustomRoles.DSchrodingerCat);   break;
             }
             if (killer.Is(CustomRoleTypes.Impostor))
                 target.RpcSetCustomRole(CustomRoles.MSchrodingerCat);
 
+            var killerColorCode = killer.GetRoleColorCode();
             if (CanSeeKillableTeammate)
             {
                 var roleType = killer.GetCustomRole().GetCustomRoleTypes();
@@ -118,9 +121,10 @@ namespace TownOfHost.Roles.Neutral
             {
                 if (pc.Is(CustomRoles.Egoist) && !Rand.Contains(CustomRoles.EgoSchrodingerCat))
                     Rand.Add(CustomRoles.EgoSchrodingerCat);
-
                 if (pc.Is(CustomRoles.Jackal) && !Rand.Contains(CustomRoles.JSchrodingerCat))
                     Rand.Add(CustomRoles.JSchrodingerCat);
+                if (pc.Is(CustomRoles.DarkHide) && !Rand.Contains(CustomRoles.DSchrodingerCat))
+                    Rand.Add(CustomRoles.DSchrodingerCat);
             }
             var Role = Rand[rand.Next(Rand.Count)];
             player.RpcSetCustomRole(Role);
