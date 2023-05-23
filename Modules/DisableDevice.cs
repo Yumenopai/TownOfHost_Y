@@ -4,13 +4,15 @@ using HarmonyLib;
 using Hazel;
 using InnerNet;
 using UnityEngine;
+using TownOfHost.Roles.Crewmate;
+
 
 namespace TownOfHost
 {
     //参考元 : https://github.com/ykundesu/SuperNewRoles/blob/master/SuperNewRoles/Mode/SuperHostRoles/BlockTool.cs
     class DisableDevice
     {
-        public static bool DoDisable => Options.DisableDevices.GetBool() || Options.IsStandardHAS;
+        public static bool DoDisable => Options.DisableDevices.GetBool() || Options.IsStandardHAS || IsPoorEnable();
         private static List<byte> DesyncComms = new();
         private static int frame = 0;
         public static readonly Dictionary<string, Vector2> DevicePos = new()
@@ -41,6 +43,15 @@ namespace TownOfHost
                 _ => 0.0f
             };
         }
+        public static bool IsPoorEnable()
+        {
+            foreach (var pc in Main.AllAlivePlayerControls)
+            {
+                if ((pc.Is(CustomRoles.Sheriff) && Sheriff.IsInfoPoor.GetBool()) || pc.Is(CustomRoles.InfoPoor))
+                    return true;
+            }
+            return false;
+        }
         public static void FixedUpdate()
         {
             frame = frame == 3 ? 0 : ++frame;
@@ -49,6 +60,8 @@ namespace TownOfHost
             if (!DoDisable) return;
             foreach (var pc in Main.AllPlayerControls)
             {
+                bool PcIsPoor = (pc.Is(CustomRoles.Sheriff) && Sheriff.IsInfoPoor.GetBool()) || pc.Is(CustomRoles.InfoPoor);
+
                 try
                 {
                     if (pc.IsModClient()) continue;
@@ -66,36 +79,36 @@ namespace TownOfHost
                         switch (Main.NormalOptions.MapId)
                         {
                             case 0:
-                                if (Options.DisableSkeldAdmin.GetBool())
+                                if (Options.DisableSkeldAdmin.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["SkeldAdmin"]) <= UsableDistance();
-                                if (Options.DisableSkeldCamera.GetBool())
+                                if (Options.DisableSkeldCamera.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["SkeldCamera"]) <= UsableDistance();
                                 break;
                             case 1:
-                                if (Options.DisableMiraHQAdmin.GetBool())
+                                if (Options.DisableMiraHQAdmin.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["MiraHQAdmin"]) <= UsableDistance();
-                                if (Options.DisableMiraHQDoorLog.GetBool())
+                                if (Options.DisableMiraHQDoorLog.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["MiraHQDoorLog"]) <= UsableDistance();
                                 break;
                             case 2:
-                                if (Options.DisablePolusAdmin.GetBool())
+                                if (Options.DisablePolusAdmin.GetBool() || PcIsPoor)
                                 {
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["PolusLeftAdmin"]) <= UsableDistance();
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["PolusRightAdmin"]) <= UsableDistance();
                                 }
-                                if (Options.DisablePolusCamera.GetBool())
+                                if (Options.DisablePolusCamera.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["PolusCamera"]) <= UsableDistance();
-                                if (Options.DisablePolusVital.GetBool())
+                                if (Options.DisablePolusVital.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["PolusVital"]) <= UsableDistance();
                                 break;
                             case 4:
-                                if (Options.DisableAirshipCockpitAdmin.GetBool())
+                                if (Options.DisableAirshipCockpitAdmin.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["AirshipCockpitAdmin"]) <= UsableDistance();
-                                if (Options.DisableAirshipRecordsAdmin.GetBool())
+                                if (Options.DisableAirshipRecordsAdmin.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["AirshipRecordsAdmin"]) <= UsableDistance();
-                                if (Options.DisableAirshipCamera.GetBool())
+                                if (Options.DisableAirshipCamera.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["AirshipCamera"]) <= UsableDistance();
-                                if (Options.DisableAirshipVital.GetBool())
+                                if (Options.DisableAirshipVital.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["AirshipVital"]) <= UsableDistance();
                                 break;
                         }
@@ -129,13 +142,15 @@ namespace TownOfHost
     {
         public static void Postfix()
         {
-            if (!Options.DisableDevices.GetBool()) return;
+            if (!(Options.DisableDevices.GetBool() || DisableDevice.IsPoorEnable())) return;
             UpdateDisableDevices();
         }
 
         public static void UpdateDisableDevices()
         {
             var player = PlayerControl.LocalPlayer;
+            bool PcIsPoor = (player.Is(CustomRoles.Sheriff) && Sheriff.IsInfoPoor.GetBool()) || player.Is(CustomRoles.InfoPoor);
+
             bool ignore = player.Is(CustomRoles.GM) ||
                 !player.IsAlive() ||
                 (Options.DisableDevicesIgnoreImpostors.GetBool() && player.Is(CustomRoleTypes.Impostor)) ||
@@ -149,35 +164,35 @@ namespace TownOfHost
             switch (Main.NormalOptions.MapId)
             {
                 case 0:
-                    if (Options.DisableSkeldAdmin.GetBool())
+                    if (Options.DisableSkeldAdmin.GetBool() || PcIsPoor)
                         admins[0].gameObject.GetComponent<CircleCollider2D>().enabled = false || ignore;
-                    if (Options.DisableSkeldCamera.GetBool())
+                    if (Options.DisableSkeldCamera.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "SurvConsole", x => x.gameObject.GetComponent<PolygonCollider2D>().enabled = false || ignore);
                     break;
                 case 1:
-                    if (Options.DisableMiraHQAdmin.GetBool())
+                    if (Options.DisableMiraHQAdmin.GetBool() || PcIsPoor)
                         admins[0].gameObject.GetComponent<CircleCollider2D>().enabled = false || ignore;
-                    if (Options.DisableMiraHQDoorLog.GetBool())
+                    if (Options.DisableMiraHQDoorLog.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "SurvLogConsole", x => x.gameObject.GetComponent<BoxCollider2D>().enabled = false || ignore);
                     break;
                 case 2:
-                    if (Options.DisablePolusAdmin.GetBool())
+                    if (Options.DisablePolusAdmin.GetBool() || PcIsPoor)
                         admins.Do(x => x.gameObject.GetComponent<BoxCollider2D>().enabled = false || ignore);
-                    if (Options.DisablePolusCamera.GetBool())
+                    if (Options.DisablePolusCamera.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "Surv_Panel", x => x.gameObject.GetComponent<BoxCollider2D>().enabled = false || ignore);
-                    if (Options.DisablePolusVital.GetBool())
+                    if (Options.DisablePolusVital.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "panel_vitals", x => x.gameObject.GetComponent<BoxCollider2D>().enabled = false || ignore);
                     break;
                 case 4:
                     admins.Do(x =>
                     {
-                        if ((Options.DisableAirshipCockpitAdmin.GetBool() && x.name == "panel_cockpit_map") ||
-                            (Options.DisableAirshipRecordsAdmin.GetBool() && x.name == "records_admin_map"))
+                        if (((Options.DisableAirshipCockpitAdmin.GetBool() || PcIsPoor) && x.name == "panel_cockpit_map") ||
+                            ((Options.DisableAirshipRecordsAdmin.GetBool() || PcIsPoor) && x.name == "records_admin_map"))
                             x.gameObject.GetComponent<BoxCollider2D>().enabled = false || ignore;
                     });
-                    if (Options.DisableAirshipCamera.GetBool())
+                    if (Options.DisableAirshipCamera.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "task_cams", x => x.gameObject.GetComponent<BoxCollider2D>().enabled = false || ignore);
-                    if (Options.DisableAirshipVital.GetBool())
+                    if (Options.DisableAirshipVital.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "panel_vitals", x => x.gameObject.GetComponent<CircleCollider2D>().enabled = false || ignore);
                     break;
             }

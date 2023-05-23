@@ -20,38 +20,38 @@ namespace TownOfHost
                 Logger.SendInGame(message);
                 return false;
             }
-            if (ModUpdater.isBroken || ModUpdater.hasUpdate)
-            {
-                var message = "";
-                if (ModUpdater.isBroken) message = GetString("ModBrokenMessage");
-                if (ModUpdater.hasUpdate) message = GetString("CanNotJoinPublicRoomNoLatest");
-                Logger.Info(message, "MakePublicPatch");
-                Logger.SendInGame(message);
-                return false;
-            }
+            //if (ModUpdater.isBroken || ModUpdater.hasUpdate)
+            //{
+            //    var message = "";
+            //    if (ModUpdater.isBroken) message = GetString("ModBrokenMessage");
+            //    if (ModUpdater.hasUpdate) message = GetString("CanNotJoinPublicRoomNoLatest");
+            //    Logger.Info(message, "MakePublicPatch");
+            //    Logger.SendInGame(message);
+            //    return false;
+            //}
             return true;
         }
     }
-    [HarmonyPatch(typeof(MMOnlineManager), nameof(MMOnlineManager.Start))]
-    class MMOnlineManagerStartPatch
-    {
-        public static void Postfix(MMOnlineManager __instance)
-        {
-            if (!(ModUpdater.hasUpdate || ModUpdater.isBroken)) return;
-            var obj = GameObject.Find("FindGameButton");
-            if (obj)
-            {
-                obj?.SetActive(false);
-                var parentObj = obj.transform.parent.gameObject;
-                var textObj = Object.Instantiate<TMPro.TextMeshPro>(obj.transform.FindChild("Text_TMP").GetComponent<TMPro.TextMeshPro>());
-                textObj.transform.position = new Vector3(1f, -0.3f, 0);
-                textObj.name = "CanNotJoinPublic";
-                var message = ModUpdater.isBroken ? $"<size=2>{Utils.ColorString(Color.red, GetString("ModBrokenMessage"))}</size>"
-                    : $"<size=2>{Utils.ColorString(Color.red, GetString("CanNotJoinPublicRoomNoLatest"))}</size>";
-                new LateTask(() => { textObj.text = message; }, 0.01f, "CanNotJoinPublic");
-            }
-        }
-    }
+    //[HarmonyPatch(typeof(MMOnlineManager), nameof(MMOnlineManager.Start))]
+    //class MMOnlineManagerStartPatch
+    //{
+    //    public static void Postfix(MMOnlineManager __instance)
+    //    {
+    //        //if (!(ModUpdater.hasUpdate || ModUpdater.isBroken)) return;
+    //        var obj = GameObject.Find("FindGameButton");
+    //        if (obj)
+    //        {
+    //            obj?.SetActive(false);
+    //            var parentObj = obj.transform.parent.gameObject;
+    //            var textObj = Object.Instantiate<TMPro.TextMeshPro>(obj.transform.FindChild("Text_TMP").GetComponent<TMPro.TextMeshPro>());
+    //            textObj.transform.position = new Vector3(1f, -0.3f, 0);
+    //            textObj.name = "CanNotJoinPublic";
+    //            var message = ModUpdater.isBroken ? $"<size=2>{Utils.ColorString(Color.red, GetString("ModBrokenMessage"))}</size>"
+    //                : $"<size=2>{Utils.ColorString(Color.red, GetString("CanNotJoinPublicRoomNoLatest"))}</size>";
+    //            new LateTask(() => { textObj.text = message; }, 0.01f, "CanNotJoinPublic");
+    //        }
+    //    }
+    //}
     [HarmonyPatch(typeof(SplashManager), nameof(SplashManager.Update))]
     class SplashLogoAnimatorPatch
     {
@@ -110,13 +110,10 @@ namespace TownOfHost
     {
         public static void Postfix()
         {
-            if (MainMenuManagerPatch.discordButton != null)
-                MainMenuManagerPatch.discordButton.transform.position = Vector3.Reflect(MainMenuManagerPatch.template.transform.position, Vector3.left);
-            if (MainMenuManagerPatch.updateButton != null)
-                MainMenuManagerPatch.updateButton.transform.position = MainMenuManagerPatch.template.transform.position + new Vector3(0.25f, 0.75f);
+            if (MainMenuManagerPatch.githubButton != null)
+                MainMenuManagerPatch.githubButton.transform.position = Vector3.Reflect(MainMenuManagerPatch.template.transform.position, Vector3.left);
         }
     }
-
     [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.SendAllStreamedObjects))]
     class InnerNetObjectSerializePatch
     {

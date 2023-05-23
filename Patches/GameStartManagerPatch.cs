@@ -6,6 +6,7 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using InnerNet;
 using UnityEngine;
+
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -40,12 +41,11 @@ namespace TownOfHost
                 if (!AmongUsClient.Instance.AmHost) return;
 
                 // Make Public Button
-                if (ModUpdater.isBroken || ModUpdater.hasUpdate || !Main.AllowPublicRoom)
+                if (!Main.AllowPublicRoom)
                 {
                     __instance.MakePublicButton.color = Palette.DisabledClear;
                     __instance.privatePublicText.color = Palette.DisabledClear;
                 }
-
                 if (Main.NormalOptions.KillCooldown == 0f)
                     Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
 
@@ -227,7 +227,8 @@ namespace TownOfHost
             if (GameStates.IsCountDown)
             {
                 Main.NormalOptions.KillCooldown = Options.DefaultKillCooldown;
-                PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.CurrentGameOptions));
+                PlayerControl.LocalPlayer.RpcSyncSettings(
+                    GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.CurrentGameOptions));
             }
         }
     }

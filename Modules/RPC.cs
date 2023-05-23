@@ -6,10 +6,10 @@ using HarmonyLib;
 using Hazel;
 
 using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Madmate;
 using TownOfHost.Roles.Crewmate;
 using TownOfHost.Roles.Neutral;
-using TownOfHost.Roles.AddOns.Impostor;
-using TownOfHost.Roles.AddOns.Crewmate;
+using TownOfHost.Roles.AddOns;
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -37,6 +37,37 @@ namespace TownOfHost
         SetCurrentDousingTarget,
         SetEvilTrackerTarget,
         SetRealKiller,
+        //TOH_Y
+        SetHunterShotLimit,
+        SetOppoKillerShotLimit,
+        SetApprenticeSheriffShotLimit,
+        SetGrudgeSheriffShotLimit,
+        SetDarkHiderKillCount,
+        SetBlinderVisionPlayer,
+        SetPlatonicLoverMade,
+        SetGreedierOE,
+        SetLawyerTarget,
+        RemovetLawyerTarget,
+        SetPursuerGuardCount,
+        DoPoison,
+        SetCursedWolfSpellCount,
+        SetLoveCutterKilledCount,
+        SetAntiCompGuardCount,
+        SetGuardingGuardCount,
+        SetEvilDiviner,
+        SetMedicGuardPlayer,
+        SetMedicVent,
+        SetisPotentialistChanged,
+        SetPsychic,
+        SetTotocalcio,
+
+        //ON
+        SetDefaultRole,
+        SetONWerewolfShotLimit,
+        SetONBigWerewolfShotLimit,
+        SetONDivinerDivision,
+        SetChangeRole,
+        SetDisplayRole,
     }
     public enum Sounds
     {
@@ -189,6 +220,124 @@ namespace TownOfHost
                     byte killerId = reader.ReadByte();
                     RPC.SetRealKiller(targetId, killerId);
                     break;
+
+                //TOH_Y
+                case CustomRPC.SetHunterShotLimit:
+                    Hunter.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetApprenticeSheriffShotLimit:
+                    SillySheriff.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetGrudgeSheriffShotLimit:
+                    GrudgeSheriff.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetDarkHiderKillCount:
+                    DarkHide.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetBlinderVisionPlayer:
+                    byte PlayerId = reader.ReadByte();
+                    bool isBV = reader.ReadBoolean();
+                    Main.isBlindVision[PlayerId] = isBV;
+                    break;
+                case CustomRPC.SetisPotentialistChanged:
+                    byte PotentialistId = reader.ReadByte();
+                    bool isChanged = reader.ReadBoolean();
+                    Main.isPotentialistChanged[PotentialistId] = isChanged;
+                    break;
+                case CustomRPC.SetPlatonicLoverMade:
+                    PlatonicLover.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetGreedierOE:
+                    //Greedier.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetLawyerTarget:
+                    Lawyer.ReceiveRPC(reader, SetTarget: true);
+                    break;
+                case CustomRPC.RemovetLawyerTarget:
+                    Lawyer.ReceiveRPC(reader, SetTarget: false);
+                    break;
+                case CustomRPC.SetPursuerGuardCount:
+                    Lawyer.ReceiveRPC(reader, SetTarget: false, Guard: true);
+                    break;
+                case CustomRPC.SetOppoKillerShotLimit:
+                    byte OppoId = reader.ReadByte();
+                    int Limit = reader.ReadInt32();
+                    if (Main.OppoKillerShotLimit.ContainsKey(OppoId))
+                        Main.OppoKillerShotLimit[OppoId] = Limit;
+                    else
+                        Main.OppoKillerShotLimit.Add(OppoId, Options.OppoKillerShotLimitOpt.GetInt());
+                    break;
+                case CustomRPC.DoPoison:
+                    Bakery.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetCursedWolfSpellCount:
+                    byte CursedWolfId = reader.ReadByte();
+                    int GuardNum = reader.ReadInt32();
+                    if (Main.CursedWolfSpellCount.ContainsKey(CursedWolfId))
+                        Main.CursedWolfSpellCount[CursedWolfId] = GuardNum;
+                    else
+                        Main.CursedWolfSpellCount.Add(CursedWolfId, Options.GuardSpellTimes.GetInt());
+                    break;
+                case CustomRPC.SetLoveCutterKilledCount:
+                    byte LoveCutterId = reader.ReadByte();
+                    int KilledNum = reader.ReadInt32();
+                    if (Main.LoveCutterKilledCount.ContainsKey(LoveCutterId))
+                        Main.LoveCutterKilledCount[LoveCutterId] = KilledNum;
+                    else
+                        Main.LoveCutterKilledCount.Add(LoveCutterId, Options.VictoryCutCount.GetInt());
+                    break;
+                case CustomRPC.SetAntiCompGuardCount:
+                    byte AntiCompId = reader.ReadByte();
+                    int GuardCount = reader.ReadInt32();
+                    bool AddCount = reader.ReadBoolean();
+                    if (Main.AntiCompGuardCount.ContainsKey(AntiCompId))
+                        Main.AntiCompGuardCount[AntiCompId] = (GuardCount, AddCount);
+                    else
+                        Main.AntiCompGuardCount.Add(AntiCompId, (Options.AntiCompGuardCount.GetInt(), false));
+                    break;
+                case CustomRPC.SetGuardingGuardCount:
+                    byte GuardingId = reader.ReadByte();
+                    bool IsGuard = reader.ReadBoolean();
+                        Main.GuardingGuardCount[GuardingId] = IsGuard;
+                    break;
+                case CustomRPC.SetEvilDiviner:
+                    EvilDiviner.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetMedicGuardPlayer:
+                    Medic.ReceiveRPC(false, reader);
+                    break;
+                case CustomRPC.SetMedicVent:
+                    Medic.ReceiveRPC(true, reader);
+                    break;
+                case CustomRPC.SetTotocalcio:
+                    Totocalcio.ReceiveRPC(reader);
+                    break;
+
+                //ON
+                case CustomRPC.SetONWerewolfShotLimit:
+                    ONWerewolf.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetONBigWerewolfShotLimit:
+                    ONBigWerewolf.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetONDivinerDivision:
+                    ONDiviner.ReceiveRPC(reader);
+                    break;
+                case CustomRPC.SetChangeRole:
+                    byte ChangePlayerId = reader.ReadByte();
+                    Main.ChangeRolesTarget[ChangePlayerId].PlayerId = reader.ReadByte();
+                    break;
+                case CustomRPC.SetDefaultRole:
+                    byte playerId = reader.ReadByte();
+                    int CustomRoles = reader.ReadInt32();
+                    Main.DefaultRole[playerId] = (CustomRoles)CustomRoles;
+                    //RPC.SendRPCDefaultRole(playerId);
+                    break;
+                case CustomRPC.SetDisplayRole:
+                    byte DisplayplayerId = reader.ReadByte();
+                    int DisplayRoles = reader.ReadInt32();
+                    Main.MeetingSeerDisplayRole[DisplayplayerId] = (CustomRoles)DisplayRoles;
+                    break;
             }
         }
     }
@@ -311,6 +460,9 @@ namespace TownOfHost
                 case CustomRoles.Vampire:
                     Vampire.Add(targetId);
                     break;
+                case CustomRoles.ShapeKiller:
+                    ShapeKiller.Add(targetId);
+                    break;
 
                 case CustomRoles.Egoist:
                     Egoist.Add(targetId);
@@ -345,6 +497,79 @@ namespace TownOfHost
                     break;
                 case CustomRoles.Workhorse:
                     Workhorse.Add(targetId);
+                    break;
+
+                //TOH_Y
+                case CustomRoles.AntiAdminer:
+                    AntiAdminer.Add(targetId);
+                    break;
+                case CustomRoles.MadSheriff:
+                    MadSheriff.Add(targetId);
+                    break;
+                case CustomRoles.SillySheriff:
+                    SillySheriff.Add(targetId);
+                    break;
+                case CustomRoles.Hunter:
+                    Hunter.Add(targetId);
+                    break;
+                case CustomRoles.DarkHide:
+                    DarkHide.Add(targetId);
+                    break;
+                case CustomRoles.Greedier:
+                    Greedier.Add(targetId);
+                    break;
+                case CustomRoles.Ambitioner:
+                    Ambitioner.Add(targetId);
+                    break;
+                case CustomRoles.PlatonicLover:
+                    PlatonicLover.Add(targetId);
+                    break;
+                case CustomRoles.Lawyer:
+                    Lawyer.Add(targetId);
+                    break;
+                case CustomRoles.Bakery:
+                    Bakery.Add(targetId);
+                    break;
+                case CustomRoles.EvilDiviner:
+                    EvilDiviner.Add(targetId);
+                    break;
+                case CustomRoles.Telepathisters:
+                    Telepathisters.Add(targetId);
+                    break;
+                case CustomRoles.Medic:
+                    Medic.Add(targetId);
+                    break;
+                case CustomRoles.GrudgeSheriff:
+                    GrudgeSheriff.Add(targetId);
+                    break;
+                case CustomRoles.CandleLighter:
+                    CandleLighter.Add(targetId);
+                    break;
+                case CustomRoles.Psychic:
+                    Psychic.Add(targetId);
+                    break;
+                case CustomRoles.Totocalcio:
+                    Totocalcio.Add(targetId);
+                    break;
+                case CustomRoles.FortuneTeller:
+                    FortuneTeller.Add(targetId);
+                    break;
+                case CustomRoles.CompreteCrew:
+                    CompreteCrew.Add(targetId);
+                    break;
+
+                //ON
+                case CustomRoles.ONWerewolf:
+                    ONWerewolf.Add(targetId);
+                    break;
+                case CustomRoles.ONBigWerewolf:
+                    ONBigWerewolf.Add(targetId);
+                    break;
+                case CustomRoles.ONDiviner:
+                    ONDiviner.Add(targetId);
+                    break;
+                case CustomRoles.ONPhantomThief:
+                    ONPhantomThief.Add(targetId);
                     break;
             }
             HudManager.Instance.SetHudActive(true);
@@ -417,7 +642,81 @@ namespace TownOfHost
             writer.Write(killerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
+        //TOHY
+        public static void SendRPCOppoKillerShot(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetOppoKillerShotLimit, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write(Main.OppoKillerShotLimit[playerId]);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendRPCCursedWolfSpellCount(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCursedWolfSpellCount, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write(Main.CursedWolfSpellCount[playerId]);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendRPCLoveCutterGuard(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetLoveCutterKilledCount, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write(Main.LoveCutterKilledCount[playerId]);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendRPCAntiCompGuard(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetAntiCompGuardCount, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write(Main.AntiCompGuardCount[playerId].Item1);
+            writer.Write(Main.AntiCompGuardCount[playerId].Item2);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendRPCGuardingGuard(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetGuardingGuardCount, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write(Main.GuardingGuardCount[playerId]);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendRPCDefaultRole(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetDefaultRole, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write((int)Main.DefaultRole[playerId]);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendRPCDisplayRole(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetDisplayRole, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write((int)Main.MeetingSeerDisplayRole[playerId]);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void SendRPCChangeRole(byte playerId)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetChangeRole, SendOption.Reliable, -1);
+            writer.Write(playerId);
+            writer.Write(Main.ChangeRolesTarget[playerId]);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void ReportDeadBodyForced(this PlayerControl player, GameData.PlayerInfo target)
+        {
+            //PlayerControl.ReportDeadBodyと同様の処理
+            if (!AmongUsClient.Instance.AmHost) return;
+            //if (AmongUsClient.Instance.IsGameOver || (bool)MeetingHud.Instance || (target == null && LocalPlayer.myTasks.Any(PlayerTask.TaskIsEmergency)) || Data.IsDead)
+            //    return;
+
+            MeetingRoomManager.Instance.AssignSelf(player, target);
+            //if (AmongUsClient.Instance.AmHost && !ShipStatus.Instance.   .CheckTaskCompletion())
+            if (AmongUsClient.Instance.AmHost)
+            {
+                DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
+                player.RpcStartMeeting(target);
+            }
+        }
     }
+
     [HarmonyPatch(typeof(InnerNet.InnerNetClient), nameof(InnerNet.InnerNetClient.StartRpc))]
     class StartRpcPatch
     {

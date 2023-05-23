@@ -7,7 +7,7 @@ namespace TownOfHost
     [HarmonyPatch(typeof(ControllerManager), nameof(ControllerManager.Update))]
     class ControllerManagerUpdatePatch
     {
-        static readonly (int, int)[] resolutions = { (480, 270), (640, 360), (800, 450), (1280, 720), (1600, 900), (1920, 1080) };
+        static readonly (int, int)[] resolutions = { (480, 270), (640, 360), (800, 450), (1024, 576), (1280, 720), (1366, 768), (1600, 900) };
         static int resolutionIndex = 0;
         public static void Postfix(ControllerManager __instance)
         {
@@ -104,6 +104,35 @@ namespace TownOfHost
                 OptionItem.AllOptions.ToArray().Where(x => x.Id > 0).Do(x => x.SetValue(x.DefaultValue));
             }
 
+            //自分自身の死体をレポート
+            if (GetKeysDown(new[] { KeyCode.Return, KeyCode.M, KeyCode.RightShift }) && GameStates.IsInGame)
+            {
+                PlayerControl.LocalPlayer.NoCheckStartMeeting(PlayerControl.LocalPlayer.Data);
+            }
+            //自分自身を追放
+            if (GetKeysDown(new[] { KeyCode.Return, KeyCode.E, KeyCode.LeftShift }) && GameStates.IsInGame)
+            {
+                PlayerControl.LocalPlayer.RpcExile();
+                PlayerControl.LocalPlayer.Data.IsDead = true;
+                Main.PlayerStates[PlayerControl.LocalPlayer.PlayerId].deathReason = PlayerState.DeathReason.etc;
+                Main.PlayerStates[PlayerControl.LocalPlayer.PlayerId].SetDead();
+            }
+            //エアシップのトイレのドアを全て開ける
+            if (GetKeysDown(new[] { KeyCode.P, KeyCode.LeftShift }) && GameStates.IsInGame)
+            {
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 79);
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 80);
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 81);
+                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 82);
+            }
+
+            //イントロテスト
+            if (GetKeysDown(new[] { KeyCode.G, KeyCode.T, KeyCode.B, KeyCode.LeftShift }))
+            {
+                HudManager.Instance.StartCoroutine(HudManager.Instance.CoFadeFullScreen(Color.clear, Color.black));
+                HudManager.Instance.StartCoroutine(DestroyableSingleton<HudManager>.Instance.CoShowIntro());
+            }
+
             //--以下デバッグモード用コマンド--//
             if (!DebugModeManager.IsDebugMode) return;
 
@@ -116,16 +145,6 @@ namespace TownOfHost
             if (Input.GetKeyDown(KeyCode.V) && GameStates.IsMeeting && !GameStates.IsOnlineGame)
             {
                 MeetingHud.Instance.RpcClearVote(AmongUsClient.Instance.ClientId);
-            }
-            //自分自身の死体をレポート
-            if (GetKeysDown(KeyCode.Return, KeyCode.M, KeyCode.RightShift) && GameStates.IsInGame)
-            {
-                PlayerControl.LocalPlayer.NoCheckStartMeeting(PlayerControl.LocalPlayer.Data);
-            }
-            //自分自身を追放
-            if (GetKeysDown(KeyCode.Return, KeyCode.E, KeyCode.LeftShift) && GameStates.IsInGame)
-            {
-                PlayerControl.LocalPlayer.RpcExile();
             }
             //ログをゲーム内にも出力するかトグル
             if (GetKeysDown(KeyCode.F2, KeyCode.LeftControl))
@@ -159,14 +178,6 @@ namespace TownOfHost
                 Main.VisibleTasksCount = !Main.VisibleTasksCount;
                 DestroyableSingleton<HudManager>.Instance.Notifier.AddItem("VisibleTaskCountが" + Main.VisibleTasksCount.ToString() + "に変更されました。");
             }
-            //エアシップのトイレのドアを全て開ける
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 79);
-                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 80);
-                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 81);
-                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Doors, 82);
-            }
             //現在の座標を取得
             if (Input.GetKeyDown(KeyCode.I))
                 Logger.Info(PlayerControl.LocalPlayer.GetTruePosition().ToString(), "GetLocalPlayerPos");
@@ -199,7 +210,7 @@ namespace TownOfHost
             }*/
             //マスゲーム用コード終わり
         }
-        static bool GetKeysDown(params KeyCode[] keys)
+        public static bool GetKeysDown(params KeyCode[] keys)
         {
             if (keys.Any(k => Input.GetKeyDown(k)) && keys.All(k => Input.GetKey(k)))
             {

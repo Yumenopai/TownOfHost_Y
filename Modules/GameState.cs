@@ -4,6 +4,8 @@ using System.Linq;
 using AmongUs.GameOptions;
 using HarmonyLib;
 
+using TownOfHost.Roles.Crewmate;
+
 namespace TownOfHost
 {
     public class PlayerState
@@ -102,6 +104,11 @@ namespace TownOfHost
             Execution,
             Disconnected,
             Fall,
+            //TOH_Y
+            win,
+            WTaskFinish,
+            Poisoning,
+
             etc = -1
         }
         public byte GetRealKiller()
@@ -122,7 +129,8 @@ namespace TownOfHost
         public int CompletedTasksCount;
         public bool hasTasks;
         public int RemainingTasksCount => AllTasksCount - CompletedTasksCount;
-        public bool DoExpose => RemainingTasksCount <= Options.SnitchExposeTaskLeft && hasTasks;
+        //public bool DoExpose => RemainingTasksCount <= Options.SnitchExposeTaskLeft && hasTasks;
+        public bool SympaTask => CompletedTasksCount >= Options.SympaCheckedTasks.GetInt() && hasTasks;
         public bool IsTaskFinished => RemainingTasksCount <= 0 && hasTasks;
         public TaskState()
         {
@@ -184,6 +192,73 @@ namespace TownOfHost
                 }
             }
 
+            CandleLighter.TaskFinish(player, CompletedTasksCount, AllTasksCount);
+
+
+            //ポテンシャリスト
+            if (!player.Data.IsDead
+            && player.Is(CustomRoles.Potentialist)
+            && (((CompletedTasksCount + 1) >= AllTasksCount) || (CompletedTasksCount + 1) >= Options.PotentialistTaskTrigger.GetInt())
+            && !Main.isPotentialistChanged[player.PlayerId])
+            {   //ｽﾋﾟﾌﾞが生きていて、全タスク完了orトリガー数までタスクを完了していて、SpeedBoostTargetに登録済みでない場合
+                var rand = IRandom.Instance;
+                List<CustomRoles> Rand = new()
+                {
+                    CustomRoles.Madmate,
+                    CustomRoles.MadDictator,
+                    CustomRoles.NiceWatcher,
+                    CustomRoles.Bait,
+                    CustomRoles.Lighter,
+                    CustomRoles.Mayor,
+                    CustomRoles.SabotageMaster,
+                    CustomRoles.Snitch,
+                    CustomRoles.SpeedBooster,
+                    CustomRoles.Doctor,
+                    CustomRoles.Trapper,
+                    CustomRoles.Dictator,
+                    CustomRoles.Seer,
+                    CustomRoles.TimeManager,
+                    CustomRoles.Bakery,
+                    CustomRoles.TaskManager,
+                    CustomRoles.Nekomata,
+                    CustomRoles.Express,
+                    CustomRoles.SeeingOff,
+                    CustomRoles.Rainbow,
+                    CustomRoles.Blinder,
+                };
+                var Role = Rand[rand.Next(Rand.Count)];
+                player.RpcSetCustomRole(Role);
+
+
+                Main.isPotentialistChanged[player.PlayerId] = true;
+                player.RpcSetisPotentialistChanged(true);
+            }
+
+            if (player.Is(CustomRoles.Workaholic) && (CompletedTasksCount + 1) >= AllTasksCount
+                && !(Options.WorkaholicCannotWinAtDeath.GetBool() && !player.IsAlive()))
+            {
+                if (!AmongUsClient.Instance.AmHost) return;
+
+                foreach (var pc in Main.AllAlivePlayerControls)
+                {
+                    if (pc != player)
+                    {
+                        //生存者は爆破
+                        pc.SetRealKiller(player);
+                        pc.RpcMurderPlayer(pc);
+                        Main.PlayerStates[pc.PlayerId].deathReason = PlayerState.DeathReason.Bombed;
+                        Main.PlayerStates[pc.PlayerId].SetDead();
+                    }
+                    else
+                    {
+                        RPC.PlaySoundRPC(pc.PlayerId, Sounds.KillSound);
+                        Main.PlayerStates[pc.PlayerId].deathReason = PlayerState.DeathReason.WTaskFinish;
+                    }
+                }
+                CustomWinnerHolder.ShiftWinnerAndSetWinner(CustomWinner.Workaholic); //爆破で勝利した人も勝利させる
+                CustomWinnerHolder.WinnerIds.Add(player.PlayerId);
+            }
+
             //クリアしてたらカウントしない
             if (CompletedTasksCount >= AllTasksCount) return;
 
@@ -192,7 +267,6 @@ namespace TownOfHost
             //調整後のタスク量までしか表示しない
             CompletedTasksCount = Math.Min(AllTasksCount, CompletedTasksCount);
             Logger.Info($"{player.GetNameWithRole()}: TaskCounts = {CompletedTasksCount}/{AllTasksCount}", "TaskState.Update");
-
         }
     }
     public class PlayerVersion
@@ -229,6 +303,10 @@ namespace TownOfHost
         public static bool IsInTask => InGame && !MeetingHud.Instance;
         public static bool IsMeeting => InGame && MeetingHud.Instance;
         public static bool IsCountDown => GameStartManager.InstanceExists && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown;
+        /**********TOP ZOOM.cs***********/
+        public static bool IsShip => ShipStatus.Instance != null;
+        public static bool IsCanMove => PlayerControl.LocalPlayer?.CanMove is true;
+        public static bool IsDead => PlayerControl.LocalPlayer?.Data?.IsDead is true;
     }
     public static class MeetingStates
     {

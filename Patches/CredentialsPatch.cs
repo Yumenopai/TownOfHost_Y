@@ -15,12 +15,12 @@ namespace TownOfHost
             __instance.text.alignment = TMPro.TextAlignmentOptions.TopRight;
 
             sb.Clear();
-
             sb.Append(Main.credentialsText);
 
             if (Options.NoGameEnd.GetBool()) sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("NoGameEnd")));
             if (Options.IsStandardHAS) sb.Append($"\r\n").Append(Utils.ColorString(Color.yellow, GetString("StandardHAS")));
-            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("HideAndSeek")));
+            if (Options.CurrentGameMode.IsCatMode()) sb.Append($"\r\n").Append(Utils.ColorString(Color.gray, GetString("CatchCat")));
+            if (Options.CurrentGameMode.IsOneNightMode()) sb.Append($"\r\n").Append(Utils.ColorString(Utils.GetRoleColor(CustomRoles.ONVillager), GetString("OneNight")));
             if (!GameStates.IsModHost) sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("Warning.NoModHost")));
             if (DebugModeManager.IsDebugMode) sb.Append("\r\n").Append(Utils.ColorString(Color.green, "デバッグモード"));
 
@@ -31,10 +31,15 @@ namespace TownOfHost
 
             if (GameStates.IsLobby)
             {
-                if (Options.IsStandardHAS && !CustomRoles.Sheriff.IsEnable() && !CustomRoles.SerialKiller.IsEnable() && CustomRoles.Egoist.IsEnable())
+                if (Options.IsStandardHAS
+                && !CustomRoles.Sheriff.IsEnable()
+                && !CustomRoles.MadSheriff.IsEnable()
+                && !CustomRoles.SillySheriff.IsEnable()
+                && !CustomRoles.Hunter.IsEnable()
+                && !CustomRoles.SerialKiller.IsEnable()
+                && CustomRoles.Egoist.IsEnable())
                     sb.Append($"\r\n").Append(Utils.ColorString(Color.red, GetString("Warning.EgoistCannotWin")));
             }
-
             __instance.text.text += sb.ToString();
         }
     }
@@ -75,12 +80,22 @@ namespace TownOfHost
                 ColorUtility.TryParseHtmlString(Main.ModColor, out var col);
                 SpecialEventText.color = col;
             }
+            if (Main.IsOneNightRelease)
+            {
+                SpecialEventText.text = $"<size=60%>New Game Mode</size>\n{GetString("OneNight")} Release!";
+                SpecialEventText.color = Utils.GetRoleColor(CustomRoles.ONVillager);
+            }
+            //if (Main.IsValentine)
+            //{
+            //    SpecialEventText.text = "♥happy Valentine♥";
+            //    if (CultureInfo.CurrentCulture.Name == "ja-JP")
+            //        SpecialEventText.text += "<size=60%>\n<color=#b58428>チョコレート屋で遊んでみてね。</size></color>";
+            //    SpecialEventText.color = Utils.GetRoleColor(CustomRoles.Lovers);
+            //}
             if (Main.IsChristmas && CultureInfo.CurrentCulture.Name == "ja-JP")
             {
-                //このソースコ―ドを見た人へ。口外しないでもらえると嬉しいです...
-                //To anyone who has seen this source code. I would appreciate it if you would keep your mouth shut...
-                SpecialEventText.text = "何とは言いませんが、特別な日ですね。\n<size=15%>\n\n末永く爆発しろ</size>";
-                SpecialEventText.color = Utils.GetRoleColor(CustomRoles.Lovers);
+                SpecialEventText.text = "★Merry Christmas★\n<size=15%>\n\nTOH_Yからのプレゼントはありません。</size>";
+                SpecialEventText.color = Utils.GetRoleColor(CustomRoles.Rainbow);
             }
         }
     }

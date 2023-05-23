@@ -31,6 +31,9 @@ namespace TownOfHost
             {
                 switch (ob.Title)
                 {
+                    case StringNames.GameVotingTime:
+                        ob.Cast<NumberOption>().ValidRange = new FloatRange(0, 600);
+                        break;
                     case StringNames.GameShortTasks:
                     case StringNames.GameLongTasks:
                     case StringNames.GameCommonTasks:
@@ -71,11 +74,13 @@ namespace TownOfHost
                 var tohSettings = Object.Instantiate(gameSettings, gameSettings.transform.parent);
                 tohSettings.name = tab + "Tab";
                 tohSettings.transform.FindChild("BackPanel").transform.localScale =
-                tohSettings.transform.FindChild("Bottom Gradient").transform.localScale = new Vector3(1.2f, 1f, 1f);
-                tohSettings.transform.FindChild("Background").transform.localScale = new Vector3(1.3f, 1f, 1f);
-                tohSettings.transform.FindChild("UI_Scrollbar").transform.localPosition += new Vector3(0.35f, 0f, 0f);
-                tohSettings.transform.FindChild("UI_ScrollbarTrack").transform.localPosition += new Vector3(0.35f, 0f, 0f);
-                tohSettings.transform.FindChild("GameGroup/SliderInner").transform.localPosition += new Vector3(-0.15f, 0f, 0f);
+                tohSettings.transform.FindChild("Bottom Gradient").transform.localScale = new Vector3(1.6f, 1f, 1f);
+                tohSettings.transform.FindChild("BackPanel").transform.localPosition += new Vector3(0.2f, 0f, 0f);
+                tohSettings.transform.FindChild("Bottom Gradient").transform.localPosition += new Vector3(0.2f, 0f, 0f);
+                tohSettings.transform.FindChild("Background").transform.localScale = new Vector3(1.8f, 1f, 1f);
+                tohSettings.transform.FindChild("UI_Scrollbar").transform.localPosition += new Vector3(1.4f, 0f, 0f);
+                tohSettings.transform.FindChild("UI_ScrollbarTrack").transform.localPosition += new Vector3(1.4f, 0f, 0f);
+                tohSettings.transform.FindChild("GameGroup/SliderInner").transform.localPosition += new Vector3(-0.3f, 0f, 0f);
                 var tohMenu = tohSettings.transform.FindChild("GameGroup/SliderInner").GetComponent<GameOptionsMenu>();
 
                 //OptionBehaviourを破棄
@@ -94,12 +99,13 @@ namespace TownOfHost
                         stringOption.Value = stringOption.oldValue = option.CurrentValue;
                         stringOption.ValueText.text = option.GetString();
                         stringOption.name = option.Name;
-                        stringOption.transform.FindChild("Background").localScale = new Vector3(1.2f, 1f, 1f);
-                        stringOption.transform.FindChild("Plus_TMP").localPosition += new Vector3(0.3f, 0f, 0f);
-                        stringOption.transform.FindChild("Minus_TMP").localPosition += new Vector3(0.3f, 0f, 0f);
-                        stringOption.transform.FindChild("Value_TMP").localPosition += new Vector3(0.3f, 0f, 0f);
-                        stringOption.transform.FindChild("Title_TMP").localPosition += new Vector3(0.15f, 0f, 0f);
-                        stringOption.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(3.5f, 0.37f);
+                        stringOption.transform.FindChild("Background").localScale = new Vector3(1.6f, 1f, 1f);
+                        stringOption.transform.FindChild("Plus_TMP").localPosition += new Vector3(1.4f, 0f, 0f);
+                        stringOption.transform.FindChild("Minus_TMP").localPosition += new Vector3(1.0f, 0f, 0f);
+                        stringOption.transform.FindChild("Value_TMP").localPosition += new Vector3(1.2f, 0f, 0f);
+                        stringOption.transform.FindChild("Value_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(1.6f, 0.26f);
+                        stringOption.transform.FindChild("Title_TMP").localPosition += new Vector3(0.1f, 0f, 0f);
+                        stringOption.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(5.5f, 0.37f);
 
                         option.OptionBehaviour = stringOption;
                     }
@@ -118,7 +124,7 @@ namespace TownOfHost
 
             for (var i = 0; i < tabs.Count; i++)
             {
-                tabs[i].transform.position = new(0.8f * (i - 1) - tabs.Count / 2f, tabs[i].transform.position.y, tabs[i].transform.position.z);
+                tabs[i].transform.position = new(0.7f * (i - 0.5f) - tabs.Count / 2f, tabs[i].transform.position.y, tabs[i].transform.position.z);
                 var button = tabs[i].GetComponentInChildren<PassiveButton>();
                 if (button == null) continue;
                 var copiedIndex = i;
@@ -165,33 +171,33 @@ namespace TownOfHost
                     var parent = option.Parent;
 
                     enabled = AmongUsClient.Instance.AmHost &&
-                        !option.IsHiddenOn(Options.CurrentGameMode);
+                        !option.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode);
 
                     var opt = option.OptionBehaviour.transform.Find("Background").GetComponent<SpriteRenderer>();
                     opt.size = new(5.0f, 0.45f);
                     while (parent != null && enabled)
                     {
-                        enabled = parent.GetBool();
+                        enabled = parent.GetBool() && !parent.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode);
                         parent = parent.Parent;
                         opt.color = new(0f, 1f, 0f);
                         opt.size = new(4.8f, 0.45f);
                         opt.transform.localPosition = new Vector3(0.11f, 0f);
-                        option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-0.95f, 0f);
-                        option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(3.4f, 0.37f);
+                        option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-1.08f, 0f);
+                        option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(5.1f, 0.28f);
                         if (option.Parent?.Parent != null)
                         {
                             opt.color = new(0f, 0f, 1f);
                             opt.size = new(4.6f, 0.45f);
                             opt.transform.localPosition = new Vector3(0.24f, 0f);
-                            option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-0.7f, 0f);
-                            option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(3.3f, 0.37f);
+                            option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-0.88f, 0f);
+                            option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(4.9f, 0.28f);
                             if (option.Parent?.Parent?.Parent != null)
                             {
                                 opt.color = new(1f, 0f, 0f);
                                 opt.size = new(4.4f, 0.45f);
                                 opt.transform.localPosition = new Vector3(0.37f, 0f);
-                                option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-0.55f, 0f);
-                                option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(3.2f, 0.37f);
+                                option.OptionBehaviour.transform.Find("Title_TMP").transform.localPosition = new Vector3(-0.68f, 0f);
+                                option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(4.7f, 0.28f);
                             }
                         }
                     }
@@ -207,12 +213,12 @@ namespace TownOfHost
 
                         if (option.IsHeader)
                         {
-                            numItems += 0.5f;
+                            numItems += 0.3f;
                         }
                     }
                     else
                     {
-                        numItems--;
+                        numItems -= 10f;
                     }
                 }
                 __instance.GetComponentInParent<Scroller>().ContentYBounds.max = (-offset) - 1.5f;
@@ -300,7 +306,7 @@ namespace TownOfHost
             numPlayers = Mathf.Clamp(numPlayers, 4, 15);
             __instance.PlayerSpeedMod = __instance.MapId == 4 ? 1.25f : 1f; //AirShipなら1.25、それ以外は1
             __instance.CrewLightMod = 0.5f;
-            __instance.ImpostorLightMod = 1.75f;
+            __instance.ImpostorLightMod = 1.5f;
             __instance.KillCooldown = 25f;
             __instance.NumCommonTasks = 2;
             __instance.NumLongTasks = 4;
@@ -314,7 +320,6 @@ namespace TownOfHost
             __instance.IsDefaults = true;
             __instance.ConfirmImpostor = false;
             __instance.VisualTasks = false;
-
             __instance.roleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
             __instance.roleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
             __instance.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
@@ -323,17 +328,31 @@ namespace TownOfHost
             __instance.roleOptions.SetRoleRecommended(RoleTypes.Scientist);
             __instance.roleOptions.SetRoleRecommended(RoleTypes.GuardianAngel);
             __instance.roleOptions.SetRoleRecommended(RoleTypes.Engineer);
-
-            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) //HideAndSeek
+            if (Options.CurrentGameMode.IsCatMode())
             {
-                __instance.PlayerSpeedMod = 1.75f;
-                __instance.CrewLightMod = 5f;
-                __instance.ImpostorLightMod = 0.25f;
+                __instance.PlayerSpeedMod = 1.5f;
+                __instance.CrewLightMod = 0.5f;
+                __instance.ImpostorLightMod = 0.75f;
                 __instance.NumImpostors = 1;
                 __instance.NumCommonTasks = 0;
                 __instance.NumLongTasks = 0;
-                __instance.NumShortTasks = 10;
-                __instance.KillCooldown = 10f;
+                __instance.NumShortTasks = 1;
+                __instance.KillCooldown = 20f;
+                __instance.NumEmergencyMeetings = 1;
+                __instance.KillDistance = 0;
+                __instance.DiscussionTime = 0;
+                __instance.VotingTime = 60;
+            }
+            if (Options.CurrentGameMode.IsOneNightMode())
+            {
+                __instance.NumCommonTasks = 1;
+                __instance.NumLongTasks = 0;
+                __instance.NumShortTasks = 1;
+                __instance.KillCooldown = 20f;
+                __instance.NumEmergencyMeetings = 0;
+                __instance.KillDistance = 0;
+                __instance.DiscussionTime = 0;
+                __instance.VotingTime = 300;
             }
             if (Options.IsStandardHAS) //StandardHAS
             {

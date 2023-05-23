@@ -48,7 +48,6 @@ namespace TownOfHost
             }
         }
     }
-
     [HarmonyPatch(typeof(GameOptionsManager), nameof(GameOptionsManager.SwitchGameMode))]
     class SwitchGameModePatch
     {

@@ -85,12 +85,17 @@ namespace TownOfHost
                     Executioner.ChangeRole(data.Character);
                 if (Executioner.Target.ContainsValue(data.Character.PlayerId))
                     Executioner.ChangeRoleByTarget(data.Character);
+                if (data.Character.Is(CustomRoles.Lawyer) && Lawyer.Target.ContainsKey(data.Character.PlayerId))
+                    Lawyer.ChangeRole(data.Character);
+                if (Lawyer.Target.ContainsValue(data.Character.PlayerId))
+                    Lawyer.ChangeRoleByTarget(data.Character);
                 if (Main.PlayerStates[data.Character.PlayerId].deathReason == PlayerState.DeathReason.etc) //死因が設定されていなかったら
                 {
                     Main.PlayerStates[data.Character.PlayerId].deathReason = PlayerState.DeathReason.Disconnected;
                     Main.PlayerStates[data.Character.PlayerId].SetDead();
                 }
                 AntiBlackout.OnDisconnect(data.Character.Data);
+
                 PlayerGameOptionsSender.RemoveSender(data.Character);
             }
             Logger.Info($"{data.PlayerName}(ClientID:{data.Id})が切断(理由:{reason}, ping:{AmongUsClient.Instance.Ping})", "Session");
@@ -107,6 +112,7 @@ namespace TownOfHost
                 new LateTask(() =>
                 {
                     if (client.Character == null) return;
+                    if (AmongUsClient.Instance.IsGamePublic) Utils.SendMessage(string.Format(GetString("Message.AnnounceUsingTOH"), Main.PluginVersion), client.Character.PlayerId);
                     TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
                 }, 3f, "Welcome Message");
                 if (Options.AutoDisplayLastResult.GetBool() && Main.PlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))

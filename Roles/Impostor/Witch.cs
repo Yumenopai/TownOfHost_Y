@@ -32,7 +32,7 @@ namespace TownOfHost.Roles.Impostor
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.ImpostorRoles, CustomRoles.Witch);
-            ModeSwitchAction = StringOptionItem.Create(Id + 10, "WitchModeSwitchAction", SwitchTriggerText, 0, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Witch]);
+            ModeSwitchAction = StringOptionItem.Create(Id + 10, "WitchModeSwitchAction", SwitchTriggerText, 0, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Witch]);
         }
         public static void Init()
         {
@@ -48,7 +48,6 @@ namespace TownOfHost.Roles.Impostor
             NowSwitchTrigger = (SwitchTrigger)ModeSwitchAction.GetValue();
             var pc = Utils.GetPlayerById(playerId);
             pc.AddDoubleTrigger();
-
         }
         public static bool IsEnable => playerIdList.Count > 0;
         private static void SendRPC(bool doSpell, byte witchId, byte target = 255)
@@ -167,8 +166,16 @@ namespace TownOfHost.Roles.Impostor
                 //キルモードなら通常処理に戻る
                 return true;
             }
-            SetSpelled(killer, target);
 
+            if (!IsSpelled(target.PlayerId))
+            {
+                //キルクールの適正化
+                killer.SetKillCooldown();
+
+                SpelledPlayer[killer.PlayerId].Add(target.PlayerId);
+                SendRPC(true, killer.PlayerId, target.PlayerId);
+            }
+            SetSpelled(killer, target);
             //スペルに失敗してもスイッチ判定
             SwitchSpellMode(killer.PlayerId, true);
             //キル処理終了させる
@@ -194,9 +201,9 @@ namespace TownOfHost.Roles.Impostor
                     pc.SetRealKiller(witch);
                     spelledIdList.Add(pc.PlayerId);
                 }
+                CheckForEndVotingPatch.TryAddAfterMeetingDeathPlayers(PlayerState.DeathReason.Spell, spelledIdList.ToArray());
+                RemoveSpelledPlayer();
             }
-            CheckForEndVotingPatch.TryAddAfterMeetingDeathPlayers(PlayerState.DeathReason.Spell, spelledIdList.ToArray());
-            RemoveSpelledPlayer();
         }
         public static string GetSpelledMark(byte target, bool isMeeting)
         {

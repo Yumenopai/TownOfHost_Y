@@ -28,6 +28,7 @@ namespace TownOfHost
                 SummaryText[id] = Utils.SummaryTexts(id, disableColor: false);
 
             var sb = new StringBuilder(GetString("KillLog") + ":");
+
             foreach (var kvp in Main.PlayerStates.OrderBy(x => x.Value.RealKiller.Item1.Ticks))
             {
                 var date = kvp.Value.RealKiller.Item1;
@@ -48,45 +49,27 @@ namespace TownOfHost
             {
                 if (CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId)) winner.Add(pc);
             }
+
             foreach (var team in CustomWinnerHolder.WinnerRoles)
             {
                 winner.AddRange(Main.AllPlayerControls.Where(p => p.Is(team) && !winner.Contains(p)));
             }
 
-            //HideAndSeek専用
-            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek &&
+            //HideAndSeek改め猫取専用
+            if (Options.CurrentGameMode.IsCatMode() &&
                 CustomWinnerHolder.WinnerTeam != CustomWinner.Draw && CustomWinnerHolder.WinnerTeam != CustomWinner.None)
             {
-                winner = new();
                 foreach (var pc in Main.AllPlayerControls)
                 {
-                    var role = Main.PlayerStates[pc.PlayerId].MainRole;
-                    if (role.GetCustomRoleTypes() == CustomRoleTypes.Impostor)
-                    {
-                        if (CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor)
-                            winner.Add(pc);
-                    }
-                    else if (role.GetCustomRoleTypes() == CustomRoleTypes.Crewmate)
-                    {
-                        if (CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate)
-                            winner.Add(pc);
-                    }
-                    else if (role == CustomRoles.HASTroll && pc.Data.IsDead)
-                    {
-                        //トロールが殺されていれば単独勝ち
-                        winner = new()
-                        {
-                            pc
-                        };
-                        break;
-                    }
-                    else if (role == CustomRoles.HASFox && CustomWinnerHolder.WinnerTeam != CustomWinner.HASTroll && !pc.Data.IsDead)
-                    {
+                    if (
+                        (CustomWinnerHolder.WinnerTeam == CustomWinner.RedL && (pc.Is(CustomRoles.CatRedLeader) || pc.Is(CustomRoles.CatRedCat)))
+                        || (CustomWinnerHolder.WinnerTeam == CustomWinner.BlueL && (pc.Is(CustomRoles.CatBlueLeader) || pc.Is(CustomRoles.CatBlueCat)))
+                        || (CustomWinnerHolder.WinnerTeam == CustomWinner.YellowL && (pc.Is(CustomRoles.CatYellowLeader) || pc.Is(CustomRoles.CatYellowCat)))
+                        )
                         winner.Add(pc);
-                        CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.HASFox);
-                    }
                 }
             }
+
             Main.winnerList = new();
             foreach (var pc in winner)
             {
@@ -121,9 +104,8 @@ namespace TownOfHost
             //          ==勝利陣営表示==
             //#######################################
 
-            __instance.WinText.alignment = TMPro.TextAlignmentOptions.Right;
             var WinnerTextObject = UnityEngine.Object.Instantiate(__instance.WinText.gameObject);
-            WinnerTextObject.transform.position = new(__instance.WinText.transform.position.x + 2.4f, __instance.WinText.transform.position.y - 0.5f, __instance.WinText.transform.position.z);
+            WinnerTextObject.transform.position = new(__instance.WinText.transform.position.x, __instance.WinText.transform.position.y - 0.5f, __instance.WinText.transform.position.z);
             WinnerTextObject.transform.localScale = new(0.6f, 0.6f, 0.6f);
             var WinnerText = WinnerTextObject.GetComponent<TMPro.TextMeshPro>(); //WinTextと同じ型のコンポーネントを取得
             WinnerText.fontSizeMin = 3f;
@@ -138,7 +120,7 @@ namespace TownOfHost
             {
                 CustomWinnerText = Utils.GetRoleName(winnerRole);
                 CustomWinnerColor = Utils.GetRoleColorCode(winnerRole);
-                if (winnerRole.IsNeutral())
+                if (winnerRole.IsNeutral() || winnerRole.IsONNeutral())
                 {
                     __instance.BackgroundBar.material.color = Utils.GetRoleColor(winnerRole);
                 }
@@ -199,7 +181,7 @@ namespace TownOfHost
 
             var Pos = Camera.main.ViewportToWorldPoint(new Vector3(0f, 1f, Camera.main.nearClipPlane));
             var RoleSummaryObject = UnityEngine.Object.Instantiate(__instance.WinText.gameObject);
-            RoleSummaryObject.transform.position = new Vector3(__instance.Navigation.ExitButton.transform.position.x + 0.1f, Pos.y - 0.1f, -15f);
+            RoleSummaryObject.transform.position = new Vector3(__instance.Navigation.ExitButton.transform.position.x + 0.1f, Pos.y - 0.1f, -14f);
             RoleSummaryObject.transform.localScale = new Vector3(1f, 1f, 1f);
 
             StringBuilder sb = new($"{GetString("RoleSummaryText")}");

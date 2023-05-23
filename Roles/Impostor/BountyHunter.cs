@@ -29,13 +29,13 @@ namespace TownOfHost.Roles.Impostor
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.ImpostorRoles, CustomRoles.BountyHunter);
-            OptionTargetChangeTime = FloatOptionItem.Create(Id + 10, "BountyTargetChangeTime", new(10f, 900f, 2.5f), 60f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.BountyHunter])
+            OptionTargetChangeTime = FloatOptionItem.Create(Id + 10, "BountyTargetChangeTime", new(10f, 900f, 2.5f), 60f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.BountyHunter])
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionSuccessKillCooldown = FloatOptionItem.Create(Id + 11, "BountySuccessKillCooldown", new(0f, 180f, 2.5f), 2.5f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.BountyHunter])
+            OptionSuccessKillCooldown = FloatOptionItem.Create(Id + 11, "BountySuccessKillCooldown", new(0f, 180f, 2.5f), 2.5f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.BountyHunter])
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionFailureKillCooldown = FloatOptionItem.Create(Id + 12, "BountyFailureKillCooldown", new(0f, 180f, 2.5f), 50f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.BountyHunter])
+            OptionFailureKillCooldown = FloatOptionItem.Create(Id + 12, "BountyFailureKillCooldown", new(0f, 180f, 2.5f), 50f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.BountyHunter])
                 .SetValueFormat(OptionFormat.Seconds);
-            OptionShowTargetArrow = BooleanOptionItem.Create(Id + 13, "BountyShowTargetArrow", false, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.BountyHunter]);
+            OptionShowTargetArrow = BooleanOptionItem.Create(Id + 13, "BountyShowTargetArrow", false, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.BountyHunter]);
         }
         public static void Init()
         {
@@ -48,6 +48,7 @@ namespace TownOfHost.Roles.Impostor
         public static void Add(byte playerId)
         {
             playerIdList.Add(playerId);
+
             IsEnable = true;
 
             TargetChangeTime = OptionTargetChangeTime.GetFloat();
@@ -148,7 +149,6 @@ namespace TownOfHost.Roles.Impostor
             var playerId = player.PlayerId;
 
             ChangeTimer[playerId] = 0f;
-
             Logger.Info($"{player.GetNameWithRole()}:ターゲットリセット", "BountyHunter");
             player.RpcResetAbilityCooldown(); ;//タイマー（変身クールダウン）のリセットと
 
@@ -162,7 +162,6 @@ namespace TownOfHost.Roles.Impostor
                 Logger.Warn("ターゲットの指定に失敗しました:ターゲット候補が存在しません", "BountyHunter");
                 return 0xff;
             }
-
             var rand = IRandom.Instance;
             var target = cTargets[rand.Next(0, cTargets.Count)];
             var targetId = target.PlayerId;
@@ -175,6 +174,7 @@ namespace TownOfHost.Roles.Impostor
             return targetId;
         }
         public static void SetAbilityButtonText(HudManager __instance) => __instance.AbilityButton.OverrideText($"{GetString("BountyHunterChangeButtonText")}");
+
         public static void AfterMeetingTasks()
         {
             foreach (var id in playerIdList)

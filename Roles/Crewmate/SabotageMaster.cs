@@ -22,13 +22,13 @@ namespace TownOfHost.Roles.Crewmate
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.CrewmateRoles, CustomRoles.SabotageMaster);
-            SkillLimit = IntegerOptionItem.Create(Id + 10, "SabotageMasterSkillLimit", new(0, 99, 1), 1, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SabotageMaster])
+            SkillLimit = IntegerOptionItem.Create(Id + 10, "SabotageMasterSkillLimit", new(0, 99, 1), 1, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SabotageMaster])
                 .SetValueFormat(OptionFormat.Times);
-            FixesDoors = BooleanOptionItem.Create(Id + 11, "SabotageMasterFixesDoors", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SabotageMaster]);
-            FixesReactors = BooleanOptionItem.Create(Id + 12, "SabotageMasterFixesReactors", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SabotageMaster]);
-            FixesOxygens = BooleanOptionItem.Create(Id + 13, "SabotageMasterFixesOxygens", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SabotageMaster]);
-            FixesComms = BooleanOptionItem.Create(Id + 14, "SabotageMasterFixesCommunications", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SabotageMaster]);
-            FixesElectrical = BooleanOptionItem.Create(Id + 15, "SabotageMasterFixesElectrical", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.SabotageMaster]);
+            FixesDoors = BooleanOptionItem.Create(Id + 11, "SabotageMasterFixesDoors", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SabotageMaster]);
+            FixesReactors = BooleanOptionItem.Create(Id + 12, "SabotageMasterFixesReactors", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SabotageMaster]);
+            FixesOxygens = BooleanOptionItem.Create(Id + 13, "SabotageMasterFixesOxygens", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SabotageMaster]);
+            FixesComms = BooleanOptionItem.Create(Id + 14, "SabotageMasterFixesCommunications", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SabotageMaster]);
+            FixesElectrical = BooleanOptionItem.Create(Id + 15, "SabotageMasterFixesElectrical", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SabotageMaster]);
         }
         public static void Init()
         {
@@ -89,7 +89,8 @@ namespace TownOfHost.Roles.Crewmate
                     if (DoorsProgressing == true) break;
 
                     int mapId = Main.NormalOptions.MapId;
-                    if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay) mapId = AmongUsClient.Instance.TutorialMapId;
+                    if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
+                        mapId = AmongUsClient.Instance.TutorialMapId;
 
                     DoorsProgressing = true;
                     if (mapId == 2)

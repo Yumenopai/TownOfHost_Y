@@ -27,7 +27,7 @@ namespace TownOfHost
                 Main.RefixCooldownDelay = float.NaN;
                 Logger.Info("Refix Cooldown", "CoolDown");
             }
-            if ((Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) && Main.introDestroyed)
+            if (Options.IsStandardHAS && Main.introDestroyed)
             {
                 if (Options.HideAndSeekKillDelayTimer > 0)
                 {
@@ -61,14 +61,16 @@ namespace TownOfHost
                 if (task.TaskType == TaskTypes.FixComms) IsComms = true;
 
             if (!AmongUsClient.Instance.AmHost) return true; //以下、ホストのみ実行
-            if ((Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) && systemType == SystemTypes.Sabotage) return false;
+            if ((Options.CurrentGameMode.IsCatMode()
+                || (Options.CurrentGameMode.IsOneNightMode() && Main.ONKillCount < Main.AllAlivePlayerControls.Count(pc => pc.Is(CustomRoleTypes.Impostor))) || Options.IsStandardHAS) && systemType == SystemTypes.Sabotage) return false;
             //SabotageMaster
             if (player.Is(CustomRoles.SabotageMaster))
                 SabotageMaster.RepairSystem(__instance, systemType, amount);
 
             if (systemType == SystemTypes.Electrical && 0 <= amount && amount <= 4)
             {
-                if (!Options.MadmateCanFixLightsOut.GetBool() && player.GetCustomRole().IsMadmate()) return false; //Madmateが停電を直せる設定がオフ
+                if (!Options.MadmateCanFixLightsOut.GetBool() && player.Is(CustomRoles.SKMadmate)) return false; //Madmateが停電を直せる設定がオフ
+                if (player.Is(CustomRoles.Clumsy) || (player.Is(CustomRoles.Sheriff)&&Sheriff.IsClumsy.GetBool())) return false;
                 switch (Main.NormalOptions.MapId)
                 {
                     case 4:
@@ -79,7 +81,11 @@ namespace TownOfHost
                 }
             }
 
-            if (!Options.MadmateCanFixComms.GetBool() && player.GetCustomRole().IsMadmate() //Madmateがコミュサボを直せる設定がオフ
+            if (!Options.MadmateCanFixComms.GetBool() && player.Is(CustomRoles.SKMadmate) //Madmateがコミュサボを直せる設定がオフ
+                && systemType == SystemTypes.Comms //システムタイプが通信室
+                && amount is 0 or 16 or 17)
+                return false;
+            if ((player.Is(CustomRoles.Clumsy) || (player.Is(CustomRoles.Sheriff) && Sheriff.IsClumsy.GetBool()))
                 && systemType == SystemTypes.Comms //システムタイプが通信室
                 && amount is 0 or 16 or 17)
                 return false;
@@ -115,7 +121,7 @@ namespace TownOfHost
     {
         public static bool Prefix(ShipStatus __instance)
         {
-            return !(Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) || Options.AllowCloseDoors.GetBool();
+            return !(Options.CurrentGameMode.IsCatMode() || Options.IsStandardHAS);
         }
     }
     [HarmonyPatch(typeof(SwitchSystem), nameof(SwitchSystem.RepairDamage))]
@@ -162,7 +168,7 @@ namespace TownOfHost
     {
         public static bool Prefix(ref bool __result)
         {
-            if (Options.DisableTaskWin.GetBool() || Options.NoGameEnd.GetBool() || TaskState.InitialTotalTasks == 0)
+            if (Options.DisableTaskWin.GetBool() || Options.NoGameEnd.GetBool() || TaskState.InitialTotalTasks == 0 || Options.CurrentGameMode.IsCatMode()|| Options.CurrentGameMode.IsOneNightMode())
             {
                 __result = false;
                 return false;

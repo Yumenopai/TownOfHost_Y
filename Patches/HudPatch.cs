@@ -1,8 +1,10 @@
 using System;
 using HarmonyLib;
-using TownOfHost.Roles.Impostor;
-using TownOfHost.Roles.Neutral;
 using UnityEngine;
+
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Crewmate;
+using TownOfHost.Roles.Neutral;
 using static TownOfHost.Translator;
 
 namespace TownOfHost
@@ -99,6 +101,22 @@ namespace TownOfHost
                         case CustomRoles.EvilTracker:
                             EvilTracker.GetAbilityButtonText(__instance, player.PlayerId);
                             break;
+                        //TOH_Y
+                        case CustomRoles.PlatonicLover:
+                            __instance.KillButton.OverrideText($"{GetString("PlatonicLoverButtonText")}");
+                            break;
+                        case CustomRoles.Medic:
+                            Medic.SetAbilityButtonText(__instance);
+                            break;
+                        case CustomRoles.GrudgeSheriff:
+                            GrudgeSheriff.SetAbilityButtonText(__instance);
+                            break;
+                        case CustomRoles.Psychic:
+                            Psychic.SetAbilityButtonText(__instance);
+                            break;
+                        case CustomRoles.Totocalcio:
+                            Totocalcio.SetAbilityButtonText(__instance);
+                            break;
                     }
 
                     //バウンティハンターのターゲットテキスト
@@ -122,6 +140,18 @@ namespace TownOfHost
                     else if (player.Is(CustomRoles.Witch))
                     {
                         LowerInfoText.text = Witch.GetSpellModeText(player, true);
+                    }
+                    else if (player.Is(CustomRoles.Medic))
+                    {
+                        LowerInfoText.text = Medic.GetGuardPlayerText(player, true);
+                    }
+                    else if (player.Is(CustomRoles.GrudgeSheriff))
+                    {
+                        LowerInfoText.text = GrudgeSheriff.GetGuardPlayerText(player, true);
+                    }
+                    else if (player.Is(CustomRoles.Psychic))
+                    {
+                        LowerInfoText.text = Psychic.GetCheckPlayerText(player, true);
                     }
                     else if (player.Is(CustomRoles.FireWorks))
                     {
@@ -171,7 +201,6 @@ namespace TownOfHost
                     __instance.AbilityButton.OverrideText(GetString(StringNames.HauntAbilityName));
                 }
             }
-
 
             if (Input.GetKeyDown(KeyCode.Y) && AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
             {
@@ -241,6 +270,7 @@ namespace TownOfHost
         public static void Postfix(HudManager __instance, [HarmonyArgument(2)] bool isActive)
         {
             __instance.ReportButton.ToggleVisible(!GameStates.IsLobby && isActive);
+
             if (!GameStates.IsModHost) return;
             IsActive = isActive;
             if (!isActive) return;
@@ -251,6 +281,17 @@ namespace TownOfHost
             {
                 case CustomRoles.Sheriff:
                 case CustomRoles.Arsonist:
+                case CustomRoles.SillySheriff:
+                case CustomRoles.Hunter:
+                case CustomRoles.DarkHide:
+                case CustomRoles.PlatonicLover:
+                case CustomRoles.MadSheriff:
+                case CustomRoles.CatRedLeader:
+                case CustomRoles.CatBlueLeader:
+                case CustomRoles.CatYellowLeader:
+                case CustomRoles.Opportunist:
+                case CustomRoles.Totocalcio:
+                    if (player.Is(CustomRoles.Opportunist) && !Options.OpportunistCanKill.GetBool()) break;
                     __instance.SabotageButton.ToggleVisible(false);
                     break;
                 case CustomRoles.Jackal:
@@ -278,6 +319,7 @@ namespace TownOfHost
             }
         }
     }
+
     [HarmonyPatch(typeof(TaskPanelBehaviour), nameof(TaskPanelBehaviour.SetTaskText))]
     class TaskPanelBehaviourPatch
     {
@@ -288,7 +330,7 @@ namespace TownOfHost
             PlayerControl player = PlayerControl.LocalPlayer;
 
             // 役職説明表示
-            if (!player.GetCustomRole().IsVanilla())
+            if (!player.GetCustomRole().IsVanilla() && !player.GetCustomRole().IsAddOnOnlyRole())
             {
                 var RoleWithInfo = $"{player.GetDisplayRoleName()}:\r\n";
                 RoleWithInfo += player.GetRoleInfo();

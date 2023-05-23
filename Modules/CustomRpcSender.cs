@@ -43,7 +43,7 @@ namespace TownOfHost
             onSendDelegate = () => Logger.Info($"{this.name}'s onSendDelegate =>", "CustomRpcSender");
 
             currentState = State.Ready;
-            Logger.Info($"\"{name}\" is ready", "CustomRpcSender");
+            //Logger.Info($"\"{name}\" is ready", "CustomRpcSender");
         }
         public static CustomRpcSender Create(string name = "No Name Sender", SendOption sendOption = SendOption.None, bool isUnsafe = false)
         {
@@ -199,7 +199,7 @@ namespace TownOfHost
             AmongUsClient.Instance.SendOrDisconnect(stream);
             onSendDelegate();
             currentState = State.Finished;
-            Logger.Info($"\"{name}\" is finished", "CustomRpcSender");
+            //Logger.Info($"\"{name}\" is finished", "CustomRpcSender");
             stream.Recycle();
         }
 

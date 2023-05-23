@@ -15,12 +15,12 @@ namespace TownOfHost.Roles.Impostor
 
         static OptionItem SniperBulletCount;
         static OptionItem SniperPrecisionShooting;
+        static Dictionary<byte, Vector3> LastPosition = new();
         static OptionItem SniperAimAssist;
         static OptionItem SniperAimAssistOnshot;
 
         static Dictionary<byte, byte> snipeTarget = new();
         static Dictionary<byte, Vector3> snipeBasePosition = new();
-        static Dictionary<byte, Vector3> LastPosition = new();
         static Dictionary<byte, int> bulletCount = new();
         static Dictionary<byte, List<byte>> shotNotify = new();
         static Dictionary<byte, bool> IsAim = new();
@@ -32,13 +32,14 @@ namespace TownOfHost.Roles.Impostor
         static bool precisionShooting;
         static bool AimAssist;
         static bool AimAssistOneshot;
+
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.ImpostorRoles, CustomRoles.Sniper);
-            SniperBulletCount = IntegerOptionItem.Create(Id + 10, "SniperBulletCount", new(1, 5, 1), 2, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sniper])
+            SniperBulletCount = IntegerOptionItem.Create(Id + 10, "SniperBulletCount", new(1, 5, 1), 2, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sniper])
                 .SetValueFormat(OptionFormat.Pieces);
-            SniperPrecisionShooting = BooleanOptionItem.Create(Id + 11, "SniperPrecisionShooting", false, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sniper]);
-            SniperAimAssist = BooleanOptionItem.Create(Id + 12, "SniperAimAssist", false, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sniper]);
+            SniperPrecisionShooting = BooleanOptionItem.Create(Id + 11, "SniperPrecisionShooting", false, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sniper]);
+            SniperAimAssist = BooleanOptionItem.Create(Id + 12, "SniperAimAssist", false, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sniper]);
             SniperAimAssistOnshot = BooleanOptionItem.Create(Id + 13, "SniperAimAssistOneshot", false, TabGroup.ImpostorRoles, false).SetParent(SniperAimAssist);
         }
         public static void Init()
@@ -66,7 +67,6 @@ namespace TownOfHost.Roles.Impostor
         {
             PlayerIdList.Add(playerId);
             IsEnable = true;
-
             snipeBasePosition[playerId] = new();
             LastPosition[playerId] = new();
             snipeTarget[playerId] = 0x7F;
@@ -82,6 +82,7 @@ namespace TownOfHost.Roles.Impostor
             Logger.Info($"Player{playerId}:SendRPC", "Sniper");
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SniperSync, Hazel.SendOption.Reliable, -1);
             writer.Write(playerId);
+            writer.Write(snipeTarget[playerId]);
             var snList = shotNotify[playerId];
             writer.Write(snList.Count());
             foreach (var sn in snList)
@@ -179,7 +180,6 @@ namespace TownOfHost.Roles.Impostor
             var sniperId = sniper.PlayerId;
 
             if (bulletCount[sniperId] <= 0) return;
-
             //スナイパーで弾が残ってたら
             if (shapeshifting)
             {
@@ -192,10 +192,8 @@ namespace TownOfHost.Roles.Impostor
                 LastPosition[sniperId] = sniper.transform.position;
                 IsAim[sniperId] = true;
                 AimTime[sniperId] = 0f;
-
                 return;
             }
-
             //エイム終了
             IsAim[sniperId] = false;
             AimTime[sniperId] = 0f;
@@ -244,8 +242,7 @@ namespace TownOfHost.Roles.Impostor
                             Utils.NotifyRoles(SpecifySeer: otherPc);
                         }
                         SendRPC(sniperId);
-                    },
-                    0.5f, "Sniper shot Notify"
+                    }, 0.5f, "Sniper shot Notify"
                     );
             }
         }

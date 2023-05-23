@@ -99,8 +99,7 @@ namespace TownOfHost
             else
             {
                 if (!HnSFlag)
-                    text += $"{GetString($"ErrorLevel{maxLevel}")}";
-                Text.enabled = true;
+                    text += $"{GetString($"ErrorLevel{maxLevel}")}"; Text.enabled = true;
             }
             if (GameStates.IsInGame && maxLevel != 3)
                 text += $"\n{GetString("TerminateCommand")}: Shift+L+Enter";
@@ -135,7 +134,6 @@ namespace TownOfHost
             }
             public void IncreaseTimer() => Timer += Time.deltaTime;
         }
-
         public bool HnSFlag;
     }
     public enum ErrorCode

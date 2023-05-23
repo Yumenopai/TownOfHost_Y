@@ -31,7 +31,7 @@ namespace TownOfHost.Roles.Impostor
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.ImpostorRoles, CustomRoles.Vampire);
-            OptionKillDelay = FloatOptionItem.Create(Id + 10, "VampireKillDelay", new(1f, 1000f, 1f), 10f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Vampire])
+            OptionKillDelay = FloatOptionItem.Create(Id + 10, "VampireKillDelay", new(1f, 1000f, 1f), 10f, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Vampire])
                 .SetValueFormat(OptionFormat.Seconds);
         }
         public static void Init()
@@ -55,7 +55,7 @@ namespace TownOfHost.Roles.Impostor
         public static bool OnCheckMurder(PlayerControl killer, PlayerControl target)
         {
             if (!IsThisRole(killer.PlayerId)) return true;
-            if (target.Is(CustomRoles.Bait)) return true;
+            if (target.Is(CustomRoles.Bait) || target.Is(CustomRoles.AddBait)) return true;
 
             killer.SetKillCooldown();
 

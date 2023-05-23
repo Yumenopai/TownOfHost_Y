@@ -16,6 +16,8 @@ namespace TownOfHost.Roles.Crewmate
         private static OptionItem OptionCanGetColoredArrow;
         private static OptionItem OptionCanFindNeutralKiller;
         private static OptionItem OptionRemainingTasks;
+        public static OptionItem SnitchCannotConfirmKillRoles;
+
 
         private static bool EnableTargetArrow;
         private static bool CanGetColoredArrow;
@@ -31,10 +33,12 @@ namespace TownOfHost.Roles.Crewmate
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.CrewmateRoles, CustomRoles.Snitch);
-            OptionEnableTargetArrow = BooleanOptionItem.Create(Id + 10, "SnitchEnableTargetArrow", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Snitch]);
+            OptionEnableTargetArrow = BooleanOptionItem.Create(Id + 10, "SnitchEnableTargetArrow", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Snitch]);
             OptionCanGetColoredArrow = BooleanOptionItem.Create(Id + 11, "SnitchCanGetArrowColor", false, TabGroup.CrewmateRoles, false).SetParent(OptionEnableTargetArrow);
-            OptionCanFindNeutralKiller = BooleanOptionItem.Create(Id + 12, "SnitchCanFindNeutralKiller", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Snitch]);
-            OptionRemainingTasks = IntegerOptionItem.Create(Id + 13, "SnitchRemainingTaskFound", new(0, 10, 1), 1, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Snitch]);
+            OptionCanFindNeutralKiller = BooleanOptionItem.Create(Id + 12, "SnitchCanFindNeutralKiller", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Snitch]);
+            SnitchCannotConfirmKillRoles = BooleanOptionItem.Create(Id + 13, "SnitchCannotConfirmKillRoles", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Snitch]);
+            OptionRemainingTasks = IntegerOptionItem.Create(Id + 14, "SnitchRemainingTaskFound", new(0, 10, 1), 1, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Snitch]).SetValueFormat(OptionFormat.Pieces);
+
             OverrideTasksData.Create(Id + 20, TabGroup.CrewmateRoles, CustomRoles.Snitch);
         }
         public static void Init()
@@ -72,7 +76,12 @@ namespace TownOfHost.Roles.Crewmate
             var snitchId = pc.PlayerId;
             return IsExposed[snitchId];
         }
-        private static bool IsSnitchTarget(PlayerControl target) => IsEnable && (target.Is(CustomRoleTypes.Impostor) || (target.IsNeutralKiller() && CanFindNeutralKiller));
+        private static bool IsSnitchTarget(PlayerControl target) => IsEnable
+            && (target.Is(CustomRoleTypes.Impostor)
+                || (target.IsNeutralKiller() && !target.Is(CustomRoles.Arsonist) && !target.Is(CustomRoles.PlatonicLover) && !target.Is(CustomRoles.Totocalcio) && CanFindNeutralKiller
+                    )
+                );
+
         public static void CheckTask(PlayerControl snitch)
         {
             if (!snitch.IsAlive()) return;

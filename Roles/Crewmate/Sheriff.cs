@@ -4,7 +4,6 @@ using System.Linq;
 using Hazel;
 using UnityEngine;
 
-using static TownOfHost.Translator;
 using static TownOfHost.Options;
 
 namespace TownOfHost.Roles.Crewmate
@@ -17,6 +16,8 @@ namespace TownOfHost.Roles.Crewmate
         private static OptionItem KillCooldown;
         private static OptionItem MisfireKillsTarget;
         private static OptionItem ShotLimitOpt;
+        public static OptionItem IsInfoPoor;
+        public static OptionItem IsClumsy;
         private static OptionItem CanKillAllAlive;
         public static OptionItem CanKillNeutrals;
         public static Dictionary<CustomRoles, OptionItem> KillTargetOptions = new();
@@ -29,14 +30,16 @@ namespace TownOfHost.Roles.Crewmate
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.CrewmateRoles, CustomRoles.Sheriff);
-            KillCooldown = FloatOptionItem.Create(Id + 10, "KillCooldown", new(0f, 990f, 1f), 30f, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sheriff])
+            KillCooldown = FloatOptionItem.Create(Id + 10, "KillCooldown", new(0f, 180f, 2.5f), 30f, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sheriff])
                 .SetValueFormat(OptionFormat.Seconds);
-            MisfireKillsTarget = BooleanOptionItem.Create(Id + 11, "SheriffMisfireKillsTarget", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sheriff]);
-            ShotLimitOpt = IntegerOptionItem.Create(Id + 12, "SheriffShotLimit", new(1, 15, 1), 15, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sheriff])
+            MisfireKillsTarget = BooleanOptionItem.Create(Id + 11, "SheriffMisfireKillsTarget", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sheriff]);
+            ShotLimitOpt = IntegerOptionItem.Create(Id + 12, "SheriffShotLimit", new(1, 15, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sheriff])
                 .SetValueFormat(OptionFormat.Times);
-            CanKillAllAlive = BooleanOptionItem.Create(Id + 15, "SheriffCanKillAllAlive", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sheriff]);
+            IsInfoPoor = BooleanOptionItem.Create(Id + 16, "SheriffIsInfoPoor", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sheriff]);
+            IsClumsy = BooleanOptionItem.Create(Id + 17, "SheriffIsClumsy", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sheriff]);
+            CanKillAllAlive = BooleanOptionItem.Create(Id + 15, "SheriffCanKillAllAlive", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sheriff]);
             SetUpKillTargetOption(CustomRoles.Madmate, Id + 13);
-            CanKillNeutrals = StringOptionItem.Create(Id + 14, "SheriffCanKillNeutrals", KillOption, 0, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnChances[CustomRoles.Sheriff]);
+            CanKillNeutrals = StringOptionItem.Create(Id + 14, "SheriffCanKillNeutrals", KillOption, 0, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sheriff]);
             SetUpNeutralOptions(Id + 30);
         }
         public static void SetUpNeutralOptions(int Id)
@@ -52,13 +55,13 @@ namespace TownOfHost.Roles.Crewmate
         }
         public static void SetUpKillTargetOption(CustomRoles role, int Id, bool defaultValue = true, OptionItem parent = null)
         {
-            if (parent == null) parent = CustomRoleSpawnChances[CustomRoles.Sheriff];
-            var roleName = Utils.GetRoleName(role) + role switch
+            if (parent == null) parent = CustomRoleSpawnOnOff[CustomRoles.Sheriff];
+            var roleName = Utils.GetRoleName(role); /*+ role switch
             {
                 CustomRoles.EgoSchrodingerCat => $" {GetString("In%team%", new Dictionary<string, string>() { { "%team%", Utils.GetRoleName(CustomRoles.Egoist) } })}",
                 CustomRoles.JSchrodingerCat => $" {GetString("In%team%", new Dictionary<string, string>() { { "%team%", Utils.GetRoleName(CustomRoles.Jackal) } })}",
                 _ => "",
-            };
+            };*/
             Dictionary<string, string> replacementDic = new() { { "%role%", Utils.ColorString(Utils.GetRoleColor(role), roleName) } };
             KillTargetOptions[role] = BooleanOptionItem.Create(Id, "SheriffCanKill%role%", defaultValue, TabGroup.CrewmateRoles, false).SetParent(parent);
             KillTargetOptions[role].ReplacementDictionary = replacementDic;
@@ -118,7 +121,7 @@ namespace TownOfHost.Roles.Crewmate
             return true;
         }
         public static string GetShotLimit(byte playerId) => Utils.ColorString(CanUseKillButton(playerId) ? Color.yellow : Color.gray, ShotLimit.TryGetValue(playerId, out var shotLimit) ? $"({shotLimit})" : "Invalid");
-        public static bool CanBeKilledBySheriff(this PlayerControl player)
+        private static bool CanBeKilledBySheriff(this PlayerControl player)
         {
             var cRole = player.GetCustomRole();
             return cRole.GetCustomRoleTypes() switch

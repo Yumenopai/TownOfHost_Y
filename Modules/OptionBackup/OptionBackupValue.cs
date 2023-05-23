@@ -63,7 +63,6 @@ namespace TownOfHost
             option.SetUInt(OptionName, Value);
         }
     }
-
     public class RoleRateBackupValue : OptionBackupValue
     {
         public RoleTypes roleType;

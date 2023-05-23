@@ -31,24 +31,42 @@ namespace TownOfHost
             }
             else
             {
-                //Standardの時のみ実行
-                if (Options.CurrentGameMode == CustomGameMode.Standard)
+                if (Options.CurrentGameMode.IsOneNightMode())
                 {
                     //有効な役職一覧
                     sb.Append($"<color={Utils.GetRoleColorCode(CustomRoles.GM)}>{Utils.GetRoleName(CustomRoles.GM)}:</color> {Options.EnableGM.GetString()}\n\n");
                     sb.Append(GetString("ActiveRolesList")).Append("\n");
-                    foreach (var kvp in Options.CustomRoleSpawnChances)
-                        if (kvp.Value.GameMode is CustomGameMode.Standard or CustomGameMode.All && kvp.Value.GetBool()) //スタンダードか全てのゲームモードで表示する役職
+                    foreach (var kvp in Options.CustomRoleSpawnOnOff)
+                        if (kvp.Value.GameMode is CustomGameMode.OneNight or CustomGameMode.All && kvp.Value.GetBool()) //スタンダードか全てのゲームモードで表示する役職
                             sb.Append($"{Utils.ColorString(Utils.GetRoleColor(kvp.Key), Utils.GetRoleName(kvp.Key))}: {kvp.Value.GetString()}×{kvp.Key.GetCount()}\n");
+                    pages.Add(sb.ToString() + "\n\n");
+                    sb.Clear();
+                }
+                else if (!Options.CurrentGameMode.IsCatMode())
+                {
+                    if (Options.CurrentGameMode == CustomGameMode.Standard)
+                        sb.Append($"{Options.RoleSetMode.GetName()}: {Options.RoleSetMode.GetString()}\n\n");
+
+                    //有効な役職一覧
+                    sb.Append($"<color={Utils.GetRoleColorCode(CustomRoles.GM)}>{Utils.GetRoleName(CustomRoles.GM)}:</color> {Options.EnableGM.GetString()}\n\n");
+                    sb.Append(GetString("ActiveRolesList")).Append("\n");
+                    foreach (var kvp in Options.CustomRoleSpawnOnOff)
+                        if (!kvp.Value.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode) && kvp.Value.GetBool()) //スタンダードか全てのゲームモードで表示する役職
+                        {
+                            if (kvp.Key.IsAddOn() || kvp.Key is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
+                                sb.Append($"◆{Utils.ColorString(Utils.GetRoleColor(kvp.Key), Utils.GetRoleName(kvp.Key))}: {kvp.Value.GetString()}×{kvp.Key.GetCount()}\n");
+                            else
+                                sb.Append($"{Utils.ColorString(Utils.GetRoleColor(kvp.Key), Utils.GetRoleName(kvp.Key))}: {kvp.Value.GetString()}×{kvp.Key.GetCount()}\n");
+                        }
                     pages.Add(sb.ToString() + "\n\n");
                     sb.Clear();
                 }
                 //有効な役職と詳細設定一覧
                 pages.Add("");
                 nameAndValue(Options.EnableGM);
-                foreach (var kvp in Options.CustomRoleSpawnChances)
+                foreach (var kvp in Options.CustomRoleSpawnOnOff)
                 {
-                    if (!kvp.Key.IsEnable() || kvp.Value.IsHiddenOn(Options.CurrentGameMode)) continue;
+                    if (!kvp.Key.IsEnable() || kvp.Value.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode)) continue;
                     sb.Append("\n");
                     sb.Append($"{Utils.ColorString(Utils.GetRoleColor(kvp.Key), Utils.GetRoleName(kvp.Key))}: {kvp.Value.GetString()}×{kvp.Key.GetCount()}\n");
                     ShowChildren(kvp.Value, ref sb, Utils.GetRoleColor(kvp.Key).ShadeColor(-0.5f), 1);
@@ -56,13 +74,13 @@ namespace TownOfHost
                     string ruleFooter = Utils.ColorString(Palette.ImpostorRed.ShadeColor(-0.5f), "┗ ");
                     if (kvp.Key.IsMadmate()) //マッドメイトの時に追加する詳細設定
                     {
-                        sb.Append($"{rule}{Options.MadmateCanFixLightsOut.GetName()}: {Options.MadmateCanFixLightsOut.GetString()}\n");
-                        sb.Append($"{rule}{Options.MadmateCanFixComms.GetName()}: {Options.MadmateCanFixComms.GetString()}\n");
-                        sb.Append($"{rule}{Options.MadmateHasImpostorVision.GetName()}: {Options.MadmateHasImpostorVision.GetString()}\n");
-                        sb.Append($"{rule}{Options.MadmateCanSeeKillFlash.GetName()}: {Options.MadmateCanSeeKillFlash.GetString()}\n");
-                        sb.Append($"{rule}{Options.MadmateCanSeeOtherVotes.GetName()}: {Options.MadmateCanSeeOtherVotes.GetString()}\n");
-                        sb.Append($"{rule}{Options.MadmateCanSeeDeathReason.GetName()}: {Options.MadmateCanSeeDeathReason.GetString()}\n");
-                        sb.Append($"{rule}{Options.MadmateRevengeCrewmate.GetName()}: {Options.MadmateRevengeCrewmate.GetString()}\n");
+                        //sb.Append($"{rule}{Options.MadmateCanFixLightsOut.GetName()}: {Options.MadmateCanFixLightsOut.GetString()}\n");
+                        //sb.Append($"{rule}{Options.MadmateCanFixComms.GetName()}: {Options.MadmateCanFixComms.GetString()}\n");
+                        //sb.Append($"{rule}{Options.MadmateHasImpostorVision.GetName()}: {Options.MadmateHasImpostorVision.GetString()}\n");
+                        //sb.Append($"{rule}{Options.MadmateCanSeeKillFlash.GetName()}: {Options.MadmateCanSeeKillFlash.GetString()}\n");
+                        //sb.Append($"{rule}{Options.MadmateCanSeeOtherVotes.GetName()}: {Options.MadmateCanSeeOtherVotes.GetString()}\n");
+                        //sb.Append($"{rule}{Options.MadmateCanSeeDeathReason.GetName()}: {Options.MadmateCanSeeDeathReason.GetString()}\n");
+                        //sb.Append($"{rule}{Options.MadmateRevengeCrewmate.GetName()}: {Options.MadmateRevengeCrewmate.GetString()}\n");
                         sb.Append($"{rule}{Options.MadmateVentCooldown.GetName()}: {Options.MadmateVentCooldown.GetString()}\n");
                         sb.Append($"{ruleFooter}{Options.MadmateVentMaxTime.GetName()}: {Options.MadmateVentMaxTime.GetString()}\n");
                     }
@@ -72,7 +90,7 @@ namespace TownOfHost
                     }
                 }
 
-                foreach (var opt in OptionItem.AllOptions.Where(x => x.Id >= 90000 && !x.IsHiddenOn(Options.CurrentGameMode) && x.Parent == null))
+                foreach (var opt in OptionItem.AllOptions.Where(x => x.Id >= 90000 && !x.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode) && x.Parent == null))
                 {
                     if (opt.IsHeader) sb.Append("\n");
                     sb.Append($"{opt.GetName()}: {opt.GetString()}\n");

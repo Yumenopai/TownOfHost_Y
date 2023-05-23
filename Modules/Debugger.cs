@@ -103,8 +103,7 @@ namespace TownOfHost
             StackFrame stack = new(1);
             Logger.Msg($"\"{stack.GetMethod().ReflectedType.Name}.{stack.GetMethod().Name}\" Called in \"{Path.GetFileName(fileName)}({lineNumber})\"", "Method");
         }
-
         public static LogHandler Handler(string tag)
-            => new(tag);
+           => new(tag);
     }
 }

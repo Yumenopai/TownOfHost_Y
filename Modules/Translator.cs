@@ -84,14 +84,44 @@ namespace TownOfHost
             }
             if (langId == SupportedLangs.Japanese)
             {
-                //このソースコ―ドを見た人へ。口外しないでもらえると嬉しいです...
-                //To anyone who has seen this source code. I would appreciate it if you would keep your mouth shut...
                 if (Main.IsChristmas)
                 {
                     res = str switch
                     {
                         "Lovers" => "リア充",
                         "LoversInfo" => "爆ぜろ",
+                        _ => res
+                    };
+                }
+                if (Main.IsValentine)
+                {
+                    res = str switch
+                    {
+                        "Bakery" => "チョコレート屋",
+                        "NBakery" => "(第三)覚醒チョコ屋",
+                        "BakeryInfo" => "みんなにチョコレートを配ろう",
+                        "BakeryInfoLong" => "[クルー陣営]\n生存中、会議はじめにチョコレート屋についてのコメントが流れる。レアコメントあり。\n低確率(設定)で試合途中、第三陣営に変化する。",
+
+                        "PanAliveMessageTitle" => "【チョコレート屋生存中】",
+                        "PanAlive" => "\nチョコレート屋が誰かにチョコを渡しました。\nㅤ",
+                        "PanAlive1" => "\nチョコレート屋はチョコを溶かすのに夢中に。\nㅤ",
+                        "PanAlive2" => "\nチョコレート屋はホワイトデーで大繁盛。\nㅤ",
+                        "PanAlive3" => "\nチョコレート屋が板チョコ落として割った。\nㅤ",
+                        "PanAlive4" => "\nチョコレート屋はちょこっとおっちょこちょい\nㅤ",
+                        "PanAlive5" => "\nチョコレート屋はホワイトデーで大繁盛。\nㅤ",
+                        "PanAlive6" => "\nチョコレート屋はホワイトデーで大繁盛。\nㅤ",
+                        "PanAlive7" => "\nﾊｲﾊﾟｰﾁｮｺﾚｰﾄﾄﾘﾌﾟﾙﾝﾙﾝﾗｯｷｰﾊﾋﾟﾈｽ!!!!\nㅤ",
+                        "PanAlive8" => "\nチョコレート屋が板チョコ落として割った。\nㅤ",
+                        "PanAlive9" => "\nチョコレート屋はチョコを溶かすのに夢中に。\nㅤ",
+                        "PanAlive10"=> "\nチョコレート屋はちょこっとおっちょこちょい\nㅤ",
+                        "PanAlive11"=> "\nチョコレート屋は新商品の開発に熱が入る。\nㅤ",
+                        "PanAlive12"=> "\nチョコレート屋も恋するんだよ、、？\nㅤ大好きな{0}に、本命チョコを。\nㅤ",
+                        "PanAlive13"=> "\nチョコレート屋も恋するんだよ、、？\nㅤ大好きな{0}に、本命チョコを。\nㅤ",
+
+                        "BakeryChange" => "\nチョコレート屋が覚醒し、ㅤㅤㅤㅤㅤㅤㅤ\nㅤ毒入りチョコレートを開発した。\n次ターン以降、覚醒チョコ屋を追放しないと\nㅤ貰った人は毒が回って死亡してしまう。\nㅤ",  
+                        "BakeryChangeNow"=> "\nチョコレート屋が覚醒し、ㅤㅤㅤㅤㅤㅤㅤ\nㅤ毒入りチョコレートを渡した。\n覚醒チョコ屋を追放しないと\nㅤ貰った人は毒が回って死亡してしまう。\nㅤ",
+                        "BakeryChangeNONE"=> "\nチョコレート屋は覚醒したにも関わらず\nこのターンの毒入りチョコ作りに失敗した。\nㅤ",
+
                         _ => res
                     };
                 }

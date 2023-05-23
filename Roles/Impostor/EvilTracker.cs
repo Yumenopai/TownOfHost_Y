@@ -46,13 +46,13 @@ namespace TownOfHost.Roles.Impostor
         {
             SetupRoleOptions(Id, TabGroup.ImpostorRoles, CustomRoles.EvilTracker);
             OptionCanSeeKillFlash = BooleanOptionItem.Create(Id + 10, "EvilTrackerCanSeeKillFlash", true, TabGroup.ImpostorRoles, false)
-                .SetParent(CustomRoleSpawnChances[CustomRoles.EvilTracker]);
+                .SetParent(CustomRoleSpawnOnOff[CustomRoles.EvilTracker]);
             OptionTargetMode = StringOptionItem.Create(Id + 11, "EvilTrackerTargetMode", TargetModeText, 2, TabGroup.ImpostorRoles, false)
-                .SetParent(CustomRoleSpawnChances[CustomRoles.EvilTracker]);
+                .SetParent(CustomRoleSpawnOnOff[CustomRoles.EvilTracker]);
             OptionCanCreateMadmate = BooleanOptionItem.Create(Id + 20, "CanCreateMadmate", false, TabGroup.ImpostorRoles, false)
                 .SetParent(OptionTargetMode);
             OptionCanSeeLastRoomInMeeting = BooleanOptionItem.Create(Id + 12, "EvilTrackerCanSeeLastRoomInMeeting", false, TabGroup.ImpostorRoles, false)
-                .SetParent(CustomRoleSpawnChances[CustomRoles.EvilTracker]);
+                .SetParent(CustomRoleSpawnOnOff[CustomRoles.EvilTracker]);
         }
         public static void Init()
         {

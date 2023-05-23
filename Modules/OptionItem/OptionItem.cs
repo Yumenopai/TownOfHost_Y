@@ -25,6 +25,7 @@ namespace TownOfHost
         public Color NameColor { get; protected set; }
         public OptionFormat ValueFormat { get; protected set; }
         public CustomGameMode GameMode { get; protected set; }
+        public RoleSettingMode RoleMode { get; protected set; }
         public bool IsHeader { get; protected set; }
         public bool IsHidden { get; protected set; }
         public Dictionary<string, string> ReplacementDictionary
@@ -78,6 +79,7 @@ namespace TownOfHost
             NameColor = Color.white;
             ValueFormat = OptionFormat.None;
             GameMode = CustomGameMode.All;
+            RoleMode = RoleSettingMode.All;
             IsHeader = false;
             IsHidden = false;
 
@@ -120,6 +122,7 @@ namespace TownOfHost
         public OptionItem SetColor(Color value) => Do(i => i.NameColor = value);
         public OptionItem SetValueFormat(OptionFormat value) => Do(i => i.ValueFormat = value);
         public OptionItem SetGameMode(CustomGameMode value) => Do(i => i.GameMode = value);
+        public OptionItem SetRoleMode(RoleSettingMode value) => Do(i => i.RoleMode = value);
         public OptionItem SetHeader(bool value) => Do(i => i.IsHeader = value);
         public OptionItem SetHidden(bool value) => Do(i => i.IsHidden = value);
 
@@ -159,9 +162,9 @@ namespace TownOfHost
         public virtual int GetValue() => CurrentEntry.Value;
 
         // 旧IsHidden関数
-        public virtual bool IsHiddenOn(CustomGameMode mode)
+        public virtual bool IsHiddenOn(CustomGameMode mode, RoleSettingMode setMode)
         {
-            return IsHidden || (GameMode != CustomGameMode.All && GameMode != mode);
+            return IsHidden || (GameMode != CustomGameMode.All && GameMode != mode) || (GameMode == CustomGameMode.Standard && RoleMode != RoleSettingMode.All && RoleMode != setMode);
         }
 
         public string ApplyFormat(string value)
@@ -249,6 +252,7 @@ namespace TownOfHost
     {
         MainSettings,
         ImpostorRoles,
+        MadmateRoles,
         CrewmateRoles,
         NeutralRoles,
         Addons
