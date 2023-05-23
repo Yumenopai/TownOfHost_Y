@@ -1,6 +1,7 @@
 using System;
 using HarmonyLib;
-using UnhollowerBaseLib;
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
 using UnityEngine;
 using static TownOfHost.Translator;
 
@@ -19,15 +20,15 @@ namespace TownOfHost
         public static TMPro.TextMeshPro LowerInfoText;
         public static void Postfix(HudManager __instance)
         {
+            if (!GameStates.IsModHost) return;
             var player = PlayerControl.LocalPlayer;
             if (player == null) return;
             var TaskTextPrefix = "";
-            var FakeTasksText = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.FakeTasks, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
             //壁抜け
             if (Input.GetKeyDown(KeyCode.LeftControl))
             {
                 if ((!AmongUsClient.Instance.IsGameStarted || !GameStates.IsOnlineGame)
-                    && player.MyAnim.ClipName is "Idle" or "Walk")
+                    && player.CanMove)
                 {
                     player.Collider.offset = new Vector2(0f, 127f);
                 }
@@ -40,166 +41,145 @@ namespace TownOfHost
                     player.Collider.offset = new Vector2(0f, -0.3636f);
                 }
             }
-            //MOD入り用のボタン下テキスト変更
-            switch (player.GetCustomRole())
+            if (GameStates.IsLobby)
             {
-                case CustomRoles.Sniper:
-                    __instance.AbilityButton.OverrideText(Sniper.OverrideShapeText(player.PlayerId));
-                    break;
-                case CustomRoles.FireWorks:
-                    if (FireWorks.nowFireWorksCount[player.PlayerId] == 0)
-                        __instance.AbilityButton.OverrideText($"{GetString("FireWorksExplosionButtonText")}");
-                    else
-                        __instance.AbilityButton.OverrideText($"{GetString("FireWorksInstallAtionButtonText")}");
-                    break;
-                case CustomRoles.SerialKiller:
-                    SerialKiller.GetAbilityButtonText(__instance);
-                    break;
-                case CustomRoles.Warlock:
-                    if (!Main.CheckShapeshift[player.PlayerId] && !Main.isCurseAndKill[player.PlayerId])
-                    {
-                        __instance.KillButton.OverrideText($"{GetString("WarlockCurseButtonText")}");
-                    }
-                    else
-                    {
-                        __instance.KillButton.OverrideText($"{GetString("KillButtonText")}");
-                    }
-                    break;
-                case CustomRoles.Witch:
-                    if (player.IsSpellMode())
-                    {
-                        __instance.KillButton.OverrideText($"{GetString("WitchSpellButtonText")}");
-                    }
-                    else
-                    {
-                        __instance.KillButton.OverrideText($"{GetString("KillButtonText")}");
-                    }
-                    break;
-                case CustomRoles.Vampire:
-                    __instance.KillButton.OverrideText($"{GetString("VampireBiteButtonText")}");
-                    break;
-                case CustomRoles.Arsonist:
-                    __instance.KillButton.OverrideText($"{GetString("ArsonistDouseButtonText")}");
-                    break;
-                case CustomRoles.Puppeteer:
-                    __instance.KillButton.OverrideText($"{GetString("PuppeteerOperateButtonText")}");
-                    break;
-                case CustomRoles.BountyHunter:
-                    BountyHunter.GetAbilityButtonText(__instance);
-                    break;
+                __instance.GameSettings.text = OptionShower.GetText();
+                __instance.GameSettings.fontSizeMin =
+                __instance.GameSettings.fontSizeMax = (TranslationController.Instance.currentLanguage.languageID == SupportedLangs.Japanese || Main.ForceJapanese.Value) ? 1.05f : 1.2f;
             }
-
-            __instance.GameSettings.text = OptionShower.GetText();
-            __instance.GameSettings.fontSizeMin =
-            __instance.GameSettings.fontSizeMax = (TranslationController.Instance.currentLanguage.languageID == SupportedLangs.Japanese || Main.ForceJapanese.Value) ? 1.05f : 1.2f;
             //ゲーム中でなければ以下は実行されない
             if (!AmongUsClient.Instance.IsGameStarted) return;
-            //バウンティハンターのターゲットテキスト
-            if (LowerInfoText == null)
-            {
-                LowerInfoText = UnityEngine.Object.Instantiate(__instance.KillButton.buttonLabelText);
-                LowerInfoText.transform.parent = __instance.transform;
-                LowerInfoText.transform.localPosition = new Vector3(0, -2f, 0);
-                LowerInfoText.alignment = TMPro.TextAlignmentOptions.Center;
-                LowerInfoText.overflowMode = TMPro.TextOverflowModes.Overflow;
-                LowerInfoText.enableWordWrapping = false;
-                LowerInfoText.color = Palette.EnabledColor;
-                LowerInfoText.fontSizeMin = 2.0f;
-                LowerInfoText.fontSizeMax = 2.0f;
-            }
 
-            if (player.Is(CustomRoles.BountyHunter)) BountyHunter.DisplayTarget(player, LowerInfoText);
-            else if (player.Is(CustomRoles.Witch))
-            {
-                //魔女用処理
-                var ModeLang = player.IsSpellMode() ? "WitchModeSpell" : "WitchModeKill";
-                LowerInfoText.text = GetString("WitchCurrentMode") + ":" + GetString(ModeLang);
-                LowerInfoText.enabled = true;
-            }
-            else if (player.Is(CustomRoles.FireWorks))
-            {
-                var stateText = FireWorks.GetStateText(player);
-                LowerInfoText.text = stateText;
-                LowerInfoText.enabled = true;
-            }
-            else
-            {
-                LowerInfoText.enabled = false;
-            }
-            if (!AmongUsClient.Instance.IsGameStarted && AmongUsClient.Instance.GameMode != GameModes.FreePlay)
-            {
-                LowerInfoText.enabled = false;
-            }
+            Utils.CountAlivePlayers();
 
-            if (!player.GetCustomRole().IsVanilla())
+            if (SetHudActivePatch.IsActive)
             {
-                var RoleWithInfo = $"{player.GetRoleName()}\r\n";
-                RoleWithInfo += player.GetCustomRole() switch
+                if (player.IsAlive())
                 {
-                    CustomRoles.Mafia => GetString(player.CanUseKillButton() ? "AfterMafiaInfo" : "BeforeMafiaInfo"),
-                    CustomRoles.EvilWatcher or CustomRoles.NiceWatcher => GetString("WatcherInfo"),
-                    CustomRoles.MadSnitch or CustomRoles.MadGuardian => GetString(player.GetPlayerTaskState().IsTaskFinished ? "MadmateInfo" : "BeforeMadmateInfo"),
-                    _ => GetString(player.GetCustomRole() + "Info")
-                };
-                TaskTextPrefix = Helpers.ColorString(player.GetRoleColor(), RoleWithInfo);
-            }
-            switch (player.GetCustomRole())
-            {
-                case CustomRoles.Madmate:
-                case CustomRoles.Jester:
-                    TaskTextPrefix += FakeTasksText;
-                    break;
-                case CustomRoles.Mafia:
-                case CustomRoles.Mare:
-                case CustomRoles.FireWorks:
-                case CustomRoles.Sniper:
+                    //MOD入り用のボタン下テキスト変更
+                    switch (player.GetCustomRole())
+                    {
+                        case CustomRoles.Sniper:
+                            Sniper.OverrideShapeText(player.PlayerId);
+                            break;
+                        case CustomRoles.FireWorks:
+                            if (FireWorks.nowFireWorksCount[player.PlayerId] == 0)
+                                __instance.AbilityButton.OverrideText($"{GetString("FireWorksExplosionButtonText")}");
+                            else
+                                __instance.AbilityButton.OverrideText($"{GetString("FireWorksInstallAtionButtonText")}");
+                            break;
+                        case CustomRoles.SerialKiller:
+                            SerialKiller.GetAbilityButtonText(__instance, player);
+                            break;
+                        case CustomRoles.Warlock:
+                            if (!(Main.CheckShapeshift.TryGetValue(player.PlayerId, out bool shapeshifting) && shapeshifting) && !(Main.isCurseAndKill.TryGetValue(player.PlayerId, out bool curse) && curse))
+                            {
+                                __instance.KillButton.OverrideText($"{GetString("WarlockCurseButtonText")}");
+                            }
+                            else
+                            {
+                                __instance.KillButton.OverrideText($"{GetString("KillButtonText")}");
+                            }
+                            break;
+                        case CustomRoles.Witch:
+                            Witch.GetAbilityButtonText(__instance);
+                            break;
+                        case CustomRoles.Vampire:
+                            Vampire.SetKillButtonText();
+                            break;
+                        case CustomRoles.Arsonist:
+                            __instance.KillButton.OverrideText($"{GetString("ArsonistDouseButtonText")}");
+                            break;
+                        case CustomRoles.Puppeteer:
+                            __instance.KillButton.OverrideText($"{GetString("PuppeteerOperateButtonText")}");
+                            break;
+                        case CustomRoles.BountyHunter:
+                            BountyHunter.SetAbilityButtonText(__instance);
+                            break;
+                        case CustomRoles.EvilTracker:
+                            EvilTracker.GetAbilityButtonText(__instance, player.PlayerId);
+                            break;
+                    }
+
+                    //バウンティハンターのターゲットテキスト
+                    if (LowerInfoText == null)
+                    {
+                        LowerInfoText = UnityEngine.Object.Instantiate(__instance.KillButton.buttonLabelText);
+                        LowerInfoText.transform.parent = __instance.transform;
+                        LowerInfoText.transform.localPosition = new Vector3(0, -2f, 0);
+                        LowerInfoText.alignment = TMPro.TextAlignmentOptions.Center;
+                        LowerInfoText.overflowMode = TMPro.TextOverflowModes.Overflow;
+                        LowerInfoText.enableWordWrapping = false;
+                        LowerInfoText.color = Palette.EnabledColor;
+                        LowerInfoText.fontSizeMin = 2.0f;
+                        LowerInfoText.fontSizeMax = 2.0f;
+                    }
+
+                    if (player.Is(CustomRoles.BountyHunter))
+                    {
+                        LowerInfoText.text = BountyHunter.GetTargetText(player, true);
+                    }
+                    else if (player.Is(CustomRoles.Witch))
+                    {
+                        LowerInfoText.text = Witch.GetSpellModeText(player, true);
+                    }
+                    else if (player.Is(CustomRoles.FireWorks))
+                    {
+                        var stateText = FireWorks.GetStateText(player);
+                        LowerInfoText.text = stateText;
+                    }
+                    else
+                    {
+                        LowerInfoText.text = "";
+                    }
+                    LowerInfoText.enabled = LowerInfoText.text != "";
+
+                    if (!AmongUsClient.Instance.IsGameStarted && AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
+                    {
+                        LowerInfoText.enabled = false;
+                    }
+
                     if (player.CanUseKillButton())
                     {
-                        __instance.KillButton.ToggleVisible(true && !player.Data.IsDead);
+                        __instance.KillButton.ToggleVisible(player.IsAlive() && GameStates.IsInTask);
+                        player.Data.Role.CanUseKillButton = true;
                     }
                     else
                     {
                         __instance.KillButton.SetDisabled();
                         __instance.KillButton.ToggleVisible(false);
                     }
-                    break;
-                case CustomRoles.SKMadmate:
-                    TaskTextPrefix += FakeTasksText;
-                    __instance.KillButton.SetDisabled();
-                    __instance.KillButton.ToggleVisible(false);
-                    break;
-                case CustomRoles.Sheriff:
-                    if (Sheriff.ShotLimit.TryGetValue(player.PlayerId, out var count) && count == 0)
+                    switch (player.GetCustomRole())
                     {
-                        __instance.KillButton.SetDisabled();
-                        __instance.KillButton.ToggleVisible(false);
+                        case CustomRoles.Madmate:
+                        case CustomRoles.SKMadmate:
+                        case CustomRoles.Jester:
+                            TaskTextPrefix += GetString(StringNames.FakeTasks);
+                            break;
                     }
-                    player.CanUseImpostorVent();
-                    goto DesyncImpostor;
-                case CustomRoles.Arsonist:
-                    if (player.IsDouseDone())
-                    {
-                        __instance.KillButton.SetDisabled();
-                        __instance.KillButton.ToggleVisible(false);
-                    }
-                    player.CanUseImpostorVent();
-                    goto DesyncImpostor;
-                case CustomRoles.Jackal:
-                    player.CanUseImpostorVent();
-                    goto DesyncImpostor;
 
-                DesyncImpostor:
-                    if (player.Data.Role.Role != RoleTypes.GuardianAngel)
-                        player.Data.Role.CanUseKillButton = true;
-                    break;
+                    bool CanUseVent = player.CanUseImpostorVentButton();
+                    __instance.ImpostorVentButton.ToggleVisible(CanUseVent);
+                    player.Data.Role.CanVent = CanUseVent;
+                }
+                else
+                {
+                    __instance.ReportButton.Hide();
+                    __instance.ImpostorVentButton.Hide();
+                    __instance.KillButton.Hide();
+                    __instance.AbilityButton.Show();
+                    __instance.AbilityButton.OverrideText(GetString(StringNames.HauntAbilityName));
+                }
             }
 
-            if (!__instance.TaskText.text.Contains(TaskTextPrefix)) __instance.TaskText.text = TaskTextPrefix + "\r\n" + __instance.TaskText.text;
 
-            if (Input.GetKeyDown(KeyCode.Y) && AmongUsClient.Instance.GameMode == GameModes.FreePlay)
+            if (Input.GetKeyDown(KeyCode.Y) && AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay)
             {
-                Action<MapBehaviour> tmpAction = (MapBehaviour m) => { m.ShowSabotageMap(); };
-                __instance.ShowMap(tmpAction);
+                __instance.ToggleMapVisible(new MapOptions()
+                {
+                    Mode = MapOptions.Modes.Sabotage,
+                    AllowMovementWhileMapOpen = true
+                });
                 if (player.AmOwner)
                 {
                     player.MyPhysics.inputHandler.enabled = true;
@@ -207,13 +187,13 @@ namespace TownOfHost
                 }
             }
 
-            if (AmongUsClient.Instance.GameMode == GameModes.OnlineGame) RepairSender.enabled = false;
-            if (Input.GetKeyDown(KeyCode.RightShift) && AmongUsClient.Instance.GameMode != GameModes.OnlineGame)
+            if (AmongUsClient.Instance.NetworkMode == NetworkModes.OnlineGame) RepairSender.enabled = false;
+            if (Input.GetKeyDown(KeyCode.RightShift) && AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
             {
                 RepairSender.enabled = !RepairSender.enabled;
                 RepairSender.Reset();
             }
-            if (RepairSender.enabled && AmongUsClient.Instance.GameMode != GameModes.OnlineGame)
+            if (RepairSender.enabled && AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
             {
                 if (Input.GetKeyDown(KeyCode.Alpha0)) RepairSender.Input(0);
                 if (Input.GetKeyDown(KeyCode.Alpha1)) RepairSender.Input(1);
@@ -226,7 +206,6 @@ namespace TownOfHost
                 if (Input.GetKeyDown(KeyCode.Alpha8)) RepairSender.Input(8);
                 if (Input.GetKeyDown(KeyCode.Alpha9)) RepairSender.Input(9);
                 if (Input.GetKeyDown(KeyCode.Return)) RepairSender.InputEnter();
-                __instance.TaskText.text = RepairSender.GetText();
             }
         }
     }
@@ -238,10 +217,7 @@ namespace TownOfHost
             var player = PlayerControl.LocalPlayer;
             if (!GameStates.IsInTask) return;
 
-            if ((player.GetCustomRole() == CustomRoles.Sheriff ||
-                player.GetCustomRole() == CustomRoles.Arsonist ||
-                player.GetCustomRole() == CustomRoles.Jackal)
-            && !player.Data.IsDead)
+            if (player.CanUseKillButton())
             {
                 ((Renderer)__instance.cosmetics.currentBodySprite.BodySprite).material.SetColor("_OutlineColor", Utils.GetRoleColor(player.GetCustomRole()));
             }
@@ -258,54 +234,75 @@ namespace TownOfHost
             ((Renderer)__instance.myRend).material.SetColor("_AddColor", mainTarget ? color : Color.clear);
         }
     }
-    [HarmonyPatch(typeof(HudManager), nameof(HudManager.SetHudActive))]
+    [HarmonyPatch(typeof(HudManager), nameof(HudManager.SetHudActive), new Type[] { typeof(PlayerControl), typeof(RoleBehaviour), typeof(bool) })]
     class SetHudActivePatch
     {
-        public static void Postfix(HudManager __instance, [HarmonyArgument(0)] bool isActive)
+        public static bool IsActive = false;
+        public static void Postfix(HudManager __instance, [HarmonyArgument(2)] bool isActive)
         {
+            __instance.ReportButton.ToggleVisible(!GameStates.IsLobby && isActive);
+            if (!GameStates.IsModHost) return;
+            IsActive = isActive;
+            if (!isActive) return;
+
             var player = PlayerControl.LocalPlayer;
+            if (player == null) return;
             switch (player.GetCustomRole())
             {
                 case CustomRoles.Sheriff:
                 case CustomRoles.Arsonist:
-                    if (player.Data.Role.Role != RoleTypes.GuardianAngel)
-                        __instance.KillButton.ToggleVisible(isActive && !player.Data.IsDead);
                     __instance.SabotageButton.ToggleVisible(false);
-                    __instance.ImpostorVentButton.ToggleVisible(false);
-                    __instance.AbilityButton.ToggleVisible(false);
                     break;
                 case CustomRoles.Jackal:
-                    if (player.Data.Role.Role != RoleTypes.GuardianAngel)
-                        __instance.KillButton.ToggleVisible(isActive && !player.Data.IsDead);
-                    __instance.SabotageButton.ToggleVisible(isActive && Options.JackalCanUseSabotage.GetBool());
-                    __instance.ImpostorVentButton.ToggleVisible(isActive && Options.JackalCanVent.GetBool());
-                    __instance.AbilityButton.ToggleVisible(false);
+                    Jackal.SetHudActive(__instance, isActive);
                     break;
             }
+            __instance.KillButton.ToggleVisible(player.CanUseKillButton());
+            __instance.ImpostorVentButton.ToggleVisible(player.CanUseImpostorVentButton());
         }
     }
-    [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.ShowNormalMap))]
-    class ShowNormalMapPatch
+    [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.Show))]
+    class MapBehaviourShowPatch
     {
-        public static void Prefix(ref RoleTeamTypes __state)
+        public static void Prefix(MapBehaviour __instance, ref MapOptions opts)
         {
-            var player = PlayerControl.LocalPlayer;
-            if (player.Is(CustomRoles.Sheriff) || player.Is(CustomRoles.Arsonist))
-            {
-                __state = player.Data.Role.TeamType;
-                player.Data.Role.TeamType = RoleTeamTypes.Crewmate;
-            }
-        }
+            if (GameStates.IsMeeting) return;
 
-        public static void Postfix(ref RoleTeamTypes __state)
-        {
-            var player = PlayerControl.LocalPlayer;
-            if (player.Is(CustomRoles.Sheriff) || player.Is(CustomRoles.Arsonist))
+            if (opts.Mode is MapOptions.Modes.Normal or MapOptions.Modes.Sabotage)
             {
-                player.Data.Role.TeamType = __state;
+                var player = PlayerControl.LocalPlayer;
+                if (player.Is(CustomRoleTypes.Impostor) || (player.Is(CustomRoles.Jackal) && Jackal.CanUseSabotage.GetBool()))
+                    opts.Mode = MapOptions.Modes.Sabotage;
+                else
+                    opts.Mode = MapOptions.Modes.Normal;
             }
         }
     }
+    [HarmonyPatch(typeof(TaskPanelBehaviour), nameof(TaskPanelBehaviour.SetTaskText))]
+    class TaskPanelBehaviourPatch
+    {
+        // タスク表示の文章が更新・適用された後に実行される
+        public static void Postfix(TaskPanelBehaviour __instance)
+        {
+            if (!GameStates.IsModHost) return;
+            PlayerControl player = PlayerControl.LocalPlayer;
+
+            // 役職説明表示
+            if (!player.GetCustomRole().IsVanilla())
+            {
+                var RoleWithInfo = $"{player.GetDisplayRoleName()}:\r\n";
+                RoleWithInfo += player.GetRoleInfo();
+                __instance.taskText.text = Utils.ColorString(player.GetRoleColor(), RoleWithInfo) + "\n" + __instance.taskText.text;
+            }
+
+            // RepairSenderの表示
+            if (RepairSender.enabled && AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
+            {
+                __instance.taskText.text = RepairSender.GetText();
+            }
+        }
+    }
+
     class RepairSender
     {
         public static bool enabled = false;

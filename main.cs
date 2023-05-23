@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
+using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.IL2CPP;
 using HarmonyLib;
+using UnhollowerRuntimeLib;
 using UnityEngine;
 
 [assembly: AssemblyFileVersionAttribute(TownOfHost.Main.PluginVersion)]
@@ -14,6 +15,7 @@ using UnityEngine;
 namespace TownOfHost
 {
     [BepInPlugin(PluginGuid, "Town Of Host", PluginVersion)]
+    [BepInIncompatibility("jp.ykundesu.supernewroles")]
     [BepInProcess("Among Us.exe")]
     public class Main : BasePlugin
     {
@@ -32,9 +34,20 @@ namespace TownOfHost
         public static readonly string DiscordInviteUrl = "https://discord.gg/W5ug6hXB9V";
         // ==========
         public const string OriginalForkId = "OriginalTOH"; // Don't Change The Value. / この値を変更しないでください。
+        // == 認証設定 / Authentication Config ==
+        // デバッグキーの認証インスタンス
+        public static HashAuth DebugKeyAuth { get; private set; }
+        // デバッグキーのハッシュ値
+        public const string DebugKeyHash = "c0fd562955ba56af3ae20d7ec9e64c664f0facecef4b3e366e109306adeae29d";
+        // デバッグキーのソルト
+        public const string DebugKeySalt = "59687b";
+        // デバッグキーのコンフィグ入力
+        public static ConfigEntry<string> DebugKeyInput { get; private set; }
+
+        // ==========
         //Sorry for many Japanese comments.
         public const string PluginGuid = "com.emptybottle.townofhost";
-        public const string PluginVersion = "3.0.2";
+        public const string PluginVersion = "4.1.2";
         public Harmony Harmony { get; } = new Harmony(PluginGuid);
         public static Version version = Version.Parse(PluginVersion);
         public static BepInEx.Logging.ManualLogSource Logger;
@@ -42,13 +55,13 @@ namespace TownOfHost
         public static string ExceptionMessage;
         public static bool ExceptionMessageIsShown = false;
         public static string credentialsText;
+        public static NormalGameOptionsV07 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
+        public static HideNSeekGameOptionsV07 HideNSeekSOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
         //Client Options
         public static ConfigEntry<string> HideName { get; private set; }
         public static ConfigEntry<string> HideColor { get; private set; }
         public static ConfigEntry<bool> ForceJapanese { get; private set; }
         public static ConfigEntry<bool> JapaneseRoleName { get; private set; }
-        public static ConfigEntry<bool> AmDebugger { get; private set; }
-        public static ConfigEntry<string> ShowPopUpVersion { get; private set; }
         public static ConfigEntry<int> MessageWait { get; private set; }
 
         public static Dictionary<byte, PlayerVersion> playerVersion = new();
@@ -59,14 +72,14 @@ namespace TownOfHost
         public static ConfigEntry<string> Preset4 { get; private set; }
         public static ConfigEntry<string> Preset5 { get; private set; }
         //Other Configs
-        public static ConfigEntry<bool> IgnoreWinnerCommand { get; private set; }
         public static ConfigEntry<string> WebhookURL { get; private set; }
+        public static ConfigEntry<string> BetaBuildURL { get; private set; }
         public static ConfigEntry<float> LastKillCooldown { get; private set; }
-        public static GameOptionsData RealOptionsData;
+        public static ConfigEntry<float> LastShapeshifterCooldown { get; private set; }
+        public static OptionBackupData RealOptionsData;
+        public static Dictionary<byte, PlayerState> PlayerStates = new();
         public static Dictionary<byte, string> AllPlayerNames;
         public static Dictionary<(byte, byte), string> LastNotifyNames;
-        public static Dictionary<byte, CustomRoles> AllPlayerCustomRoles;
-        public static Dictionary<byte, CustomRoles> AllPlayerCustomSubRoles;
         public static Dictionary<byte, Color32> PlayerColors = new();
         public static Dictionary<byte, PlayerState.DeathReason> AfterMeetingDeathPlayers = new();
         public static Dictionary<CustomRoles, String> roleColors;
@@ -74,10 +87,9 @@ namespace TownOfHost
         public static float RefixCooldownDelay = 0f;
         public static List<byte> ResetCamPlayerList;
         public static List<byte> winnerList;
-        public static List<(string, byte)> MessagesToSend;
+        public static List<int> clientIdList;
+        public static List<(string, byte, string)> MessagesToSend;
         public static bool isChatCommand = false;
-        public static bool TextCursorVisible;
-        public static float TextCursorTimer;
         public static List<PlayerControl> LoversPlayers = new();
         public static bool isLoversDead = true;
         public static Dictionary<byte, float> AllPlayerKillCooldown = new();
@@ -87,15 +99,11 @@ namespace TownOfHost
         /// </summary>
         public static Dictionary<byte, float> AllPlayerSpeed = new();
         public const float MinSpeed = 0.0001f;
-        public static Dictionary<byte, (byte, float)> BitPlayers = new();
         public static Dictionary<byte, float> WarlockTimer = new();
         public static Dictionary<byte, PlayerControl> CursedPlayers = new();
-        public static List<PlayerControl> SpelledPlayer = new();
-        public static Dictionary<byte, bool> KillOrSpell = new();
         public static Dictionary<byte, bool> isCurseAndKill = new();
         public static Dictionary<(byte, byte), bool> isDoused = new();
         public static Dictionary<byte, (PlayerControl, float)> ArsonistTimer = new();
-        public static Dictionary<byte, float> AirshipMeetingTimer = new();
         /// <summary>
         /// Key: ターゲットのPlayerId, Value: パペッティアのPlayerId
         /// </summary>
@@ -104,19 +112,20 @@ namespace TownOfHost
         public static Dictionary<byte, int> MayorUsedButtonCount = new();
         public static int AliveImpostorCount;
         public static int SKMadmateNowCount;
-        public static bool witchMeeting;
         public static bool isCursed;
         public static Dictionary<byte, bool> CheckShapeshift = new();
-        public static Dictionary<(byte, byte), string> targetArrows = new();
-        public static bool CustomWinTrigger;
+        public static Dictionary<byte, byte> ShapeshiftTarget = new();
         public static bool VisibleTasksCount;
         public static string nickName = "";
         public static bool introDestroyed = false;
-        public static int DiscussionTime;
-        public static int VotingTime;
         public static byte currentDousingTarget;
         public static float DefaultCrewmateVision;
         public static float DefaultImpostorVision;
+        public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day is 24 or 25;
+        public static bool IsInitialRelease = DateTime.Now.Month == 12 && DateTime.Now.Day is 4;
+
+        public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
+        public static IEnumerable<PlayerControl> AllAlivePlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive());
 
         public static Main Instance;
 
@@ -124,35 +133,36 @@ namespace TownOfHost
         {
             Instance = this;
 
-            TextCursorTimer = 0f;
-            TextCursorVisible = true;
-
             //Client Options
             HideName = Config.Bind("Client Options", "Hide Game Code Name", "Town Of Host");
             HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
             ForceJapanese = Config.Bind("Client Options", "Force Japanese", false);
             JapaneseRoleName = Config.Bind("Client Options", "Japanese Role Name", true);
+            DebugKeyInput = Config.Bind("Authentication", "Debug Key", "");
+
             Logger = BepInEx.Logging.Logger.CreateLogSource("TownOfHost");
             TownOfHost.Logger.Enable();
             TownOfHost.Logger.Disable("NotifyRoles");
             TownOfHost.Logger.Disable("SendRPC");
             TownOfHost.Logger.Disable("ReceiveRPC");
             TownOfHost.Logger.Disable("SwitchSystem");
+            TownOfHost.Logger.Disable("CustomRpcSender");
             //TownOfHost.Logger.isDetail = true;
 
-            AllPlayerCustomRoles = new Dictionary<byte, CustomRoles>();
-            AllPlayerCustomSubRoles = new Dictionary<byte, CustomRoles>();
-            CustomWinTrigger = false;
-            BitPlayers = new Dictionary<byte, (byte, float)>();
+            // 認証関連-初期化
+            DebugKeyAuth = new HashAuth(DebugKeyHash, DebugKeySalt);
+
+            // 認証関連-認証
+            DebugModeManager.Auth(DebugKeyAuth, DebugKeyInput.Value);
+
             WarlockTimer = new Dictionary<byte, float>();
             CursedPlayers = new Dictionary<byte, PlayerControl>();
-            SpelledPlayer = new List<PlayerControl>();
             isDoused = new Dictionary<(byte, byte), bool>();
             ArsonistTimer = new Dictionary<byte, (PlayerControl, float)>();
             MayorUsedButtonCount = new Dictionary<byte, int>();
             winnerList = new();
             VisibleTasksCount = false;
-            MessagesToSend = new List<(string, byte)>();
+            MessagesToSend = new List<(string, byte, string)>();
             currentDousingTarget = 255;
 
             Preset1 = Config.Bind("Preset Name Options", "Preset1", "Preset_1");
@@ -160,16 +170,18 @@ namespace TownOfHost
             Preset3 = Config.Bind("Preset Name Options", "Preset3", "Preset_3");
             Preset4 = Config.Bind("Preset Name Options", "Preset4", "Preset_4");
             Preset5 = Config.Bind("Preset Name Options", "Preset5", "Preset_5");
-            IgnoreWinnerCommand = Config.Bind("Other", "IgnoreWinnerCommand", true);
             WebhookURL = Config.Bind("Other", "WebhookURL", "none");
-            AmDebugger = Config.Bind("Other", "AmDebugger", false);
-            ShowPopUpVersion = Config.Bind("Other", "ShowPopUpVersion", "0");
+            BetaBuildURL = Config.Bind("Other", "BetaBuildURL", "");
             MessageWait = Config.Bind("Other", "MessageWait", 1);
             LastKillCooldown = Config.Bind("Other", "LastKillCooldown", (float)30);
+            LastShapeshifterCooldown = Config.Bind("Other", "LastShapeshifterCooldown", (float)30);
 
-            NameColorManager.Begin();
             CustomWinnerHolder.Reset();
             Translator.Init();
+            BanManager.Init();
+            TemplateManager.Init();
+
+            IRandom.SetInstance(new NetRandomWrapper());
 
             hasArgumentException = false;
             ExceptionMessage = "";
@@ -180,8 +192,8 @@ namespace TownOfHost
                 {
                     //バニラ役職
                     {CustomRoles.Crewmate, "#ffffff"},
-                    {CustomRoles.Engineer, "#b6f0ff"},
-                    {CustomRoles.Scientist, "#b6f0ff"},
+                    {CustomRoles.Engineer, "#8cffff"},
+                    {CustomRoles.Scientist, "#8cffff"},
                     {CustomRoles.GuardianAngel, "#ffffff"},
                     //インポスター、シェイプシフター
                     //特殊インポスター役職
@@ -203,7 +215,8 @@ namespace TownOfHost
                     {CustomRoles.Dictator, "#df9b00"},
                     {CustomRoles.CSchrodingerCat, "#ffffff"}, //シュレディンガーの猫の派生
                     {CustomRoles.Seer, "#61b26c"},
-                    //第三陣営役職
+                    {CustomRoles.TimeManager, "#6495ed"},
+                    //ニュートラル役職
                     {CustomRoles.Arsonist, "#ff6633"},
                     {CustomRoles.Jester, "#ec62a5"},
                     {CustomRoles.Terrorist, "#00ff00"},
@@ -220,18 +233,19 @@ namespace TownOfHost
                     // GM
                     {CustomRoles.GM, "#ff5b70"},
                     //サブ役職
-                    {CustomRoles.NoSubRoleAssigned, "#ffffff"},
-                    {CustomRoles.Lovers, "#ffaaaa"}
+                    {CustomRoles.LastImpostor, "#ff1919"},
+                    {CustomRoles.Lovers, "#ff6be4"},
+                    {CustomRoles.Workhorse, "#00ffff"},
+
+                    {CustomRoles.NotAssigned, "#ffffff"}
                 };
                 foreach (var role in Enum.GetValues(typeof(CustomRoles)).Cast<CustomRoles>())
                 {
-                    switch (role.GetRoleType())
+                    switch (role.GetCustomRoleTypes())
                     {
-                        case RoleType.Impostor:
-                            roleColors.TryAdd(role, "#ff0000");
-                            break;
-                        case RoleType.Madmate:
-                            roleColors.TryAdd(role, "#ff0000");
+                        case CustomRoleTypes.Impostor:
+                        case CustomRoleTypes.Madmate:
+                            roleColors.TryAdd(role, "#ff1919");
                             break;
                         default:
                             break;
@@ -241,33 +255,23 @@ namespace TownOfHost
             catch (ArgumentException ex)
             {
                 TownOfHost.Logger.Error("エラー:Dictionaryの値の重複を検出しました", "LoadDictionary");
-                TownOfHost.Logger.Error(ex.Message, "LoadDictionary");
+                TownOfHost.Logger.Exception(ex, "LoadDictionary");
                 hasArgumentException = true;
                 ExceptionMessage = ex.Message;
                 ExceptionMessageIsShown = false;
             }
             TownOfHost.Logger.Info($"{Application.version}", "AmongUs Version");
 
-            TownOfHost.Logger.Info($"{nameof(ThisAssembly.Git.Branch)}: {ThisAssembly.Git.Branch}", "GitVersion");
-            TownOfHost.Logger.Info($"{nameof(ThisAssembly.Git.BaseTag)}: {ThisAssembly.Git.BaseTag}", "GitVersion");
-            TownOfHost.Logger.Info($"{nameof(ThisAssembly.Git.Commit)}: {ThisAssembly.Git.Commit}", "GitVersion");
-            TownOfHost.Logger.Info($"{nameof(ThisAssembly.Git.Commits)}: {ThisAssembly.Git.Commits}", "GitVersion");
-            TownOfHost.Logger.Info($"{nameof(ThisAssembly.Git.IsDirty)}: {ThisAssembly.Git.IsDirty}", "GitVersion");
-            TownOfHost.Logger.Info($"{nameof(ThisAssembly.Git.Sha)}: {ThisAssembly.Git.Sha}", "GitVersion");
-            TownOfHost.Logger.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}", "GitVersion");
+            var handler = TownOfHost.Logger.Handler("GitVersion");
+            handler.Info($"{nameof(ThisAssembly.Git.Branch)}: {ThisAssembly.Git.Branch}");
+            handler.Info($"{nameof(ThisAssembly.Git.BaseTag)}: {ThisAssembly.Git.BaseTag}");
+            handler.Info($"{nameof(ThisAssembly.Git.Commit)}: {ThisAssembly.Git.Commit}");
+            handler.Info($"{nameof(ThisAssembly.Git.Commits)}: {ThisAssembly.Git.Commits}");
+            handler.Info($"{nameof(ThisAssembly.Git.IsDirty)}: {ThisAssembly.Git.IsDirty}");
+            handler.Info($"{nameof(ThisAssembly.Git.Sha)}: {ThisAssembly.Git.Sha}");
+            handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
 
-            if (!File.Exists("template.txt"))
-            {
-                TownOfHost.Logger.Info("Among Us.exeと同じフォルダにtemplate.txtが見つかりませんでした。新規作成します。", "Template");
-                try
-                {
-                    File.WriteAllText(@"template.txt", "test:This is template text.\\nLine breaks are also possible.\ntest:これは定型文です。\\n改行も可能です。");
-                }
-                catch (Exception ex)
-                {
-                    TownOfHost.Logger.Error(ex.ToString(), "Template");
-                }
-            }
+            ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
 
             Harmony.PatchAll();
         }
@@ -285,7 +289,7 @@ namespace TownOfHost
         FireWorks,
         Mafia,
         SerialKiller,
-        //ShapeMaster,
+        ShapeMaster,
         Sniper,
         Vampire,
         Witch,
@@ -294,7 +298,6 @@ namespace TownOfHost
         Puppeteer,
         TimeThief,
         EvilTracker,
-        LastImpostor,
         //Madmate
         MadGuardian,
         Madmate,
@@ -320,6 +323,7 @@ namespace TownOfHost
         Dictator,
         Doctor,
         Seer,
+        TimeManager,
         CSchrodingerCat,//クルー陣営のシュレディンガーの猫
         //Neutral
         Arsonist,
@@ -327,7 +331,7 @@ namespace TownOfHost
         EgoSchrodingerCat,//エゴイスト陣営のシュレディンガーの猫
         Jester,
         Opportunist,
-        SchrodingerCat,//第三陣営のシュレディンガーの猫
+        SchrodingerCat,//無所属のシュレディンガーの猫
         Terrorist,
         Executioner,
         Jackal,
@@ -338,8 +342,10 @@ namespace TownOfHost
         //GM
         GM,
         // Sub-roll after 500
-        NoSubRoleAssigned = 500,
+        NotAssigned = 500,
+        LastImpostor,
         Lovers,
+        Workhorse,
     }
     //WinData
     public enum CustomWinner
@@ -381,7 +387,6 @@ namespace TownOfHost
         RoomHost,
         OriginalName
     }
-
     public enum VoteMode
     {
         Default,

@@ -1,3 +1,8 @@
+using AmongUs.GameOptions;
+
+using TownOfHost.Roles.Impostor;
+using TownOfHost.Roles.Neutral;
+
 namespace TownOfHost
 {
     static class CustomRolesHelper
@@ -10,7 +15,7 @@ namespace TownOfHost
                 CustomRoles.BountyHunter or
                 CustomRoles.Vampire or
                 CustomRoles.Witch or
-                //CustomRoles.ShapeMaster or
+                CustomRoles.ShapeMaster or
                 CustomRoles.Warlock or
                 CustomRoles.SerialKiller or
                 CustomRoles.Mare or
@@ -20,8 +25,7 @@ namespace TownOfHost
                 CustomRoles.Mafia or
                 CustomRoles.FireWorks or
                 CustomRoles.Sniper or
-                CustomRoles.EvilTracker or
-                CustomRoles.LastImpostor;
+                CustomRoles.EvilTracker;
         }
         public static bool IsMadmate(this CustomRoles role)
         {
@@ -60,21 +64,29 @@ namespace TownOfHost
                 CustomRoles.Impostor or
                 CustomRoles.Shapeshifter;
         }
-
-        public static RoleType GetRoleType(this CustomRoles role)
+        public static bool IsKilledSchrodingerCat(this CustomRoles role)
         {
-            RoleType type = RoleType.Crewmate;
-            if (role.IsImpostor()) type = RoleType.Impostor;
-            if (role.IsNeutral()) type = RoleType.Neutral;
-            if (role.IsMadmate()) type = RoleType.Madmate;
+            return role is
+                CustomRoles.SchrodingerCat or
+                CustomRoles.MSchrodingerCat or
+                CustomRoles.CSchrodingerCat or
+                CustomRoles.EgoSchrodingerCat or
+                CustomRoles.JSchrodingerCat;
+        }
+
+        public static CustomRoleTypes GetCustomRoleTypes(this CustomRoles role)
+        {
+            CustomRoleTypes type = CustomRoleTypes.Crewmate;
+            if (role.IsImpostor()) type = CustomRoleTypes.Impostor;
+            if (role.IsNeutral()) type = CustomRoleTypes.Neutral;
+            if (role.IsMadmate()) type = CustomRoleTypes.Madmate;
             return type;
         }
-        public static void SetCount(this CustomRoles role, int num) => Options.SetRoleCount(role, num);
         public static int GetCount(this CustomRoles role)
         {
             if (role.IsVanilla())
             {
-                RoleOptionsData roleOpt = PlayerControl.GameOptions.RoleOptions;
+                var roleOpt = Main.NormalOptions.RoleOptions;
                 return role switch
                 {
                     CustomRoles.Engineer => roleOpt.GetNumPerGame(RoleTypes.Engineer),
@@ -94,7 +106,7 @@ namespace TownOfHost
         {
             if (role.IsVanilla())
             {
-                RoleOptionsData roleOpt = PlayerControl.GameOptions.RoleOptions;
+                var roleOpt = Main.NormalOptions.RoleOptions;
                 return role switch
                 {
                     CustomRoles.Engineer => roleOpt.GetChancePerGame(RoleTypes.Engineer),
@@ -111,12 +123,73 @@ namespace TownOfHost
             }
         }
         public static bool IsEnable(this CustomRoles role) => role.GetCount() > 0;
+        public static bool CanMakeMadmate(this CustomRoles role)
+            => role switch
+            {
+                CustomRoles.Shapeshifter => true,
+                CustomRoles.EvilTracker => EvilTracker.CanCreateMadmate,
+                CustomRoles.Egoist => Egoist.CanCreateMadmate,
+                _ => false,
+            };
+        public static RoleTypes GetRoleTypes(this CustomRoles role)
+            => role switch
+            {
+                CustomRoles.Sheriff or
+                CustomRoles.Arsonist or
+                CustomRoles.Jackal => RoleTypes.Impostor,
+
+                CustomRoles.Scientist or
+                CustomRoles.Doctor => RoleTypes.Scientist,
+
+                CustomRoles.Engineer or
+                CustomRoles.Madmate or
+                CustomRoles.Terrorist => RoleTypes.Engineer,
+
+                CustomRoles.GuardianAngel or
+                CustomRoles.GM => RoleTypes.GuardianAngel,
+
+                CustomRoles.MadSnitch => Options.MadSnitchCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
+                CustomRoles.Watcher => Options.IsEvilWatcher ? RoleTypes.Impostor : RoleTypes.Crewmate,
+                CustomRoles.Mayor => Options.MayorHasPortableButton.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
+
+                CustomRoles.Shapeshifter or
+                CustomRoles.BountyHunter or
+                CustomRoles.SerialKiller or
+                CustomRoles.FireWorks or
+                CustomRoles.Sniper or
+                CustomRoles.ShapeMaster or
+                CustomRoles.Warlock or
+                CustomRoles.Egoist => RoleTypes.Shapeshifter,
+
+                CustomRoles.EvilTracker => EvilTracker.RoleTypes,
+
+                _ => role.IsImpostor() ? RoleTypes.Impostor : RoleTypes.Crewmate,
+            };
+
+        public static CountTypes GetCountTypes(this CustomRoles role)
+            => role switch
+            {
+                CustomRoles.GM => CountTypes.OutOfGame,
+                CustomRoles.Egoist => CountTypes.Impostor,
+                CustomRoles.Jackal => CountTypes.Jackal,
+                CustomRoles.HASFox or
+                CustomRoles.HASTroll => CountTypes.None,
+                _ => role.IsImpostor() ? CountTypes.Impostor : CountTypes.Crew,
+            };
     }
-    public enum RoleType
+    public enum CustomRoleTypes
     {
         Crewmate,
         Impostor,
         Neutral,
         Madmate
+    }
+    public enum CountTypes
+    {
+        OutOfGame,
+        None,
+        Crew,
+        Impostor,
+        Jackal,
     }
 }

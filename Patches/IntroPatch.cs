@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AmongUs.GameOptions;
 using HarmonyLib;
 using UnityEngine;
 using static TownOfHost.Translator;
@@ -12,6 +13,7 @@ namespace TownOfHost
     {
         public static void Postfix(IntroCutscene __instance)
         {
+            if (!GameStates.IsModHost) return;
             new LateTask(() =>
             {
                 CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
@@ -22,12 +24,12 @@ namespace TownOfHost
                     __instance.RoleText.color = Utils.GetRoleColor(role);
                     __instance.RoleBlurbText.color = Utils.GetRoleColor(role);
 
-                    __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.Is(CustomRoles.EvilWatcher) || PlayerControl.LocalPlayer.Is(CustomRoles.NiceWatcher)
-                        ? GetString("WatcherInfo")
-                        : GetString(role.ToString() + "Info");
+                    __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
                 }
 
-                __instance.RoleText.text += Utils.GetShowLastSubRolesText(PlayerControl.LocalPlayer.PlayerId);
+                foreach (var subRole in Main.PlayerStates[PlayerControl.LocalPlayer.PlayerId].SubRoles)
+                    __instance.RoleBlurbText.text += "\n" + Utils.ColorString(Utils.GetRoleColor(subRole), GetString($"{subRole}Info"));
+                __instance.RoleText.text += Utils.GetSubRolesText(PlayerControl.LocalPlayer.PlayerId);
 
             }, 0.01f, "Override Role Text");
 
@@ -38,29 +40,20 @@ namespace TownOfHost
     {
         public static void Prefix()
         {
-            if (!AmongUsClient.Instance.AmHost)
-                foreach (var pc in PlayerControl.AllPlayerControls)
-                {
-                    switch (pc.GetCustomRole())
-                    {
-                        case CustomRoles.Egoist:
-                            Egoist.Add(pc.PlayerId);
-                            break;
-                    }
-                }
-            Logger.Info("------------名前表示------------", "Info");
-            foreach (var pc in PlayerControl.AllPlayerControls)
+            var logger = Logger.Handler("Info");
+            logger.Info("------------名前表示------------");
+            foreach (var pc in Main.AllPlayerControls)
             {
-                Logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc.name.PadRightV2(20)}:{pc.cosmetics.nameText.text}", "Info");
+                logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc.name.PadRightV2(20)}:{pc.cosmetics.nameText.text}({Palette.ColorNames[pc.Data.DefaultOutfit.ColorId].ToString().Replace("Color", "")})");
                 pc.cosmetics.nameText.text = pc.name;
             }
-            Logger.Info("----------役職割り当て----------", "Info");
-            foreach (var pc in PlayerControl.AllPlayerControls)
+            logger.Info("----------役職割り当て----------");
+            foreach (var pc in Main.AllPlayerControls)
             {
-                Logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc?.Data?.PlayerName?.PadRightV2(20)}:{pc.GetAllRoleName()}", "Info");
+                logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc?.Data?.PlayerName?.PadRightV2(20)}:{pc.GetAllRoleName().RemoveHtmlTags()}");
             }
-            Logger.Info("--------------環境--------------", "Info");
-            foreach (var pc in PlayerControl.AllPlayerControls)
+            logger.Info("--------------環境--------------");
+            foreach (var pc in Main.AllPlayerControls)
             {
                 try
                 {
@@ -69,23 +62,25 @@ namespace TownOfHost
                     if (Main.playerVersion.TryGetValue(pc.PlayerId, out PlayerVersion pv))
                         text += $":Mod({pv.forkId}/{pv.version}:{pv.tag})";
                     else text += ":Vanilla";
-                    Logger.Info(text, "Info");
+                    logger.Info(text);
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.ToString(), "Platform");
+                    Logger.Exception(ex, "Platform");
                 }
             }
-            Logger.Info("------------基本設定------------", "Info");
-            var tmp = PlayerControl.GameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1);
-            foreach (var t in tmp) Logger.Info(t, "Info");
-            Logger.Info("------------詳細設定------------", "Info");
-            foreach (var o in CustomOption.Options)
-                if (!o.IsHidden(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.Enabled))
-                    Logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}", "Info");
-            Logger.Info("-------------その他-------------", "Info");
-            Logger.Info($"プレイヤー数: {PlayerControl.AllPlayerControls.Count}人", "Info");
-            PlayerControl.AllPlayerControls.ToArray().Do(x => PlayerState.InitTask(x));
+            logger.Info("------------基本設定------------");
+            var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1);
+            foreach (var t in tmp) logger.Info(t);
+            logger.Info("------------詳細設定------------");
+            foreach (var o in OptionItem.AllOptions)
+                if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.GetBool()))
+                    logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}");
+            logger.Info("-------------その他-------------");
+            logger.Info($"プレイヤー数: {Main.AllPlayerControls.Count()}人");
+            Main.AllPlayerControls.Do(x => Main.PlayerStates[x.PlayerId].InitTask(x));
+            GameData.Instance.RecomputeTaskCounts();
+            TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
 
             Utils.NotifyRoles();
 
@@ -97,7 +92,7 @@ namespace TownOfHost
     {
         public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
         {
-            if (PlayerControl.LocalPlayer.Is(RoleType.Neutral))
+            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral))
             {
                 //ぼっち役職
                 var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -108,13 +103,11 @@ namespace TownOfHost
         public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
         {
             //チーム表示変更
-            var rand = new System.Random();
             CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
-            RoleType roleType = role.GetRoleType();
 
-            switch (roleType)
+            switch (role.GetCustomRoleTypes())
             {
-                case RoleType.Neutral:
+                case CustomRoleTypes.Neutral:
                     __instance.TeamTitle.text = Utils.GetRoleName(role);
                     __instance.TeamTitle.color = Utils.GetRoleColor(role);
                     __instance.ImpostorText.gameObject.SetActive(true);
@@ -126,7 +119,7 @@ namespace TownOfHost
                     };
                     __instance.BackgroundBar.material.color = Utils.GetRoleColor(role);
                     break;
-                case RoleType.Madmate:
+                case CustomRoleTypes.Madmate:
                     __instance.TeamTitle.text = GetString("Madmate");
                     __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.Madmate);
                     __instance.ImpostorText.text = GetString("TeamImpostor");
@@ -157,6 +150,12 @@ namespace TownOfHost
                 case CustomRoles.Sheriff:
                     PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Crewmate);
                     __instance.BackgroundBar.material.color = Palette.CrewmateBlue;
+                    __instance.ImpostorText.gameObject.SetActive(true);
+                    var numImpostors = Main.NormalOptions.NumImpostors;
+                    var text = numImpostors == 1
+                        ? GetString(StringNames.NumImpostorsS)
+                        : string.Format(GetString(StringNames.NumImpostorsP), numImpostors);
+                    __instance.ImpostorText.text = text.Replace("[FF1919FF]", "<color=#FF1919FF>").Replace("[]", "</color>");
                     break;
                 case CustomRoles.Arsonist:
                     PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Crewmate);
@@ -230,7 +229,7 @@ namespace TownOfHost
                 //シェリフの場合はキャンセルしてBeginCrewmateに繋ぐ
                 yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                 yourTeam.Add(PlayerControl.LocalPlayer);
-                foreach (var pc in PlayerControl.AllPlayerControls)
+                foreach (var pc in Main.AllPlayerControls)
                 {
                     if (!pc.AmOwner) yourTeam.Add(pc);
                 }
@@ -255,33 +254,33 @@ namespace TownOfHost
             Main.introDestroyed = true;
             if (AmongUsClient.Instance.AmHost)
             {
-                if (PlayerControl.GameOptions.MapId != 4)
+                if (Main.NormalOptions.MapId != 4)
                 {
-                    PlayerControl.AllPlayerControls.ToArray().Do(pc => pc.RpcResetAbilityCooldown());
+                    Main.AllPlayerControls.Do(pc => pc.RpcResetAbilityCooldown());
                     if (Options.FixFirstKillCooldown.GetBool())
                         new LateTask(() =>
                         {
-                            PlayerControl.AllPlayerControls.ToArray().Do(pc => pc.SetKillCooldown(Main.AllPlayerKillCooldown[pc.PlayerId] - 2f));
+                            Main.AllPlayerControls.Do(pc => pc.SetKillCooldown(Main.AllPlayerKillCooldown[pc.PlayerId] - 2f));
                         }, 2f, "FixKillCooldownTask");
                 }
-                new LateTask(() => PlayerControl.AllPlayerControls.ToArray().Do(pc => pc.RpcSetRole(RoleTypes.Shapeshifter)), 2f, "SetImpostorForServer");
+                new LateTask(() => Main.AllPlayerControls.Do(pc => pc.RpcSetRoleDesync(RoleTypes.Shapeshifter, -3)), 2f, "SetImpostorForServer");
                 if (PlayerControl.LocalPlayer.Is(CustomRoles.GM))
                 {
                     PlayerControl.LocalPlayer.RpcExile();
-                    PlayerState.SetDead(PlayerControl.LocalPlayer.PlayerId);
+                    Main.PlayerStates[PlayerControl.LocalPlayer.PlayerId].SetDead();
                 }
                 if (Options.RandomSpawn.GetBool())
                 {
                     RandomSpawn.SpawnMap map;
-                    switch (PlayerControl.GameOptions.MapId)
+                    switch (Main.NormalOptions.MapId)
                     {
                         case 0:
                             map = new RandomSpawn.SkeldSpawnMap();
-                            PlayerControl.AllPlayerControls.ToArray().Do(map.RandomTeleport);
+                            Main.AllPlayerControls.Do(map.RandomTeleport);
                             break;
                         case 1:
                             map = new RandomSpawn.MiraHQSpawnMap();
-                            PlayerControl.AllPlayerControls.ToArray().Do(map.RandomTeleport);
+                            Main.AllPlayerControls.Do(map.RandomTeleport);
                             break;
                     }
                 }
