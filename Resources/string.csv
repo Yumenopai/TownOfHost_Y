@@ -1,21 +1,12 @@
-<<<<<<< HEAD
 id,0,11,13,14,5
 ## Translators
 #5  RusTranslation: Tommy-XL
 #13 SChinese:fivefirex&ZeMingOH233  2T&MC-AS-Huier&xiaojin xyjx001(Edit: Tanakanira) (TOH_Y)Among Us
 #14 TChinese: NetherDragon_Tw (Edit: Soukunsandesu)
-=======
-"id","0","11","13","14","5","2"
-"## Translators"
-"#5  RusTranslation: Tommy-XL"
-"#13 SChinese:fivefirex&ZeMingOH233  2T&MC-AS-Huier&xiaojin xyjx001(Edit: Tanakanira)"
-"#14 TChinese: NetherDragon_Tw (Edit: Soukunsandesu)"
->>>>>>> c6ac45cccc615c2a645f484a286f549e403ba238
 
 "## 役職"
 "Neutral","Neutral","ニュートラル","独立阵营","中立陣營","Нейтрал","Neutro"
 
-<<<<<<< HEAD
 # TOH_Y役職
 Evilneko,Evilnekomata,イビル猫又,双尾妖猫,
 AntiAdminer,AntiAdminer,アンチアドミナー,反管理人,
@@ -102,15 +93,6 @@ Scientist,Scientist,科学者,科学家,科學家,Ученый
 GuardianAngel,GuardianAngel,守護天使,守护天使,守護天使,Ангел-хранитель
 Impostor,Impostor,インポスター,内鬼,偽裝者,Предатель
 Shapeshifter,Shapeshifter,シェイプシフター,变形者,變形者,Оборотень
-=======
-"# バニラ役職"
-"Crewmate","Crewmate","クルーメイト","船员","船員","Член Экипажа","Tripulante"
-"Engineer","Engineer","エンジニア","工程师","工程師","Инженер","Engenheiro"
-"Scientist","Scientist","科学者","科学家","科學家","Ученый","Cientista"
-"GuardianAngel","Guardian Angel","守護天使","守护天使","守護天使","Ангел-хранитель","Anjo da Guarda"
-"Impostor","Impostor","インポスター","内鬼","偽裝者","Предатель","Impostor"
-"Shapeshifter","Shapeshifter","シェイプシフター","变形者","變形者","Оборотень","Metamorfo"
->>>>>>> c6ac45cccc615c2a645f484a286f549e403ba238
 
 "# 特殊インポスター役職"
 "BountyHunter","Bounty Hunter","バウンティハンター","赏金猎人","賞金獵人","Охотник за головами","Caçador de Recompensas"
@@ -153,7 +135,6 @@ Shapeshifter,Shapeshifter,シェイプシフター,变形者,變形者,Обор�
 "Seer","Seer","シーア","灵媒","靈媒","Провидец","Vidente"
 "TimeManager","TimeManager","タイムマネージャー","时间管理者","時間大師","Мастер Времени",""
 
-<<<<<<< HEAD
 # 第三陣営役職
 Jester,Jester,ジェスター,小丑,小丑,Jester
 Terrorist,Terrorist,テロリスト,恐怖分子,恐怖分子,Terrorist
@@ -167,33 +148,13 @@ Opportunist,Opportunist,オポチュニスト,投机者,投機主義者,Opportun
 Egoist,Egoist,エゴイスト,野心家,利己主義者,Egoist
 Lovers,Lovers,恋人,恋人,戀人,Lovers
 Jackal,Jackal,ジャッカル,豺狼,豺狼,Jackal
-=======
-"# ニュートラル役職"
-"Jester","Jester","ジェスター","小丑","小丑","Шут","Bobo"
-"Terrorist","Terrorist","テロリスト","恐怖分子","恐怖分子","Террорист","Terrorista"
-"Executioner","Executioner","エクスキューショナー","处刑人","劊子手","Палач","Executor"
-"SchrodingerCat","Schrödinger's Cat","シュレディンガーの猫","薛定谔的猫","薛定諤的貓","Пленник","Gato de Schrodinger"
-"CSchrodingerCat","Schrödinger's Cat","シュレディンガーの猫","薛定谔的猫","薛定諤的貓","Пленник Экипажа","Gato de Schrodinger"
-"MSchrodingerCat","Schrödinger's Cat","シュレディンガーの猫","薛定谔的猫","薛定諤的貓","Пленник Предателя","Gato de Schrodinger"
-"EgoSchrodingerCat","Schrödinger's Cat","シュレディンガーの猫","薛定谔的猫","薛定諤的貓","Пленник Эгоиста","Gato de Schrodinger"
-"JSchrodingerCat","Schrödinger's Cat","シュレディンガーの猫","薛定谔的猫","薛定諤的貓","Пленник Шакала","Gato de Schrodinger"
-"Opportunist","Opportunist","オポチュニスト","投机者","投機主義者","Выживший","Oportunista"
-"Egoist","Egoist","エゴイスト","野心家","利己主義者","Эгоист","Egoísta"
-"Lovers","Lovers","恋人","恋人","戀人","Любовники","Amantes"
-"Jackal","Jackal","ジャッカル","豺狼","豺狼","Шакал","Chacal"
->>>>>>> c6ac45cccc615c2a645f484a286f549e403ba238
 
 "# HideAndSeek"
 "HASFox","Fox","狐","狐狸","狐妖","Лис","Raposa"
 "HASTroll","Troll","トロール","猎人","誘捕者","Тролль","Troll"
 
-<<<<<<< HEAD
 # GM
 GM,GM,ゲームマスター,GM(管理员),GM(遊戲大師),GM(Призрак)
-=======
-"# GM"
-"GM","GM","GM","GM(管理员)","GM(遊戲大師)","GM(Призрак)","GM(Fantasma)"
->>>>>>> c6ac45cccc615c2a645f484a286f549e403ba238
 
 "# 属性"
 "LastImpostor","Last Impostor","ラストインポスター","绝境者","絕境者","Последний Предатель","Último Impostor"
@@ -551,7 +512,6 @@ GM,GM,ゲームマスター,GM(管理员),GM(遊戲大師),GM(Призрак)
 "IgnoreVent","Disable Vents","ベントの使用を禁止する","禁止使用管道","禁止使用管道","Отключить Вентиляцию","Desativar Dutos"
 "HideAndSeekRoles","Hide and Seek Roles","かくれんぼの役職","躲猫猫职业","躲貓貓職業","Роли в Прятках","Classes do Esconde-Esconde"
 
-<<<<<<< HEAD
 ## 死因
 DeathReason.Kill,Kill,キル,被杀,被殺,Убит
 DeathReason.Vote,Exiled,追放,放逐,被丟,Изгнан
@@ -573,27 +533,6 @@ DeathReason.WTaskFinish,TaskFinish,タスク完了,任务完成
 Alive,Alive,生存,存活,存活,Выжил
 Win," Wins",勝利,胜利,勝利,"Победил"
 Last,Last,ラスト,仅存,獨活,Последний
-=======
-"## 死因"
-"DeathReason.Kill","Kill","キル","被杀","被殺","Убит","Abatido"
-"DeathReason.Vote","Ejected","追放","放逐","被丟","Изгнан","Exilado"
-"DeathReason.Suicide","Suicide","自殺","自杀","自殺","Суицид","Suicídio"
-"DeathReason.Spell","Spell","呪殺","咒杀","咒殺","Заколдован","Feitiço"
-"DeathReason.Bite","Bitten","噛殺","吸血","咬死","Укушен","Mordido"
-"DeathReason.FollowingSuicide","Lover's Suicide","後追い","为爱而死","戀人共死","♡Суицид♡","Suicídio por Amor"
-"DeathReason.Bombed","Explosion","爆死","炸死","炸死","Взорван","Explosão"
-"DeathReason.Misfire","Misfire","誤爆","走火","走火","Убился","Alvo Incorreto"
-"DeathReason.Torched","Torched","焼殺","烧死","燒死","Сожжён","Queimado"
-"DeathReason.Sniped","Sniped","狙撃","狙杀","被狙","Застрелен","Baleado"
-"DeathReason.Execution","Execution","処刑","处决","處刑","Казнен","Executado"
-"DeathReason.Disconnected","Disconnected","回線切断","断连","斷線","Вышел","Desconectado"
-"DeathReason.Fall","Fall","転落","摔死","摔死","Упал","Queda"
-"DeathReason.Revenge","Revenge","道連れ","复仇","復仇","Месть",""
-"DeathReason.etc","Other","その他","其他","其他","Другое","Outros"
-"Alive","Alive","生存","存活","存活","Выжил","Vivo"
-"Win"," Wins","勝利","胜利","勝利"," Победили","Vitória"
-"Last-","Last ","ラスト","仅存","獨活","Последний ",""
->>>>>>> c6ac45cccc615c2a645f484a286f549e403ba238
 
 "## リアクターの時間制御"
 "SabotageTimeControl","Sabotage Duration Control","サボタージュの時間制御","更改修理时限","重新設定緊急任務時間","Изменить время Саботажа","Controle da Duração de Sabotagem"
