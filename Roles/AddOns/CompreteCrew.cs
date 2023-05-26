@@ -46,6 +46,7 @@ namespace TownOfHost.Roles.AddOns
                         if (Options.AddOnRoleOptions.TryGetValue((CustomRoles.CompreteCrew, Addon), out var option) && option.GetBool())
                         {
                             pc.RpcSetCustomRole(Addon);
+                            SelectRolesPatch.AddonInit(pc, Addon);
                         }
                     }
                 }
