@@ -557,15 +557,6 @@ namespace TownOfHost
                 AssignCustomSubRolesFromList(CustomRoles.Refusing, allPlayersbySub);
 
                 //RPCによる同期
-                foreach (var pc in Main.AllPlayerControls)
-                {
-                    if (pc.Is(CustomRoles.Watcher))
-                    {
-                        Main.PlayerStates[pc.PlayerId].SetMainRole(Options.IsEvilWatcher ? CustomRoles.EvilWatcher : CustomRoles.NiceWatcher);
-                    }
-
-                    var role = pc.GetCustomRole();
-                }
                 foreach (var pair in Main.PlayerStates)
                 {
                     ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.MainRole);

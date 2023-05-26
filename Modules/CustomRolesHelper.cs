@@ -373,7 +373,6 @@ namespace TownOfHost
                 CustomRoles.MadSnitch => Options.MadSnitchCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
                 CustomRoles.MadDictator => Options.MadDictatorCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
                 CustomRoles.JClient => Options.JClientCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
-                CustomRoles.Watcher => Options.IsEvilWatcher ? RoleTypes.Impostor : RoleTypes.Crewmate,
                 CustomRoles.Mayor => Options.MayorHasPortableButton.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
                 CustomRoles.Opportunist => Options.OpportunistCanKill.GetBool() ? RoleTypes.Impostor : RoleTypes.Crewmate,
 
