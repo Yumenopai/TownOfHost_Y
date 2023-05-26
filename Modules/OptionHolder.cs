@@ -774,6 +774,7 @@ namespace TownOfHost
 
             /**************************************** Impostor ****************************************/
             SetupRoleOptions(4900, TabGroup.ImpostorRoles, CustomRoles.NormalImpostor);
+            SetupRoleOptions(9000, TabGroup.ImpostorRoles, CustomRoles.EvilWatcher);
             BountyHunter.SetupCustomOption();
             SerialKiller.SetupCustomOption();
             SetupRoleOptions(1200, TabGroup.ImpostorRoles, CustomRoles.ShapeMaster);
@@ -902,9 +903,7 @@ namespace TownOfHost
             //        .SetValueFormat(OptionFormat.Pieces);
             //}
 
-            SetupRoleOptions(49900, TabGroup.CrewmateRoles, CustomRoles.Watcher);
-            EvilWatcherChance = IntegerOptionItem.Create(49910, "EvilWatcherChance", new(0, 100, 10), 0, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Watcher])
-                .SetValueFormat(OptionFormat.Percent);
+            SetupRoleOptions(49900, TabGroup.CrewmateRoles, CustomRoles.NiceWatcher);
             //Sheriff
             Sheriff.SetupCustomOption();
             SillySheriff.SetupCustomOption();//35800

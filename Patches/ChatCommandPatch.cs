@@ -362,8 +362,7 @@ namespace TownOfHost
                 { CustomRoles.MadSheriff, "マッドシェリフ" },
                 { CustomRoles.SKMadmate, "サイドキックマッドメイト" },
                 //両陣営役職
-                { (CustomRoles)(-3), $"== {GetString("Impostor")} or {GetString("Crewmate")} ==" }, //区切り用
-                { CustomRoles.Watcher, "ウォッチャー" },
+                //{ (CustomRoles)(-3), $"== {GetString("Impostor")} or {GetString("Crewmate")} ==" }, //区切り用
                 //Crewmate役職
                 { (CustomRoles)(-4), $"== {GetString("Crewmate")} ==" }, //区切り用
                 { CustomRoles.Bait, "ベイト" },

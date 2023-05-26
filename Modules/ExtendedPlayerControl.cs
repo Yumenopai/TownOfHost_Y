@@ -697,10 +697,6 @@ namespace TownOfHost
                     case CustomRoles.Mafia:
                         Prefix = Utils.CanMafiaKill() ? "After" : "Before";
                         break;
-                    case CustomRoles.EvilWatcher:
-                    case CustomRoles.NiceWatcher:
-                        text = CustomRoles.Watcher.ToString();
-                        break;
                     case CustomRoles.MadSnitch:
                     case CustomRoles.MadGuardian:
                         text = CustomRoles.Madmate.ToString();

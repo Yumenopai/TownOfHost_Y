@@ -244,8 +244,6 @@ namespace TownOfHost
                     //特殊インポスター役職
                     //マッドメイト系役職
                         //後ろで追加
-                    //両陣営可能役職
-                    {CustomRoles.Watcher, "#800080"},
                     //特殊クルー役職
                     {CustomRoles.NiceWatcher, "#800080"}, //ウォッチャーの派生
                     {CustomRoles.Bait, "#00f7ff"},
@@ -453,8 +451,6 @@ namespace TownOfHost
         MadBrackOuter,
         MadSheriff,
 
-        //両陣営
-        Watcher,
         //Crewmate(Vanilla)
         Engineer,
         GuardianAngel,
