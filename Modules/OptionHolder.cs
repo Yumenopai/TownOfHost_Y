@@ -914,7 +914,7 @@ namespace TownOfHost
             BaitWaitTime = FloatOptionItem.Create(20010, "BaitWaitTime", new(0f, 15f, 1f), 0f, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Bait])
                 .SetValueFormat(OptionFormat.Seconds);
             SetupRoleOptions(20100, TabGroup.CrewmateRoles, CustomRoles.Lighter);
-            LighterTaskTrigger = IntegerOptionItem.Create(20112, "SpeedBoosterTaskTrigger", new(1, 30, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Lighter])
+            LighterTaskTrigger = IntegerOptionItem.Create(20112, "SpeedBoosterTaskTrigger", new(1, 20, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Lighter])
                 .SetValueFormat(OptionFormat.Pieces);
             LighterTaskCompletedVision = FloatOptionItem.Create(20110, "LighterTaskCompletedVision", new(0f, 5f, 0.25f), 2f, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Lighter])
                 .SetValueFormat(OptionFormat.Multiplier);
@@ -923,14 +923,14 @@ namespace TownOfHost
             MayorAdditionalVote = IntegerOptionItem.Create(20210, "MayorAdditionalVote", new(1, 99, 1), 1, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Mayor])
                 .SetValueFormat(OptionFormat.Votes);
             MayorHasPortableButton = BooleanOptionItem.Create(20211, "MayorHasPortableButton", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Mayor]);
-            MayorNumOfUseButton = IntegerOptionItem.Create(20212, "MayorNumOfUseButton", new(1, 99, 1), 1, TabGroup.CrewmateRoles, false).SetParent(MayorHasPortableButton)
+            MayorNumOfUseButton = IntegerOptionItem.Create(20212, "MayorNumOfUseButton", new(1, 20, 1), 1, TabGroup.CrewmateRoles, false).SetParent(MayorHasPortableButton)
                 .SetValueFormat(OptionFormat.Times);
             SabotageMaster.SetupCustomOption();
             Snitch.SetupCustomOption();
             SetupRoleOptions(20600, TabGroup.CrewmateRoles, CustomRoles.SpeedBooster);
             SpeedBoosterUpSpeed = FloatOptionItem.Create(20610, "SpeedBoosterUpSpeed", new(0.1f, 0.5f, 0.1f), 0.3f, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SpeedBooster])
                 .SetValueFormat(OptionFormat.Multiplier);
-            SpeedBoosterTaskTrigger = IntegerOptionItem.Create(20611, "SpeedBoosterTaskTrigger", new(1, 99, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SpeedBooster])
+            SpeedBoosterTaskTrigger = IntegerOptionItem.Create(20611, "SpeedBoosterTaskTrigger", new(1, 20, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.SpeedBooster])
                 .SetValueFormat(OptionFormat.Pieces);
             SetupRoleOptions(20700, TabGroup.CrewmateRoles, CustomRoles.Doctor);
             DoctorHasVital = BooleanOptionItem.Create(20711, "DoctorHasVital", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Doctor]);
@@ -959,7 +959,7 @@ namespace TownOfHost
             SetupRoleOptions(35700, TabGroup.CrewmateRoles, CustomRoles.Rainbow);//TOH_Y01_8
             RainbowDontSeeTaskTurn = BooleanOptionItem.Create(35710, "RainbowDontSeeTaskTurn", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Rainbow]);
             SetupSingleRoleOptions(35900, TabGroup.CrewmateRoles, CustomRoles.Sympathizer, 2);
-            SympaCheckedTasks = IntegerOptionItem.Create(35910, "SympaCheckedTasks", new(1, 50, 1), 5, TabGroup.CrewmateRoles,false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sympathizer])
+            SympaCheckedTasks = IntegerOptionItem.Create(35910, "SympaCheckedTasks", new(1, 20, 1), 5, TabGroup.CrewmateRoles,false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Sympathizer])
                 .SetValueFormat(OptionFormat.Pieces);
             SetupRoleOptions(36000, TabGroup.CrewmateRoles, CustomRoles.Blinder);
             BlinderVision = FloatOptionItem.Create(36010, "BlinderVision", new(0f, 5f, 0.05f), 0.5f, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Blinder])
@@ -1040,7 +1040,7 @@ namespace TownOfHost
             AntiCompKnowOption = BooleanOptionItem.Create(60011, "AntiCompKnowOption", false, TabGroup.NeutralRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.AntiComplete]);
             AntiCompKnowNotask = BooleanOptionItem.Create(60012, "AntiCompKnowNotask", true, TabGroup.NeutralRoles, false).SetParent(AntiCompKnowOption);
             AntiCompKnowCompTask = BooleanOptionItem.Create(60013, "AntiCompKnowCompTask", false, TabGroup.NeutralRoles, false).SetParent(AntiCompKnowOption);
-            AntiCompAddGuardCount = IntegerOptionItem.Create(60014, "AntiCompAddGuardCount", new(0, 5, 1), 0, TabGroup.NeutralRoles, false).SetParent(AntiCompKnowOption)
+            AntiCompAddGuardCount = IntegerOptionItem.Create(60014, "AntiCompAddGuardCount", new(0, 10, 1), 0, TabGroup.NeutralRoles, false).SetParent(AntiCompKnowOption)
                 .SetValueFormat(OptionFormat.Times);
             AntiCompleteTasks = OverrideTasksData.Create(60020, TabGroup.NeutralRoles, CustomRoles.AntiComplete, AntiCompKnowOption);
             SetupRoleOptions(60100, TabGroup.NeutralRoles, CustomRoles.Workaholic);//TOH_Y01_14

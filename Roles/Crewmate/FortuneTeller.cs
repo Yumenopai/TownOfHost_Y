@@ -23,9 +23,9 @@ namespace TownOfHost.Roles.Crewmate
         public static void SetupCustomOption()
         {
             SetupRoleOptions(Id, TabGroup.CrewmateRoles, CustomRoles.FortuneTeller);
-            NumOfForecast = IntegerOptionItem.Create(Id + 10, "FortuneTellerNumOfForecast", new(1, 99, 1), 2, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.FortuneTeller])
+            NumOfForecast = IntegerOptionItem.Create(Id + 10, "FortuneTellerNumOfForecast", new(1, 20, 1), 2, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.FortuneTeller])
                 .SetValueFormat(OptionFormat.Times);
-            ForecastTaskTrigger = IntegerOptionItem.Create(Id + 11, "FortuneTellerForecastTaskTrigger", new(0, 99, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.FortuneTeller])
+            ForecastTaskTrigger = IntegerOptionItem.Create(Id + 11, "FortuneTellerForecastTaskTrigger", new(0, 20, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.FortuneTeller])
                 .SetValueFormat(OptionFormat.Pieces);
             CanForecastNoDeadBody = BooleanOptionItem.Create(Id + 12, "FortuneTellerCanForecastNoDeadBody", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.FortuneTeller]);
             ConfirmCamp = BooleanOptionItem.Create(Id + 13, "FortuneTellerConfirmCamp", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.FortuneTeller]);

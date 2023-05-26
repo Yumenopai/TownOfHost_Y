@@ -30,10 +30,10 @@ namespace TownOfHost.Roles.Crewmate
             SetupRoleOptions(Id, TabGroup.CrewmateRoles, CustomRoles.Psychic);
             Cooldown = FloatOptionItem.Create(Id + 10, "Cooldown", new(0f, 180f, 2.5f), 30f, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Psychic])
                 .SetValueFormat(OptionFormat.Seconds);
-            MaxCheckRole = IntegerOptionItem.Create(Id + 11, "PsychicMaxCheckRole", new(1, 10, 1), 3, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Psychic])
+            MaxCheckRole = IntegerOptionItem.Create(Id + 11, "PsychicMaxCheckRole", new(1, 15, 1), 3, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Psychic])
                 .SetValueFormat(OptionFormat.Times);
-            ConfirmCamp = BooleanOptionItem.Create(Id + 12, "PsychicConfirmCamp", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Psychic]);
-            KillerOnly = BooleanOptionItem.Create(Id + 13, "PsychicKillerOnly", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Psychic]);
+            ConfirmCamp = BooleanOptionItem.Create(Id + 12, "PsychicConfirmCamp", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Psychic]);
+            KillerOnly = BooleanOptionItem.Create(Id + 13, "PsychicKillerOnly", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Psychic]);
         }
         public static void Init()
         {
