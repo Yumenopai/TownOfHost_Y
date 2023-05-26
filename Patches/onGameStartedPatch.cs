@@ -741,27 +741,7 @@ namespace TownOfHost
                     }
                     foreach (var subRole in pc.GetCustomSubRoles())
                     {
-                        switch (subRole)
-                        {
-                            // ここに属性のAddを追加
-                            case CustomRoles.Guarding:
-                                Main.GuardingGuardCount[pc.PlayerId] = false;
-                                break;
-
-                            case CustomRoles.Loyalty:
-                                foreach (var target in Main.AllPlayerControls.Where(x => x.GetCustomRole().IsImpostor()))
-                                {
-                                    NameColorManager.Add(pc.PlayerId, target.PlayerId);
-                                }
-                                break;
-
-                            case CustomRoles.Refusing:
-                                Main.IsAdd1NextExiled[pc.PlayerId] = false;
-                                break;
-
-                            default:
-                                break;
-                        }
+                        AddonInit(pc,subRole);
                     }
 
                     //通常モードでかくれんぼをする人用 色変更
@@ -807,6 +787,28 @@ namespace TownOfHost
             Utils.CountAlivePlayers(true);
             Utils.SyncAllSettings();
             SetColorPatch.IsAntiGlitchDisabled = false;
+        }
+
+        public static void AddonInit(PlayerControl pc, CustomRoles role)
+        {
+            switch (role)
+            {
+                // ここに属性のAddを追加
+                case CustomRoles.Guarding:
+                    Main.GuardingGuardCount[pc.PlayerId] = false;
+                    break;
+
+                case CustomRoles.Loyalty:
+                    foreach (var target in Main.AllPlayerControls.Where(x => x.GetCustomRole().IsImpostor()))
+                    {
+                        NameColorManager.Add(pc.PlayerId, target.PlayerId);
+                    }
+                    break;
+
+                case CustomRoles.Refusing:
+                    Main.IsAdd1NextExiled[pc.PlayerId] = false;
+                    break;
+            }
         }
         private static void AssignDesyncRole(CustomRoles role, List<PlayerControl> AllPlayers, Dictionary<byte, CustomRpcSender> senders, Dictionary<(byte, byte), RoleTypes> rolesMap, RoleTypes BaseRole, RoleTypes hostBaseRole = RoleTypes.Crewmate)
         {
