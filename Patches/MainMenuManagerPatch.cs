@@ -5,7 +5,6 @@ using UnityEngine;
 using AmongUs.Data;
 using Assets.InnerNet;
 using AmongUs.Data.Player;
-using System.Linq;
 using System.Collections;
 using UnhollowerBaseLib;
 using BepInEx.IL2CPP.Utils.Collections;

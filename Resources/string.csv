@@ -259,7 +259,7 @@ VictoryCutCount,Victory cut count,勝利条件のキルされる回数,胜利需
 OddKillCooldown,Odd Kill cooldown,キル奇数回目のキルクール,奇数击杀冷却,
 EvenKillCooldown,Even Kill cooldown,キル偶数回目のキルクール,偶数击杀冷却,
 KillCoolDecreaseRate,Killcool Decrease rate,キルクール減少率,击杀冷却降低率,
-LoversAddWin,,勝利を追加勝利にする,以胜利为追加胜利,
+LoversAddWin,Make the win an additional win,勝利を追加勝利にする,以胜利为追加胜利,
 BlinderVision,Blinder vision,ブラインダーの視野,盲人视野,
 PlatonicLoverButtonText,make,一目惚れ,一见钟情,
 AddLightAddCrewmateVision, - rate of increase in CrewmateVision(+), - クルー視界増加率(+), - 船员视野增加率(+),
