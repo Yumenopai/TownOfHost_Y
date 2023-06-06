@@ -14,6 +14,10 @@ We also use a translator for all in-game translations into English. If there is 
 
 Thank you for finding and using TOH_Y!<br>
 
+## WikiWiki
+作成しました！ここのりーどみーより見やすさアップしています。
+https://wikiwiki.jp/tohy_amongus/
+
 ## ★リリース
 
 AmongUsバージョン : **2023.3.28**<br>
