@@ -1,11 +1,16 @@
-# Town Of Host_Y
+# Town Of Host_Y & Town Of Host_YS
 
 ## ★この Mod について
 
 この Mod は非公式のものであり、この Mod の開発に関して Among Us の開発元である"Innersloth"は一切関与していません。<br>
 この Mod の問題などに関して公式に問い合わせないでください。<br>
 
-基本、このMODの情報・バグ報告などは[Discord](https://discord.gg/PekjJscTT6)でのみ対応しております。<br>
+このMODはTownOfHostの機能・役職はそのままに、若干の機能追加や新役職を追加したMODとなります。追加された内容については、下記をご覧ください。<br>
+また、**本家TOHを含む**、別MODとの共存はできません。必ず1つのMODを共有して使用してください。<br>
+本家TOHと別の開発者が作成しているので、TOH_Yの問題などに関して本家TOHの方に問い合わせないでください。<br>
+言語は英語・簡体中国語に対応。適当な翻訳ではあるので何卒。<br>
+
+基本、このMODのバグ報告や質問などは[Discord](https://discord.gg/PekjJscTT6)でのみ対応しております。<br>
 
 ### English
 This Readme is basically for Japanese only, and you may not be able to read it even though you came to this, sorry.<br>
@@ -14,77 +19,34 @@ We also use a translator for all in-game translations into English. If there is 
 
 Thank you for finding and using TOH_Y!<br>
 
-## WikiWiki
-作成しました！ここのりーどみーより見やすさアップしています。
-https://wikiwiki.jp/tohy_amongus/
-
 ## ★リリース
 
-AmongUsバージョン : **2023.3.28**<br>
+AmongUsバージョン : **2023.6.13**<br>
 **最新バージョンは[こちら](https://github.com/Yumenopai/TownOfHost_Y/releases/latest)から**<br>
-本家TOHの対応バージョンは[こちら](https://github.com/tukasa0001/TownOfHost/releases/tag/v4.1.2)<br>
+
+TOH_Y：TownOfHost[v4.1.2](https://github.com/tukasa0001/TownOfHost/releases/tag/v4.1.2)Fork<br>
+TOH_YS：TownOfHost[v5.0.1](https://github.com/tukasa0001/TownOfHost/releases/tag/v5.0.1)Fork<br>
 
 本家TOHの説明は全てカットします。本家TOHの[GitHub](https://github.com/tukasa0001/TownOfHost#readme)からReadMeをご覧ください。<br>
 
+TOH_Yの追加要素の説明は[WIKIWIKI](https://wikiwiki.jp/tohy_amongus/)に移行しました。
 
-## ★TOH_Y説明
+## クレジット
 
-このMODはTownOfHostの機能・役職はそのままに、若干の機能追加や新役職を追加したMODとなります。追加された内容については、下記をご覧ください。<br>
-また、**本家TOHを含む**、別MODとの共存はできません。必ず1つのMODを共有して使用してください。<br>
-本家TOHと別の開発者が作成しているので、TOH_Yの問題などに関して本家TOHの方に問い合わせないでください。<br>
-言語は英語・簡体中国語に対応。適当な翻訳ではあるので何卒。<br>
+- MODクライアント視点霊界での視界拡大縮小 [TownOfPlus](https://github.com/tugaru1975/TownOfPlus)
+- 猫又系役職の道連れ・純愛者 [SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)
+- サングラス・弁護士・VIP・タイブレーカー [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles)
+- タイトル画面から見れるInfoアナウンス画面 [Nebula on the Ship](https://github.com/Dolly1016/Nebula)
+- スカベンジャー [TownOfHostEdited](https://github.com/KARPED1EM/TownOfHostEdited)
+- トトカルチョ [ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)
 
-## ★新規・追加・変更機能
-### 霊界での視野拡大縮小(MODクライアント限定)/TOH_Yでの追加
-霊界でマウスホイールを動かすと、マップ全体が見えるようになったりします。<br>
-MOD入りインポスターが千里眼を使えるかどうか設定できます。<br>
+## 開発者
 
-### /w コマンドの追加
-ホストのみ使用可能。<br>
-「/w (impostor/crewmate/none/jackal)」を入力することで、その陣営の勝利としてその試合を終了できる。<br>
+- [ゆめの/Yumenopai](https://github.com/Yumenopai) ([Twitter](https://twitter.Yumepai_houchi), [Youtube](https://www.youtube.com/channel/UCf01MvIzjPq6ChJ9XVuKK1Q))
+- TownOfHostの開発者様は省略。
 
-### /messagewait or /mw <秒> コマンド
-小数に対応できるように変更。<br>
+--------ｷﾘﾄﾘ線--------
 
-### F11の画面サイズ
-ゆめのがいつも使っている1366×768を含めるなど少々変更。<br>
-
-### 幽霊が他人の役職・投票先を見ることができる設定
-「幽霊が他人の役職・投票先を見ることができる」<br>
-↓<br>
-「幽霊が他人の役職・投票先を見ることができない」<br>
-
-### 役職設定画面の新レイアウト
-各陣営ごとのタブ、madmate settingはYのみ。<br>
-アイコンはとりにく氏提供。<br>
-
-### /nで表示される設定
-キルフラッシュの長さ・自動的に試合結果を表示・名前の二行目・役職割り当てのアルゴリズムを表示しないように変更。<br>
-
-### 道連れ通知
-道連れが起こった時、次の会議時に道連れされた人を表示させる設定を追加。<br>
-
-### 会議が開かれた
-ボタンかレポートか表示する設定を追加。死体レポートの時、誰の死体が通報されたかも表示される。<br>
-
-### 役職説明の自動表示
-一回目の会議時に、自身の役職説明を自動で表示する機能を追加。<br>
-
-### 複数属性の省略表示
-2つ以上の属性を持った時、自身の役職名の前に＋が付く。設定で、省略せずに表示させることができる。<br>
-
-### イントロ変更(MODクライアントのみ)
-マッドメイト系役職・第三陣営のイントロ表示を変更。<br>
-
-マッドメイト系役職：初めからマッドメイトと表示されず、クルーと表示されてからマッドメイト(詳細役職表示)になる。<br>
-第三陣営：ジャッカル以外の単独第三陣営は、初めに第三陣営と表示されてから詳細役職表示になる。<br>
-本家TOH仕様に戻す設定あり。 <br>
-
-### 役職設定モード
-旧設定モードを、ON-OFF設定モードとし、0%-100%表示をオンオフに変更。<br>
-また、属性のみモードを新規追加。現在各バニラ役職につき3パターンまで設定可能。ランダム付与も設定可能。<br>
-確率設定モードはv10で実装予定。<br>
-※スタンダードゲームモードのみ<br>
 
 ### チャット読み上げ
 開発：くろにゃんこ<br>
@@ -124,43 +86,6 @@ GitHub/Releaseより`VoiceList.txt`をダウンロードし、`TOH_DATA`内に�
 [紹介動画](https://youtu.be/oWz-rTnxwS0)<br>
 
 ### 役職
-[リーダー]赤 1/青 1(8人以上推奨/黄 1)<br>
-[無陣営]猫 その他<br>
-> **info**  
-> v411.7から、インポスターの人数を強制的に1に設定されるようになりました。
-
-### リーダーのルール
-・各リーダーは、無陣営の猫にキルボタンを押すことで、自陣営の仲間に出来る。<br>
-・リーダー同士は、互いにキルができるかどうか設定で決める。<br>
-・各リーダー視点、自陣営にした猫は自身と同じ色で表示される。<br>
-・どこかの陣営に就いた猫をキルできるかは設定で決める。キルできる設定の時、自陣営の猫であってもキルできるので注意。<br>
-・リーダーの視界はインポスタービジョンで設定する。<br>
-
-### 猫のルール
-・猫は初めてキルされた時、キルを防いでそのキルをしてきた陣営に所属する。2回目以降キルされるかは設定で決める。<br>
-・猫の視界は、クルービジョンで設定する。<br>
-・タスクは出来るが関係ない。<br>
-
-### 決着は以下の2通り
-(1)無陣営猫が居なくなった時、生存者の中で一番自陣営が多かった陣営が勝利。<br>
-(2)リーダーをキルできる設定がオンの時で、他陣営のキルリーダーが全員死んでいた時、残ったキルリーダーの陣営の勝利。<br>
-
-### その他
-[会議・死体通報]会議を開くと、毎回生存中の無陣営人数、リーダー生存数を知ることが出来ます。<br>
-[キルクール]無陣営の猫を仲間にする時や、対象者をキルできない設定がオンの時のキルガードが発生した時、キルクールは設定時間の半分になる。会議後や、誰かをキルした時は、設定時間通りのキルクールになる。<br>
-
-### 禁止事項
-・会議時の追放は出来ない。どこに入れても絶対スキップになる。<br>
-・ドア閉め含むサボタージュ禁止。<br>
-・ベントはリーダーのみ使えるか設定可能。<br>
-
-設定)
-
-| 設定名                              |
-| ----------------------------------- |
-| 3人目のリーダー(黄陣営)を追加する    |
-| リーダー同士はキルできない           |
-| どこかの陣営に就いた猫はキルできない  |
 
 ## ★TOH_Yオリジナルゲームモード【ワンナイト】
 ### 勝利条件
@@ -231,48 +156,6 @@ GitHub/Releaseより`VoiceList.txt`をダウンロードし、`TOH_DATA`内に�
 | [シェイプキラー](#シェイプキラー)    |    | [共鳴者](#共鳴者)    |           | [コンプリートクルー](#コンプリートクルー)  |
 |                |    | [ブラインダー](#ブラインダー)     |                           |           |
 |         |    | [メディック](#メディック)           |                               |           |
-|         |    | [キャンドルライター](#キャンドルライター)           |                               |           |
-|         |    | [占い師](#占い師)           |                               |           |
-|         |    | [霊媒師](#霊媒師)           |                               |           |
-
-## ★既存TOH役職＿TOH_Yによる仕様変更・追加機能
-#### 通常インポスター
-役職設定画面に「通常インポスター」を追加。<br>
-ただ名前に通常がついたもの。今まで通り設定しなくても使えるし、人数・役職把握をしやすくするために設定してもよい。<br>
-
-#### マフィア
-キル可能になるインポスター残数設定を追加。<br>
-キルクール設定を追加。 <br>
-
-#### マッド系役職のオプション
-設定方法を全て属性として設定するように変更。<br>
-
-| 旧設定名                              | 置換属性                            |
-| ----------------------------------- | ----------------------------------- |
-| 停電・通信妨害を直せない→               | [クラムシー](#クラムシー)            |
-| インポスター視界→                    | [ライティング](#ライティング)           |
-| キルフラッシュが見える→              | [シーイング](#シーイング)               |
-| 他人の投票先が見える→                | [ウォッチング](#ウォッチング)            |
-| 死因が分かる→                       | [オートプシー](#オートプシー)            |
-| クルーを道連れ→                      | [リベンジャー](#リベンジャー)            |
-
-
-#### シェリフ
-キルクールの設定が1秒間隔 → 2.5秒間隔に変更。<br>
-
-#### ドクター
-バイタルを持たない設定を追加。<br>
-
-#### スニッチ
-タスク完了しても会議中はスニッチ視点、キル役職が分からない設定を追加。<br>
-また、キル役職に通知が届くタスク残数の設定を追加。 <br>
-
-#### ベイト
-ベイトキルから通報までの時間を決める設定を追加。<br>
-キラーがベイトをキルした時、自身の名前に！マークが付く。<br>
-
-#### ライター
-効果が発動されるタスク数設定を追加。<br>
 
 #### シェリフ
 「アドミン・カメラ等の機器が使用できない」「停電・通信妨害が直せない」オプションを追加。<br>
@@ -977,16 +860,3 @@ v411.7時点、ベイトをキルした時もベイトの通報能力をかき�
 タスクを全て完了させた人に、早い順に設定人数分まで付与される。<br>
 設定された属性を持つようになる。<br>
 
-## クレジット
-
-- MODクライアント視点霊界での視界拡大縮小 [TownOfPlus](https://github.com/tugaru1975/TownOfPlus)
-- 猫又系役職の道連れ・純愛者 [SuperNewRoles](https://github.com/ykundesu/SuperNewRoles)
-- サングラス・弁護士・VIP・タイブレーカー [TheOtherRoles](https://github.com/TheOtherRolesAU/TheOtherRoles)
-- タイトル画面から見れるInfoアナウンス画面 [Nebula on the Ship](https://github.com/Dolly1016/Nebula)
-- スカベンジャー [TownOfHostEdited](https://github.com/KARPED1EM/TownOfHostEdited)
-- トトカルチョ [ExtremeRoles](https://github.com/yukieiji/ExtremeRoles)
-
-## 開発者
-
-- [ゆめの/Yumenopai](https://github.com/Yumenopai) ([Twitter](https://twitter.Yumepai_houchi), [Youtube](https://www.youtube.com/channel/UCf01MvIzjPq6ChJ9XVuKK1Q))
-- TownOfHostの開発者様は省略。
