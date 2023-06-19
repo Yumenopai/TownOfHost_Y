@@ -516,9 +516,6 @@ namespace TownOfHost
                     if (role.IsVanilla()) continue;
                     if (!role.IsStanderdRole()) continue;
 
-                    if (Options.RoleSettingMode == RoleSettingMode.OnOffSet && role.IsAddOnOnlyRole()) continue;
-                    if (Options.RoleSettingMode == RoleSettingMode.AddOnOnly && !role.IsAddOnOnlyRole()) continue;
-
                     if (role is CustomRoles.Sheriff or CustomRoles.Arsonist
                         or CustomRoles.Hunter or CustomRoles.SillySheriff or CustomRoles.MadSheriff
                         or CustomRoles.DarkHide or CustomRoles.PlatonicLover or CustomRoles.Totocalcio or CustomRoles.Jackal) continue;
@@ -966,8 +963,6 @@ namespace TownOfHost
             foreach (var role in Enum.GetValues(typeof(CustomRoles)).Cast<CustomRoles>().Where(x => x < CustomRoles.NotAssigned))
             {
                 if (role.IsVanilla()) continue;
-                if (Options.RoleSettingMode == RoleSettingMode.OnOffSet && role.IsAddOnOnlyRole()) continue;
-                if (Options.RoleSettingMode == RoleSettingMode.AddOnOnly && !role.IsAddOnOnlyRole()) continue;
 
                 if (role is CustomRoles.Sheriff or CustomRoles.Arsonist
                         or CustomRoles.Hunter or CustomRoles.SillySheriff or CustomRoles.MadSheriff
