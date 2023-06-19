@@ -1,78 +1,186 @@
 using System;
 using System.Collections.Generic;
 using HarmonyLib;
+using TMPro;
 using UnityEngine;
 using AmongUs.Data;
 using Assets.InnerNet;
 using AmongUs.Data.Player;
 using System.Collections;
-using UnhollowerBaseLib;
-using BepInEx.IL2CPP.Utils.Collections;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
+
+using Object = UnityEngine.Object;
 
 namespace TownOfHost
 {
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(MainMenuManager))]
     public class MainMenuManagerPatch
     {
-        public static GameObject template;
-        //public static GameObject discordButton;
-        public static GameObject githubButton;
+        private static PassiveButton template;
+        private static PassiveButton discordButton;
+        private static PassiveButton twitterButton;
+        private static PassiveButton wikiwikiButton;
+        private static PassiveButton gitHubButton;
 
-        [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start)), HarmonyPrefix]
-        public static void Start_Prefix(MainMenuManager __instance)
+        [HarmonyPatch(nameof(MainMenuManager.Start)), HarmonyPostfix, HarmonyPriority(Priority.Normal)]
+        public static void StartPostfix(MainMenuManager __instance)
         {
-            if (template == null) template = GameObject.Find("/MainUI/ExitGameButton");
+            if (template == null) template = __instance.quitButton;
             if (template == null) return;
-
-            //GitHubボタンを生成
+            //Discordボタンを生成
+            if (discordButton == null)
             {
-                if (githubButton == null) githubButton = UnityEngine.Object.Instantiate(template, template.transform.parent);
-                githubButton.name = "GithubButton";
-                githubButton.transform.position = Vector3.Reflect(template.transform.position, Vector3.left);
+                discordButton = CreateButton(
+                    "DiscordButton",
+                    new(-2.45f, -2.7f, 1f),
+                    new(86, 98, 246, byte.MaxValue),
+                    new(173, 179, 244, byte.MaxValue),
+                    () => Application.OpenURL(Main.DiscordInviteUrl),
+                    "Discord",
+                    new(1.85f, 0.5f));
+            }
+            discordButton.gameObject.SetActive(Main.ShowDiscordButton);
 
-                var githubText = githubButton.transform.GetChild(0).GetComponent<TMPro.TMP_Text>();
-                Color githubColor = new Color32(161, 161, 161, byte.MaxValue);
-                PassiveButton githubPassiveButton = githubButton.GetComponent<PassiveButton>();
-                SpriteRenderer githubButtonSprite = githubButton.GetComponent<SpriteRenderer>();
-                githubPassiveButton.OnClick = new();
-                githubPassiveButton.OnClick.AddListener((Action)(() => Application.OpenURL("https://github.com/Yumenopai/TownOfHost_Y")));
-                githubPassiveButton.OnMouseOut.AddListener((Action)(() => githubButtonSprite.color = githubText.color = githubColor));
-                __instance.StartCoroutine(Effects.Lerp(0.01f, new Action<float>((p) => githubText.SetText("GitHub"))));
-                githubButtonSprite.color = githubText.color = githubColor;
-                githubButton.gameObject.SetActive(true);
+            // Twitterボタンを生成
+            if (twitterButton == null)
+            {
+                twitterButton = CreateButton(
+                    "TwitterButton",
+                    new(-0.85f, -2.7f, 1f),
+                    new(29, 160, 241, byte.MaxValue),
+                    new(169, 215, 242, byte.MaxValue),
+                    () => Application.OpenURL("https://twitter.com/yumeno_AmongUs"),
+                    "Twitter",
+                    new(1.85f, 0.5f));
+            }
+            // WIKIWIKIボタンを生成
+            if (wikiwikiButton == null)
+            {
+                wikiwikiButton = CreateButton(
+                    "WikiwikiButton",
+                    new(0.75f, -2.7f, 1f),
+                    new(255, 142, 168, byte.MaxValue),
+                    new(255, 226, 153, byte.MaxValue),
+                    () => Application.OpenURL("https://wikiwiki.jp/tohy_amongus"),
+                    "WIKIWIKI",
+                    new(1.85f, 0.5f));
+            }
+            // GitHubボタンを生成
+            if (gitHubButton == null)
+            {
+                gitHubButton = CreateButton(
+                    "GitHubButton",
+                    new(2.35f, -2.7f, 1f),
+                    new(153, 153, 153, byte.MaxValue),
+                    new(209, 209, 209, byte.MaxValue),
+                    () => Application.OpenURL("https://github.com/Yumenopai/TownOfHost_Y"),
+                    "GitHub",
+                    new(1.85f, 0.5f));
             }
 
-            //ハウトゥプレイの無効化 discord
-            var howtoplayButton = GameObject.Find("/MainUI/HowToPlayButton");
-            if (howtoplayButton != null)
-            {
-                var discordText = howtoplayButton.transform.GetChild(0).GetComponent<TMPro.TMP_Text>();
-                Color discordColor = new Color32(88, 101, 242, byte.MaxValue);
-                PassiveButton discordPassiveButton = howtoplayButton.GetComponent<PassiveButton>();
-                SpriteRenderer discordButtonSprite = howtoplayButton.GetComponent<SpriteRenderer>();
-                discordPassiveButton.OnClick = new();
-                discordPassiveButton.OnClick.AddListener((Action)(() => Application.OpenURL(Main.DiscordInviteUrl)));
-                discordPassiveButton.OnMouseOut.AddListener((Action)(() => discordButtonSprite.color = discordText.color = discordColor));
-                __instance.StartCoroutine(Effects.Lerp(0.01f, new Action<float>((p) => discordText.SetText("Discord"))));
-                discordButtonSprite.color = discordText.color = discordColor;
-            }
-            //フリープレイの無効化 Twitter
-            var freeplayButton = GameObject.Find("/MainUI/FreePlayButton");
+
+#if RELEASE
+            // フリープレイの無効化
+            var howToPlayButton = __instance.howToPlayButton;
+            var freeplayButton = howToPlayButton.transform.parent.Find("FreePlayButton");
             if (freeplayButton != null)
             {
-                var twitterText = freeplayButton.transform.GetChild(0).GetComponent<TMPro.TMP_Text>();
-                Color twitterColor = new Color32(29, 161, 242, byte.MaxValue);
-                PassiveButton twitterPassiveButton = freeplayButton.GetComponent<PassiveButton>();
-                SpriteRenderer twitterButtonSprite = freeplayButton.GetComponent<SpriteRenderer>();
-                twitterPassiveButton.OnClick = new();
-                twitterPassiveButton.OnClick.AddListener((Action)(() => Application.OpenURL("https://twitter.com/yumeno_AmongUs")));
-                twitterPassiveButton.OnMouseOut.AddListener((Action)(() => twitterButtonSprite.color = twitterText.color = twitterColor));
-                __instance.StartCoroutine(Effects.Lerp(0.01f, new Action<float>((p) => twitterText.SetText("Twitter"))));
-                twitterButtonSprite.color = twitterText.color = twitterColor;
+                freeplayButton.gameObject.SetActive(false);
+            }
+            // フリープレイが消えるのでHowToPlayをセンタリング
+            howToPlayButton.transform.SetLocalX(0);
+#endif
+        }
+
+        /// <summary>TOHロゴの子としてボタンを生成</summary>
+        /// <param name="name">オブジェクト名</param>
+        /// <param name="normalColor">普段のボタンの色</param>
+        /// <param name="hoverColor">マウスが乗っているときのボタンの色</param>
+        /// <param name="action">押したときに発火するアクション</param>
+        /// <param name="label">ボタンのテキスト</param>
+        /// <param name="scale">ボタンのサイズ 変更しないなら不要</param>
+        private static PassiveButton CreateButton(string name, Vector3 localPosition, Color32 normalColor, Color32 hoverColor, Action action, string label, Vector2? scale = null)
+        {
+            var button = Object.Instantiate(template, CredentialsPatch.TohLogo.transform);
+            button.name = name;
+            Object.Destroy(button.GetComponent<AspectPosition>());
+            button.transform.localPosition = localPosition;
+
+            button.OnClick = new();
+            button.OnClick.AddListener(action);
+
+            var buttonText = button.transform.Find("FontPlacer/Text_TMP").GetComponent<TMP_Text>();
+            buttonText.DestroyTranslator();
+            buttonText.fontSize = buttonText.fontSizeMax = buttonText.fontSizeMin = 3.7f;
+            buttonText.enableWordWrapping = false;
+            buttonText.text = label;
+            var normalSprite = button.inactiveSprites.GetComponent<SpriteRenderer>();
+            var hoverSprite = button.activeSprites.GetComponent<SpriteRenderer>();
+            normalSprite.color = normalColor;
+            hoverSprite.color = hoverColor;
+
+            // ラベルをセンタリング
+            var container = buttonText.transform.parent;
+            Object.Destroy(container.GetComponent<AspectPosition>());
+            Object.Destroy(buttonText.GetComponent<AspectPosition>());
+            container.SetLocalX(0f);
+            buttonText.transform.SetLocalX(0f);
+            buttonText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+
+            var buttonCollider = button.GetComponent<BoxCollider2D>();
+            if (scale.HasValue)
+            {
+                normalSprite.size = hoverSprite.size = buttonCollider.size = scale.Value;
+            }
+            // 当たり判定のズレを直す
+            buttonCollider.offset = new(0f, 0f);
+
+            return button;
+        }
+
+        // プレイメニュー，アカウントメニュー，クレジット画面が開かれたらロゴとボタンを消す
+        [HarmonyPatch(nameof(MainMenuManager.OpenGameModeMenu))]
+        [HarmonyPatch(nameof(MainMenuManager.OpenAccountMenu))]
+        [HarmonyPatch(nameof(MainMenuManager.OpenCredits))]
+        [HarmonyPostfix]
+        public static void OpenMenuPostfix()
+        {
+            if (CredentialsPatch.TohLogo != null)
+            {
+                CredentialsPatch.TohLogo.gameObject.SetActive(false);
+            }
+        }
+        [HarmonyPatch(nameof(MainMenuManager.ResetScreen)), HarmonyPostfix]
+        public static void ResetScreenPostfix()
+        {
+            if (CredentialsPatch.TohLogo != null)
+            {
+                CredentialsPatch.TohLogo.gameObject.SetActive(true);
             }
         }
     }
 
+    public static class ObjectHelper
+    {
+        /// <summary>
+        /// オブジェクトの<see cref="TextTranslatorTMP"/>コンポーネントを破棄します
+        /// </summary>
+        public static void DestroyTranslator(this GameObject obj)
+        {
+            var translator = obj.GetComponent<TextTranslatorTMP>();
+            if (translator != null)
+            {
+                Object.Destroy(translator);
+            }
+        }
+        /// <summary>
+        /// オブジェクトの<see cref="TextTranslatorTMP"/>コンポーネントを破棄します
+        /// </summary>
+        public static void DestroyTranslator(this MonoBehaviour obj) => obj.gameObject.DestroyTranslator();
+    }
+
+    /*
     public class ModNews
     {
         public int Number;
@@ -130,7 +238,7 @@ namespace TownOfHost
                             + "\n 【新役職】呪狼・マッドシェリフ・バカシェリフ・共鳴者・ダークハイド・ラブカッター・オポチュニストキラー(オポチュニストのキル可能設定)"
                             + "\n 【新レイアウトの設定画面】：陣営ごとのタブ\n"
                             + "\n ホストが重くカク付く現象を比較的修正。さらに負荷軽減設定(ワカホリ,にじスタ対象)を追加。全員から役職名見えるのが重いの..etc.\n"
-                            
+
                             + "\n【注意】\nプレイする際は必ずTOH_Yであることを明記・通知してください。本家TOHではないことを十分理解した上で(参加者にも理解させた上で)ご利用ください。"
                             + "\nまた、本家TOHとTOH_Yの同時使用はできません。必ず1つのMODだけを使用するようにしてください。",
                         Date = "2022-11-21T00:00:00Z"
@@ -153,7 +261,7 @@ namespace TownOfHost
                             + "\n 【新属性】ウォッチング・ライティング・サングラス・シーイング"
                             + "\n 【(予告)新要素】新ゲームモード『猫取合戦』"
                             + "\n ここはそれぞれ孤独な猫たちが集う場。いつも自身のタスクをこなしながら穏やかな日々を過ごしていた。或る日、この地の神がここの孤独な猫たちを見て、裏切り者が生まれた時に備えていくつか集団を作るべきと判断し、数名にリーダーを任命した。\n"
-                            
+
                             + "\n【注意】プレイの際は必ずTOH_Yであることを通知して下さい。",
                         Date = "2023-1-12T00:00:00Z"
 
@@ -171,7 +279,7 @@ namespace TownOfHost
                         Text = "Thank you for playing TownOfHost_Y!\n"
                             + "\n 【新要素】新ゲームモード『猫取合戦』"
                             + "\n ここはそれぞれ孤独な猫たちが集う場。いつも自身のタスクをこなしながら穏やかな日々を過ごしていた。或る日、この地の神がここの孤独な猫たちを見て、裏切り者が生まれた時に備えていくつか集団を作るべきと判断し、数名にリーダーを任命した。\n"
-                            
+
                             + "\n【注意】プレイの際は必ずTOH_Yであることを通知して下さい。本家TOHではないことを十分理解した上で(参加者にも理解させた上で)ご利用ください。"
                             + "特に公開部屋で遊ぶときは注意してください。自分の名前の上にTownOfHost_Yと表記されたり、参加者に自動的にお知らせが流れたりしますが、「TOHだよ！」と偽ったり「TOHの新バージョン」のように本家と区別がつかない言い方をするのはお辞めください。\n"
                             + "\nまた、本家TOHとTOH_Yの同時使用はできません。必ず1つのMODだけを使用するようにしてください。",
@@ -219,11 +327,11 @@ namespace TownOfHost
                             + "\n 【新機能】既存役職の新オプションを12種追加"
                             + "\n 【新機能】「自身の役職説明自動表示」を含む新機能を5種追加"
                             + "\n 【期間限定役職】チョコレート屋～2/15\n"
-                            
+
                             + "\n【注意】プレイの際は必ずTOH_Yであることを通知して下さい。"
                             + "\n・野良でのwelcomeメッセージやYouTube、Twitter等を見ているとTOH_Yを使用しているにも関わらず、TownOfHost(無印)になっているのをよく見かけます。"
                             + "本家TOHと勘違いされるパターンも実際起こりますので充分お気を付けください。"
-                            + "\n・特に公開ルームで部屋を立てる際も、何もわからずに参加してくる方にでも本家TOHでないことが伝わるような通知を心がけてください。\n何卒宜しくお願い致します。 ",                         
+                            + "\n・特に公開ルームで部屋を立てる際も、何もわからずに参加してくる方にでも本家TOHでないことが伝わるような通知を心がけてください。\n何卒宜しくお願い致します。 ",
                         Date = "2023-02-09T00:00:00Z"
 
                     };
@@ -337,5 +445,5 @@ namespace TownOfHost
 
             return false;
         }
-    }
+    }*/
 }

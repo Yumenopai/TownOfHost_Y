@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using UnityEngine;
-using UnhollowerBaseLib;
+using Il2CppInterop.Runtime.InteropTypes;
 
 using TownOfHost.Modules;
 using TownOfHost.Roles.Impostor;
@@ -640,7 +640,7 @@ namespace TownOfHost
                 sb.Append($" {Options.LeaderNotKilled.GetName()}: {Options.LeaderNotKilled.GetString()}\n");
                 sb.Append($" {Options.CatNotKilled.GetName()}: {Options.CatNotKilled.GetString()}\n");
                 //SendMessage(text, PlayerId);
-                foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 80000 && !x.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode)))
+                foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 80000 && !x.IsHiddenOn(Options.CurrentGameMode)))
                 {
                     if (!NotShowOption(opt.Name))
                         sb.Append($"\n【{opt.GetName(true)}】\n");
@@ -672,8 +672,6 @@ namespace TownOfHost
                     foreach (var role in Options.CustomRoleCounts)
                     {
                         if (!role.Key.IsEnable() || role.Key.IsCatLeaderRoles() || role.Key.IsOneNightRoles()) continue;
-                        if (Options.RoleSettingMode == RoleSettingMode.OnOffSet && role.Key.IsAddOnOnlyRole()) continue;
-                        if (Options.RoleSettingMode == RoleSettingMode.AddOnOnly && !role.Key.IsAddOnOnlyRole()) continue;
 
                         if(role.Key.IsAddOn() || role.Key is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
                             sb.Append($"\n〖{GetRoleName(role.Key)}×{role.Key.GetCount()}〗\n");
@@ -685,7 +683,7 @@ namespace TownOfHost
                     }
 
                 }
-                foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 80000 && !x.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode)))
+                foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 80000 && !x.IsHiddenOn(Options.CurrentGameMode)))
                 {
                     if (opt.Name is "SyncColorMode" && Options.GetSyncColorMode() != SyncColorMode.None)
                         sb.Append($"\n【{opt.GetName(true)}: {opt.GetString()}】\n");
@@ -727,8 +725,6 @@ namespace TownOfHost
                 foreach (var role in Options.CustomRoleCounts)
                 {
                     if (!role.Key.IsEnable() || role.Key.IsCatLeaderRoles() || role.Key.IsOneNightRoles()) continue;
-                    if (Options.RoleSettingMode == RoleSettingMode.OnOffSet && role.Key.IsAddOnOnlyRole()) continue;
-                    if (Options.RoleSettingMode == RoleSettingMode.AddOnOnly && !role.Key.IsAddOnOnlyRole()) continue;
 
                     sb.Append($"\n【{GetRoleName(role.Key)}×{role.Key.GetCount()}】\n");
                     ShowChildrenSettings(Options.CustomRoleSpawnOnOff[role.Key], ref sb);
@@ -737,7 +733,7 @@ namespace TownOfHost
                 }
             }
             sb.Append($"━━━━━━━━━━━━【{GetString("Settings")}】━━━━━━━━━━━━");
-            foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 80000 && !x.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode)))
+            foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 80000 && !x.IsHiddenOn(Options.CurrentGameMode)))
             {
                 //if (opt.Name == "KillFlashDuration")
                 //    sb.Append($"\n【{opt.GetName(true)}: {opt.GetString()}】\n");
@@ -804,9 +800,6 @@ namespace TownOfHost
                 {
                     if (role.IsEnable() && !role.IsCatLeaderRoles()&& !role.IsOneNightRoles())
                     {
-                        if (Options.RoleSettingMode == RoleSettingMode.OnOffSet && role.IsAddOnOnlyRole()) continue;
-                        if (Options.RoleSettingMode == RoleSettingMode.AddOnOnly && !role.IsAddOnOnlyRole()) continue;
-
                         //if (role == CustomRoles.Rainbow)
                         //    sb.AppendFormat("\n{0}:{1}x{2}", GetString("HelpRoleNameRainbow"), $"{role.GetChance() * 100}%", role.GetCount());
                         //else if (role.IsAddOn() || role is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)

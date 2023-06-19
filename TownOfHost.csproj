@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netstandard2.1</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
 		<GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
 		<Description>Town Of Host_Y</Description>
 		<Authors>tukasa0001(EmptyBottle), integral0131, yumenopai</Authors>
 		<langVersion>preview</langVersion>
+		<NoWarn>MSB3246</NoWarn>
 		<PackageId>TownOfHost_Y</PackageId>
 		<Company>tukasa0001(EmptyBottle), integral0131, yumenopai</Company>
 		<Product>TownOfHost_Y</Product>
@@ -17,8 +18,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0328\BepInEx\core\*.dll" />
-		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0328\BepInEx\unhollowed\*.dll" />
+		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0613\BepInEx\core\*.dll" />
+		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0613\BepInEx\interop\*.dll" />
 		<EmbeddedResource Include=".\Resources\*.png" />
 		<EmbeddedResource Include=".\Resources\string.csv" />
 	</ItemGroup>
@@ -35,7 +36,7 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<Target Name="Copy" AfterTargets="Build" Condition="'C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0328' != ''">
-		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0328/BepInEx/plugins/" />
+	<Target Name="Copy" AfterTargets="Build" Condition="'C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0613' != ''">
+		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_0613/BepInEx/plugins/" />
 	</Target>
 </Project>
