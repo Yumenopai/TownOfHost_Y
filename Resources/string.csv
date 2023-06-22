@@ -611,7 +611,8 @@ DSchrodingerCat,(Dark)SCat,(Dark)シュレ猫,(潜藏)薛定谔的猫,(Dark)薛�
 "SKMadmateInfo","You are now on Team Impostors","サイドキックにされた","你是内鬼的好帮手","你現在是偽裝者的夥伴了，盡你所能幫助他們","Теперь вы в команде Предателя","Você agora está no Time Impostor"
 
 "# 両陣営可能役職"
-"WatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
+"EvilWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
+"NiceWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
 
 "# 特殊クルー役職"
 "BaitInfo","Bait your enemies","敵を罠にはめよう","诱骗敌人，让敌人落入你的陷阱","犧牲小我，完成大我","Убийца моментально зарепортит ваш труп","Engane os seus inimigos"

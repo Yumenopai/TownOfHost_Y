@@ -235,9 +235,6 @@ namespace TownOfHost
             }
             RpcSetRoleReplacer.StartReplace(senders);
 
-            //ウォッチャーの陣営抽選
-            Options.SetWatcherTeam(Options.EvilWatcherChance.GetFloat());
-
             if (Options.CurrentGameMode.IsCatMode())
             {
                 List<PlayerControl> AllPlayers = new();

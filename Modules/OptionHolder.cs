@@ -109,7 +109,6 @@ namespace TownOfHost
         public static OptionItem MadmateVentCooldown;
         public static OptionItem MadmateVentMaxTime;
 
-        public static OptionItem EvilWatcherChance;
         public static OptionItem LighterTaskCompletedVision;
         public static OptionItem LighterTaskCompletedDisableLightOut;
         public static OptionItem MayorAdditionalVote;
@@ -374,17 +373,6 @@ namespace TownOfHost
             return (SuffixModes)SuffixMode.GetValue();
         }
 
-
-
-        //public static int SnitchExposeTaskLeft = 1;
-
-
-        public static bool IsEvilWatcher = false;
-        public static void SetWatcherTeam(float EvilWatcherRate)
-        {
-            EvilWatcherRate = Options.EvilWatcherChance.GetFloat();
-            IsEvilWatcher = UnityEngine.Random.Range(1, 100) < EvilWatcherRate;
-        }
         public static bool IsLoaded = false;
 
         static Options()
