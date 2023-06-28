@@ -5,9 +5,9 @@ using System.Reflection;
 using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.Unity.IL2CPP;
+using BepInEx.IL2CPP;
 using HarmonyLib;
-using Il2CppInterop.Runtime.Injection;
+using UnhollowerRuntimeLib;
 using UnityEngine;
 
 [assembly: AssemblyFileVersionAttribute(TownOfHost.Main.PluginVersion)]
@@ -47,7 +47,7 @@ namespace TownOfHost
         // ==========
         //Sorry for many Japanese comments.
         public const string PluginGuid = "com.emptybottle.townofhost";
-        public const string PluginVersion = "412.10";
+        public const string PluginVersion = "412.9.2";
         public Harmony Harmony { get; } = new Harmony(PluginGuid);
         public static Version version = Version.Parse(PluginVersion);
         public static BepInEx.Logging.ManualLogSource Logger;
@@ -125,7 +125,7 @@ namespace TownOfHost
         public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day is 23 or 24 or 25 or 26;
         public static bool IsAprilFool = DateTime.Now.Month == 4 && DateTime.Now.Day is 1 or 2 or 3;
         public static bool IsInitialRelease = DateTime.Now.Month == 11 && DateTime.Now.Day is 2;
-        public static bool IsOneNightRelease = DateTime.Now.Month == 6;
+        public static bool IsOneNightRelease = DateTime.Now.Month == 3;
 
         //TOH_Y
         public static Dictionary<byte, int> ChairmanUsedButtonCount = new();

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using Csv;
 using HarmonyLib;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using UnhollowerBaseLib;
 
 namespace TownOfHost
 {

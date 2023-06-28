@@ -11,7 +11,7 @@ namespace TownOfHost.Roles.AddOns
         public static List<byte> playerIdList = new();
         public static void SetupCustomOption()
         {
-            Options.SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.CompreteCrew);
+            Options.SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.CompreteCrew, roleSetMode: RoleSettingMode.All);
             Options.SetUpAddOnOptions(Id + 10, CustomRoles.CompreteCrew, TabGroup.Addons);
         }
         public static void Init()

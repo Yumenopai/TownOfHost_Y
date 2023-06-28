@@ -32,7 +32,6 @@ namespace TownOfHost
         public static void Create(TMPro.TextMeshPro baseText)
         {
             var Text = Instantiate(baseText);
-            Text.fontSizeMax = Text.fontSizeMin = 2f;
             var instance = Text.gameObject.AddComponent<ErrorText>();
             instance.Text = Text;
             instance.name = "ErrorText";

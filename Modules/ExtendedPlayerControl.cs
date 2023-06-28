@@ -555,6 +555,11 @@ namespace TownOfHost
                     ONPhantomThief.SetKillCooldown(player.PlayerId);
                     break;
             }
+            if (Options.RoleSettingMode == RoleSettingMode.AddOnOnly)
+            {
+                if ((role.IsAddOnOnlyImpostor() || role.IsAddOnOnlyShapeshifter()) && Options.IsCustomKillCool[role].GetBool())
+                    Main.AllPlayerKillCooldown[player.PlayerId] = Options.CustomKillCool[role].GetFloat();
+            }
             if (player.PlayerId == LastImpostor.currentId)
                 LastImpostor.SetKillCooldown(player);
         }

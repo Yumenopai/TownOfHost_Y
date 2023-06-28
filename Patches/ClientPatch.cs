@@ -105,6 +105,15 @@ namespace TownOfHost
             if (ban) BanManager.AddBanPlayer(AmongUsClient.Instance.GetRecentClient(clientId));
         }
     }
+    [HarmonyPatch(typeof(ResolutionManager), nameof(ResolutionManager.SetResolution))]
+    class SetResolutionManager
+    {
+        public static void Postfix()
+        {
+            if (MainMenuManagerPatch.githubButton != null)
+                MainMenuManagerPatch.githubButton.transform.position = Vector3.Reflect(MainMenuManagerPatch.template.transform.position, Vector3.left);
+        }
+    }
     [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.SendAllStreamedObjects))]
     class InnerNetObjectSerializePatch
     {

@@ -35,15 +35,15 @@ namespace TownOfHost.Roles.Impostor
                 .SetValueFormat(OptionFormat.Times);
         }
 
-        private static void SetupTelepathistersOptions(int id, TabGroup tab, CustomRoles role)
+        private static void SetupTelepathistersOptions(int id, TabGroup tab, CustomRoles role, RoleSettingMode roleSetMode = RoleSettingMode.OnOffSet)
         {
             var spawnOption = BooleanOptionItem.Create(id, role.ToString(), false, tab, false).SetColor(Utils.GetRoleColor(role))
                 .SetHeader(true)
-                .SetGameMode(CustomGameMode.Standard) as BooleanOptionItem;
+                .SetGameMode(CustomGameMode.Standard).SetRoleMode(roleSetMode) as BooleanOptionItem;
             // 初期値,最大値,最小値が同じで、stepが0のどうやっても変えることができない個数オプション
             var countOption = IntegerOptionItem.Create(id + 1, "Maximum", new(2, 3, 1), 2, tab, false).SetParent(spawnOption)
                 .SetValueFormat(OptionFormat.Players)
-                .SetGameMode(CustomGameMode.Standard);
+                .SetGameMode(CustomGameMode.Standard).SetRoleMode(roleSetMode);
 
             CustomRoleSpawnOnOff.Add(role, spawnOption);
             CustomRoleCounts.Add(role, countOption);
