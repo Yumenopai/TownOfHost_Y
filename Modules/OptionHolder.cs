@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Globalization;
 using HarmonyLib;
 using UnityEngine;
 
@@ -20,15 +19,6 @@ namespace TownOfHost
         Standard,
         CatchCat,
         OneNight,
-        All = int.MaxValue
-    }
-    [Flags]
-    public enum RoleSettingMode
-    {
-        OnOffSet,
-        RateSet,
-        AddOnOnly,
-        
         All = int.MaxValue
     }
 
@@ -60,17 +50,11 @@ namespace TownOfHost
 
         // ゲームモード
         public static OptionItem GameMode;
-        public static OptionItem RoleSetMode;
         public static CustomGameMode CurrentGameMode => (CustomGameMode)GameMode.GetValue();
-        public static RoleSettingMode RoleSettingMode => (RoleSettingMode)RoleSetMode.GetValue();
 
         public static readonly string[] gameModes =
         {
             "Standard", "CatchCat", "OneNight",
-        };
-        public static readonly string[] roleSetModes =
-        {
-            "OnOffSet", "RateSet", "AddOnOnly",
         };
 
         // MapActive
@@ -139,13 +123,6 @@ namespace TownOfHost
         public static OptionItem ArsonistCooldown;
         public static OptionItem KillFlashDuration;
 
-        //役職別設定
-        public static Dictionary<CustomRoles, OptionItem> IsCustomKillCool;
-        public static Dictionary<CustomRoles, OptionItem> CustomKillCool;
-        public static Dictionary<CustomRoles, OptionItem> IsCustomVentCool;
-        public static Dictionary<CustomRoles, OptionItem> CustomVentCool;
-
-
         //TOH_Y
         //機能
         public static OptionItem OperateVisibilityImpostor;
@@ -200,6 +177,7 @@ namespace TownOfHost
         public static OptionItem MafiaKillCooldown;
         public static OptionItem RainbowDontSeeTaskTurn;
         public static OptionItem PotentialistTaskTrigger;
+        public static OptionItem ScavengerIgnoreBait;
 
         public static OptionItem JClientAfterJackalDead;
         public enum AfterJackalDeadMode
@@ -389,17 +367,7 @@ namespace TownOfHost
             return (SuffixModes)SuffixMode.GetValue();
         }
 
-
-
         //public static int SnitchExposeTaskLeft = 1;
-
-
-        public static bool IsEvilWatcher = false;
-        public static void SetWatcherTeam(float EvilWatcherRate)
-        {
-            EvilWatcherRate = Options.EvilWatcherChance.GetFloat();
-            IsEvilWatcher = UnityEngine.Random.Range(1, 100) < EvilWatcherRate;
-        }
         public static bool IsLoaded = false;
 
         static Options()
@@ -455,11 +423,6 @@ namespace TownOfHost
                 .SetColor(new Color32(204, 204, 0, 255))
                 .SetGameMode(CustomGameMode.All);
 
-            // ゲームモード
-            RoleSetMode = StringOptionItem.Create(5, "RoleSetMode", roleSetModes, 0, TabGroup.MainSettings, false)
-                .SetColor(new Color32(204, 204, 0, 255))
-                .SetGameMode(CustomGameMode.Standard).SetRoleMode(RoleSettingMode.All);
-
             #region 役職・詳細設定
 
             HideGameSettings = BooleanOptionItem.Create(1_000_002, "HideGameSettings", false, TabGroup.MainSettings, false)
@@ -470,14 +433,9 @@ namespace TownOfHost
             CustomRoleCounts = new();
             CustomRoleSpawnOnOff = new();
 
-            IsCustomKillCool = new();
-            CustomKillCool = new();
-            IsCustomVentCool = new();
-            CustomVentCool = new();
-
             // GM
             EnableGM = BooleanOptionItem.Create(100, "GM", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.GM))
+                .SetColor(new Color32(255, 91, 112, 255))
                 .SetHeader(true)
                 .SetGameMode(CustomGameMode.All);
 
@@ -486,7 +444,7 @@ namespace TownOfHost
             //    .SetGameMode(CustomGameMode.Standard);
 
             KillFlashDuration = FloatOptionItem.Create(90000, "KillFlashDuration", new(0.1f, 0.45f, 0.05f), 0.3f, TabGroup.MainSettings, false)
-                .SetColor(Color.red)
+                .SetColor(Palette.ImpostorRed)
                 .SetValueFormat(OptionFormat.Seconds)
                 .SetGameMode(CustomGameMode.Standard);
 
@@ -568,7 +526,7 @@ namespace TownOfHost
 
             // リアクターの時間制御
             SabotageTimeControl = BooleanOptionItem.Create(100800, "SabotageTimeControl", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Sympathizer))
+                .SetColor(Color.magenta)
                 .SetHeader(true)
                 .SetGameMode(CustomGameMode.All);
             PolusReactorTimeLimit = FloatOptionItem.Create(100801, "PolusReactorTimeLimit", new(1f, 60f, 1f), 30f, TabGroup.MainSettings, false).SetParent(SabotageTimeControl)
@@ -580,7 +538,7 @@ namespace TownOfHost
 
             // 停電の特殊設定
             LightsOutSpecialSettings = BooleanOptionItem.Create(101500, "LightsOutSpecialSettings", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Sympathizer))
+                .SetColor(Color.magenta)
                 .SetGameMode(CustomGameMode.All);
             DisableAirshipViewingDeckLightsPanel = BooleanOptionItem.Create(101511, "DisableAirshipViewingDeckLightsPanel", false, TabGroup.MainSettings, false).SetParent(LightsOutSpecialSettings)
                 .SetGameMode(CustomGameMode.All);
@@ -591,7 +549,7 @@ namespace TownOfHost
 
             //コミュサボのカモフラージュ
             CommsCamouflage = BooleanOptionItem.Create(900_013, "CommsCamouflage", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Sympathizer))
+                .SetColor(Color.magenta)
                 .SetGameMode(CustomGameMode.All);
 
             // 収集表示
@@ -678,22 +636,22 @@ namespace TownOfHost
 
             //幽霊のタスクを無効に
             GhostIgnoreTasks = BooleanOptionItem.Create(900_012, "GhostIgnoreTasks", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Trapper))
+                .SetColor(Palette.LightBlue)
                 .SetHeader(true)
                 .SetGameMode(CustomGameMode.Standard);
             GhostCanSeeOtherRoles = BooleanOptionItem.Create(900_010, "GhostCanSeeOtherRoles", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Trapper))
+                .SetColor(Palette.LightBlue)
                 .SetGameMode(CustomGameMode.All);
             GhostCanSeeOtherVotes = BooleanOptionItem.Create(900_011, "GhostCanSeeOtherVotes", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Trapper))
+                .SetColor(Palette.LightBlue)
                 .SetGameMode(CustomGameMode.All);
             GhostCanSeeDeathReason = BooleanOptionItem.Create(900_014, "GhostCanSeeDeathReason", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Trapper))
+                .SetColor(Palette.LightBlue)
                 .SetGameMode(CustomGameMode.Standard);
 
             // ランダムマップ
             RandomMapsMode = BooleanOptionItem.Create(100400, "RandomMapsMode", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Arsonist))
+                .SetColor(Palette.Orange)
                 .SetHeader(true)
                 .SetGameMode(CustomGameMode.All);
             AddedTheSkeld = BooleanOptionItem.Create(100401, "AddedTheSkeld", false, TabGroup.MainSettings, false).SetParent(RandomMapsMode)
@@ -709,19 +667,19 @@ namespace TownOfHost
 
             // 転落死
             LadderDeath = BooleanOptionItem.Create(101100, "LadderDeath", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Arsonist))
+                .SetColor(Palette.Orange)
                 .SetGameMode(CustomGameMode.All);
             LadderDeathChance = StringOptionItem.Create(101110, "LadderDeathChance", rates[1..], 0, TabGroup.MainSettings, false).SetParent(LadderDeath)
                 .SetGameMode(CustomGameMode.All);
 
             //初手キルクール調整
             FixFirstKillCooldown = BooleanOptionItem.Create(900_000, "FixFirstKillCooldown", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Arsonist))
+                .SetColor(Palette.Orange)
                 .SetGameMode(CustomGameMode.All);
 
             //エレキ構造変化
             AirShipVariableElectrical = BooleanOptionItem.Create(101600, "AirShipVariableElectrical", false, TabGroup.MainSettings, false)
-                .SetColor(Utils.GetRoleColor(CustomRoles.Arsonist))
+                .SetColor(Palette.Orange)
                 .SetGameMode(CustomGameMode.All);
 
             SyncColorMode = StringOptionItem.Create(105100, "SyncColorMode", SelectSyncColorMode, 0, TabGroup.MainSettings, false)
@@ -805,18 +763,10 @@ namespace TownOfHost
             Greedier.SetupCustomOption();//3300
             Ambitioner.SetupCustomOption();//3400
             SetupRoleOptions(3500, TabGroup.ImpostorRoles, CustomRoles.Scavenger);//TOH_Y
+            ScavengerIgnoreBait = BooleanOptionItem.Create(3510, "ScavengerIgnoreBait", false, TabGroup.ImpostorRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Scavenger]);
             EvilDiviner.SetupCustomOption();//3600
             Telepathisters.SetupCustomOption();//3700
             ShapeKiller.SetupCustomOption();//3800
-
-            {
-                SetupRoleAddOnOnlyOptions(9400, TabGroup.ImpostorRoles, CustomRoles.Impostor1);
-                SetupRoleAddOnOnlyOptions(9500, TabGroup.ImpostorRoles, CustomRoles.Impostor2);
-                SetupRoleAddOnOnlyOptions(9600, TabGroup.ImpostorRoles, CustomRoles.Impostor3);
-                SetupRoleAddOnOnlyOptions(9700, TabGroup.ImpostorRoles, CustomRoles.Shapeshifter1);
-                SetupRoleAddOnOnlyOptions(9800, TabGroup.ImpostorRoles, CustomRoles.Shapeshifter2);
-                SetupRoleAddOnOnlyOptions(9900, TabGroup.ImpostorRoles, CustomRoles.Shapeshifter3);
-            }
 
             DefaultShapeshiftCooldown = FloatOptionItem.Create(5011, "DefaultShapeshiftCooldown", new(5f, 999f, 5f), 15f, TabGroup.ImpostorRoles, false)
                 .SetHeader(true)
@@ -855,12 +805,6 @@ namespace TownOfHost
             SetupRoleOptions(10500, TabGroup.MadmateRoles, CustomRoles.MadBrackOuter);//TOH_Y
             SetUpAddOnOptions(10510, CustomRoles.MadBrackOuter, TabGroup.MadmateRoles);
             MadSheriff.SetupCustomOption();
-
-            {
-                SetupRoleAddOnOnlyOptions(19500, TabGroup.MadmateRoles, CustomRoles.Madmate1);
-                SetupRoleAddOnOnlyOptions(19600, TabGroup.MadmateRoles, CustomRoles.Madmate2);
-                SetupRoleAddOnOnlyOptions(19700, TabGroup.MadmateRoles, CustomRoles.Madmate3);
-            }
 
             CanMakeMadmateCount = IntegerOptionItem.Create(5012, "CanMakeMadmateCount", new(0, 15, 1), 0, TabGroup.MadmateRoles, false)
                 .SetColor(Utils.GetRoleColor(CustomRoles.Impostor))
@@ -968,18 +912,6 @@ namespace TownOfHost
             FortuneTeller.SetupCustomOption();//36400
             Psychic.SetupCustomOption();//36300
 
-            {
-                SetupRoleAddOnOnlyOptions(48100, TabGroup.CrewmateRoles, CustomRoles.Crewmate1);
-                SetupRoleAddOnOnlyOptions(48200, TabGroup.CrewmateRoles, CustomRoles.Crewmate2);
-                SetupRoleAddOnOnlyOptions(48300, TabGroup.CrewmateRoles, CustomRoles.Crewmate3);
-                SetupRoleAddOnOnlyOptions(48400, TabGroup.CrewmateRoles, CustomRoles.Engineer1);
-                SetupRoleAddOnOnlyOptions(48500, TabGroup.CrewmateRoles, CustomRoles.Engineer2);
-                SetupRoleAddOnOnlyOptions(48600, TabGroup.CrewmateRoles, CustomRoles.Engineer3);
-                SetupRoleAddOnOnlyOptions(48700, TabGroup.CrewmateRoles, CustomRoles.Scientist1);
-                SetupRoleAddOnOnlyOptions(48800, TabGroup.CrewmateRoles, CustomRoles.Scientist2);
-                SetupRoleAddOnOnlyOptions(48900, TabGroup.CrewmateRoles, CustomRoles.Scientist3);
-            }
-
             /********ON********/
             SetupRoleOptions(67000, TabGroup.CrewmateRoles, CustomRoles.ONVillager, CustomGameMode.OneNight);
             ONDiviner.SetupCustomOption();//67100
@@ -1066,111 +998,84 @@ namespace TownOfHost
 
             /**************************************** Add-Ons ****************************************/
             LastImpostor.SetupCustomOption();   //79000
-            SetupLoversRoleOptionsToggle(50300,roleSetMode:RoleSettingMode.All);
+            SetupLoversRoleOptionsToggle(50300);
             LoversAddWin = BooleanOptionItem.Create(50310, "LoversAddWin", false, TabGroup.Addons, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Lovers]);
             Workhorse.SetupCustomOption();//78900
             CompreteCrew.SetupCustomOption();//77700
 
-            SetupRoleOptions(79100, TabGroup.Addons, CustomRoles.AddWatch, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(79200, TabGroup.Addons, CustomRoles.AddLight, roleSetMode: RoleSettingMode.All);
+            SetupRoleOptions(79100, TabGroup.Addons, CustomRoles.AddWatch);
+            SetupRoleOptions(79200, TabGroup.Addons, CustomRoles.AddLight);
             AddLightAddCrewmateVision = FloatOptionItem.Create(79210, "AddLightAddCrewmateVision", new(0f, 5f, 0.1f), 0.3f, TabGroup.Addons, false)
             .SetValueFormat(OptionFormat.Multiplier).SetGameMode(CustomGameMode.Standard);
             AddLightAddImpostorVision = FloatOptionItem.Create(79211, "AddLightAddImpostorVision", new(0f, 5f, 0.1f), 0.5f, TabGroup.Addons, false)
                 .SetValueFormat(OptionFormat.Multiplier).SetGameMode(CustomGameMode.Standard);
             AddLighterDisableLightOut = BooleanOptionItem.Create(79212, "AddLighterDisableLightOut", true, TabGroup.Addons, false)
                 .SetGameMode(CustomGameMode.Standard);
-            SetupRoleOptions(79400, TabGroup.Addons, CustomRoles.AddSeer, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(79500, TabGroup.Addons, CustomRoles.Autopsy, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(79600, TabGroup.Addons, CustomRoles.VIP, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(79800, TabGroup.Addons, CustomRoles.Revenger, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(79900, TabGroup.Addons, CustomRoles.Management, roleSetMode: RoleSettingMode.All);
+            SetupRoleOptions(79400, TabGroup.Addons, CustomRoles.AddSeer);
+            SetupRoleOptions(79500, TabGroup.Addons, CustomRoles.Autopsy);
+            SetupRoleOptions(79600, TabGroup.Addons, CustomRoles.VIP);
+            SetupRoleOptions(79800, TabGroup.Addons, CustomRoles.Revenger);
+            SetupRoleOptions(79900, TabGroup.Addons, CustomRoles.Management);
             ManagementSeeNowtask = BooleanOptionItem.Create(79910, "ManagementSeeNowtask", true, TabGroup.Addons, false)
                 .SetGameMode(CustomGameMode.Standard);
-            SetupRoleOptions(77600, TabGroup.Addons, CustomRoles.Sending, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(77100, TabGroup.Addons, CustomRoles.TieBreaker, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(77300, TabGroup.Addons, CustomRoles.PlusVote, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(77400, TabGroup.Addons, CustomRoles.Guarding, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(77500, TabGroup.Addons, CustomRoles.AddBait, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(77800, TabGroup.Addons, CustomRoles.Refusing, roleSetMode: RoleSettingMode.All);
+            SetupRoleOptions(77600, TabGroup.Addons, CustomRoles.Sending);
+            SetupRoleOptions(77100, TabGroup.Addons, CustomRoles.TieBreaker);
+            SetupRoleOptions(77300, TabGroup.Addons, CustomRoles.PlusVote);
+            SetupRoleOptions(77400, TabGroup.Addons, CustomRoles.Guarding);
+            SetupRoleOptions(77500, TabGroup.Addons, CustomRoles.AddBait);
+            SetupRoleOptions(77800, TabGroup.Addons, CustomRoles.Refusing);
 
-            SetupRoleOptions(79300, TabGroup.Addons, CustomRoles.Sunglasses, roleSetMode: RoleSettingMode.All);
+            SetupRoleOptions(79300, TabGroup.Addons, CustomRoles.Sunglasses);
             SunglassesSubCrewmateVision = FloatOptionItem.Create(79310, "SunglassesSubCrewmateVision", new(0f, 5f, 0.05f), 0.2f, TabGroup.Addons, false)
                 .SetValueFormat(OptionFormat.Multiplier).SetGameMode(CustomGameMode.Standard);
             SunglassesSubImpostorVision = FloatOptionItem.Create(79311, "SunglassesSubImpostorVision", new(0f, 5f, 0.1f), 0.5f, TabGroup.Addons, false)
                 .SetValueFormat(OptionFormat.Multiplier).SetGameMode(CustomGameMode.Standard);
-            SetupRoleOptions(79700, TabGroup.Addons, CustomRoles.Clumsy, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(77000, TabGroup.Addons, CustomRoles.InfoPoor, roleSetMode: RoleSettingMode.All);
-            SetupRoleOptions(77200, TabGroup.Addons, CustomRoles.NonReport, roleSetMode: RoleSettingMode.All);
+            SetupRoleOptions(79700, TabGroup.Addons, CustomRoles.Clumsy);
+            SetupRoleOptions(77000, TabGroup.Addons, CustomRoles.InfoPoor);
+            SetupRoleOptions(77200, TabGroup.Addons, CustomRoles.NonReport);
 
             #endregion
             IsLoaded = true;
         }
 
-        public static void SetupRoleOptions(int id, TabGroup tab, CustomRoles role, CustomGameMode customGameMode = CustomGameMode.Standard, RoleSettingMode roleSetMode = RoleSettingMode.OnOffSet)
+        public static void SetupRoleOptions(int id, TabGroup tab, CustomRoles role, CustomGameMode customGameMode = CustomGameMode.Standard)
         {
             int MaxCount = 15;
             if (role.IsImpostor()) MaxCount = 3;
 
              var spawnOption = BooleanOptionItem.Create(id, role.ToString(), false, tab, false).SetColor(Utils.GetRoleColor(role))
                 .SetHeader(true)
-                .SetGameMode(customGameMode).SetRoleMode(roleSetMode) as BooleanOptionItem;
+                .SetGameMode(customGameMode) as BooleanOptionItem;
             var countOption = IntegerOptionItem.Create(id + 1, "Maximum", new(1, MaxCount, 1), 1, tab, false).SetParent(spawnOption)
                 .SetValueFormat(OptionFormat.Players)
-                .SetGameMode(customGameMode).SetRoleMode(roleSetMode);
+                .SetGameMode(customGameMode);
 
             CustomRoleSpawnOnOff.Add(role, spawnOption);
             CustomRoleCounts.Add(role, countOption);
         }
-        public static void SetupRoleAddOnOnlyOptions(int id, TabGroup tab, CustomRoles role)
-        {
-            int MaxCount = 15;
-            Color roleColor = Utils.GetRoleColor(role);
-            if (role.IsImpostor()) MaxCount = 3;
-            var spawnOption = BooleanOptionItem.Create(id, role.ToString(), false, tab, false).SetColor(roleColor)
-                .SetHeader(true)
-                .SetGameMode(CustomGameMode.Standard).SetRoleMode(RoleSettingMode.AddOnOnly) as BooleanOptionItem;
-            var countOption = IntegerOptionItem.Create(id + 1, "Maximum", new(1, MaxCount, 1), 1, tab, false).SetParent(spawnOption)
-                .SetValueFormat(OptionFormat.Players)
-                .SetGameMode(CustomGameMode.Standard).SetRoleMode(RoleSettingMode.AddOnOnly);
-
-            if (role.IsImpostor())
-            {
-                var IsKillcoolOption = BooleanOptionItem.Create(id + 50, "IsKillcoolOption", false, tab, false)
-                    .SetParent(spawnOption);
-                var KillcoolOption = FloatOptionItem.Create(id + 51, "KillCooldown", new(0f, 180f, 2.5f), 30f, tab, false).SetParent(IsKillcoolOption)
-                    .SetValueFormat(OptionFormat.Seconds);
-
-                IsCustomKillCool.Add(role, IsKillcoolOption);
-                CustomKillCool.Add(role, KillcoolOption);
-            }
-            CustomRoleSpawnOnOff.Add(role, spawnOption);
-            CustomRoleCounts.Add(role, countOption);
-
-            SetUpAddOnOptions(id + 10, role, tab);
-        }
-        private static void SetupLoversRoleOptionsToggle(int id, CustomGameMode customGameMode = CustomGameMode.Standard, RoleSettingMode roleSetMode = RoleSettingMode.OnOffSet)
+        private static void SetupLoversRoleOptionsToggle(int id, CustomGameMode customGameMode = CustomGameMode.Standard)
         {
             var role = CustomRoles.Lovers;
             var spawnOption = BooleanOptionItem.Create(id, role.ToString(), false, TabGroup.Addons, false).SetColor(Utils.GetRoleColor(role))
                 .SetHeader(true)
-                .SetGameMode(customGameMode).SetRoleMode(roleSetMode) as BooleanOptionItem;
+                .SetGameMode(customGameMode) as BooleanOptionItem;
 
             var countOption = IntegerOptionItem.Create(id + 1, "NumberOfLovers", new(2, 2, 1), 2, TabGroup.Addons, false).SetParent(spawnOption)
                 .SetHidden(true)
-                .SetGameMode(customGameMode).SetRoleMode(roleSetMode);
+                .SetGameMode(customGameMode);
 
             CustomRoleSpawnOnOff.Add(role, spawnOption);
             CustomRoleCounts.Add(role, countOption);
         }
-        public static void SetupSingleRoleOptions(int id, TabGroup tab, CustomRoles role, int count, CustomGameMode customGameMode = CustomGameMode.Standard, RoleSettingMode roleSetMode = RoleSettingMode.OnOffSet)
+        public static void SetupSingleRoleOptions(int id, TabGroup tab, CustomRoles role, int count, CustomGameMode customGameMode = CustomGameMode.Standard)
         {
             var spawnOption = BooleanOptionItem.Create(id, role.ToString(),false, tab, false).SetColor(Utils.GetRoleColor(role))
                 .SetHeader(true)
-                .SetGameMode(customGameMode).SetRoleMode(roleSetMode) as BooleanOptionItem;
+                .SetGameMode(customGameMode) as BooleanOptionItem;
             // 初期値,最大値,最小値が同じで、stepが0のどうやっても変えることができない個数オプション
             var countOption = IntegerOptionItem.Create(id + 1, "Maximum", new(count, count, count), count, tab, false).SetParent(spawnOption)
                 .SetValueFormat(OptionFormat.Players)
-                .SetGameMode(customGameMode).SetRoleMode(roleSetMode);
+                .SetGameMode(customGameMode);
 
             CustomRoleSpawnOnOff.Add(role, spawnOption);
             CustomRoleCounts.Add(role, countOption);

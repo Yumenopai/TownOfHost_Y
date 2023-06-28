@@ -315,6 +315,27 @@ namespace TownOfHost
                     };
                     AllModNews.Add(news);
                 }
+                {
+                    var news = new ModNews
+                    {
+                        Number = 100010,
+                        //BeforeNumber = 0,
+                        Title = "Town Of Host_Y v412.9.3",
+                        SubTitle = "★★★★★v412.9.3アップデート!★★★★★",
+                        ShortTitle = "★TOH_Y v412.9.3",
+                        Text = "Thank you for playing TownOfHost_Y!\n"
+                        + "\n<b>おかえりなさい！またこのYで会えるなんて、、</b>"
+                        + "\n　今回の0622サーバーアップデートによる仕様変更により、ホストMODがかなりの制限の中でしか使用できない状況になっています。この度InnerSloth側との連絡を取りつつ、暫定的に<b>本体v20230328</b>のみ6月22日に変更された仕様を元に戻してもらう運びとなりました。"
+                        + "\n　それに伴いホストMODを正常に全機能使用したい場合、MODを入れる方は以下の環境を用意して頂ければ可能となります。\n"
+                        + "\n<b>本体v20230328\nv412.9.3(これ)</b>"
+                        + "\n　※MODをいれない参加者側の制限はありません。本体v20230613で参加できます。\n"
+                        + "\n　次のAmongUsアップデートなど、状況発展次第Discord/Twitterのほうにアナウンス致します。\r\nご不便をおかけしますがよろしくお願い致します。\n"
+                        + "\nなにか気になったことやバグ報告はTOH_YのDiscordまでご連絡ください。\n\nTown Of Host_Y：Yumeno",
+                        Date = "2023-06-28T00:00:00Z"
+
+                    };
+                    AllModNews.Add(news);
+                }
                 AnnouncementPopUp.UpdateState = AnnouncementPopUp.AnnounceState.NotStarted;
             }
 

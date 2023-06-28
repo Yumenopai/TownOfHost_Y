@@ -171,13 +171,13 @@ namespace TownOfHost
                     var parent = option.Parent;
 
                     enabled = AmongUsClient.Instance.AmHost &&
-                        !option.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode);
+                        !option.IsHiddenOn(Options.CurrentGameMode);
 
                     var opt = option.OptionBehaviour.transform.Find("Background").GetComponent<SpriteRenderer>();
                     opt.size = new(5.0f, 0.45f);
                     while (parent != null && enabled)
                     {
-                        enabled = parent.GetBool() && !parent.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode);
+                        enabled = parent.GetBool() && !parent.IsHiddenOn(Options.CurrentGameMode);
                         parent = parent.Parent;
                         opt.color = new(0f, 1f, 0f);
                         opt.size = new(4.8f, 0.45f);

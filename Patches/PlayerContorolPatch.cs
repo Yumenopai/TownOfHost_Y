@@ -289,7 +289,16 @@ namespace TownOfHost
                         Ambitioner.OnCheckMurder(killer);
                         break;
                     case CustomRoles.Scavenger:
-                        ReportDeadBodyPatch.CanReportByDeadBody[target.PlayerId] = false;
+                        if (!Options.ScavengerIgnoreBait.GetBool() && target.Is(CustomRoles.Bait))
+                        {
+                            Logger.Info($"{target.GetNameWithRole()}：ベイトキルなので通報される", "Scavenger");
+                        }
+                        else //ベイトじゃない又はベイト無効など
+                        {
+                            if (target.Is(CustomRoles.Bait)) Main.BaitKillPlayer = byte.MaxValue; //ベイトマーク取り消し
+                            ReportDeadBodyPatch.CanReportByDeadBody[target.PlayerId] = false;
+                            Logger.Info($"{target.GetNameWithRole()}：通報できない死体", "Scavenger");
+                        }
                         break;
                     //case CustomRoles.EvilDivinerのみ上で
                     //    if (!EvilDiviner.OnCheckMurder(killer, target))

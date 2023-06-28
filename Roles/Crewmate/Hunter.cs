@@ -13,7 +13,9 @@ namespace TownOfHost.Roles.Crewmate
 
         private static OptionItem KillCooldown;
         private static OptionItem ShotLimitOpt;
+        private static OptionItem CanKillAllAlive;
         private static OptionItem KnowTargetIsImpostor;
+        private static OptionItem KnowTargetMadIsImpostor;
 
         public static Dictionary<byte, float> ShotLimit = new();
         public static Dictionary<byte, float> CurrentKillCooldown = new();
@@ -25,7 +27,9 @@ namespace TownOfHost.Roles.Crewmate
                 .SetValueFormat(OptionFormat.Seconds);
             ShotLimitOpt = IntegerOptionItem.Create(Id + 12, "SheriffShotLimit", new(1, 15, 1), 5, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Hunter])
                 .SetValueFormat(OptionFormat.Times);
-            KnowTargetIsImpostor = BooleanOptionItem.Create(Id + 13, "KnowTargetIsImpostor", false, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Hunter]);
+            CanKillAllAlive = BooleanOptionItem.Create(Id + 13, "SheriffCanKillAllAlive", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Hunter]);
+            KnowTargetIsImpostor = BooleanOptionItem.Create(Id + 14, "HunterKnowTargetIsImpostor", true, TabGroup.CrewmateRoles, false).SetParent(CustomRoleSpawnOnOff[CustomRoles.Hunter]);
+            KnowTargetMadIsImpostor = BooleanOptionItem.Create(Id + 15, "HunterKnowTargetMadIsImpostor", true, TabGroup.CrewmateRoles, false).SetParent(KnowTargetIsImpostor);
         }
         public static void Init()
         {
@@ -75,6 +79,7 @@ namespace TownOfHost.Roles.Crewmate
         public static void SetKillCooldown(byte id) => Main.AllPlayerKillCooldown[id] = CanUseKillButton(id) ? CurrentKillCooldown[id] : 0f;
         public static bool CanUseKillButton(byte playerId)
             => !Main.PlayerStates[playerId].IsDead
+            && (CanKillAllAlive.GetBool() || GameStates.AlreadyDied)
             && ShotLimit[playerId] > 0;
 
         public static void OnCheckMurder(PlayerControl killer, PlayerControl target)
@@ -82,10 +87,22 @@ namespace TownOfHost.Roles.Crewmate
             ShotLimit[killer.PlayerId]--;
             Logger.Info($"{killer.GetNameWithRole()} : 残り{ShotLimit[killer.PlayerId]}発", "Hunter");
 
-            if (target.Is(CustomRoleTypes.Impostor))       isImpostor[killer.PlayerId] = 1;
-            else if (target.Is(CustomRoleTypes.Neutral))   isImpostor[killer.PlayerId] = 2;
-            else                                    isImpostor[killer.PlayerId] = 0;
+            switch (target.GetCustomRole().GetCustomRoleTypes())
+            {
+                case CustomRoleTypes.Impostor:
+                    isImpostor[killer.PlayerId] = 1; break;
+                case CustomRoleTypes.Madmate:
+                    if (KnowTargetMadIsImpostor.GetBool()) isImpostor[killer.PlayerId] = 1;
+                    else isImpostor[killer.PlayerId] = 0;
+                    break;
+                case CustomRoleTypes.Neutral:
+                    isImpostor[killer.PlayerId] = 2; break;
+                default:
+                    isImpostor[killer.PlayerId] = 0; break;
+            }
+
             SendRPC(killer.PlayerId);
+            Utils.NotifyRoles(SpecifySeer: killer);
         }
         public static string GetShotLimit(byte playerId) => Utils.ColorString(CanUseKillButton(playerId) ? Color.yellow : Color.white, ShotLimit.TryGetValue(playerId, out var shotLimit) ? $"({shotLimit})" : "Invalid");
 

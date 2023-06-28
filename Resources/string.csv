@@ -284,7 +284,8 @@ LoveCutterKnow,Task completed shows kill Roles,タスク完了でキル役職が
 BaitWaitTime,Time from bait kill to report,ベイトキルから通報までの時間,从杀死诱饵后到报告的时间长度
 IsReportShow,"Show button or report","ボタンかレポートか表示させる",显示按钮或报告
 ShowRevengeTarget,"Show Revenge player at Meeting","道連れされた人を会議で表示する","在会议上显示复仇玩家"
-KnowTargetIsImpostor,"Can show if the kill target is not Crewmate","キルした時、敵陣営かどうか分かる","可以显示杀死的目标是不是船员"
+"HunterKnowTargetIsImpostor","Can Show If the Kill Target Is Not Crewmate","キルした時、敵陣営かどうか分かる","可以显示杀死的目标是不是船员"
+"HunterKnowTargetMadIsImpostor","MadMate Is Indicated By Imposter Determination.","マッドメイトはインポスター判定で表示する",
 AntiCompGuardCount,Kill guard count,キルガード回数,自保次数,
 AntiCompKnowOption,"Options on Task Completion","タスク完了でのオプション","任务完成选项"
 AntiCompKnowNotask,"Know who do not have tasks","タスクを持たない人がわかる","知道谁没有任务"
@@ -324,6 +325,7 @@ TotocalcioBetChangeCount,'BET'Change Count,「賭ける」の変更できる回�
 TotocalcioInitialCoolDown,'BET'Initial Ability Cooldown,「賭ける」の初期クールタイム,
 TotocalcioFinalCoolDown,'BET'Final Ability Cooldown,「賭ける」の最終クールタイム,
 TotocalcioButtonText,BET,賭ける,
+"ScavengerIgnoreBait","Ignore Forced Reports of Bait Kill","ベイトキル時の強制レポートを無視する",
 
 "isImpostor","{0} is Impostor.","{0}はインポスターだった","{0} 是 内鬼."
 "isNotImpostor","{0} is not Impostor.","{0}はインポスターではなかった","{0} 不是 内鬼.",

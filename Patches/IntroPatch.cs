@@ -81,7 +81,7 @@ namespace TownOfHost
             foreach (var t in tmp) logger.Info(t);
             logger.Info("------------詳細設定------------");
             foreach (var o in OptionItem.AllOptions)
-                if (!o.IsHiddenOn(Options.CurrentGameMode, Options.RoleSettingMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.GetBool()))
+                if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.GetBool()))
                     logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}");
             logger.Info("-------------その他-------------");
             logger.Info($"プレイヤー数: {Main.AllPlayerControls.Count()}人");

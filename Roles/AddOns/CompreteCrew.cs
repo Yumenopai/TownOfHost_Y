@@ -11,7 +11,7 @@ namespace TownOfHost.Roles.AddOns
         public static List<byte> playerIdList = new();
         public static void SetupCustomOption()
         {
-            Options.SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.CompreteCrew, roleSetMode: RoleSettingMode.All);
+            Options.SetupRoleOptions(Id, TabGroup.Addons, CustomRoles.CompreteCrew);
             Options.SetUpAddOnOptions(Id + 10, CustomRoles.CompreteCrew, TabGroup.Addons);
         }
         public static void Init()
@@ -27,9 +27,8 @@ namespace TownOfHost.Roles.AddOns
         public static bool CanBeCompreteCrew(PlayerControl pc)
            => pc.IsAlive()
            && !IsThisRole(pc.PlayerId)
-           && !(pc.GetPlayerTaskState().CompletedTasksCount + 1 < pc.GetPlayerTaskState().AllTasksCount)
-           && pc.GetCustomRole().IsCrewmate()
-           && Utils.HasTasks(pc.Data);
+           && pc.GetPlayerTaskState().IsTaskFinished
+           && pc.GetCustomRole().IsCrewmate();
 
         public static void OnCompleteTask(PlayerControl pc)
         {

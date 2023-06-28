@@ -722,9 +722,16 @@ namespace TownOfHost
             {
                 _ = new LateTask(() =>
                 {
-                    foreach (var pc in Main.AllPlayerControls)
+                    foreach (var seer in Main.AllPlayerControls)
                     {
-                        pc.RpcSetNameEx(pc.GetRealName(isMeeting: true));
+                        foreach (var target in Main.AllPlayerControls)
+                        {
+                            var seerName = seer.GetRealName(isMeeting: true);
+                            var coloredName = Utils.ColorString(seer.GetRoleColor(), seerName);
+                            seer.RpcSetNamePrivate(
+                                seer == target ? coloredName : seerName,
+                                true);
+                        }
                     }
                     ChatUpdatePatch.DoBlockChat = false;
                 }, 3f, "SetName To Chat");
