@@ -79,6 +79,8 @@ namespace TownOfHost
         {
             if (CustomRoles.Executioner.IsPresent())
                 Executioner.ChangeRoleByTarget(data.Character.PlayerId);
+            if (CustomRoles.Lawyer.IsPresent())
+                Lawyer.ChangeRoleByTarget(data.Character);
         }
         public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData data, [HarmonyArgument(1)] DisconnectReasons reason)
         {

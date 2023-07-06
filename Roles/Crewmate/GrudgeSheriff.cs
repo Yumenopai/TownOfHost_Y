@@ -32,7 +32,6 @@ public sealed class GrudgeSheriff : RoleBase
         ShotLimit = ShotLimitOpt.GetInt();
         KillCooldown = OptionKillCooldown.GetFloat();
 
-        ShotLimit = ShotLimitOpt.GetInt();
     }
 
     private static OptionItem OptionKillCooldown;
@@ -96,7 +95,7 @@ public sealed class GrudgeSheriff : RoleBase
         KillWaitPlayerSelect = null;
         KillWaitPlayer = null;
         IsCoolTimeOn = true;
-        ShotLimit = 0;
+        ShotLimit = ShotLimitOpt.GetInt();
 
         Player.AddVentSelect();
     }
@@ -130,47 +129,47 @@ public sealed class GrudgeSheriff : RoleBase
     }
     public override void OnFixedUpdate(PlayerControl player)
     {
-        if (!GameStates.IsInTask && KillWaitPlayer == null) return;
+        if (!GameStates.IsInTask) return;
+        if (KillWaitPlayer == null) return;
 
-        if (!Player.IsAlive())
+        if (Player == null || !Player.IsAlive())
         {
             KillWaitPlayerSelect = null;
             KillWaitPlayer = null;
+            return;
         }
-        else
+
+        Vector2 GSpos = Player.transform.position;//GSの位置
+
+        var target = KillWaitPlayer;
+        float targetDistance = Vector2.Distance(GSpos, target.transform.position);
+
+        var KillRange = GameOptionsData.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
+        if (targetDistance <= KillRange && Player.CanMove && target.CanMove)
         {
-            Vector2 GSpos = Player.transform.position;//GSの位置
+            ShotLimit--;
+            Logger.Info($"{Player.GetNameWithRole()} : 残り{ShotLimit}発", "GrudgeSheriff");
+            Player.RpcResetAbilityCooldown();
 
-            var target = KillWaitPlayer;
-            float targetDistance = Vector2.Distance(GSpos, target.transform.position);
-
-            var KillRange = GameOptionsData.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
-            if (targetDistance <= KillRange && Player.CanMove && target.CanMove)
+            if (!CanBeKilledBy(target))
             {
-                ShotLimit--;
-                Logger.Info($"{Player.GetNameWithRole()} : 残り{ShotLimit}発", "GrudgeSheriff");
-                Player.RpcResetAbilityCooldown();
-
-                if (!CanBeKilledBy(target))
-                {
-                    PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Misfire;
-                    Player.RpcMurderPlayerEx(Player);
-                    Utils.MarkEveryoneDirtySettings();
-                    KillWaitPlayerSelect = null;
-                    KillWaitPlayer = null;
-
-                    if (!MisfireKillsTarget.GetBool())
-                    {
-                        Utils.NotifyRoles(); return;
-                    }
-                }
-                target.SetRealKiller(Player);
-                Player.RpcMurderPlayer(target);
+                PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Misfire;
+                Player.RpcMurderPlayerEx(Player);
                 Utils.MarkEveryoneDirtySettings();
                 KillWaitPlayerSelect = null;
                 KillWaitPlayer = null;
-                Utils.NotifyRoles();
+
+                if (!MisfireKillsTarget.GetBool())
+                {
+                    Utils.NotifyRoles(); return;
+                }
             }
+            target.SetRealKiller(Player);
+            Player.RpcMurderPlayer(target);
+            Utils.MarkEveryoneDirtySettings();
+            KillWaitPlayerSelect = null;
+            KillWaitPlayer = null;
+            Utils.NotifyRoles();
         }
     }
     public static bool CanBeKilledBy(PlayerControl player)

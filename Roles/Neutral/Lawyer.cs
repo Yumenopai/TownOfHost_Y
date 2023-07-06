@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using HarmonyLib;
 using Hazel;
 using AmongUs.GameOptions;
 using UnityEngine;
@@ -34,41 +33,44 @@ public sealed class Lawyer : RoleBase
         TargetKnows = OptionTargetKnows.GetBool();
         PursuerGuardNum = OptionPursuerGuardNum.GetInt();
 
+        Lawyers.Add(this);
         CustomRoleManager.MarkOthers.Add(GetMarkOthers);
         CustomRoleManager.OnMurderPlayerOthers.Add(OnMurderPlayerOthers);
+
+        Target = null;
+        Pursuers = false;
     }
     public override void OnDestroy()
     {
-        CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
-        if (Target.Count <= 0)
+        Lawyers.Remove(this);
+
+        if (Lawyers.Count <= 0)
         {
+            CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
             CustomRoleManager.OnMurderPlayerOthers.Remove(OnMurderPlayerOthers);
         }
-        Pursuers.Clear();
     }
 
-    public static OptionItem OptionHasImpostorVision;
-    public static OptionItem OptionKnowTargetRole;
+    private static OptionItem OptionHasImpostorVision;
+    private static OptionItem OptionKnowTargetRole;
     private static OptionItem OptionTargetKnows;
-    public static OptionItem OptionPursuerGuardNum;
+    private static OptionItem OptionPursuerGuardNum;
     enum OptionName
     {
         LawyerTargetKnows,
         LawyerKnowTargetRole,
         PursuerGuardNum
     }
-    public static bool HasImpostorVision;
-    public static bool KnowTargetRole;
+    private static bool HasImpostorVision;
+    private static bool KnowTargetRole;
     private static bool TargetKnows;
-    public static int PursuerGuardNum;
+    private static int PursuerGuardNum;
 
-    /// <summary>
-    /// Key: LawyerのPlayerId, Value: ターゲットのPlayerControl
-    /// </summary>
-    public static Dictionary<byte, PlayerControl> Target = new();
-    public static List<byte> Pursuers = new();
+    private static HashSet<Lawyer> Lawyers = new(15);
+    private PlayerControl Target = null;
+    private bool Pursuers = false;
 
-    public int GuardCount = 0;
+    private int GuardCount = 0;
 
     private static void SetupOptionItem()
     {
@@ -80,7 +82,7 @@ public sealed class Lawyer : RoleBase
     }
     public override void Add()
     {
-        Pursuers.Clear();
+        Pursuers = false;
         //ターゲット割り当て
         if (AmongUsClient.Instance.AmHost)
         {
@@ -95,13 +97,14 @@ public sealed class Lawyer : RoleBase
                 ) targetList.Add(target);
             }
             var SelectedTarget = targetList[rand.Next(targetList.Count)];
-            Target.Add(Player.PlayerId, SelectedTarget);
+            Target = SelectedTarget;
             SendRPC(Player.PlayerId, SelectedTarget.PlayerId, "SetTarget");
             Logger.Info($"{Player.GetNameWithRole()}:{SelectedTarget.GetNameWithRole()}", "Lawyer");
         }
 
         GuardCount = PursuerGuardNum;
     }
+    public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision);
     private void SendRPC(byte LawyerId, byte targetId = byte.MaxValue, string Progress = "")
     {
         switch (Progress)
@@ -120,55 +123,46 @@ public sealed class Lawyer : RoleBase
     }
     public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
     {
-        if (rpcType == CustomRPC.SetBountyTarget)
+        if (rpcType == CustomRPC.SetLawyerTarget)
         {
             byte LawyerId = reader.ReadByte();
             byte TargetId = reader.ReadByte();
-            Target[LawyerId] = Utils.GetPlayerById(TargetId);
-        }
-        else if (rpcType == CustomRPC.SetBountyTarget)
-        {
-            Target.Remove(reader.ReadByte());
-        }
-    }
-    public static bool IsPursuer(PlayerControl bakery)
-    {
-        foreach (var ba in Pursuers)
-        {
-            if (ba == bakery.PlayerId)
-                return true;
-        }
-        return false;
-    }
+            if (Player == null || Player.PlayerId != LawyerId) return;
 
-    public override void OnMurderPlayerAsTarget(MurderInfo _)
-    {
-        Target[Player.PlayerId] = null;
-        SendRPC(Player.PlayerId);
+            Target = Utils.GetPlayerById(TargetId);
+        }
+        else if (rpcType == CustomRPC.SetRemoveLawyerTarget)
+        {
+            byte LawyerId = reader.ReadByte();
+            if (Player == null || Player.PlayerId != LawyerId) return;
+            Target = null;
+        }
     }
+    public bool IsPursuer() => Pursuers;
+
     public static void OnMurderPlayerOthers(MurderInfo info)
     {
         var target = info.AttemptTarget;
 
-        foreach (var lawyerId in Target.Keys)
+        foreach (var lawyer in Lawyers.ToArray())
         {
-            if (Target[lawyerId] == target)
+            if (lawyer.Target == target)
             {
-                ChangeRole(lawyerId);
+                lawyer.ChangeRole();
                 break;
             }
         }
     }
     public override void OverrideRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
     {
-        if (KnowTargetRole && Target.ContainsKey(Player.PlayerId) && seen == Target[Player.PlayerId])
+        if (KnowTargetRole && Target != null && seen.PlayerId == Target.PlayerId)
             enabled = true;
     }
 
     private bool CanUseGuard() => Player.IsAlive() && GuardCount > 0;
     public override string GetProgressText(bool comms = false)
     {
-        if (!Pursuers.Contains(Player.PlayerId)) return string.Empty;
+        if (!Pursuers) return string.Empty;
         return Utils.ColorString(CanUseGuard() ? Color.yellow : Color.gray, $"({GuardCount})");
     }
     public override string GetMark(PlayerControl seer, PlayerControl seen, bool _ = false)
@@ -176,28 +170,24 @@ public sealed class Lawyer : RoleBase
         //seenが省略の場合seer
         seen ??= seer;
 
-        if (seer == Player && seen == Target[Player.PlayerId])
+        if (seer == Player && seen == Target)
             return Utils.ColorString(RoleInfo.RoleColor, "§");
         return string.Empty;
     }
-    public static string GetMarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    public string GetMarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
 
-        var mark = string.Empty;
-        Target.Do(x =>
-        {
-            if (TargetKnows && seer == x.Value && seen == x.Value && Utils.GetPlayerById(x.Key).IsAlive())
-                mark = Utils.ColorString(RoleInfo.RoleColor, "§");
-        });
-        return mark;
+        if (TargetKnows && seer == Target && seen == Target && Player.IsAlive())
+            return Utils.ColorString(RoleInfo.RoleColor, "§");
+        return string.Empty;
     }
 
     public override bool OnCheckMurderAsTarget(MurderInfo info)
     {
         (var killer, var target) = info.AttemptTuple;
 
-        if (!Pursuers.Contains(Player.PlayerId) || GuardCount <= 0) return true;
+        if (!Pursuers || GuardCount <= 0) return true;
         killer.RpcGuardAndKill(target);
         target.RpcGuardAndKill(target);
         killer.SetKillCooldown();
@@ -209,58 +199,65 @@ public sealed class Lawyer : RoleBase
 
     public override void OnExileWrapUp(GameData.PlayerInfo exiled, ref bool DecidedWinner)
     {
-        if (Target[Player.PlayerId].PlayerId == exiled.PlayerId && Player.IsAlive())
-            ChangeRole(Player.PlayerId);
+        if (Player == null) return;
+        if (Target != null && Target.PlayerId == exiled.PlayerId && Player.IsAlive())
+            ChangeRole();
     }
 
     public static void ChangeRoleByTarget(PlayerControl target)
     {
-        byte LawyerId = byte.MaxValue;
-        Target.Do(x =>
+        foreach (var lawyer in Lawyers)
         {
-            if (x.Value == target)
-                LawyerId = x.Key;
-        });
-        ChangeRole(LawyerId);
-        Utils.NotifyRoles();
+            if (lawyer.Target != target) continue;
+
+            lawyer.ChangeRole();
+            break;
+        }
     }
-    public static void ChangeRole(byte LawyerId)
+    public void ChangeRole()
     {
-        Pursuers.Add(LawyerId);
-        Target.Remove(LawyerId);
+        Pursuers = true;
+        Target = null;
+        SendRPC(Player.PlayerId);
+        Utils.NotifyRoles();
     }
 
 
     public static void EndGameCheck()
     {
-        Target.Do(x =>
+        foreach (var pc in Main.AllPlayerControls.Where(c => c.GetCustomRole() == CustomRoles.Lawyer))
         {
-            // 勝者に依頼人が含まれている時
-            if (CustomWinnerHolder.WinnerIds.Contains(x.Value.PlayerId))
+            var role = (Lawyer)pc.GetRoleClass();
+            if (!role.IsPursuer())
             {
-                byte Lawyer = x.Key;
-                // 弁護士が生きている時 リセットして単独勝利
-                if (Utils.GetPlayerById(Lawyer).IsAlive())
+                // 弁護士
+                // 勝者に依頼人が含まれている時
+                if (role.Target != null && CustomWinnerHolder.WinnerIds.Contains(role.Target.PlayerId))
                 {
-                    CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Lawyer);
-                    CustomWinnerHolder.WinnerIds.Add(Lawyer);
-                }
-                // 弁護士が死んでいる時 勝者と共に追加勝利
-                else
-                {
-                    CustomWinnerHolder.WinnerIds.Add(Lawyer);
-                    CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.Lawyer);
+                    // 弁護士が生きている時 リセットして単独勝利
+                    if (pc.IsAlive())
+                    {
+                        CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Lawyer);
+                        CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                    }
+                    // 弁護士が死んでいる時 勝者と共に追加勝利
+                    else
+                    {
+                        CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                        CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.Lawyer);
+                    }
                 }
             }
-        });
-
-        // 追跡者が生き残った場合ここで追加勝利
-        Main.AllPlayerControls
-            .Where(p => p.Is(CustomRoles.Lawyer) && Pursuers.Contains(p.PlayerId) && p.IsAlive())
-            .Do(p =>
+            else
             {
-                CustomWinnerHolder.WinnerIds.Add(p.PlayerId);
-                CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.Pursuer);
-            });
+                // 追跡者
+                // 追跡者が生き残った場合ここで追加勝利
+                if (pc.IsAlive())
+                {
+                    CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
+                    CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.Pursuer);
+                }
+            }
+        }
     }
 }

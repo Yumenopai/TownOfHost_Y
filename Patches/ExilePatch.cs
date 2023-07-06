@@ -147,8 +147,8 @@ namespace TownOfHost
                 player?.SetRealKiller(player, true);
             if (Main.ResetCamPlayerList.Contains(playerId) || (requireResetCam.HasValue && requireResetCam.Value))
                 player?.ResetPlayerCam(1f);
-            if (roleClass is Executioner executioner && executioner.TargetId == playerId)
-                Executioner.ChangeRoleByTarget(playerId);
+            Executioner.ChangeRoleByTarget(playerId);
+            Lawyer.ChangeRoleByTarget(player);
         }
     }
 
