@@ -24,8 +24,7 @@ Thank you for finding and using TOH_Y!<br>
 AmongUsバージョン : **2023.7.11**<br>
 **最新バージョンは[こちら](https://github.com/Yumenopai/TownOfHost_Y/releases/latest)から**<br>
 
-TOH_Y：TownOfHost[v4.1.2](https://github.com/tukasa0001/TownOfHost/releases/tag/v4.1.2)Fork<br>
-TOH_YS：TownOfHost[v5.0.1](https://github.com/tukasa0001/TownOfHost/releases/tag/v5.0.1)Fork<br>
+TOH_Y/TOH_YS：TownOfHost[v5.0.3](https://github.com/tukasa0001/TownOfHost/releases/tag/v5.0.3)Fork<br>
 
 本家TOHの説明は[本家TOH/GitHub](https://github.com/tukasa0001/TownOfHost#readme)からReadMeをご覧ください。<br>
 <ins>TOH_Yの追加要素の説明は[WIKIWIKI](https://wikiwiki.jp/tohy_amongus/)に移行しました。</ins>
