@@ -837,10 +837,6 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "Message.VoiceNow","Changed the reading of the {0} to {1}.","{0} の現在の読上げは {1} です",,,,
 "Message.VoiceChange","Changed the reading of the {0} to {1}.","{0} の読上げを {1} に変更しました",,,,
 "Message.VoiceChangeFailed","Failed to change {0} chat reading.","{0} の読上げを変更できませんでした",,,,
-"Message.ModCheckCommandInvalid","Mod check command invalid in current mode.","公開ルーム不可のため/modcheckコマンド無効です",,,,
-"Message.ModCheckAllOK","All players consented to the mod.","全プレイヤーがMod同意しました",,,,
-"Message.ModCheckNotOKColor","Not consented color: {0}","Mod未同意の色: {0}",,,,
-"Message.ModCheckMessageSend","A confirmation message has been sent to players who have not consented to the mod.","Mod未同意のプレイヤーに確認メッセージを送信しました",,,,
 "Message.ModCheckAgree","I agree to use mods. Player: {0}\n\nPlease exit the room to cancel.","MODの使用に合意しました。\n　Player: {0}\n\n※取り消す場合は部屋を抜けてください",,,,
 "Message.ModCheckKick","{0} has been kicked due to lack of agreement to use mods.","{0} はMOD使用の合意がないためキックされました",,,,
 

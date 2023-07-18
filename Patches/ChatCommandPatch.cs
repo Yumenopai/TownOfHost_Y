@@ -310,37 +310,6 @@ namespace TownOfHostY
                             Utils.SendMessage(VoiceReader.GetVoiceIdxMsg(), 0);
                         break;
 
-                    case "/modcheck":
-                    case "/modmsg":
-                        canceled = true;
-                        if (!Main.CanPublicRoom.Value)
-                        {
-                            Utils.SendMessage(string.Format(GetString("Message.ModCheckCommandInvalid")), 0);
-                            break;
-                        }
-                        var msgSend = args[0]?.ToLower() == "/modmsg";
-                        var allOK = true;
-                        var notOKColor = "";
-                        foreach (var pc in Main.AllPlayerControls.Where(x => x.PlayerId != PlayerControl.LocalPlayer.PlayerId))
-                        {
-                            var cl = pc.GetClient();
-                            if (cl != null　&& !Main.ConsentModUse.ContainsKey(cl.Id))
-                            {
-                                allOK = false;
-                                if (msgSend)
-                                    Utils.SendMessageCustom(string.Format(GetString("Message.AnnounceUsingOpenMOD"), Main.PluginVersion), pc.PlayerId);
-                                notOKColor = (notOKColor == "" ? "" : ",") + Palette.GetColorName(pc.Data.DefaultOutfit.ColorId);
-                            }
-                        }
-                        if (allOK)
-                            Utils.SendMessage(string.Format(GetString("Message.ModCheckAllOK")), 0);
-                        else
-                        {
-                            if (msgSend)
-                                Utils.SendMessage(string.Format(GetString("Message.ModCheckMessageSend")), 0);
-                            Utils.SendMessage(string.Format(GetString("Message.ModCheckNotOKColor"), notOKColor), 0);
-                        }
-
                         break;
 
                     case "/offhat":
