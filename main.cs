@@ -29,7 +29,7 @@ namespace TownOfHostY
         // modの色 / Mod Color (Default: #00bfff)
         public static readonly string ModColor = "#ffff00";
         // 公開ルームを許可する / Allow Public Room (Default: true)
-        public static readonly bool AllowPublicRoom = true;
+        public static readonly bool AllowPublicRoom = false;
         // フォークID / ForkId (Default: OriginalTOH)
         public static readonly string ForkId = "TOH_Y";
         // Discordボタンを表示するか / Show Discord Button (Default: true)
