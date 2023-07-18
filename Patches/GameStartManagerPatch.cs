@@ -22,30 +22,6 @@ namespace TownOfHostY
         private static TextMeshPro timerText;
         private static SpriteRenderer cancelButton;
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.ReallyBegin))]
-        public class GameStartManagerReallyBeginPatch
-        {
-            public static void Postfix(GameStartManager __instance, bool neverShow)
-            {
-                if (!Main.CanPublicRoom.Value) return;
-                if (GameStartManager.Instance.startState != GameStartManager.StartingStates.Countdown) return;
-                Logger.Info($"CanPublicRoom: {Main.CanPublicRoom.Value}", "GameStartManagerStart");
-                foreach (var pc in Main.AllPlayerControls.Where(x => x.PlayerId != PlayerControl.LocalPlayer.PlayerId))
-                {
-                    var target = pc.GetClient();
-                    if (target == null) continue;
-                    Logger.Info($"ConsentCheck name: {target.PlayerName}, id; {target.Id}, check: {Main.ConsentModUse.ContainsKey(target.Id)}", "GameStartManagerStart");
-                    if (!Main.ConsentModUse.ContainsKey(target.Id))
-                    {
-                        AmongUsClient.Instance.KickPlayer(target.Id, false);
-                        Utils.SendMessage(string.Format(GetString("Message.ModCheckKick"), target.PlayerName));
-                    }
-
-                }
-                return;
-            }
-        }
-
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public class GameStartManagerStartPatch
         {
