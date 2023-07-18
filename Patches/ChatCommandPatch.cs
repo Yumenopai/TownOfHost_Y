@@ -310,8 +310,6 @@ namespace TownOfHostY
                             Utils.SendMessage(VoiceReader.GetVoiceIdxMsg(), 0);
                         break;
 
-                        break;
-
                     case "/offhat":
                     case "/offskin":
                     case "/offvisor":
