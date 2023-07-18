@@ -378,10 +378,6 @@ namespace TownOfHostY
                         else __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.2>v{ver.version}</size>\n{__instance?.name}</color>";
                     }
                     else __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
-
-                    var client = __instance.GetClient();
-                    var consent = Main.CanPublicRoom.Value && client != null && Main.ConsentModUse.ContainsKey(client.Id) ? "<color=#ff00ff>ModOK</color>" : "";
-                    __instance.cosmetics.nameText.text += consent;
                 }
                 if (GameStates.IsInGame)
                 {

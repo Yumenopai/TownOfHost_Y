@@ -837,7 +837,6 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "Message.VoiceNow","Changed the reading of the {0} to {1}.","{0} の現在の読上げは {1} です",,,,
 "Message.VoiceChange","Changed the reading of the {0} to {1}.","{0} の読上げを {1} に変更しました",,,,
 "Message.VoiceChangeFailed","Failed to change {0} chat reading.","{0} の読上げを変更できませんでした",,,,
-"Message.ModCheckAgree","I agree to use mods. Player: {0}\n\nPlease exit the room to cancel.","MODの使用に合意しました。\n　Player: {0}\n\n※取り消す場合は部屋を抜けてください",,,,
 
 "IsNimrodMeetingTitle","【The Nimrod's choice】","【ニムロッドの処刑選択】"
 "IsNimrodMeetingText","The Nimrod should choose who to execute.\nIt's time for others to wait quietly...","ニムロッドは処刑する人を選択してください。\n他の人は静かに待つ時間...",

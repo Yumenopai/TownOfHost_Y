@@ -98,7 +98,6 @@ namespace TownOfHostY
         public static List<PlayerControl> LoversPlayers = new();
         public static bool isLoversDead = true;
         public static Dictionary<byte, float> AllPlayerKillCooldown = new();
-        public static Dictionary<int, string> ConsentModUse = new();
 
         /// <summary>
         /// 基本的に速度の代入は禁止.スピードは増減で対応してください.

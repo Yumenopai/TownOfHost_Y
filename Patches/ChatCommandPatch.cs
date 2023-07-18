@@ -515,11 +515,6 @@ namespace TownOfHostY
                         Utils.SendMessage(VoiceReader.GetVoiceIdxMsg(), player.PlayerId);
                     break;
 
-                case "/modok":
-                    Main.ConsentModUse[player.GetClient().Id] = player.name;
-                    Utils.SendMessage(string.Format(GetString("Message.ModCheckAgree"), player.name), player.PlayerId);
-                    break;
-
                 default:
                     break;
             }
