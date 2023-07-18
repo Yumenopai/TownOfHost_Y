@@ -827,8 +827,6 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "Message.BanedByBanList","{0} has been banned because it has been banned in the past.","{0}は過去にBAN済みのためBANされました。","{0} 已被封禁，因其之前就被封禁过","因為{0}在被記錄在黑名單中，所以禁止了{0}再次進入此房間。","{0} был заблокирован, потому что он был заблокирован в прошлый раз",""
 "Message.KickedByNoFriendCode","{0} was kicked because the friend code does not exist.","{0}はフレンドコードが存在しないためキックされました。","{0}被踢出，因其好友编号无效。","{0}因為沒有好友代碼，所以踢出了他。","{0} был кикнут, так как у него нет кода друга",""
 "Message.AddedPlayerToBanList","Added {0} to the ban list.","{0}をBANリストに追記しました。","{0}已被添加到封禁名单","已將 {0} 加入到黑名單中，此玩家將無法再進入你的房間。(需安裝TOH模組)","{0} был добавлен в список забаненых игроков",""
-"Message.AnnounceUsingOpenMODAttention","This room uses TownOfHost_Y v{0}.\nPlease check GitHub for detailed roles descriptions.","<size=200%><color=#03a0e3>TownOfHost</color><color=yellow> Y</color></size>\n\nこの部屋はMOD TownOfHost_YS v{0}を使用しています\n\n<color=red>【重要】</color>\nMODの使用にあたり、<color=red>全プレイヤーにMOD使用の同意を取る必要があります</color>\n各プレイヤーに /ModOK コマンドを使用してMOD使用の同意を取ってください\n各プレイヤーには同意コマンドを入力するよう案内が表示されます\n\n※コマンド未入力の場合はスタート時にキックされ<color=red>ゲームに参加できません</color>\n※再度同意コマンドの入力を促す場合は /modmsg コマンドを使用してください\n※詳細は TownOfHost_Y のGitHubを参照ください",,,,
-"Message.AnnounceUsingOpenMOD","This room uses TownOfHost_Y v{0}.\nPlease check GitHub for detailed roles descriptions.","<size=200%><color=#03a0e3>TownOfHost</color><color=yellow> Y</color></size>\n\nこの部屋はMOD TownOfHost_YS v{0}を使用しています\n\n<color=red>【重要】</color>\nこの部屋ではMODを使用しています\nMOD使用について同意する場合は下記コマンドを入力してください\n<color=red>　/ModOK</color>\n\n※コマンド未入力の場合はスタート時にキックされ<color=red>ゲームに参加できません</color>\n\nMODの詳細は TownOfHost_Y のGitHubを参照ください\nゲーム中の不具合などはTownOfHost_Yのディスコードへ報告してください\n※この部屋での不具合等について<color=red>AmongUs公式への問合せはしない</color>でください",,,,
 "Message.AnnounceUsingTOH","This room uses TownOfHost_Y v{0}.\n/now can be used to check the current settings.\nPlease check GitHub for detailed roles descriptions.","この部屋はTownOfHost_YS v{0}を使用しています。本家TOH、現行版TOH_Yを含む他MOD導入中の方との共存は出来ません。\n/nで現在の設定、/h nで現在の設定の説明が確認できます。","本房间使用TownOfHost_Y mod v{0}。\n可以使用/now来查询当前设置。\n请前往本mod的Github页面来获取详细的职业信息。","本房間使用TownOfHost_Y v{0}。\n可以使用/n來查詢目前設定。\n若要獲得進一步的職業介紹(並沒有繁體中文翻譯版本)請前往本模組的Github頁面來獲得。","В этой комнате используется TownOfHost_Y v{0}. Используйте  \n/now чтобы увидеть текущие настройки. \nПожалуйста посетите GitHub для получения подробного описания мода и ролей.","Esta sala está usando TownOfHost_Y versão {0} .\nO comando /now pode ser usado para ver as configurações atuais.\nPor favor, verifique o GitHub para descrições detalhadas das classes."
 "Message.isReport","The meeting was started by the discovery of a dead body.\nReported dead body：{0}","死体発見により会議が開かれました。\n通報された死体：{0}","会议以发现一具尸体开始。\n报告的尸体：{0}"
 "Message.isButton","The meeting was started by an emergency button.","緊急ボタンにより会議が開かれました。","会议以使用紧急按钮开始."
@@ -1041,7 +1039,6 @@ PanAlive13,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "nameChangeMode.None","None","なし",
 "nameChangeMode.Crew","Crewmate","クルーメイト","船员","船員","Член Экипажа","Tripulante"
 "nameChangeMode.Color","Color","色名",
-"ExtendedChat","Extended Chat","拡張チャット",,,,
 
 "VoiceReaderMode","VoiceReader Mode","チャットの読上げ",,,,
 "VoiceReaderHost","Host","ホスト",,,,

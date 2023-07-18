@@ -120,19 +120,8 @@ namespace TownOfHostY
                 _ = new LateTask(() =>
                 {
                     if (client.Character == null) return;
-                    if (Main.CanPublicRoom.Value)
-                    {
-                        if (client.Character.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-                            Utils.SendMessageCustom(string.Format(GetString("Message.AnnounceUsingOpenMODAttention"), Main.PluginVersion), client.Character.PlayerId);
-                        else
-                            Utils.SendMessageCustom(string.Format(GetString("Message.AnnounceUsingOpenMOD"), Main.PluginVersion), client.Character.PlayerId);
-                    }
-                    else
-                    {
-                        if (client.Character.PlayerId == PlayerControl.LocalPlayer.PlayerId) return;
-                        if (AmongUsClient.Instance.IsGamePublic) Utils.SendMessage(string.Format(GetString("Message.AnnounceUsingTOH"), Main.PluginVersion), client.Character.PlayerId);
-                        TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
-                    }
+                    if (AmongUsClient.Instance.IsGamePublic) Utils.SendMessage(string.Format(GetString("Message.AnnounceUsingTOH"), Main.PluginVersion), client.Character.PlayerId);
+                    TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
                 }, 3f, "Welcome Message");
                 if (Options.AutoDisplayLastResult.GetBool() && PlayerState.AllPlayerStates.Count != 0 && Main.clientIdList.Contains(client.Id))
                 {
