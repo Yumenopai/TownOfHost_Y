@@ -790,7 +790,6 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "TOHOptions","<color=#ffff00>TOH_Y</color> Options","<color=#ffff00>TOH_Y</color>の設定","","","",""
 "ForceJapanese","Force Japanese","日本語に強制","强制使用日语","強制使用日語","Принудительный Японский","Forçar Japonês"
 "JapaneseRoleName","Japanese Role Name","日本語の役職名","用日语显示职业名","","Японские названия ролей",""
-"CanPublicRoom","Can Public Room","公開ルーム可能",
 "UnloadMod","Disable The Mod","Modを無効化","切换为原版","","Отключить мод",""
 "UnloadWarning","<color=#ffff00><size=200%>Warning</size></color>\n\nTo re-enable the mod, you must restart the game. Would you like to continue anyway?","<color=#ffff00><size=200%>警告</size></color>\n\nModを再び有効化するにはゲームの再起動が必要です。本当に無効化しますか？","<color=#ffff00><size=200%>警告：</size></color>\n\n切换后需要重启游戏来恢复模组，确定要切换原版吗？","","<color=#ffff00><size=200%>Внимание!</size></color>\n\nДля повторного включения мода необходимо перезапустить игру. Вы все равно хотите продолжить?",""
 "CannotUnloadDuringGame","The mod cannot be disabled during a game.","試合中はModを無効化できません","游戏中不能切换原版","","Мод нельзя отключить во время игры.",""
@@ -906,7 +905,6 @@ PanAlive13,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "ERR-000-920-2","Test Error Lv.2","テストエラーLv2","测试错误Lv2","測試錯誤Lv2","Ошибка теста - Lv2","Erro de Teste Nvl.2"
 "ERR-000-930-3","Test Error Lv.3","テストエラーLv3","测试错误Lv3","測試錯誤Lv3","Ошибка теста - Lv3","Erro de Teste Nvl.3"
 "ERR-000-804-1","TownOfHost does not support the Vanilla HnS, so unloaded.","現在バニラのHide And Seekはサポートされていません。modを無効化しました。","TOH不支持原版躲猫猫, mod因此失效","Town Of Host模組尚未支援原版的Hide And Seek模式，所以模組將暫時卸載。","Мод не поддерживает обычные Прятки. Мод был отключён",""
-"ERR-000-503-1","Public room settings have been changed. Please create the room again.","公開ルーム設定が変更されました。部屋を立て直してください。"
 "#### 001 Main"
 "ERR-001-000-3","Main dictionary has duplicated keys.","MainのDictonaryでKeyの重複が発生しています。","在主目录出现重复密钥","在主目錄出現重複密鑰","Дублирование ключей происходит в основном словаре.","Dicionário principal tem chaves duplicadas."
 "#### 002 Support"
@@ -940,8 +938,6 @@ PanAlive13,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "ModBrokenMessage","The MOD file is damaged.\nPlease reinstall.","MODを構成するファイルが破損しています。\nもう一度導入しなおしてください。","模组文件损坏。\n请重新安装本模组。","模組檔案損壞\n請重新安裝模組","Мод был поврежден.\nПожалуйста переустановите его снова.","Os arquivos do MOD estão danificados.\nPor favor reinstale."
 "UnsupportedVersion","Unsupported AmongUs version.\nPlease update.","サポートされていないAmongUsバージョンです。\nゲームをアップデートしてください。","","","Неподдерживаемая версия AmongUs.\nПожалуйста, обновите игру",""
 "DisabledByProgram","Public rooms have been disabled by the program","公開ルームはプログラムによって無効化されています","公开房间的操作已被程序禁用","公開房間的操作已經被程式禁用","Создание публичного лобби отключена программой","Salas públicas foram desativadas pelo programa"
-"DisabledBySetting","Public rooms have been disabled by the Setting","公開ルームは設定によって無効化されています。\n歯車から設定して部屋を作りなおしてください。",
-"DisabledBySetting1","Public rooms have been disabled by the Setting","公開ルームは設定によって無効化されています。\n設定から[公開ルーム可能]をオンにしてください。",
 "EnterVentToWin","Enter Vent to Win!!","ベントに入って勝利しろ!!","跳管道来获得胜利！","跳管道來獲得勝利!!","Запрыгните в вентиляцию чтобы победить!!","Entre no Duto Para Ganhar!!!"
 "FireworksPutPhase","{0} Fireworks Left","あと{0}個置け","还要安放{0}枚烟花","還需要安裝{0}枚煙火","Осталось {0} Фейерверков","Restam {0} Fogos de Artifício"
 "FireworksWaitPhase","Wait for it...","時を待て...","耐心等待....","等待時機...","Подожди время...","Espere o momento certo..."

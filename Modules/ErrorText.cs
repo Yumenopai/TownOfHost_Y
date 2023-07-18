@@ -58,8 +58,6 @@ namespace TownOfHostY
                 UpdateText();
                 if (HnSFlag)
                     Destroy(this.gameObject);
-                if (PublicFlag)
-                    Destroy(this.gameObject);
             }
         }
         public void LateUpdate()
@@ -102,7 +100,7 @@ namespace TownOfHostY
             }
             else
             {
-                if (!HnSFlag && !PublicFlag)
+                if (!HnSFlag)
                     text += $"{GetString($"ErrorLevel{maxLevel}")}";
                 Text.enabled = true;
             }
@@ -141,7 +139,6 @@ namespace TownOfHostY
         }
 
         public bool HnSFlag;
-        public bool PublicFlag;
     }
     public enum ErrorCode
     {
@@ -166,6 +163,5 @@ namespace TownOfHostY
         TestError2 = 0009202, // 000-920-2 Test Error 2
         TestError3 = 0009303, // 000-930-3 Test Error 3
         HnsUnload = 000_804_1, // 000-804-1 Unloaded By HnS
-        PublicModeChange = 000_503_1, // 000_503_1 PublicModeChange
     }
 }
