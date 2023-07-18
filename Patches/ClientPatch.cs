@@ -43,7 +43,7 @@ namespace TownOfHostY
     {
         public static void Postfix(MMOnlineManager __instance)
         {
-            if (VersionChecker.IsSupported && Main.CanPublicRoom.Value) return;
+            if (VersionChecker.IsSupported && Main.CanPublicRoom.Value && Main.AllowPublicRoom) return;
 
             var obj = GameObject.Find("FindGameButton");
             if (obj)
@@ -58,6 +58,10 @@ namespace TownOfHostY
                 if (!VersionChecker.IsSupported)
                 {
                     message = GetString("UnsupportedVersion");
+                }
+                else if (!Main.AllowPublicRoom)
+                {
+                    message = GetString("DisabledByProgram");
                 }
                 else if (!Main.CanPublicRoom.Value)
                 {
