@@ -70,7 +70,7 @@ namespace TownOfHostY
                 if (!AmongUsClient.Instance.AmHost) return;
 
                 // Make Public Button
-                if (!Main.AllowPublicRoom || !Main.CanPublicRoom.Value || !VersionChecker.IsSupported)
+                if (!Main.AllowPublicRoom || !VersionChecker.IsSupported)
                 {
                     __instance.MakePublicButton.color = Palette.DisabledClear;
                     __instance.privatePublicText.color = Palette.DisabledClear;
@@ -253,7 +253,7 @@ namespace TownOfHostY
             }
         }
     }
-    
+
     [HarmonyPatch(typeof(TextBoxTMP), nameof(TextBoxTMP.SetText))]
     public static class HiddenTextPatch
     {

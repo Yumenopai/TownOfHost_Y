@@ -7,7 +7,7 @@ public static class GetBroadcastVersionPatch
 {
     public static bool Prefix(ref int __result)
     {
-        if (GameStates.IsLocalGame || Main.CanPublicRoom.Value)
+        if (GameStates.IsLocalGame)
         {
             return true;
         }

@@ -321,7 +321,7 @@ namespace TownOfHostY
 
             if (AmongUsClient.Instance.AmHost)
             {//実行クライアントがホストの場合のみ実行
-                if (GameStates.IsLobby && (!Main.AllowPublicRoom || !Main.CanPublicRoom.Value || !VersionChecker.IsSupported) && AmongUsClient.Instance.IsGamePublic)
+                if (GameStates.IsLobby && (!Main.AllowPublicRoom || !VersionChecker.IsSupported) && AmongUsClient.Instance.IsGamePublic)
                     AmongUsClient.Instance.ChangeGamePublic(false);
 
                 if (GameStates.IsInTask && ReportDeadBodyPatch.CanReport[__instance.PlayerId] && ReportDeadBodyPatch.WaitReport[__instance.PlayerId].Count > 0)

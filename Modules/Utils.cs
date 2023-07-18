@@ -630,7 +630,6 @@ namespace TownOfHostY
                 foreach (var role in CustomRolesHelper.AllRoles)
                 {
                     if (role is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
-                    if (Main.CanPublicRoom.Value && role.IsCannotPublicRole()) continue;
 
                     if (role.IsEnable() && !role.IsVanilla()) SendMessage(GetRoleName(role) + GetString(Enum.GetName(typeof(CustomRoles), role) + "InfoLong"), PlayerId);
                 }
@@ -661,7 +660,6 @@ namespace TownOfHostY
                 foreach (var role in Options.CustomRoleCounts)
                 {
                     if (!role.Key.IsEnable() || role.Key is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
-                    if (Main.CanPublicRoom.Value && role.Key.IsCannotPublicRole()) continue;
 
                     if (role.Key.IsAddOn() || role.Key is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
                         sb.Append($"\n〖{GetRoleName(role.Key)}×{role.Key.GetCount()}〗\n");
@@ -697,7 +695,6 @@ namespace TownOfHostY
             foreach (var role in Options.CustomRoleCounts)
             {
                 if (!role.Key.IsEnable() || role.Key is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
-                if (Main.CanPublicRoom.Value && role.Key.IsCannotPublicRole()) continue;
 
                 if (role.Key.IsAddOn() || role.Key is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
                     sb.Append($"\n〖{GetRoleName(role.Key)}×{role.Key.GetCount()}〗\n");
@@ -731,7 +728,6 @@ namespace TownOfHostY
             foreach (CustomRoles role in CustomRolesHelper.AllRoles)
             {
                 if (role is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
-                if (Main.CanPublicRoom.Value && role.IsCannotPublicRole()) continue;
 
                 if (role.IsEnable())
                 {

@@ -163,7 +163,7 @@ namespace TownOfHostY
         // 旧IsHidden関数
         public virtual bool IsHiddenOn(CustomGameMode mode)
         {
-            return IsHidden || (GameMode != CustomGameMode.All && GameMode != mode) || (IsPublicDontUse && IsPublicDontUse == Main.CanPublicRoom.Value);
+            return IsHidden || (GameMode != CustomGameMode.All && GameMode != mode);
         }
 
         public string ApplyFormat(string value)

@@ -36,13 +36,6 @@ public sealed class ClientOptionItem : ClientActionItem
         var item = new ClientOptionItem(name, config, optionsMenuBehaviour);
         item.OnClickAction = () =>
         {
-            if(config == Main.CanPublicRoom)
-                if (GameStates.IsLobby)
-                {
-                    ErrorText.Instance.PublicFlag = true;
-                    ErrorText.Instance.AddError(ErrorCode.PublicModeChange);
-                }
-
             config.Value = !config.Value;
             item.UpdateToggle();
             additionalOnClickAction?.Invoke();

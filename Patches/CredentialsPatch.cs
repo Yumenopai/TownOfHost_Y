@@ -93,21 +93,12 @@ namespace TownOfHostY
                         SpecialEventText.color = col;
                     }
                 }
-                if (!Main.CanPublicRoom.Value && Main.IsOneNightRelease && CultureInfo.CurrentCulture.Name == "ja-JP")
+                if (Main.IsOneNightRelease && CultureInfo.CurrentCulture.Name == "ja-JP")
                 {
                     SpecialEventText.text = "TOH_Yへようこそ！" +
                         "\n<size=55%>遂にシェリフ等役職が完全復活！" +
                         "\n全役職が最新バージョンで遊べるようになりました。(非公開ルームのみ)" +
                         "\n公開ルームで遊びたい場合は設定(歯車)から[公開ルーム可能]をオンにした制限版で。" +
-                        "\nこれからもTOH_Yをよろしくお願いします！\n</size><size=40%>\n次回アップデートはちょっと先になりそう。</size>";
-                    SpecialEventText.color = Color.yellow;
-                }
-                if (Main.CanPublicRoom.Value && Main.IsOneNightRelease && CultureInfo.CurrentCulture.Name == "ja-JP")
-                {
-                    SpecialEventText.text = "TOH_YSへようこそ！" +
-                        "\n<size=55%>制限版では公開ルーム/非公開ルームどちらでも使用できます。" +
-                        "\nただし、一部役職が使用できません。(非表示にしてあります)" +
-                        "\n非公開ルームで遊ぶ場合は設定(歯車)から[公開ルーム可能]をオフにした完全版で。" +
                         "\nこれからもTOH_Yをよろしくお願いします！\n</size><size=40%>\n次回アップデートはちょっと先になりそう。</size>";
                     SpecialEventText.color = Color.yellow;
                 }
@@ -143,10 +134,7 @@ namespace TownOfHostY
                 logoTransform.parent = rightpanel;
                 logoTransform.localPosition = new(0f, 0.18f, 1f);
                 //logoTransform.localScale *= 1f;
-                if(!Main.CanPublicRoom.Value)
-                    TohLogo.sprite = Utils.LoadSprite("TownOfHost_Y.Resources.TownOfHostY-Logo.png", 300f);
-                else
-                    TohLogo.sprite = Utils.LoadSprite("TownOfHost_Y.Resources.TownOfHostYS-Logo.png", 300f);
+                TohLogo.sprite = Utils.LoadSprite("TownOfHost_Y.Resources.TownOfHostY-Logo.png", 300f);
             }
         }
         [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]
