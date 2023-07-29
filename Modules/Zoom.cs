@@ -10,11 +10,15 @@ namespace TownOfHostY
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public static class Zoom
     {
+        private static bool resetTest = false;
         public static void Postfix()
         {
             if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Impostor) && Options.ImpostorOperateVisibility.GetBool()) return;
             if (GameStates.IsShip && !GameStates.IsMeeting && GameStates.IsCanMove)
             {
+                if (Camera.main.orthographicSize > 3.0f)
+                    resetTest = true;
+                
                 if (Input.mouseScrollDelta.y > 0)
                 {
                     if (Camera.main.orthographicSize > 3.0f)
@@ -60,7 +64,12 @@ namespace TownOfHostY
                 Camera.main.orthographicSize *= size;
                 HudManager.Instance.UICamera.orthographicSize *= size;
             }
-            ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, Screen.fullScreen);
+            
+            if (resetTest)
+            {
+                ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, Screen.fullScreen);
+                resetTest = false;
+            }
         }
     }
 }
