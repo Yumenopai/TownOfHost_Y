@@ -26,6 +26,9 @@ namespace TownOfHostY
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
 
+            if (Options.IsCCMode) Main.NormalOptions.NumImpostors = 1;
+            //if (Options.IsONMode) Main.NormalOptions.NumEmergencyMeetings = 0;
+
             Main.AllPlayerKillCooldown = new Dictionary<byte, float>();
             Main.AllPlayerSpeed = new Dictionary<byte, float>();
 
@@ -145,7 +148,55 @@ namespace TownOfHostY
 
             RoleAssignManager.SelectAssignRoles();
 
-            if (Options.CurrentGameMode != CustomGameMode.HideAndSeek)
+            if (Options.IsCCMode)
+            {
+                List<PlayerControl> AllPlayers = new();
+                foreach (var pc in Main.AllPlayerControls)
+                {
+                    AllPlayers.Add(pc);
+                }
+
+                if (Options.EnableGM.GetBool())
+                {
+                    AllPlayers.RemoveAll(x => x == PlayerControl.LocalPlayer);
+                    PlayerControl.LocalPlayer.RpcSetCustomRole(CustomRoles.GM);
+                    PlayerControl.LocalPlayer.RpcSetRole(RoleTypes.Crewmate);
+                    PlayerControl.LocalPlayer.Data.IsDead = true;
+                }
+
+                Dictionary<(byte, byte), RoleTypes> rolesMap = new();
+
+                AssignDesyncRole(CustomRoles.CCYellowLeader, AllPlayers, senders, rolesMap, BaseRole: RoleTypes.Impostor);
+                AssignDesyncRole(CustomRoles.CCBlueLeader, AllPlayers, senders, rolesMap, BaseRole: RoleTypes.Impostor);
+
+                MakeDesyncSender(senders, rolesMap);
+            }
+            //else if (Options.IsONMode())
+            //{
+            //    List<PlayerControl> AllPlayers = new();
+            //    foreach (var pc in Main.AllPlayerControls)
+            //    {
+            //        AllPlayers.Add(pc);
+            //        //ついでに初期化
+            //        ONDeadTargetArrow.Add(pc.PlayerId);
+            //    }
+
+            //    if (Options.EnableGM.GetBool())
+            //    {
+            //        AllPlayers.RemoveAll(x => x == PlayerControl.LocalPlayer);
+            //        PlayerControl.LocalPlayer.RpcSetCustomRole(CustomRoles.GM);
+            //        PlayerControl.LocalPlayer.RpcSetRole(RoleTypes.Crewmate);
+            //        PlayerControl.LocalPlayer.Data.IsDead = true;
+            //    }
+
+            //    Dictionary<(byte, byte), RoleTypes> rolesMap = new();
+
+            //    AssignDesyncRole(CustomRoles.ONDiviner, AllPlayers, senders, rolesMap, BaseRole: RoleTypes.Impostor);
+            //    AssignDesyncRole(CustomRoles.ONPhantomThief, AllPlayers, senders, rolesMap, BaseRole: RoleTypes.Impostor);
+
+            //    MakeDesyncSender(senders, rolesMap);
+            //}
+            else if (Options.CurrentGameMode != CustomGameMode.HideAndSeek)
             {
                 RoleTypes[] RoleTypesList = { RoleTypes.Scientist, RoleTypes.Engineer, RoleTypes.Shapeshifter };
                 foreach (var roleTypes in RoleTypesList)
@@ -280,6 +331,121 @@ namespace TownOfHostY
 
                 GameEndChecker.SetPredicateToHideAndSeek();
             }
+            else if (Options.IsCCMode)
+            {
+                //役職設定処理
+                AssignCustomRolesFromList(CustomRoles.CCRedLeader, Impostors);
+                //残りを割り当て
+                {
+                    SetColorPatch.IsAntiGlitchDisabled = true;
+                    foreach (var crew in Crewmates)
+                    {
+                        PlayerState.GetByPlayerId(crew.PlayerId).SetMainRole(CustomRoles.CCNoCat);
+                        Logger.Info("役職設定:" + crew?.Data?.PlayerName + " = " + CustomRoles.CCNoCat.ToString(), "AssignRoles");
+                    }
+                    SetColorPatch.IsAntiGlitchDisabled = false;
+                }
+
+                foreach (var pair in PlayerState.AllPlayerStates)
+                {
+                    //RPCによる同期
+                    ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.MainRole);
+                }
+
+                foreach (var pc in Main.AllPlayerControls)
+                {
+                    HudManager.Instance.SetHudActive(true);
+                    Main.AllPlayerKillCooldown[pc.PlayerId] = Options.DefaultKillCooldown; //キルクールをデフォルトキルクールに変更
+                }
+                GameEndChecker.SetPredicateToCatchCat();
+
+                GameOptionsSender.AllSenders.Clear();
+                foreach (var pc in Main.AllPlayerControls)
+                {
+                    GameOptionsSender.AllSenders.Add(
+                        new PlayerGameOptionsSender(pc)
+                    );
+                }
+
+                // ResetCamが必要なプレイヤーのリストにクラス化が済んでいない役職のプレイヤーを追加
+                Main.ResetCamPlayerList.AddRange(PlayerControl.AllPlayerControls.ToArray().Where(p =>
+                p.GetCustomRole().IsCCLeaderRoles()).Select(p => p.PlayerId));
+            }
+            //else if (Options.IsONMode)
+            //{
+            //    //役職設定処理
+            //    AssignCustomRolesFromList(CustomRoles.ONBigWerewolf, Impostors);
+            //    AssignCustomRolesFromList(CustomRoles.ONWerewolf, Impostors);
+            //    AssignCustomRolesFromList(CustomRoles.ONMadman, Crewmates);
+            //    AssignCustomRolesFromList(CustomRoles.ONMadFanatic, Crewmates);
+            //    AssignCustomRolesFromList(CustomRoles.ONMayor, Crewmates);
+            //    AssignCustomRolesFromList(CustomRoles.ONHunter, Crewmates);
+            //    AssignCustomRolesFromList(CustomRoles.ONBakery, Crewmates);
+            //    AssignCustomRolesFromList(CustomRoles.ONTrapper, Crewmates);
+            //    AssignCustomRolesFromList(CustomRoles.ONHangedMan, Crewmates);
+            //    AssignCustomRolesFromList(CustomRoles.ONVillager, Crewmates);
+
+            //    //残りを割り当て
+            //    {
+            //        SetColorPatch.IsAntiGlitchDisabled = true;
+            //        foreach (var imp in Impostors)
+            //        {
+            //            PlayerState.GetByPlayerId(imp.PlayerId).SetMainRole(CustomRoles.ONWerewolf);
+            //            Logger.Info("役職設定:" + imp?.Data?.PlayerName + " = " + CustomRoles.ONWerewolf.ToString(), "AssignRoles");
+            //        }
+            //        foreach (var crew in Crewmates)
+            //        {
+            //            PlayerState.GetByPlayerId(crew.PlayerId).SetMainRole(CustomRoles.ONVillager);
+            //            Logger.Info("役職設定:" + crew?.Data?.PlayerName + " = " + CustomRoles.ONVillager.ToString(), "AssignRoles");
+            //        }
+            //        SetColorPatch.IsAntiGlitchDisabled = false;
+            //    }
+
+            //    foreach (var pair in PlayerState.AllPlayerStates)
+            //    {
+            //        //RPCによる同期
+            //        ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.MainRole);
+            //    }
+
+            //    foreach (var pc in Main.AllPlayerControls)
+            //    {
+            //        switch (pc.GetCustomRole())
+            //        {
+            //            case CustomRoles.ONWerewolf:
+            //                ONWerewolf.Add(pc.PlayerId);
+            //                break;
+            //            case CustomRoles.ONBigWerewolf:
+            //                ONBigWerewolf.Add(pc.PlayerId);
+            //                break;
+            //            case CustomRoles.ONDiviner:
+            //                ONDiviner.Add(pc.PlayerId);
+            //                break;
+            //            case CustomRoles.ONPhantomThief:
+            //                ONPhantomThief.Add(pc.PlayerId);
+            //                break;
+            //        }
+            //        Main.DefaultRole[pc.PlayerId] = pc.GetCustomRole();
+            //        Main.MeetingSeerDisplayRole[pc.PlayerId] = pc.GetCustomRole();
+            //        Main.ChangeRolesTarget.Add(pc.PlayerId, null);
+            //        RPC.SendRPCDefaultRole(pc.PlayerId);
+
+            //        HudManager.Instance.SetHudActive(true);
+            //        pc.ResetKillCooldown();
+            //    }
+            //    GameEndChecker.SetPredicateToOneNight();
+
+            //    GameOptionsSender.AllSenders.Clear();
+            //    foreach (var pc in Main.AllPlayerControls)
+            //    {
+            //        GameOptionsSender.AllSenders.Add(
+            //            new PlayerGameOptionsSender(pc)
+            //        );
+            //    }
+
+            //    // ResetCamが必要なプレイヤーのリストにクラス化が済んでいない役職のプレイヤーを追加
+            //    Main.ResetCamPlayerList.AddRange(PlayerControl.AllPlayerControls.ToArray().Where(p =>
+            //    p.Is(CustomRoles.ONDiviner) || p.Is(CustomRoles.ONPhantomThief)).Select(p => p.PlayerId));
+            //}
             else
             {
                 foreach (var role in CustomRolesHelper.AllRoles.Where(x => x < CustomRoles.NotAssigned))

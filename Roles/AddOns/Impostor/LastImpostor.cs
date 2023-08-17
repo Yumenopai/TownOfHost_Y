@@ -32,7 +32,11 @@ namespace TownOfHostY.Roles.AddOns.Impostor
         public static bool CanBeLastImpostor(PlayerControl pc)
             => pc.IsAlive()
             && !pc.Is(CustomRoles.LastImpostor)
-            && pc.Is(CustomRoleTypes.Impostor);
+            && pc.Is(CustomRoleTypes.Impostor)
+            && pc.GetCustomRole()
+            is not CustomRoles.CCRedLeader;
+            //and not CustomRoles.ONWerewolf
+            //and not CustomRoles.ONBigWerewolf;
 
         public static bool CanChangeKillColldown(PlayerControl pc)
             => pc.IsAlive()

@@ -56,40 +56,56 @@ namespace TownOfHostY
                 winner.AddRange(Main.AllPlayerControls.Where(p => p.Is(team) && !winner.Contains(p)));
             }
 
-            //HideAndSeek専用
-            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek &&
-                CustomWinnerHolder.WinnerTeam != CustomWinner.Draw && CustomWinnerHolder.WinnerTeam != CustomWinner.None)
+            if (CustomWinnerHolder.WinnerTeam != CustomWinner.Draw && CustomWinnerHolder.WinnerTeam != CustomWinner.None)
             {
-                winner = new();
-                foreach (var pc in Main.AllPlayerControls)
+                //HideAndSeek専用
+                if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
                 {
-                    var role = PlayerState.GetByPlayerId(pc.PlayerId).MainRole;
-                    if (role.GetCustomRoleTypes() == CustomRoleTypes.Impostor)
+                    winner = new();
+                    foreach (var pc in Main.AllPlayerControls)
                     {
-                        if (CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor)
-                            winner.Add(pc);
-                    }
-                    else if (role.GetCustomRoleTypes() == CustomRoleTypes.Crewmate)
-                    {
-                        if (CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate)
-                            winner.Add(pc);
-                    }
-                    else if (role == CustomRoles.HASTroll && pc.Data.IsDead)
-                    {
-                        //トロールが殺されていれば単独勝ち
-                        winner = new()
+                        var role = PlayerState.GetByPlayerId(pc.PlayerId).MainRole;
+                        if (role.GetCustomRoleTypes() == CustomRoleTypes.Impostor)
+                        {
+                            if (CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor)
+                                winner.Add(pc);
+                        }
+                        else if (role.GetCustomRoleTypes() == CustomRoleTypes.Crewmate)
+                        {
+                            if (CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate)
+                                winner.Add(pc);
+                        }
+                        else if (role == CustomRoles.HASTroll && pc.Data.IsDead)
+                        {
+                            //トロールが殺されていれば単独勝ち
+                            winner = new()
                         {
                             pc
                         };
-                        break;
+                            break;
+                        }
+                        else if (role == CustomRoles.HASFox && CustomWinnerHolder.WinnerTeam != CustomWinner.HASTroll && !pc.Data.IsDead)
+                        {
+                            winner.Add(pc);
+                            CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.HASFox);
+                        }
                     }
-                    else if (role == CustomRoles.HASFox && CustomWinnerHolder.WinnerTeam != CustomWinner.HASTroll && !pc.Data.IsDead)
+                }
+                // CC
+                else if (Options.IsCCMode)
+                {
+                    foreach (var pc in Main.AllPlayerControls)
                     {
-                        winner.Add(pc);
-                        CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.HASFox);
+                        if (
+                            (CustomWinnerHolder.WinnerTeam == CustomWinner.RedL && (pc.Is(CustomRoles.CCRedLeader) || pc.Is(CustomRoles.CCRedCat)))
+                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.BlueL && (pc.Is(CustomRoles.CCBlueLeader) || pc.Is(CustomRoles.CCBlueCat)))
+                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.YellowL && (pc.Is(CustomRoles.CCYellowLeader) || pc.Is(CustomRoles.CCYellowCat)))
+                            )
+                            winner.Add(pc);
                     }
                 }
             }
+
             Main.winnerList = new();
             foreach (var pc in winner)
             {

@@ -401,6 +401,8 @@ namespace TownOfHostY
         public static bool CanUseKillButton(this PlayerControl pc)
         {
             if (!pc.IsAlive() || pc.Data.Role.Role == RoleTypes.GuardianAngel) return false;
+            // CC
+            if (pc.GetCustomRole().IsCCLeaderRoles()) return true;
 
             var roleCanUse = (pc.GetRoleClass() as IKiller)?.CanUseKillButton();
 
@@ -409,6 +411,8 @@ namespace TownOfHostY
         public static bool CanUseImpostorVentButton(this PlayerControl pc)
         {
             if (!pc.IsAlive() || pc.Data.Role.Role == RoleTypes.GuardianAngel) return false;
+            // CC
+            if (pc.GetCustomRole().IsCCLeaderRoles()) return !Options.IgnoreVent.GetBool();
 
             return pc.GetCustomRole() switch
             {

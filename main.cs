@@ -221,6 +221,16 @@ namespace TownOfHostY
                     {CustomRoles.Refusing, "#61b26c"},
                     {CustomRoles.Archenemy, "#ff6347"},
 
+                    // CatchCat
+                    {CustomRoles.CCRedLeader, "#ff0000"},
+                    {CustomRoles.CCBlueLeader, "#00b4eb"},
+                    {CustomRoles.CCYellowLeader, "#f8cd46"},
+                    {CustomRoles.CCNoCat, "#696969"},
+                    {CustomRoles.CCRedCat, "#ff0000"},
+                    {CustomRoles.CCBlueCat, "#00b4eb"},
+                    {CustomRoles.CCYellowCat, "#f8cd46"},
+
+
                     {CustomRoles.NotAssigned, "#ffffff"}
                 };
 
@@ -300,6 +310,11 @@ namespace TownOfHostY
         LoveCutter = CustomRoles.LoveCutter,
         Lawyer = CustomRoles.Lawyer,
 
+        //CC
+        RedL = CustomRoles.CCRedLeader,
+        BlueL = CustomRoles.CCBlueLeader,
+        YellowL = CustomRoles.CCYellowLeader,
+
         HASTroll = CustomRoles.HASTroll,
     }
     public enum AdditionalWinners
@@ -316,6 +331,10 @@ namespace TownOfHostY
         Duelist = CustomRoles.Duelist,
         Archenemy = CustomRoles.Archenemy,
         HASFox = CustomRoles.HASFox,
+        //CC
+        RedC = CustomRoles.CCRedCat,
+        BlueC = CustomRoles.CCBlueCat,
+        YellowC = CustomRoles.CCYellowCat,
     }
     /*public enum CustomRoles : byte
     {

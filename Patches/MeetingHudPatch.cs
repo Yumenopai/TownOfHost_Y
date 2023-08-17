@@ -101,10 +101,39 @@ public static class MeetingHudPatch
                 RevengeTargetPlayer.Clear();
             }
 
-            if (AntiBlackout.OverrideExiledPlayer)
+            if (AntiBlackout.OverrideExiledPlayer && !Options.IsCCMode)
             {
                 Utils.SendMessage(GetString("Warning.OverrideExiledPlayer"));
             }
+            if (Options.IsCCMode)
+            {
+                int[] counts = GameModeUtils.CountLivingPlayersByPredicates(
+                    pc => pc.Is(CustomRoles.CCRedLeader),
+                    pc => pc.Is(CustomRoles.CCBlueLeader),
+                    pc => pc.Is(CustomRoles.CCYellowLeader),
+                    pc => pc.Is(CustomRoles.CCNoCat),
+                    pc => pc.Is(CustomRoles.CCRedCat),
+                    pc => pc.Is(CustomRoles.CCBlueCat),
+                    pc => pc.Is(CustomRoles.CCYellowCat)
+                );
+                int Leader = counts[0] + counts[1] + counts[2];
+                int NoCat = counts[3];
+                int RedTeam = counts[0] + counts[4];
+                int BlueTeam = counts[1] + counts[5];
+                int YellowTeam = counts[2] + counts[6];
+
+                string title = $"<color=#f8cd46>{GetString("CCMidwayResultsTitle")}</color>";
+
+                if (CustomRoles.CCYellowLeader.IsEnable() && NoCat == 0)
+                    Utils.SendMessage(string.Format(GetString("Message.CCMidwayResultsSudden3"), RedTeam, BlueTeam, YellowTeam), title: title);
+                else if (!CustomRoles.CCYellowLeader.IsEnable() && NoCat == 0)
+                    Utils.SendMessage(string.Format(GetString("Message.CCMidwayResultsSudden"), RedTeam, BlueTeam), title: title);
+                else
+                    Utils.SendMessage(string.Format(GetString("Message.CCMidwayResults"), Leader, NoCat), title: title);
+
+                Logger.Info("リーダー" + Leader + "人生存中。無陣営猫残り" + NoCat + "人", "MidwayResults");
+            }
+
             if (MeetingStates.FirstMeeting) TemplateManager.SendTemplate("OnFirstMeeting", noErr: true);
             TemplateManager.SendTemplate("OnMeeting", noErr: true);
 
@@ -149,7 +178,26 @@ public static class MeetingHudPatch
                 //会議画面での名前変更
                 //自分自身の名前の色を変更
                 //NameColorManager準拠の処理
-                pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
+                if (target.AmOwner && AmongUsClient.Instance.IsGameStarted) //変更先が自分自身
+                {
+                    //if (Options.IsONMode && (Main.DefaultRole[pva.TargetPlayerId] != CustomRoles.ONPhantomThief))
+                    //    pva.NameText.color = Utils.GetRoleColor(Main.DefaultRole[pva.TargetPlayerId]);
+                    //else if (Options.IsONMode && (Main.DefaultRole[pva.TargetPlayerId] == CustomRoles.ONPhantomThief))
+                    //    pva.NameText.color = Utils.GetRoleColor(seer.GetCustomRole());
+                    //else
+                        pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
+                }
+                else
+                {
+                    //if (Options.IsONMode && Main.DefaultRole[seer.PlayerId].IsONImpostor() && Main.DefaultRole[target.PlayerId].IsONImpostor())
+                    //    pva.NameText.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
+                    //else if (Options.IsONMode && Main.DefaultRole[seer.PlayerId] == CustomRoles.ONPhantomThief && Main.DefaultRole[target.PlayerId].IsONImpostor())
+                    //{ }
+                    //else if (Options.IsONMode && (Main.DefaultRole[target.PlayerId] == CustomRoles.ONPhantomThief))
+                    //{ }
+                    //else
+                        pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
+                }
 
                 //とりあえずSnitchは会議中にもインポスターを確認することができる仕様にしていますが、変更する可能性があります。
 

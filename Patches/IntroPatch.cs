@@ -94,7 +94,8 @@ namespace TownOfHostY
     {
         public static void Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
         {
-            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) || PlayerControl.LocalPlayer.Is(CustomRoles.StrayWolf))
+            if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) || PlayerControl.LocalPlayer.Is(CustomRoles.StrayWolf)
+                || PlayerControl.LocalPlayer.GetCustomRole().IsCCLeaderRoles())
             {
                 //ぼっち役職
                 var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -211,6 +212,68 @@ namespace TownOfHostY
                     break;
 
             }
+            if (Options.IsCCMode)
+            {
+                if (role.IsCCLeaderRoles())
+                {
+                    __instance.TeamTitle.text = GetString("CCLeaderIntro");
+                    __instance.TeamTitle.color = Color.red;
+                    __instance.ImpostorText.gameObject.SetActive(true);
+                    __instance.ImpostorText.text = GetString("CCLeaderIntro2");
+                    __instance.BackgroundBar.material.color = Color.red;
+
+                    __instance.RoleBlurbText.text = GetString("CCLeaderIntro2");
+                    PlayerControl.LocalPlayer.Data.Role.IntroSound = RoleManager.Instance.AllRoles.Where((role) => role.Role == RoleTypes.Impostor).FirstOrDefault().IntroSound;
+                }
+                else
+                {
+                    __instance.TeamTitle.text = GetString("CCNoCatIntro");
+                    __instance.TeamTitle.color = Utils.GetRoleColor(role);
+                    __instance.ImpostorText.gameObject.SetActive(true);
+                    __instance.ImpostorText.text = GetString("CCNoCatIntro2");
+                    __instance.BackgroundBar.material.color = Color.white;
+
+                    __instance.RoleBlurbText.text = GetString("CCNoCatIntro2");
+                }
+            }
+            //else if (Options.IsONMode)
+            //{
+            //    if (role.IsONImpostor())
+            //    {
+            //        __instance.TeamTitle.text = GetString("Wteam");
+            //        __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
+            //        __instance.ImpostorText.gameObject.SetActive(true);
+            //        __instance.ImpostorText.text = GetString("WteamInfo");
+            //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
+
+            //        __instance.RoleBlurbText.text = GetString("CatLeaderIntro2");
+            //        PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
+            //    }
+            //    else if (role.IsONMadmate())
+            //    {
+            //        __instance.TeamTitle.text = GetString("Wteam");
+            //        __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
+            //        __instance.ImpostorText.gameObject.SetActive(true);
+            //        __instance.ImpostorText.text = GetString("ONMadmanInfo");
+            //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
+            //    }
+            //    else if (role.IsONCrewmate())
+            //    {
+            //        __instance.TeamTitle.text = GetString("Vteam");
+            //        __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.ONVillager);
+            //        __instance.ImpostorText.gameObject.SetActive(true);
+            //        __instance.ImpostorText.text = GetString("VteamInfo");
+            //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.ONVillager);
+            //    }
+            //    else if (role.IsONNeutral())
+            //    {
+            //        __instance.TeamTitle.text = Utils.GetRoleName(role);
+            //        __instance.TeamTitle.color = Utils.GetRoleColor(role);
+            //        __instance.ImpostorText.gameObject.SetActive(true);
+            //        __instance.ImpostorText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+            //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(role);
+            //    }
+            //}
 
             if (Input.GetKey(KeyCode.RightShift))
             {

@@ -60,6 +60,9 @@ namespace TownOfHostY
                 var nextSabotage = (SystemTypes)amount;
                 //HASモードではサボタージュ不可
                 if (Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) return false;
+                if (Options.IsCCMode) return false;
+                //if (Options.IsONMode && Main.ONKillCount < Main.AllAlivePlayerControls.Count(pc => pc.Is(CustomRoleTypes.Impostor))) return false;
+
                 var roleClass = player.GetRoleClass();
                 if (roleClass != null)
                 {
@@ -164,7 +167,11 @@ namespace TownOfHostY
     {
         public static bool Prefix(ShipStatus __instance)
         {
-            return !(Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) || Options.AllowCloseDoors.GetBool();
+            if (Options.CurrentGameMode == CustomGameMode.HideAndSeek && !Options.AllowCloseDoors.GetBool()) return false;
+            if (Options.IsStandardHAS) return false;
+            if (Options.IsCCMode) return false;
+            
+            return true;
         }
     }
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Start))]
@@ -202,7 +209,8 @@ namespace TownOfHostY
     {
         public static bool Prefix(ref bool __result)
         {
-            if (Options.DisableTaskWin.GetBool() || Options.NoGameEnd.GetBool() || TaskState.InitialTotalTasks == 0)
+            if (Options.DisableTaskWin.GetBool() || Options.NoGameEnd.GetBool() || TaskState.InitialTotalTasks == 0
+                || Options.IsCCMode/* || Options.IsONMode*/)
             {
                 __result = false;
                 return false;

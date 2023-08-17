@@ -77,7 +77,7 @@ namespace TownOfHostY
             // 任意情報の初期値設定
             NameColor = Color.white;
             ValueFormat = OptionFormat.None;
-            GameMode = CustomGameMode.All;
+            GameMode = CustomGameMode.Standard;
             IsPublicDontUse = false;
             IsHeader = false;
             IsHidden = false;

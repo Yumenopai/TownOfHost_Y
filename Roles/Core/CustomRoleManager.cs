@@ -11,6 +11,7 @@ using TownOfHostY.Roles.Core.Interfaces;
 using TownOfHostY.Roles.Crewmate;
 using TownOfHostY.Roles.Impostor;
 using TownOfHostY.Roles.AddOns.Common;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHostY.Roles.Core;
 
@@ -76,6 +77,21 @@ public static class CustomRoleManager
             // キラーのキルチェック処理実行
             killer.OnCheckMurderAsKiller(info);
         }
+        // CC
+        if (attemptTarget.GetCustomRole().IsCCLeaderRoles() && GameModeUtils.LeaderNotKilled.GetBool())
+        {
+            attemptKiller.RpcGuardAndKill(attemptTarget); return;
+        }
+        if (attemptTarget.GetCustomRole().IsCCCatRoles() && GameModeUtils.CatNotKilled.GetBool())
+        {
+            attemptKiller.RpcGuardAndKill(attemptTarget); return;
+        }
+        if (!GameModeUtils.OnCheckMurder(info)) return;
+        // ON
+        //if (Options.IsONMode && attemptTarget.Is(CustomRoles.ONPhantomThief))
+        //{
+        //    ONPhantomThief.OnCheckMurderTarget(info);
+        //}
 
         //キル可能だった場合のみMurderPlayerに進む
         if (info.CanKill && info.DoKill)
@@ -490,9 +506,20 @@ public enum CustomRoles
     Lawyer,
     Totocalcio,
     Duelist,
+
     //HideAndSeek
     HASFox,
     HASTroll,
+
+    //CC
+    CCRedLeader,
+    CCBlueLeader,
+    CCYellowLeader,
+    CCNoCat,
+    CCRedCat,
+    CCBlueCat,
+    CCYellowCat,
+
     //GM
     GM,
 

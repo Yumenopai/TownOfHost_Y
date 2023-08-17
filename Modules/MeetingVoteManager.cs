@@ -5,7 +5,6 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.AddOns.Common;
 using TownOfHostY.Roles.Madmate;
 using TownOfHostY.Roles.Crewmate;
-
 namespace TownOfHostY.Modules;
 
 public class MeetingVoteManager
@@ -173,6 +172,12 @@ public class MeetingVoteManager
             ApplySkipAndNoVoteMode();
         }
 
+        // GameMode
+        if (Options.IsCCMode/* || (Options.IsONMode && !MeetingStates.FirstMeeting/*狩人投票ターン)*/)
+        {
+            ChangeSkipByGameMode();
+        }
+
         // Key: 投票された人
         // Value: 票数
         Dictionary<byte, int> votes = new();
@@ -240,6 +245,22 @@ public class MeetingVoteManager
                         logger.Info($"スキップしたため {voterName} に自投票させます");
                         break;
                 }
+            }
+        }
+    }
+    /// <summary>
+    /// GameModeで投票を強制的にスキップ
+    /// </summary>
+    private void ChangeSkipByGameMode()
+    {
+        foreach (var voteData in AllVotes)
+        {
+            var vote = voteData.Value;
+            var voter = Utils.GetPlayerById(vote.Voter);
+            if (!vote.IsSkip && !voter.Data.IsDead)
+            {
+                vote.ChangeVoteTarget(Skip);
+                logger.Info($"スキップ以外のため{voter.GetNameWithRole()}にスキップさせました");
             }
         }
     }

@@ -59,8 +59,7 @@ namespace TownOfHostY.Roles
         private static List<CustomRoles> AssignRoleList = new(CustomRolesHelper.AllRoles.Length);
         public static void SetupOptionItem()
         {
-            var optionAssignMode = StringOptionItem.Create(idStart, "AssignMode", AssignModeSelections, 0, TabGroup.MainSettings, false)
-                .SetHeader(true);
+            var optionAssignMode = StringOptionItem.Create(idStart, "AssignMode", AssignModeSelections, 0, TabGroup.MainSettings, false);
 
             assignMode = () => (AssignAlgorithm)optionAssignMode.GetInt();
             RandomAssignOptionsCollection.Clear();

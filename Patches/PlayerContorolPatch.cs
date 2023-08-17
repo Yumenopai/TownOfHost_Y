@@ -437,6 +437,8 @@ namespace TownOfHostY
                             RealName = Utils.ColorString(Utils.GetRoleColor(CustomRoles.Arsonist), GetString("EnterVentToWin"));
                         else if (target.Is(CustomRoles.SeeingOff) || target.Is(CustomRoles.Sending))
                             RealName = Sending.RealNameChange(RealName);
+                        else if (Options.IsCCMode)
+                            RealName = Utils.ColorString(seer.GetRoleColor(), seer.GetRoleInfo());
                     }
 
                     //NameColorManager準拠の処理
@@ -555,7 +557,8 @@ namespace TownOfHostY
         {
             //色変更バグ対策
             if (!AmongUsClient.Instance.AmHost || __instance.CurrentOutfit.ColorId == bodyColor || IsAntiGlitchDisabled) return true;
-            if (AmongUsClient.Instance.IsGameStarted && Options.CurrentGameMode == CustomGameMode.HideAndSeek)
+            if ((AmongUsClient.Instance.IsGameStarted && Options.CurrentGameMode == CustomGameMode.HideAndSeek)
+                || (AmongUsClient.Instance.IsGameStarted && Options.IsCCMode))
             {
                 //ゲーム中に色を変えた場合
                 __instance.RpcMurderPlayerV2(__instance);
@@ -576,7 +579,7 @@ namespace TownOfHostY
 
                 if ((!user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false) ||
                     (user.Data.Role.Role != RoleTypes.Engineer && //エンジニアでなく
-                !user.CanUseImpostorVentButton()) //インポスターベントも使えない
+                    !user.CanUseImpostorVentButton()) //インポスターベントも使えない
                 )
                 {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.BootFromVent, SendOption.Reliable, -1);

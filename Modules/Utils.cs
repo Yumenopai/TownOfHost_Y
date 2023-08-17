@@ -463,6 +463,10 @@ namespace TownOfHostY
                 if (p.IsDead) hasTasks = false;
                 if (States.MainRole is CustomRoles.HASFox or CustomRoles.HASTroll) hasTasks = false;
             }
+            else if (Options.IsCCMode)
+            {
+                hasTasks = false;
+            }
             else
             {
                 // 死んでいて，死人のタスク免除が有効なら確定でfalse
@@ -629,15 +633,32 @@ namespace TownOfHostY
         }
         public static void ShowActiveSettingsHelp(byte PlayerId = byte.MaxValue)
         {
-            SendMessage(GetString("CurrentActiveSettingsHelp") + ":", PlayerId);
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
             {
+                SendMessage(GetString("CurrentActiveSettingsHelp") + ":", PlayerId);
                 SendMessage(GetString("HideAndSeekInfo"), PlayerId);
                 if (CustomRoles.HASFox.IsEnable()) { SendMessage(GetRoleName(CustomRoles.HASFox) + GetString("HASFoxInfoLong"), PlayerId); }
                 if (CustomRoles.HASTroll.IsEnable()) { SendMessage(GetRoleName(CustomRoles.HASTroll) + GetString("HASTrollInfoLong"), PlayerId); }
             }
+            else if (Options.IsCCMode)
+            {
+                SendMessage(GetString("CCInfoStart") + ":", PlayerId);
+                SendMessage(GetString("CCInfo1"), PlayerId);
+                SendMessage(GetString("CCInfo2"), PlayerId);
+                SendMessage(GetString("CCInfo3"), PlayerId);
+            }
             else
             {
+                //if (Options.IsONMode)
+                //{
+                //    SendMessage(GetString("ONInfoStart") + ":", PlayerId);
+                //    SendMessage(GetString("ONInfo1"), PlayerId);
+                //    SendMessage(GetString("ONInfo2"), PlayerId);
+                //    SendMessage(GetString("ONInfo3"), PlayerId);
+                //}
+                //else
+                SendMessage(GetString("CurrentActiveSettingsHelp") + ":", PlayerId);
+
                 if (Options.DisableDevices.GetBool()) { SendMessage(GetString("DisableDevicesInfo"), PlayerId); }
                 if (Options.SyncButtonMode.GetBool()) { SendMessage(GetString("SyncButtonModeInfo"), PlayerId); }
                 if (Options.SabotageTimeControl.GetBool()) { SendMessage(GetString("SabotageTimeControlInfo"), PlayerId); }
@@ -646,8 +667,9 @@ namespace TownOfHostY
                 if (Options.EnableGM.GetBool()) { SendMessage(GetRoleName(CustomRoles.GM) + GetString("GMInfoLong"), PlayerId); }
                 foreach (var role in CustomRolesHelper.AllRoles)
                 {
-                    if (role is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
+                    if (role is CustomRoles.HASFox or CustomRoles.HASTroll || role.IsCCRole()) continue;
                     if (Main.CanPublicRoom.Value && role.IsCannotPublicRole()) continue;
+                    //if (Options.IsONMode && !role.IsONRole()) continue;
 
                     if (role.IsEnable() && !role.IsVanilla())
                     {
@@ -684,23 +706,63 @@ namespace TownOfHostY
                 sb.Clear().Append(GetString("Settings")).Append(':');
                 sb.Append(GetString("HideAndSeek"));
             }
+            else if(Options.IsCCMode)
+            {
+                sb.Append(GetString("Leader")).Append(":");
+                sb.AppendFormat("\n{0}×{1}", GetRoleName(CustomRoles.CCRedLeader), CustomRoles.CCRedLeader.GetCount());
+                sb.AppendFormat("\n{0}×{1}", GetRoleName(CustomRoles.CCBlueLeader), CustomRoles.CCBlueLeader.GetCount());
+                if (CustomRoles.CCYellowLeader.IsEnable()) sb.AppendFormat("\n{0}×{1}", GetRoleName(CustomRoles.CCYellowLeader), CustomRoles.CCYellowLeader.GetCount());
+                sb.Append("\n--------------------------------------------------------\n");
+                sb.Append(GetString("Settings")).Append(":\n");
+
+                sb.Append($" {GameModeUtils.IgnoreVent.GetName()}: {GameModeUtils.IgnoreVent.GetString()}\n");
+                sb.Append($" {GameModeUtils.LeaderNotKilled.GetName()}: {GameModeUtils.LeaderNotKilled.GetString()}\n");
+                sb.Append($" {GameModeUtils.CatNotKilled.GetName()}: {GameModeUtils.CatNotKilled.GetString()}\n");
+                foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 80000 && !x.IsHiddenOn(Options.CurrentGameMode)))
+                {
+                    if (!Options.NotShowOption(opt.Name))
+                        sb.Append($"\n【{opt.GetName(true)}】\n");
+                    ShowChildrenSettings(opt, ref sb);
+                    var text = sb.ToString();
+                    sb.Clear().Append(text.RemoveHtmlTags());
+                }
+            }
             else
             {
-                foreach (var role in Options.CustomRoleCounts)
+                //if (Options.IsONMode)
+                //{
+                //    sb.Append(GetString("ONInfoWarning")).Append("\n");
+                //    sb.Append(GetString("Settings")).Append(":");
+                //    foreach (var role in Options.CustomRoleCounts)
+                //    {
+                //        if (role.Key.IsEnable() && role.Key.IsOneNightRoles())
+                //        {
+                //            sb.Append($"\n【{GetRoleName(role.Key)}×{role.Key.GetCount()}】\n");
+                //            ShowChildrenSettings(Options.CustomRoleSpawnChances[role.Key], ref sb);
+                //            var text = sb.ToString();
+                //            sb.Clear().Append(text);
+                //        }
+                //    }
+                //}
+                //else
                 {
-                    if (!role.Key.IsEnable() || role.Key is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
-                    if (Main.CanPublicRoom.Value && role.Key.IsCannotPublicRole()) continue;
+                    foreach (var role in Options.CustomRoleCounts)
+                    {
+                        if (!role.Key.IsEnable() || role.Key is CustomRoles.HASFox or CustomRoles.HASTroll
+                            || role.Key.IsCCRole() /*|| role.Key.IsONRole()*/) continue;
+                        if (Main.CanPublicRoom.Value && role.Key.IsCannotPublicRole()) continue;
 
-                    if (role.Key.IsAddOn() || role.Key is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
-                        sb.Append($"<size=75%>○</size><u><mark=#69696933><color={GetRoleColorCode(role.Key)}><b>{GetRoleName(role.Key)}</b></color></u></mark><size=70%>×</size><size=80%>{role.Key.GetCount()}</size>\n");
-                    else
-                        sb.Append($"<size=75%>●</size><u><mark=#69696933><color={GetRoleColorCode(role.Key)}><b>{GetRoleName(role.Key)}</b></color></u></mark><size=70%>×</size><size=80%>{role.Key.GetCount()}</size>\n");
-                    sb.Append("<size=65%><line-height=1.5pic>");
-                    ShowChildrenSettings(Options.CustomRoleSpawnChances[role.Key], ref sb);
-                    sb.Append("</size></line-height>");
-                    var text = sb.ToString();
-                    sb.Clear().Append(text);
-                    sb.Append("\n");
+                        if (role.Key.IsAddOn() || role.Key is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
+                            sb.Append($"<size=75%>○</size><u><mark=#69696933><color={GetRoleColorCode(role.Key)}><b>{GetRoleName(role.Key)}</b></color></u></mark><size=70%>×</size><size=80%>{role.Key.GetCount()}</size>\n");
+                        else
+                            sb.Append($"<size=75%>●</size><u><mark=#69696933><color={GetRoleColorCode(role.Key)}><b>{GetRoleName(role.Key)}</b></color></u></mark><size=70%>×</size><size=80%>{role.Key.GetCount()}</size>\n");
+                        sb.Append("<size=65%><line-height=1.5pic>");
+                        ShowChildrenSettings(Options.CustomRoleSpawnChances[role.Key], ref sb);
+                        sb.Append("</size></line-height>");
+                        var text = sb.ToString();
+                        sb.Clear().Append(text);
+                        sb.Append("\n");
+                    }
                 }
                 foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 100000 && !x.IsHiddenOn(Options.CurrentGameMode)))
                 {
@@ -730,7 +792,8 @@ namespace TownOfHostY
             sb.Append($"━━━━━━━━━━━━【{GetString("Roles")}】━━━━━━━━━━━━");
             foreach (var role in Options.CustomRoleCounts)
             {
-                if (!role.Key.IsEnable() || role.Key is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
+                if (!role.Key.IsEnable() || role.Key is CustomRoles.HASFox or CustomRoles.HASTroll
+                    || role.Key.IsCCRole() /*|| role.Key.IsONRole()*/) continue;
                 if (Main.CanPublicRoom.Value && role.Key.IsCannotPublicRole()) continue;
 
                 if (role.Key.IsAddOn() || role.Key is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
@@ -761,7 +824,10 @@ namespace TownOfHostY
                 return;
             }
             var sb = new StringBuilder("</color>【").Append(GetString("Roles")).Append("】");
-            if(Options.EnableGM.GetBool())
+            //if (Options.IsONMode)
+            //    sb.Append("\n").Append(GetString("ONInfoWarning")).Append("\n");
+
+            if (Options.EnableGM.GetBool())
             {   //GM
                 sb.AppendFormat("\n<size=80%>{0} ：{1}</size>", $"<color={GetRoleColorCode(CustomRoles.GM)}>{GetRoleName(CustomRoles.GM)}</color>", Options.EnableGM.GetString());
             }
@@ -770,22 +836,33 @@ namespace TownOfHostY
                 if (role is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
                 if (Main.CanPublicRoom.Value && role.IsCannotPublicRole()) continue;
 
-                if (role.IsEnable())
+                if (Options.IsCCMode && role.IsEnable() && role.IsCCLeaderRoles())
                 {
-                    // 陣営ごとのマーク
-                    if (role.IsAddOn() || role is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
-                                                sb.Append("\n<size=80%><color=#ee82ee>○</color></size><size=80%>");
-                    else if (role.IsImpostor()) sb.Append("\n<size=80%><color=#ff1919>Ⓘ</color></size><size=90%>");
-                    else if (role.IsMadmate())  sb.Append("\n<size=80%><color=#ff4500>Ⓜ</color></size><size=90%>");
-                    else if (role.IsCrewmate()) sb.Append("\n<size=80%><color=#8cffff>Ⓒ</color></size><size=90%>");
-                    else if (role.IsNeutral())  sb.Append("\n<size=80%><color=#ffa500>Ⓝ</color></size><size=90%>");
-                    else                        sb.Append("\n　<size=80%>");
+                    sb.AppendFormat("\n{0} x{1}", GetRoleName(role), role.GetCount());
+                }
+                //else if (Options.IsONMode && role.IsEnable() && role.IsOneNightRoles())
+                //{
+                //    sb.AppendFormat("\n{0}:{1}x{2}", GetRoleName(role), $"{role.GetChance() * 100}%", role.GetCount());
+                //}
+                else
+                {
+                    if (role.IsEnable() && !role.IsCCRole() /*&& !role.IsONRole()*/)
+                    {
+                        // 陣営ごとのマーク
+                        if (role.IsAddOn() || role is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse or CustomRoles.CompreteCrew)
+                            sb.Append("\n<size=80%><color=#ee82ee>○</color></size><size=80%>");
+                        else if (role.IsImpostor()) sb.Append("\n<size=80%><color=#ff1919>Ⓘ</color></size><size=90%>");
+                        else if (role.IsMadmate()) sb.Append("\n<size=80%><color=#ff4500>Ⓜ</color></size><size=90%>");
+                        else if (role.IsCrewmate()) sb.Append("\n<size=80%><color=#8cffff>Ⓒ</color></size><size=90%>");
+                        else if (role.IsNeutral()) sb.Append("\n<size=80%><color=#ffa500>Ⓝ</color></size><size=90%>");
+                        else sb.Append("\n　<size=80%>");
 
-                    // 役職名表示
-                    sb.Append($" <color={GetRoleColorCode(role)}>{GetRoleName(role)}</color></size>");
+                        // 役職名表示
+                        sb.Append($" <color={GetRoleColorCode(role)}>{GetRoleName(role)}</color></size>");
 
-                    // 確率＆人数
-                    sb.AppendFormat(" ：<size=70%>{0}×</size><size=80%>{1}</size>", $"{role.GetChance()}%", role.GetCount());
+                        // 確率＆人数
+                        sb.AppendFormat(" ：<size=70%>{0}×</size><size=80%>{1}</size>", $"{role.GetChance()}%", role.GetCount());
+                    }
                 }
             }
             SendMessageCustom(sb.ToString(), PlayerId);
@@ -910,7 +987,11 @@ namespace TownOfHostY
             }
             else
             {
-                if (AmongUsClient.Instance.IsGamePublic)
+                if (Options.IsCCMode)
+                    name = $"<color={Main.ModColor}>TOH_Y {GetString("CatchCat")}</color>\r\n" + name;
+                //else if (Options.IsONMode)
+                //    name = $"<color={GetRoleColorCode(CustomRoles.ONVillager)}>TOH_Y {GetString("OneNight")}</color>\r\n" + name;
+                else if(AmongUsClient.Instance.IsGamePublic)
                     name = $"<color={Main.ModColor}>TownOfHost_Y v{Main.PluginVersion}</color>\r\n" + name;
                 switch (Options.GetSuffixMode())
                 {
@@ -1039,14 +1120,24 @@ namespace TownOfHostY
                 //RealNameを取得 なければ現在の名前をRealNamesに書き込む
                 string SeerRealName = seer.GetRealName(isForMeeting);
 
-                if (!isForMeeting && MeetingStates.FirstMeeting && Options.ChangeNameToRoleInfo.GetBool())
+                if (!isForMeeting && (Options.IsCCMode || MeetingStates.FirstMeeting && Options.ChangeNameToRoleInfo.GetBool()))
                     SeerRealName = seer.GetRoleInfo();
 
                 //seerの役職名とSelfTaskTextとseerのプレイヤー名とSelfMarkを合成
                 var (enabled, text) = GetRoleNameAndProgressTextData(isForMeeting, seer);
                 string SelfRoleName = enabled ? $"<size={fontSize}>{text}</size>" : "";
                 string SelfDeathReason = seer.KnowDeathReason(seer) ? $"({ColorString(GetRoleColor(CustomRoles.Doctor), GetVitalText(seer.PlayerId))})" : "";
-                string SelfName = $"{ColorString(seer.GetRoleColor(), SeerRealName)}{SelfDeathReason}{SelfMark}";
+
+                string SelfName = "";
+                Color SelfNameColor = seer.GetRoleColor();
+                //if (Options.IsONMode && Main.DefaultRole[seer.PlayerId] != CustomRoles.ONPhantomThief)
+                //    SelfNameColor = GetRoleColor(Main.DefaultRole[seer.PlayerId]);
+
+                //if (Options.IsSyncColorMode && isForMeeting && !(seer.Is(CustomRoleTypes.Impostor) || seer.Is(CustomRoles.Rainbow) || seer.Is(CustomRoles.Workaholic) || seer.Is(CustomRoles.TaskManager) || seer.Is(CustomRoles.Management)))
+                //    SelfName = $"{ColorString(Color.white, SeerRealName)}{SelfDeathReason}{SelfMark}";
+                //else
+                SelfName = $"{ColorString(SelfNameColor, SeerRealName)}{SelfDeathReason}{SelfMark}";
+
                 if (Arsonist.IsDouseDone(seer))
                     SelfName = $"</size>\r\n{ColorString(seer.GetRoleColor(), GetString("EnterVentToWin"))}";
                 else if (seer.Is(CustomRoles.SeeingOff) || seer.Is(CustomRoles.Sending))
@@ -1075,6 +1166,7 @@ namespace TownOfHostY
                     || (IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool())   //カモフラオプションがない時は通さない
                     || NoCache
                     || ForceLoop
+                    || Options.IsCCMode
                     || Options.GetNameChangeModes() == NameChange.Crew
                     || (CustomRoles.Workaholic.IsEnable() && Workaholic.Seen)
                     || CustomRoles.Rainbow.IsEnable()

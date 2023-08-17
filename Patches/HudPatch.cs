@@ -210,6 +210,9 @@ namespace TownOfHostY
                 case CustomRoles.PlatonicLover:
                 case CustomRoles.Totocalcio:
                 case CustomRoles.Opportunist:
+                case CustomRoles.CCRedLeader:
+                case CustomRoles.CCBlueLeader:
+                case CustomRoles.CCYellowLeader:
                     __instance.SabotageButton.ToggleVisible(false);
                     break;
                 case CustomRoles.Jackal:

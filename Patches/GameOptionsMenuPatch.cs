@@ -396,6 +396,33 @@ namespace TownOfHostY
                 __instance.NumShortTasks = 10;
                 __instance.KillCooldown = 10f;
             }
+            if (Options.IsCCMode)
+            {
+                __instance.PlayerSpeedMod = 1.5f;
+                __instance.CrewLightMod = 0.5f;
+                __instance.ImpostorLightMod = 0.75f;
+                __instance.NumImpostors = 1;
+                __instance.NumCommonTasks = 0;
+                __instance.NumLongTasks = 0;
+                __instance.NumShortTasks = 1;
+                __instance.KillCooldown = 20f;
+                __instance.NumEmergencyMeetings = 1;
+                __instance.KillDistance = 0;
+                __instance.DiscussionTime = 0;
+                __instance.VotingTime = 60;
+            }
+            //if (Options.IsONMode)
+            //{
+            //    __instance.NumCommonTasks = 1;
+            //    __instance.NumLongTasks = 0;
+            //    __instance.NumShortTasks = 1;
+            //    __instance.KillCooldown = 20f;
+            //    __instance.NumEmergencyMeetings = 0;
+            //    __instance.KillDistance = 0;
+            //    __instance.DiscussionTime = 0;
+            //    __instance.VotingTime = 300;
+            //}
+
             return false;
         }
     }

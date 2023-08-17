@@ -14,8 +14,8 @@ namespace TownOfHostY
             var roleInfo = role.GetRoleInfo();
             if (roleInfo != null)
                 return roleInfo.CustomRoleType == CustomRoleTypes.Impostor;
-
-            return false;
+            
+            return role == CustomRoles.CCRedLeader;
         }
         public static bool IsMadmate(this CustomRoles role)
         {
@@ -130,6 +130,26 @@ namespace TownOfHostY
                 CustomRoles.PlatonicLover or
                 CustomRoles.Totocalcio or
                 CustomRoles.MadSheriff;
+        }
+
+        //CC
+        public static bool IsCCRole(this CustomRoles role) => role.IsCCLeaderRoles() || role.IsCCCatRoles()
+                                                            || role == CustomRoles.CCNoCat;
+        public static bool IsCCLeaderRoles(this CustomRoles role)
+        {
+            return
+                role is
+                CustomRoles.CCRedLeader or
+                CustomRoles.CCBlueLeader or
+                CustomRoles.CCYellowLeader;
+        }
+        public static bool IsCCCatRoles(this CustomRoles role)
+        {
+            return
+                role is
+                CustomRoles.CCRedCat or
+                CustomRoles.CCYellowCat or
+                CustomRoles.CCBlueCat;
         }
 
         public static CustomRoleTypes GetCustomRoleTypes(this CustomRoles role)
