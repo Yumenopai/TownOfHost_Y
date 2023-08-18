@@ -15,6 +15,7 @@ static class GameModeUtils
     public static OptionItem IgnoreVent;
     public static OptionItem LeaderNotKilled;
     public static OptionItem CatNotKilled;
+    public static OptionItem CatOverrideKilled;
 
     public static void SetupCustomOption()
     {
@@ -29,16 +30,18 @@ static class GameModeUtils
             .SetGameMode(CustomGameMode.CatchCat);
         CatNotKilled = BooleanOptionItem.Create(Id + 1002, "CCCatNotKilled", false, TabGroup.MainSettings, false)
             .SetGameMode(CustomGameMode.CatchCat);
+        CatOverrideKilled = BooleanOptionItem.Create(Id + 1003, "CCCatOverrideKilled", false, TabGroup.MainSettings, false)
+            .SetGameMode(CustomGameMode.CatchCat);
     }
     public static void SetupLeaderRoleOptions(int id, CustomRoles role)
     {
         var spawnOption = IntegerOptionItem.Create(id, role.ToString() + "Fixed", new(100, 100, 1), 100, TabGroup.MainSettings, false).SetColor(Utils.GetRoleColor(role))
             .SetValueFormat(OptionFormat.Percent)
             .SetHeader(true)
+            .SetFixValue(true)
             .SetGameMode(CustomGameMode.CatchCat) as IntegerOptionItem;
         var countOption = IntegerOptionItem.Create(id + 1, "Maximum", new(1, 1, 1), 1, TabGroup.MainSettings, false).SetParent(spawnOption)
             .SetValueFormat(OptionFormat.Players)
-            //.SetHidden(true)
             .SetGameMode(CustomGameMode.CatchCat);
 
         Options.CustomRoleSpawnChances.Add(role, spawnOption);
@@ -78,11 +81,33 @@ static class GameModeUtils
     {
         (var killer, var target) = info.AttemptTuple;
 
-        if (!Options.IsCCMode || !target.Is(CustomRoles.CCNoCat)) return true;
+        if (!Options.IsCCMode || (!target.Is(CustomRoles.CCNoCat) && !CatOverrideKilled.GetBool())) return true;
 
         // 互いにパリン
         killer.RpcGuardAndKill(target);
         target.RpcGuardAndKill(target);
+
+        // 元所属陣営の色を消す
+        if (!target.Is(CustomRoles.CCNoCat))
+        {
+            switch (target.GetCustomRole())
+            {
+                case CustomRoles.CCRedCat:
+                    foreach (var leader in Main.AllPlayerControls.Where(pc => pc.GetCustomRole() == CustomRoles.CCRedLeader))
+                        NameColorManager.Remove(leader.PlayerId, target.PlayerId);
+                    break;
+
+                case CustomRoles.CCBlueCat:
+                    foreach (var leader in Main.AllPlayerControls.Where(pc => pc.GetCustomRole() == CustomRoles.CCBlueLeader))
+                        NameColorManager.Remove(leader.PlayerId, target.PlayerId);
+                    break;
+
+                case CustomRoles.CCYellowCat:
+                    foreach (var leader in Main.AllPlayerControls.Where(pc => pc.GetCustomRole() == CustomRoles.CCYellowLeader))
+                        NameColorManager.Remove(leader.PlayerId, target.PlayerId);
+                    break;
+            }
+        }
 
         // 役職変化
         switch (killer.GetCustomRole())

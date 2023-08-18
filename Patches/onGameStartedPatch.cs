@@ -451,7 +451,7 @@ namespace TownOfHostY
                 foreach (var role in CustomRolesHelper.AllRoles.Where(x => x < CustomRoles.NotAssigned))
                 {
                     if (role.IsVanilla()) continue;
-                    if (role is CustomRoles.HASTroll or CustomRoles.HASFox) continue;
+                    if (role is CustomRoles.HASTroll or CustomRoles.HASFox || role.IsCCRole()/* || role.IsONRole()*/) continue;
                     if (Main.CanPublicRoom.Value && role.IsCannotPublicRole()) continue;
 
                     if (role is CustomRoles.Sheriff or CustomRoles.Arsonist 

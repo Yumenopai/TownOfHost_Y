@@ -28,6 +28,7 @@ namespace TownOfHostY
         public bool IsPublicDontUse { get; protected set; }
         public bool IsHeader { get; protected set; }
         public bool IsHidden { get; protected set; }
+        public bool IsFixValue { get; protected set; }
         public Dictionary<string, string> ReplacementDictionary
         {
             get => _replacementDictionary;
@@ -81,6 +82,7 @@ namespace TownOfHostY
             IsPublicDontUse = false;
             IsHeader = false;
             IsHidden = false;
+            IsFixValue = false;
 
             // オブジェクト初期化
             Children = new();
@@ -124,6 +126,7 @@ namespace TownOfHostY
         public OptionItem SetIsPublicDontUse(bool value) => Do(i => i.IsPublicDontUse = value);
         public OptionItem SetHeader(bool value) => Do(i => i.IsHeader = value);
         public OptionItem SetHidden(bool value) => Do(i => i.IsHidden = value);
+        public OptionItem SetFixValue(bool value) => Do(i => i.IsFixValue = value);
 
         public OptionItem SetParent(OptionItem parent) => Do(i =>
         {

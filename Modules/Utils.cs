@@ -836,9 +836,10 @@ namespace TownOfHostY
                 if (role is CustomRoles.HASFox or CustomRoles.HASTroll) continue;
                 if (Main.CanPublicRoom.Value && role.IsCannotPublicRole()) continue;
 
-                if (Options.IsCCMode && role.IsEnable() && role.IsCCLeaderRoles())
+                if (Options.IsCCMode)
                 {
-                    sb.AppendFormat("\n{0} x{1}", GetRoleName(role), role.GetCount());
+                    if(role.IsCCLeaderRoles() && role.IsEnable())
+                        sb.AppendFormat("\n{0} x{1}", GetRoleName(role), role.GetCount());
                 }
                 //else if (Options.IsONMode && role.IsEnable() && role.IsOneNightRoles())
                 //{

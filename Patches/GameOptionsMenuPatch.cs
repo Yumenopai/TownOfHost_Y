@@ -112,6 +112,7 @@ namespace TownOfHostY
                     if (option.Tab != (TabGroup)tab) continue;
                     if (option.OptionBehaviour == null)
                     {
+                        float offset = option.IsFixValue ? 100f : 0f;
                         var stringOption = Object.Instantiate(template, tohMenu.transform);
                         scOptions.Add(stringOption);
                         stringOption.OnValueChanged = new System.Action<OptionBehaviour>((o) => { });
@@ -120,8 +121,8 @@ namespace TownOfHostY
                         stringOption.ValueText.text = option.GetString();
                         stringOption.name = option.Name;
                         stringOption.transform.FindChild("Background").localScale = new Vector3(1.6f, 1f, 1f);
-                        stringOption.transform.FindChild("Plus_TMP").localPosition += new Vector3(1.4f, 0f, 0f);
-                        stringOption.transform.FindChild("Minus_TMP").localPosition += new Vector3(1.0f, 0f, 0f);
+                        stringOption.transform.FindChild("Plus_TMP").localPosition += new Vector3(1.4f, offset, 0f);
+                        stringOption.transform.FindChild("Minus_TMP").localPosition += new Vector3(1.0f, offset, 0f);
                         stringOption.transform.FindChild("Value_TMP").localPosition += new Vector3(1.2f, 0f, 0f);
                         stringOption.transform.FindChild("Value_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(1.6f, 0.26f);
                         stringOption.transform.FindChild("Title_TMP").localPosition += new Vector3(0.1f, 0f, 0f);
