@@ -334,10 +334,17 @@ namespace TownOfHostY
             else if (Options.IsCCMode)
             {
                 //役職設定処理
-                AssignCustomRolesFromList(CustomRoles.CCRedLeader, Impostors);
-                //残りを割り当て
+                //Impostorsを割り当て
                 {
                     SetColorPatch.IsAntiGlitchDisabled = true;
+                    foreach (var imp in Impostors)
+                    {
+                        PlayerState.GetByPlayerId(imp.PlayerId).SetMainRole(CustomRoles.CCRedLeader);
+                        Logger.Info("役職設定:" + imp?.Data?.PlayerName + " = " + CustomRoles.CCRedLeader.ToString(), "AssignRoles");
+                    }
+                }
+                //残りを割り当て
+                {
                     foreach (var crew in Crewmates)
                     {
                         PlayerState.GetByPlayerId(crew.PlayerId).SetMainRole(CustomRoles.CCNoCat);
