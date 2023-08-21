@@ -402,7 +402,7 @@ InfoPoorInfoLong,"(Add-ons):\nUnable to Use Admin,Camera,Door-log,and Vital.",[�
 TieBreakerInfoLong,"(Add-ons):\nIf there is a tie vote, the tie breaker will break the tie vote in favor of whichever one of them is placed by the tiebreaker.",[属性]:\nもし同数投票があった時、タイブレーカーがそのどれかに入れていた方が優先されて同数投票を壊す。,
 NonReportInfoLong,"(Add-ons):\nNonReport cannot report Dead bodies.","[属性]:\n死体通報ができない。",
 LoyaltyInfoLong,"(Add-ons):\nLoyalty know the parent of the same camp.(madmate→impostor)","[属性]:\n同陣営の親が分かる(マッドメイト→インポスター)",
-PlusVoteInfoLong,"(Add-ons):\nWhen voting at the meeting, one person can vote twice, to the same person.",[属性]:\n会議の投票時、1人で2票同じ人のところに投票できる。,"(效果):\n当他被投出时，再次召开会议，对猎人进行投票。在这里，只有猎人被流放后才被允许讨论这件事，他可以选择一个人在途中投票并处决。"
+PlusVoteInfoLong,"(Add-ons):\nWhen voting at the meeting, PlusVote can vote for one more vote.",[属性]:\n会議の投票時、同じ人の所に票数を1増やして投票できる。,"(效果):\n当他被投出时，再次召开会议，对猎人进行投票。在这里，只有猎人被流放后才被允许讨论这件事，他可以选择一个人在途中投票并处决。"
 GuardingInfoLong,"(Add-ons):\nIt can prevent one unconditional kill. The protected barrier to itself is invisible.","[属性]:\n1回無条件でキルを防ぐことが出来る。自身への守ったバリアは見えない。",
 AddBaitInfoLong,"(Add-ons):\nWhen you are killed, you force your killer to immediately self-report.","[属性]:\nキルされた時に、自身をキルした人にセルフレポートさせる。","(效果):\n诱饵被击杀时，击杀诱饵的凶手将被迫报告。",
 RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exiled and stays on the ship.",[属性]:\n追放されそうになった時、一度追放を拒んで船に居続ける。,
@@ -1095,9 +1095,11 @@ CCLeaderIntro2,Find lonely cats and add more ally.,孤独な猫たちを見つ�
 CCNoCatIntro,<size=5>I became a lonely cat.</size>,<size=10>孤独な猫になった。</size>,<size=10>我成了一只孤独的猫</size>
 CCNoCatIntro2,Find a leader and belong to a camp.,リーダーを見つけ、陣営に所属しよう。,找到一个首领并加入一个阵营 
 
-CCLeaderKillcool,LeaderKillcool,リーダーのキルクール,首领击杀冷却
-CCLeaderNotKilled,Leaders are not killed,リーダーはキルされない,首领未被击杀
-CCCatNotKilled,Cats that belong somewhere are not killed,どこかに所属した猫はキルされない,属于某个位置的猫无法被杀死
+IgnoreReport,Ignore Report,死体レポートを無効にする,
+CCLeaderKillcool,Leaders Kill Cooldown,リーダーのキルクール,首领击杀冷却
+CCLeaderNotKilled,Leaders Are Not Killed,リーダーはキルされない,首领未被击杀
+CCCatNotKilled,Color Cats Are Not Killed,どこかに所属した猫はキルされない,属于某个位置的猫无法被杀死
+CCCatOverrideKilled,Color Cats Override Camp,所属猫の陣営上書き
 
 Leader,Leader,リーダー,首领
 CCRedLeaderFixed,●RedLeader●(fixed),●赤陣営リーダー●(固定),●红色阵营首领●（固定）

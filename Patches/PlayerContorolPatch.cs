@@ -231,6 +231,7 @@ namespace TownOfHostY
             Logger.Info($"{__instance.GetNameWithRole()} => {target?.Object?.GetNameWithRole() ?? "null"}", "ReportDeadBody");
             if (Options.IsStandardHAS && target != null && __instance == target.Object) return true; //[StandardHAS] ボタンでなく、通報者と死体が同じなら許可
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek || Options.IsStandardHAS) return false;
+            if (Options.IsCCMode && GameModeUtils.IgnoreReport.GetBool() && target != null) return false;
             if (reporter.Object.Is(CustomRoles.NonReport) &&
                 target != null && !target.Object.Is(CustomRoles.Bait) && !target.Object.Is(CustomRoles.AddBait))
             {

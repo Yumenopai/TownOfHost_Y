@@ -12,6 +12,7 @@ static class GameModeUtils
 {
 
     private static readonly int Id = 210000;
+    public static OptionItem IgnoreReport;
     public static OptionItem IgnoreVent;
     public static OptionItem LeaderNotKilled;
     public static OptionItem CatNotKilled;
@@ -25,6 +26,8 @@ static class GameModeUtils
 
         IgnoreVent = BooleanOptionItem.Create(Id + 1000, "IgnoreVent", false, TabGroup.MainSettings, false)
             .SetHeader(true)
+            .SetGameMode(CustomGameMode.CatchCat);
+        IgnoreReport = BooleanOptionItem.Create(Id + 1004, "IgnoreReport", false, TabGroup.MainSettings, false)
             .SetGameMode(CustomGameMode.CatchCat);
         LeaderNotKilled = BooleanOptionItem.Create(Id + 1001, "CCLeaderNotKilled", false, TabGroup.MainSettings, false)
             .SetGameMode(CustomGameMode.CatchCat);
