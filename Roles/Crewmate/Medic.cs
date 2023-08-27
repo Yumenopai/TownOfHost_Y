@@ -65,14 +65,17 @@ public sealed class Medic : RoleBase
     && UseVent
     && MyTaskState.CompletedTasksCount >= TaskTrigger;
 
+    /// <summary>
+    /// 使用する時true
+    /// </summary>
     public static bool GuardPlayerCheckMurder(MurderInfo info)
     {
         (var killer, var target) = info.AttemptTuple;
 
         // メディックに守られていなければなにもせず返す
-        if (!IsGuard(target)) return true;
+        if (!IsGuard(target)) return false;
         // 直接キル出来る役職チェック
-        if (killer.GetCustomRole().IsDirectKillRole()) return true;
+        if (killer.GetCustomRole().IsDirectKillRole()) return false;
 
         killer.RpcGuardAndKill(target); //killer側のみ。斬られた側は見れない。
 
@@ -83,7 +86,6 @@ public sealed class Medic : RoleBase
                 medic.GuardPlayer = null; break;
             }
         }
-        info.CanKill = false;
         return true;
     }
     public static bool IsGuard(PlayerControl target)

@@ -68,6 +68,7 @@ public sealed class MadSheriff : RoleBase, IKiller
     {
         if (!Is(info.AttemptKiller) || info.IsSuicide) return;
         (var killer, var target) = info.AttemptTuple;
+        // ガード持ちに関わらず能力発動する直接キル役職
 
         PlayerState.GetByPlayerId(killer.PlayerId).DeathReason = CustomDeathReason.Misfire;
         killer.RpcMurderPlayerV2(killer);

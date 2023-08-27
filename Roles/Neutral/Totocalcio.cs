@@ -88,6 +88,7 @@ public sealed class Totocalcio : RoleBase, IKiller, IAdditionalWinner
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         (var killer, var target) = info.AttemptTuple;
+        // ガード持ちに関わらず能力発動する直接キル役職
 
         BetTarget = target;
         BetTargetCount--;

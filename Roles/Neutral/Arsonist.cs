@@ -110,6 +110,7 @@ public sealed class Arsonist : RoleBase, IKiller
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
+        // ガード持ちに関わらず能力発動する直接キル役職
 
         Logger.Info("Arsonist start douse", "OnCheckMurderAsKiller");
         killer.SetKillCooldown(DouseTime);

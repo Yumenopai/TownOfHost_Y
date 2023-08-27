@@ -92,7 +92,7 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
     {
         foreach (var duelist in Duelists)
         {
-            if (pc == duelist.Archenemy && !duelist.Player.IsAlive()) return true;
+            if (pc == duelist.Archenemy && !duelist.Player.IsAlive() && pc.IsAlive()) return true;
         }
         return false;
     }

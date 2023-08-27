@@ -63,13 +63,13 @@ public static class CustomRoleManager
             if (killer.IsKiller)
             {
                 // イビルディバイナーのみ占いのためここで先に処理
-                if (killerRole is EvilDiviner && !EvilDiviner.OnCheckMurder(attemptKiller, attemptTarget)) return;
+                if (killerRole is EvilDiviner && !EvilDiviner.OnCheckMurder(info)) return;
                 // ガーディング属性によるガード
-                if (!Guarding.OnCheckMurder(info)) return;
+                if (Guarding.OnCheckMurder(info)) { }
                 // メディックの対象プレイヤー
-                if (!Medic.GuardPlayerCheckMurder(info)) return;
+                else if (Medic.GuardPlayerCheckMurder(info)) { }
                 // ターゲットのキルチェック処理実行
-                if (targetRole != null)
+                else if (targetRole != null)
                 {
                     if (!targetRole.OnCheckMurderAsTarget(info)) return;
                 }
@@ -78,15 +78,11 @@ public static class CustomRoleManager
             killer.OnCheckMurderAsKiller(info);
         }
         // CC
-        if (attemptTarget.GetCustomRole().IsCCLeaderRoles() && GameModeUtils.LeaderNotKilled.GetBool())
+        if (Options.IsCCMode)
         {
-            attemptKiller.RpcGuardAndKill(attemptTarget); return;
+            GameModeUtils.OnCheckMurderByLeader(info);
+            GameModeUtils.OnCheckMurderByCat(info);
         }
-        if (attemptTarget.GetCustomRole().IsCCCatRoles() && GameModeUtils.CatNotKilled.GetBool())
-        {
-            attemptKiller.RpcGuardAndKill(attemptTarget); return;
-        }
-        if (!GameModeUtils.OnCheckMurder(info)) return;
         // ON
         //if (Options.IsONMode && attemptTarget.Is(CustomRoles.ONPhantomThief))
         //{

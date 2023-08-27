@@ -412,7 +412,7 @@ namespace TownOfHostY
         {
             if (!pc.IsAlive() || pc.Data.Role.Role == RoleTypes.GuardianAngel) return false;
             // CC
-            if (pc.GetCustomRole().IsCCLeaderRoles()) return !Options.IgnoreVent.GetBool();
+            if (pc.GetCustomRole().IsCCLeaderRoles()) return !GameModeUtils.IgnoreVent.GetBool();
 
             return pc.GetCustomRole() switch
             {
@@ -428,6 +428,8 @@ namespace TownOfHostY
         public static void ResetKillCooldown(this PlayerControl player)
         {
             Main.AllPlayerKillCooldown[player.PlayerId] = (player.GetRoleClass() as IKiller)?.CalculateKillCooldown() ?? Options.DefaultKillCooldown; //キルクールをデフォルトキルクールに変更
+            if (Options.IsCCMode && player.GetCustomRole().IsCCLeaderRoles())
+                Main.AllPlayerKillCooldown[player.PlayerId] = GameModeUtils.CalculateKillCooldown(player);
             if (player.PlayerId == LastImpostor.currentId)
                 LastImpostor.SetKillCooldown(player);
         }

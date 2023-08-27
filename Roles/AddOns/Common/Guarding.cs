@@ -36,20 +36,21 @@ public static class Guarding
         if (!GuardingList.Contains(playerId))
             GuardingList.Add(playerId);
     }
+
     /// <summary>
-    /// trueはキルが起こる
+    /// 使用する時true
     /// </summary>
     public static bool OnCheckMurder(MurderInfo info)
     {
         (var killer, var target) = info.AttemptTuple;
-        if (!GuardingList.Contains(target.PlayerId)) return true;
+        if (!GuardingList.Contains(target.PlayerId)) return false;
         // 直接キル出来る役職チェック
-        if (killer.GetCustomRole().IsDirectKillRole()) return true;
+        if (killer.GetCustomRole().IsDirectKillRole()) return false;
 
         killer.RpcGuardAndKill(target);
         GuardingList.Remove(target.PlayerId);
         Logger.Info($"{killer.GetNameWithRole()}->{target.GetNameWithRole()}:ガード", "Guarding");
-        info.CanKill = false;
+
         return true;
     }
     public static bool IsEnable => playerIdList.Count > 0;

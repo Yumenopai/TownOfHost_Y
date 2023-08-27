@@ -579,6 +579,7 @@ namespace TownOfHostY
                     __instance.RpcBootFromVent(id);
 
                 if ((!user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false) ||
+                    (user.GetCustomRole().IsCCCatRoles() && !GameModeUtils.CanUseVent(user)) ||
                     (user.Data.Role.Role != RoleTypes.Engineer && //エンジニアでなく
                     !user.CanUseImpostorVentButton()) //インポスターベントも使えない
                 )
@@ -625,6 +626,9 @@ namespace TownOfHostY
                 ret = roleClass.OnCompleteTask();
             }
             ret &= Workhorse.OnCompleteTask(pc);
+
+            if (Options.IsCCMode) GameModeUtils.OnCompleteTask(pc, taskState);
+
 
             Utils.NotifyRoles();
             return ret;

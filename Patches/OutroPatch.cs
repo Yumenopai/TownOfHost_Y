@@ -91,19 +91,6 @@ namespace TownOfHostY
                         }
                     }
                 }
-                // CC
-                else if (Options.IsCCMode)
-                {
-                    foreach (var pc in Main.AllPlayerControls)
-                    {
-                        if (
-                            (CustomWinnerHolder.WinnerTeam == CustomWinner.RedL && (pc.Is(CustomRoles.CCRedLeader) || pc.Is(CustomRoles.CCRedCat)))
-                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.BlueL && (pc.Is(CustomRoles.CCBlueLeader) || pc.Is(CustomRoles.CCBlueCat)))
-                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.YellowL && (pc.Is(CustomRoles.CCYellowLeader) || pc.Is(CustomRoles.CCYellowCat)))
-                            )
-                            winner.Add(pc);
-                    }
-                }
             }
 
             Main.winnerList = new();
@@ -206,7 +193,14 @@ namespace TownOfHostY
             }
             if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw and not CustomWinner.None)
             {
-                WinnerText.text = $"<color={CustomWinnerColor}>{CustomWinnerText}{AdditionalWinnerText}{GetString("Win")}</color>";
+                if (Options.IsCCMode)
+                {
+                    if (CustomWinnerHolder.WinnerTeam == CustomWinner.RedL)     WinnerText.text = $"<color={CustomWinnerColor}>{GetString("CCRedWin")}</color>";
+                    if (CustomWinnerHolder.WinnerTeam == CustomWinner.BlueL)    WinnerText.text = $"<color={CustomWinnerColor}>{GetString("CCBlueWin")}</color>";
+                    if (CustomWinnerHolder.WinnerTeam == CustomWinner.YellowL)  WinnerText.text = $"<color={CustomWinnerColor}>{GetString("CCYellowWin")}</color>";
+                }
+                else
+                    WinnerText.text = $"<color={CustomWinnerColor}>{CustomWinnerText}{AdditionalWinnerText}{GetString("Win")}</color>";
             }
             LastWinsText = WinnerText.text;
             LastWinsText = LastWinsText.RemoveHtmlTags();

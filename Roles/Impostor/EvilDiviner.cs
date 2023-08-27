@@ -85,8 +85,9 @@ public sealed class EvilDiviner : RoleBase, IImpostor
             enabled = true;
     }
 
-    public static bool OnCheckMurder(PlayerControl killer, PlayerControl target)
+    public static bool OnCheckMurder(MurderInfo info)
     {
+        (var killer, var target) = info.AttemptTuple;
         if (DivinationCount > 0)
         {
             return killer.CheckDoubleTrigger(target, () => { SetDivination(killer, target); });

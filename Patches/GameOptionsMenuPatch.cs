@@ -112,7 +112,8 @@ namespace TownOfHostY
                     if (option.Tab != (TabGroup)tab) continue;
                     if (option.OptionBehaviour == null)
                     {
-                        float offset = option.IsFixValue ? 100f : 0f;
+                        float offset = option.IsFixValue || option.IsText ? 100f : 0f;
+                        float textOffset = option.IsText ? 100f : 0f;
                         var stringOption = Object.Instantiate(template, tohMenu.transform);
                         scOptions.Add(stringOption);
                         stringOption.OnValueChanged = new System.Action<OptionBehaviour>((o) => { });
@@ -123,9 +124,9 @@ namespace TownOfHostY
                         stringOption.transform.FindChild("Background").localScale = new Vector3(1.6f, 1f, 1f);
                         stringOption.transform.FindChild("Plus_TMP").localPosition += new Vector3(1.4f, offset, 0f);
                         stringOption.transform.FindChild("Minus_TMP").localPosition += new Vector3(1.0f, offset, 0f);
-                        stringOption.transform.FindChild("Value_TMP").localPosition += new Vector3(1.2f, 0f, 0f);
+                        stringOption.transform.FindChild("Value_TMP").localPosition += new Vector3(1.2f, textOffset, 0f);
                         stringOption.transform.FindChild("Value_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(1.6f, 0.26f);
-                        stringOption.transform.FindChild("Title_TMP").localPosition += new Vector3(0.1f, 0f, 0f);
+                        stringOption.transform.FindChild("Title_TMP").localPosition += new Vector3(option.IsText ? 0.25f : 0.1f, option.IsText ? -0.1f : 0f, 0f);
                         stringOption.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(5.5f, 0.37f);
 
                         option.OptionBehaviour = stringOption;
@@ -245,6 +246,12 @@ namespace TownOfHostY
                                 option.OptionBehaviour.transform.FindChild("Title_TMP").GetComponent<RectTransform>().sizeDelta = new Vector2(4.7f, 0.28f);
                             }
                         }
+                    }
+
+                    if (option.IsText)
+                    {
+                        opt.color = new(0, 0, 0);
+                        opt.transform.localPosition = new(100f, 100f, 100f);
                     }
 
                     option.OptionBehaviour.gameObject.SetActive(enabled);
@@ -408,6 +415,7 @@ namespace TownOfHostY
                 __instance.NumShortTasks = 1;
                 __instance.KillCooldown = 20f;
                 __instance.NumEmergencyMeetings = 1;
+                __instance.EmergencyCooldown = 30;
                 __instance.KillDistance = 0;
                 __instance.DiscussionTime = 0;
                 __instance.VotingTime = 60;

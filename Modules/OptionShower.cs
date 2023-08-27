@@ -93,7 +93,7 @@ namespace TownOfHostY
                         }
                     }
 
-                foreach (var opt in OptionItem.AllOptions.Where(x => x.Id >= 100000 && !x.IsHiddenOn(Options.CurrentGameMode) && x.Parent == null))
+                foreach (var opt in OptionItem.AllOptions.Where(x => x.Id >= 100000 && !x.IsHiddenOn(Options.CurrentGameMode) && x.Parent == null && !x.IsText))
                 {
                     if (opt.IsHeader) sb.Append('\n');
                     sb.Append($"{opt.GetName()}: {opt.GetString()}\n");

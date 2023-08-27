@@ -320,11 +320,24 @@ namespace TownOfHostY.Roles
         ///両陣営役職、コンビ役職向け
         ///</summary>
         private static CustomRoles[] GetAssignTargetRolesArray(this CustomRoles role)
-            => role switch
+        {
+            if (role == CustomRoles.Telepathisters)
             {
-                CustomRoles.Lovers => new CustomRoles[2] { CustomRoles.Lovers, CustomRoles.Lovers },
-                _ => new CustomRoles[1] { role },
-            };
+                return CustomRoles.Telepathisters.GetCount() switch
+                {
+                    2 => new CustomRoles[2] { CustomRoles.Telepathisters, CustomRoles.Telepathisters },
+                    3 => new CustomRoles[3] { CustomRoles.Telepathisters, CustomRoles.Telepathisters, CustomRoles.Telepathisters },
+                    _ => new CustomRoles[1] { role },
+                };
+            }
+
+            return role switch
+               {
+                   CustomRoles.Lovers => new CustomRoles[2] { CustomRoles.Lovers, CustomRoles.Lovers },
+                   CustomRoles.Sympathizer => new CustomRoles[2] { CustomRoles.Sympathizer, CustomRoles.Sympathizer },
+                   _ => new CustomRoles[1] { role },
+               };
+        }
         public static bool IsPresent(this CustomRoles role) => AssignRoleList.Any(x => x == role);
         public static int GetRealCount(this CustomRoles role) => AssignRoleList.Count(x => x == role);
     }

@@ -107,31 +107,7 @@ public static class MeetingHudPatch
             }
             if (Options.IsCCMode)
             {
-                int[] counts = GameModeUtils.CountLivingPlayersByPredicates(
-                    pc => pc.Is(CustomRoles.CCRedLeader),
-                    pc => pc.Is(CustomRoles.CCBlueLeader),
-                    pc => pc.Is(CustomRoles.CCYellowLeader),
-                    pc => pc.Is(CustomRoles.CCNoCat),
-                    pc => pc.Is(CustomRoles.CCRedCat),
-                    pc => pc.Is(CustomRoles.CCBlueCat),
-                    pc => pc.Is(CustomRoles.CCYellowCat)
-                );
-                int Leader = counts[0] + counts[1] + counts[2];
-                int NoCat = counts[3];
-                int RedTeam = counts[0] + counts[4];
-                int BlueTeam = counts[1] + counts[5];
-                int YellowTeam = counts[2] + counts[6];
-
-                string title = $"<color=#f8cd46>{GetString("CCMidwayResultsTitle")}</color>";
-
-                if (CustomRoles.CCYellowLeader.IsEnable() && NoCat == 0)
-                    Utils.SendMessage(string.Format(GetString("Message.CCMidwayResultsSudden3"), RedTeam, BlueTeam, YellowTeam), title: title);
-                else if (!CustomRoles.CCYellowLeader.IsEnable() && NoCat == 0)
-                    Utils.SendMessage(string.Format(GetString("Message.CCMidwayResultsSudden"), RedTeam, BlueTeam), title: title);
-                else
-                    Utils.SendMessage(string.Format(GetString("Message.CCMidwayResults"), Leader, NoCat), title: title);
-
-                Logger.Info("リーダー" + Leader + "人生存中。無陣営猫残り" + NoCat + "人", "MidwayResults");
+                GameModeUtils.CCMeetingInfomation();
             }
 
             if (MeetingStates.FirstMeeting) TemplateManager.SendTemplate("OnFirstMeeting", noErr: true);

@@ -83,6 +83,7 @@ public sealed class PlatonicLover : RoleBase, IKiller
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         (var killer, var target) = info.AttemptTuple;
+        // ガード持ちに関わらず能力発動する直接キル役職
 
         isMadeLover = true;
         info.DoKill = false;

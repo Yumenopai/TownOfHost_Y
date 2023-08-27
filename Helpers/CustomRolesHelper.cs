@@ -133,8 +133,7 @@ namespace TownOfHostY
         }
 
         //CC
-        public static bool IsCCRole(this CustomRoles role) => role.IsCCLeaderRoles() || role.IsCCCatRoles()
-                                                            || role == CustomRoles.CCNoCat;
+        public static bool IsCCRole(this CustomRoles role) => role.IsCCLeaderRoles() || role.IsCCCatRoles();
         public static bool IsCCLeaderRoles(this CustomRoles role)
         {
             return
@@ -143,7 +142,8 @@ namespace TownOfHostY
                 CustomRoles.CCBlueLeader or
                 CustomRoles.CCYellowLeader;
         }
-        public static bool IsCCCatRoles(this CustomRoles role)
+        public static bool IsCCCatRoles(this CustomRoles role) => role.IsCCColorCatRoles() || role == CustomRoles.CCNoCat;
+        public static bool IsCCColorCatRoles(this CustomRoles role)
         {
             return
                 role is

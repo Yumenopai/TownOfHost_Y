@@ -69,6 +69,10 @@ namespace TownOfHostY
                             __instance.AbilityButton.ToggleVisible(roleClass.CanUseAbilityButton() && GameStates.IsInTask);
                         }
                     }
+                    if (player.GetCustomRole().IsCCCatRoles())
+                    {
+                        __instance.AbilityButton.ToggleVisible(GameModeUtils.CanUseVent(player) && GameStates.IsInTask);
+                    }
 
                     //バウンティハンターのターゲットテキスト
                     if (LowerInfoText == null)

@@ -150,6 +150,11 @@ namespace TownOfHostY
 
             if (Options.IsCCMode)
             {
+                if (GameModeUtils.T_CanUseVent.GetBool())
+                { // Engineer Setting
+                    int CatCount = Main.AllPlayerControls.Count() - 2 - CustomRoles.CCYellowLeader.GetCount();
+                    Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Engineer, CatCount, 100);
+                }
                 List<PlayerControl> AllPlayers = new();
                 foreach (var pc in Main.AllPlayerControls)
                 {
@@ -345,7 +350,7 @@ namespace TownOfHostY
                 }
                 //残りを割り当て
                 {
-                    foreach (var crew in Crewmates)
+                    foreach (var crew in GameModeUtils.T_CanUseVent.GetBool() ? Engineers : Crewmates)
                     {
                         PlayerState.GetByPlayerId(crew.PlayerId).SetMainRole(CustomRoles.CCNoCat);
                         Logger.Info("役職設定:" + crew?.Data?.PlayerName + " = " + CustomRoles.CCNoCat.ToString(), "AssignRoles");
@@ -363,6 +368,8 @@ namespace TownOfHostY
                 {
                     HudManager.Instance.SetHudActive(true);
                     Main.AllPlayerKillCooldown[pc.PlayerId] = Options.DefaultKillCooldown; //キルクールをデフォルトキルクールに変更
+
+                    GameModeUtils.Add(pc);
                 }
                 GameEndChecker.SetPredicateToCatchCat();
 

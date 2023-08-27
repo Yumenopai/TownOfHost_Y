@@ -96,6 +96,10 @@ namespace TownOfHostY.Modules
                         opt.SetBool(BoolOptionNames.AnonymousVotes, false);
                     break;
             }
+            if (role.IsCCCatRoles())
+            {
+                GameModeUtils.ApplyGameOptions(player, opt);
+            }
 
             var roleClass = player.GetRoleClass();
             roleClass?.ApplyGameOptions(opt);

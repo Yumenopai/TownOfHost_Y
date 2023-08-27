@@ -429,9 +429,8 @@ namespace TownOfHostY
                     switch (info.RoleName)
                     {
                         case CustomRoles.Jackal: //ジャッカルは1人固定
-                            SetupSingleRoleOptions(info.ConfigId, info.Tab, info.RoleName, 1);
-                            break;
-                        case CustomRoles.DarkHide: //ジャッカルは1人固定
+                        case CustomRoles.DarkHide:
+                        case CustomRoles.PlatonicLover:
                             SetupSingleRoleOptions(info.ConfigId, info.Tab, info.RoleName, 1);
                             break;
                         default:
@@ -768,6 +767,7 @@ namespace TownOfHostY
             // 初期値,最大値,最小値が同じで、stepが0のどうやっても変えることができない個数オプション
             var countOption = IntegerOptionItem.Create(id + 1, "Maximum", new(count, count, count), count, tab, false).SetParent(spawnOption)
                 //.SetHidden(true)
+                .SetFixValue(true)
                 .SetValueFormat(OptionFormat.Players)
                 .SetGameMode(customGameMode);
 

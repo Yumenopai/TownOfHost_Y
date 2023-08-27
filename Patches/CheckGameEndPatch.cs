@@ -142,52 +142,14 @@ namespace TownOfHostY
                     SetGhostRole(ToGhostImpostor: true);
                     continue;
                 }
-                if (Options.IsCCMode)
-                {
-                    if (winner == CustomWinner.RedL)
-                    {
-                        if (pc.Is(CustomRoles.CCYellowLeader) || pc.Is(CustomRoles.CCYellowCat))
-                        {
-                            SetGhostRole(ToGhostImpostor: true);
-                        }
-                        else
-                        {
-                            SetGhostRole(ToGhostImpostor: false);
-                        }
-                    }
-                    else if (winner == CustomWinner.BlueL)
-                    {
-                        if (pc.Is(CustomRoles.CCYellowLeader) || pc.Is(CustomRoles.CCYellowCat))
-                        {
-                            SetGhostRole(ToGhostImpostor: true);
-                        }
-                        else
-                        {
-                            SetGhostRole(ToGhostImpostor: false);
-                        }
-                    }
-                    else if (winner == CustomWinner.YellowL)
-                    {
-                        if (pc.Is(CustomRoles.CCYellowLeader) || pc.Is(CustomRoles.CCYellowCat))
-                        {
-                            SetGhostRole(ToGhostImpostor: true);
-                        }
-                        else
-                        {
-                            SetGhostRole(ToGhostImpostor: false);
-                        }
-                    }
-                }
-                else
-                {
-                    //if (Options.IsONMode && winner == CustomWinner.Crewmate)
-                    //    reason = GameOverReason.HumansByVote;
+                //if (Options.IsONMode && winner == CustomWinner.Crewmate)
+                //    reason = GameOverReason.HumansByVote;
 
-                    bool canWin = CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId) ||
-                        CustomWinnerHolder.WinnerRoles.Contains(pc.GetCustomRole());
-                    bool isCrewmateWin = reason.Equals(GameOverReason.HumansByVote) || reason.Equals(GameOverReason.HumansByTask);
-                    SetGhostRole(ToGhostImpostor: canWin ^ isCrewmateWin);
-                }
+                bool canWin = CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId) ||
+                    CustomWinnerHolder.WinnerRoles.Contains(pc.GetCustomRole());
+                bool isCrewmateWin = reason.Equals(GameOverReason.HumansByVote) || reason.Equals(GameOverReason.HumansByTask);
+                SetGhostRole(ToGhostImpostor: canWin ^ isCrewmateWin);
+
                 void SetGhostRole(bool ToGhostImpostor)
                 {
                     if (!pc.Data.IsDead) ReviveRequiredPlayerIds.Add(pc.PlayerId);
@@ -392,16 +354,22 @@ namespace TownOfHostY
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.RedL);
                         CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.RedC);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCRedLeader);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCRedCat);
                     }
                     else if (counts[1] == 1)
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.BlueL);
                         CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.BlueC);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCBlueLeader);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCBlueCat);
                     }
                     else if (counts[2] == 1)
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.YellowL);
                         CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.YellowC);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCYellowLeader);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCYellowCat);
                     }
                 }
                 else if (NoCat <= 0) //無陣営の猫がいなくなった
@@ -412,16 +380,22 @@ namespace TownOfHostY
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.RedL);
                         CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.RedC);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCRedLeader);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCRedCat);
                     }
                     else if (RedTeam < BlueTeam && BlueTeam > YellowTeam)
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.BlueL);
                         CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.BlueC);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCBlueLeader);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCBlueCat);
                     }
                     else if (RedTeam < YellowTeam && BlueTeam < YellowTeam)
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.YellowL);
                         CustomWinnerHolder.AdditionalWinnerTeams.Add(AdditionalWinners.YellowC);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCYellowLeader);
+                        CustomWinnerHolder.WinnerRoles.Add(CustomRoles.CCYellowCat);
                     }
                 }
                 else if (Leader == 0) //クルー勝利(インポスター切断など)
