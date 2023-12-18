@@ -335,6 +335,19 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "DuelistInfoLong","(Neutrals):\nThe opponent who votes for the first meeting becomes the Duelist's own Archenemy.After the decision of the Archenemy, the name of the duelist is also displayed from the Archenemy's point of view, and the victory condition for the duelist and Archenemy is 'If you are alive when the victory is decided and your Archenemy dies, you win an additional victory.'","[ニュートラル]\n初手会議に投票した相手を自身の宿敵にする。初手会議の投票時、決闘者の投票先は全視点見えない。初手会議で宿敵を決定しないと自殺する。\n宿敵決定後、宿敵目線でも決闘者が誰か表示され、決闘者・宿敵の勝利条件は「勝利判定時に自身が生存、且つ宿敵(決闘者)が死亡で追加勝利」となる。",,
 "GodInfoLong","(Neutrals):\nEveryone's position is known.\nIf you survive to the end you take away the win.\nGod cannot fix all sabotage.","(第三陣営):\n全員の役職がわかります。\n最後まで生き残っていると、勝利を奪い取ります。\n神はすべてのサボタージュが直せません。","","","",""
 
+# Unit-Role
+"CounselorAndMadDilemma","<color=#ffc0cb>Counselor</color>＆<color=#ff1919>MadDilemma</color>","<color=#ffc0cb>カウンセラー</color>＆<color=#ff1919>マッドジレンマ</color>",
+"Counselor","Counselor","カウンセラー",
+"MadDilemma","Mad Dilemma","マッドジレンマ",
+
+"CounselorAndMadDilemmaInfo","Unit","ユニット",
+"CounselorInfo","Isn't it time for a change of heart?","そろそろ改心しませんか？",
+"MadDilemmaInfo","I'm trying to help Impostor..!","私はインポスターを助けるんだ、、！",
+
+"CounselorAndMadDilemmaInfoLong","(Unit):\n\nCounselor(Crewmates)\nCounseling is available when the counselor is alive and has completed certain tasks.\nWhen Counselor votes for a MadDilemma at the time of the meeting, MadDilemma can be made to be the crewmate's.\n\nMad Dilemma(Impostors):\nJust a Madmate for unit positions. Customize the attributes from the settings. ","[ユニット]\n\nカウンセラー[クルー陣営]\nカウンセラーが生存している且つ、一定タスク完了した時からカウンセリングを行うことが可能。\n会議時にカウンセラーの投票した先がマッドジレンマの時、マッドジレンマをクルー陣営にさせることができる。\n\nマッドジレンマ[インポスター陣営]\nユニット役職用のただのマッドメイト。属性を設定からカスタマイズしよう。",
+"CounselorInfoLong","(Crewmates)\nCounseling is available when the counselor is alive and has completed certain tasks.\nWhen Counselor votes for a MadDilemma at the time of the meeting, MadDilemma can be made to be the crewmate's.","[クルー陣営]\nカウンセラーが生存している且つ、一定タスク完了した時からカウンセリングを行うことが可能。\n会議時にカウンセラーの投票した先がマッドジレンマの時、マッドジレンマをクルー陣営にさせることができる。",
+"MadDilemmaInfoLong","(Impostors):\nJust a Madmate for unit positions. Customize the attributes from the settings.","[インポスター陣営]\nユニット役職用のただのマッドメイト。属性を設定からカスタマイズしよう。",
+
 "# HideAndSeek"
 "HASFox","Fox","狐","狐狸","狐妖","Лис","Raposa"
 "HASTroll","Troll","トロール","猎人","誘捕者","Тролль","Troll"
@@ -841,6 +854,12 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "GodTaskCompleteToWin","Task Complete To Win","タスクを終わらせないと勝利できない","","","",""
 "GodViewVoteFor","View Where To Vote","投票先が見える	","","","",""
 
+# Unit
+"CounselorTaskTrigger","Counselor Trigger Tasks","カウンセラーの能力が使用できるタスク数",
+"CounselorChallengeMaxCount","Counselor Voting with Ability Count","カウンセラーの能力投票できる回数",
+"MadDilemmaResetAddonChangeCrew","MadDilemma Resets Addon After Change to Crewmate","マッドジレンマがクルーに改心後、属性をリセットする",
+
+
 # アドオン
 #"NumberOfLovers","Number Of Lovers (Pairs)","ラバーズの組数(x2人数)","恋人对数","戀人最大數量(2位玩家)","Количество Любовников (x2участника)","Quantidade de Amantes (Pares)"
 "LoversAddWin","Make the Win an Additional Win","勝利を追加勝利にする","以胜利为追加胜利",
@@ -1182,6 +1201,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "nameChangeMode.Crew","Crewmate","クルー","船员","船員","Экипаж","Tripulante"
 "nameChangeMode.Color","Color","色名",
 "ExtendedChat","Extended Chat","拡張チャット",,,,
+"DoCounsel","Do Counsel","投票でカウンセル",
 
 "VoiceReaderMode","VoiceReader Mode","チャットの読上げ",,,,
 "VoiceReaderHost","Host","ホスト",,,,

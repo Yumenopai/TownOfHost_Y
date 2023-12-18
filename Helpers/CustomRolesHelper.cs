@@ -69,16 +69,26 @@ namespace TownOfHostY
 
         public static bool IsPairRole(this CustomRoles role)
         {
-            return role is CustomRoles.Lovers or CustomRoles.Sympathizer;
+            return role is CustomRoles.Lovers
+                or CustomRoles.Sympathizer
+                or CustomRoles.CounselorAndMadDilemma;
         }
         public static bool IsFixedCountRole(this CustomRoles role)
         {
+            if (IsPairRole(role)) return true;
+
             return role is CustomRoles.Jackal
                 or CustomRoles.StrayWolf
-                or CustomRoles.Sympathizer
                 or CustomRoles.DarkHide
+                or CustomRoles.PlatonicLover;
+        }
+
+        public static bool IsDontShowOptionRole(this CustomRoles role)
+        {
+            return role is CustomRoles.Counselor or CustomRoles.MadDilemma
+                or CustomRoles.VentManager
                 or CustomRoles.PlatonicLover
-                or CustomRoles.Lovers;
+                or CustomRoles.Potentialist or CustomRoles.EvilHacker;
         }
 
         public static bool IsAddAddOn(this CustomRoles role)

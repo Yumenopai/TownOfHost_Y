@@ -89,6 +89,9 @@ namespace TownOfHostY
                         case TabGroup.NeutralRoles:
                             tabName = "<color=#ffa500>Neutral Settings</color>";
                             break;
+                        case TabGroup.UnitRoles:
+                            tabName = "<color=#7fff00>Unit-Role Settings</color>";
+                            break;
                         case TabGroup.Addons:
                             tabName = "<color=#ee82ee>Add-Ons Settings</color>";
                             break;
@@ -200,6 +203,9 @@ namespace TownOfHostY
                         break;
                     case TabGroup.NeutralRoles:
                         tabName = "<color=#ffa500>Neutral Settings</color>";
+                        break;
+                    case TabGroup.UnitRoles:
+                        tabName = "<color=#7fff00>Unit-Role Settings</color>";
                         break;
                     case TabGroup.Addons:
                         tabName = "<color=#ee82ee>Add-Ons Settings</color>";

@@ -438,6 +438,7 @@ public enum CustomRoles
     MadNatureCalls,
     MadBrackOuter,
     MadNimrod,
+    MadDilemma,
     SKMadmate,
     //Crewmate(Vanilla)
     Engineer,
@@ -479,6 +480,7 @@ public enum CustomRoles
     Nimrod,
     Detector,
     VentManager,
+    Counselor,
 
     Potentialist,
     //Neutral
@@ -502,6 +504,7 @@ public enum CustomRoles
     God,
 
     GM,
+    CounselorAndMadDilemma,
     MaxMain,
     /************/
 
@@ -566,6 +569,7 @@ public enum CustomRoleTypes
     Madmate,
     Crewmate,
     Neutral,
+    Unit
 }
 public enum HasTask
 {

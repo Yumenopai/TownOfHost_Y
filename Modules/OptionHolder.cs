@@ -362,13 +362,10 @@ public static class Options
         // SpecialEvent
         SpecialEvent.SetupOptions();
 
-        sortedRoleInfo.Where(role => role.CustomRoleType is CustomRoleTypes.Impostor or CustomRoleTypes.Madmate).Do(info =>
+        sortedRoleInfo.Where(role => !role.RoleName.IsDontShowOptionRole()).Do(info =>
         {
-            if (!SpecialEvent.IsEventRole(info.RoleName))
-            {
-                SetupRoleOptions(info);
-                info.OptionCreator?.Invoke();
-            }
+            SetupRoleOptions(info);
+            info.OptionCreator?.Invoke();
         });
 
         TextOptionItem.Create((int)offsetId.Text + 0, "Head.CommonImpostor", TabGroup.ImpostorRoles);
@@ -395,14 +392,6 @@ public static class Options
         MadmateVentMaxTime = FloatOptionItem.Create((int)offsetId.FeatNonDisplay + 2010, "MadmateVentMaxTime", new(0f, 180f, 5f), 0f, TabGroup.MadmateRoles, false)
             .SetValueFormat(OptionFormat.Seconds);
 
-        sortedRoleInfo.Where(role => role.CustomRoleType is CustomRoleTypes.Crewmate or CustomRoleTypes.Neutral).Do(info =>
-        {
-            if (!SpecialEvent.IsEventRole(info.RoleName) && info.RoleName is not CustomRoles.VentManager and not CustomRoles.PlatonicLover)
-            {
-                SetupRoleOptions(info);
-                info.OptionCreator?.Invoke();
-            }
-        });
         // Add-Ons
         TextOptionItem.Create((int)offsetId.Text + 10, "Head.ImpostorAddOn", TabGroup.Addons).SetColor(Palette.ImpostorRed);
         LastImpostor.SetupCustomOption();
@@ -780,22 +769,24 @@ public static class Options
     }
     
     //AddOn
-    public static void SetUpAddOnOptions(int Id, CustomRoles PlayerRole, TabGroup tab)
+    public static void SetUpAddOnOptions(int Id, CustomRoles PlayerRole, TabGroup tab, CustomRoles parentRole = CustomRoles.NotAssigned)
     {
-        AddOnBuffAssign[PlayerRole] = BooleanOptionItem.Create(Id, "AddOnBuffAssign", false, tab, false).SetParent(CustomRoleSpawnChances[PlayerRole]);
+        if (parentRole == CustomRoles.NotAssigned) parentRole = PlayerRole;
+
+        AddOnBuffAssign[PlayerRole] = BooleanOptionItem.Create(Id, "AddOnBuffAssign", false, tab, false).SetParent(CustomRoleSpawnChances[parentRole]);
         Id += 10;
         foreach (var Addon in Enum.GetValues(typeof(CustomRoles)).Cast<CustomRoles>().Where(x => x.IsBuffAddOn()))
         {
             if (Addon == CustomRoles.Loyalty && PlayerRole is
                 CustomRoles.CustomImpostor or CustomRoles.CustomCrewmate or
-                CustomRoles.MadSnitch or CustomRoles.Jackal or CustomRoles.JClient or
+                CustomRoles.MadSnitch or CustomRoles.MadDilemma or CustomRoles.Jackal or CustomRoles.JClient or
                 CustomRoles.LastImpostor or CustomRoles.CompleteCrew) continue;
             if (Addon == CustomRoles.Revenger && PlayerRole is CustomRoles.MadNimrod) continue;
 
             SetUpAddOnRoleOption(PlayerRole, tab, Addon, Id, false, AddOnBuffAssign[PlayerRole]);
             Id++;
         }
-        AddOnDebuffAssign[PlayerRole] = BooleanOptionItem.Create(Id, "AddOnDebuffAssign", false, tab, false).SetParent(CustomRoleSpawnChances[PlayerRole]);
+        AddOnDebuffAssign[PlayerRole] = BooleanOptionItem.Create(Id, "AddOnDebuffAssign", false, tab, false).SetParent(CustomRoleSpawnChances[parentRole]);
         Id += 10;
         foreach (var Addon in Enum.GetValues(typeof(CustomRoles)).Cast<CustomRoles>().Where(x => x.IsDebuffAddOn()))
         {
@@ -854,6 +845,14 @@ public static class Options
         Main = 0,
         Text = 100,
         GM = 500,
+
+        //Unit
+        UnitSpecial = 1000,
+        UnitImp = 2000,
+        UnitMad = 3000,
+        UnitCrew = 4000,
+        UnitNeu = 5000,
+        UnitMix = 6000,
 
         // Impostor
         ImpSpecial = 10000,

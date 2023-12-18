@@ -281,7 +281,8 @@ namespace TownOfHostY
         MadmateRoles,
         CrewmateRoles,
         NeutralRoles,
-        Addons
+        UnitRoles,
+        Addons,
     }
     public enum OptionFormat
     {

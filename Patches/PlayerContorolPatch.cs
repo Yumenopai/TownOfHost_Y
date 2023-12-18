@@ -492,7 +492,7 @@ namespace TownOfHostY
                     //自分自身の名前の色を変更
                     if (target.AmOwner && AmongUsClient.Instance.IsGameStarted)
                     { //targetが自分自身
-                        if (target.Is(CustomRoles.SeeingOff) || target.Is(CustomRoles.Sending))
+                        if (target.Is(CustomRoles.SeeingOff) || target.Is(CustomRoles.Sending) || target.Is(CustomRoles.MadDilemma))
                             RealName = Sending.RealNameChange(RealName);
                         else if (Options.IsCCMode)
                             RealName = Utils.ColorString(seer.GetRoleColor(), seer.GetRoleInfo());

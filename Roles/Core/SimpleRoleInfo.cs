@@ -81,6 +81,7 @@ public class SimpleRoleInfo
                 CustomRoleTypes.Madmate => TabGroup.MadmateRoles,
                 CustomRoleTypes.Crewmate => TabGroup.CrewmateRoles,
                 CustomRoleTypes.Neutral => TabGroup.NeutralRoles,
+                CustomRoleTypes.Unit => TabGroup.UnitRoles,
                 _ => tab
             };
         Tab = tab;
