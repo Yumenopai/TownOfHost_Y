@@ -429,6 +429,7 @@ public enum CustomRoles
     Telepathisters,
     ShapeKiller,
     StrayWolf,
+    Assassin,
     //Madmate
     MadGuardian,
     Madmate,
@@ -481,6 +482,7 @@ public enum CustomRoles
     Detector,
     VentManager,
     Counselor,
+    Merlin,
 
     Potentialist,
     //Neutral
@@ -505,6 +507,7 @@ public enum CustomRoles
 
     GM,
     CounselorAndMadDilemma,
+    AssassinAndMerlin,
     MaxMain,
     /************/
 
