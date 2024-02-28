@@ -18,10 +18,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_231128\BepInEx\core\*.dll" />
-		<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_231128\BepInEx\interop\*.dll" />
-		<EmbeddedResource Include=".\Resources\*.png" />
-		<EmbeddedResource Include=".\Resources\string.csv" />
+    	<Reference Include="$(AmongUs)\BepInEx\core\*.dll" />
+    	<Reference Include="$(AmongUs)\BepInEx\interop\*.dll" />
+    	<EmbeddedResource Include=".\Resources\*.png" />
+    	<EmbeddedResource Include=".\Resources\string.csv" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -36,7 +36,7 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<Target Name="Copy" AfterTargets="Build" Condition="'C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_231128' != ''">
-		<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TOH_Y - dev_231128/BepInEx/plugins/" />
+	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
+    	<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
 	</Target>
 </Project>
