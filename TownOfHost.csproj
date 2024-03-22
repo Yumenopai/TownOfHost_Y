@@ -18,8 +18,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-    	<Reference Include="$(AmongUs)\BepInEx\core\*.dll" />
-    	<Reference Include="$(AmongUs)\BepInEx\interop\*.dll" />
+    	<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TownOfHost-Y_dev\BepInEx\core\*.dll" />
+    	<Reference Include="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TownOfHost-Y_dev\BepInEx\interop\*.dll" />
     	<EmbeddedResource Include=".\Resources\*.png" />
     	<EmbeddedResource Include=".\Resources\string.csv" />
 	</ItemGroup>
@@ -36,7 +36,7 @@
 		</PackageReference>
 	</ItemGroup>
 
-	<Target Name="Copy" AfterTargets="Build" Condition="'$(AmongUs)' != ''">
-    	<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" Condition="'$(Configuration)' == 'Debug'" />
+	<Target Name="Copy" AfterTargets="Build" Condition="'C:\Program Files (x86)\Steam\steamapps\common\Among Us_TownOfHost-Y_dev' != ''">
+    	<Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="C:\Program Files (x86)\Steam\steamapps\common\Among Us_TownOfHost-Y_dev/BepInEx/plugins/" />
 	</Target>
 </Project>
