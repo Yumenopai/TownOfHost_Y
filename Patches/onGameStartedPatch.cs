@@ -39,6 +39,8 @@ class ChangeRoleSettings
         Main.CheckShapeshift = new();
         Main.ShapeshiftTarget = new();
 
+        Main.ShowRoleInfoAtMeeting = new();
+
         ReportDeadBodyPatch.CannotReportList = new();
         ReportDeadBodyPatch.CannotReportByDeadBodyList = new();
         ReportDeadBodyPatch.DontReportMarkList = new();
@@ -103,6 +105,12 @@ class ChangeRoleSettings
             var outfit = pc.Data.DefaultOutfit;
             Camouflage.PlayerSkins[pc.PlayerId] = new GameData.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
             Main.clientIdList.Add(pc.GetClientId());
+
+            // 初手会議での役職説明表示
+            if (Options.ShowRoleInfoAtFirstMeeting.GetBool())
+            {
+                Main.ShowRoleInfoAtMeeting.Add(pc.PlayerId);
+            }
         }
         Main.VisibleTasksCount = true;
         if (__instance.AmHost)

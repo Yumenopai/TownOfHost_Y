@@ -53,9 +53,9 @@ namespace TownOfHostY
         // ==========
         //Sorry for many Japanese comments.
         public const string PluginGuid = "com.yumenopai.townofhosty";
-        public const string PluginVersion = "514.20.3";
+        public const string PluginVersion = "516.21.4";
         // サポートされている最低のAmongUsバージョン
-        public static readonly string LowestSupportedVersion = "2023.10.24";
+        public static readonly string LowestSupportedVersion = "2024.3.5";
         // このバージョンのみで公開ルームを無効にする場合
         public static readonly bool IsPublicAvailableOnThisVersion = false;
         public Harmony Harmony { get; } = new Harmony(PluginGuid);
@@ -92,7 +92,6 @@ namespace TownOfHostY
         public static Dictionary<byte, Color32> PlayerColors = new();
         public static Dictionary<byte, CustomDeathReason> AfterMeetingDeathPlayers = new();
         public static Dictionary<CustomRoles, string> roleColors;
-        public static Dictionary<CustomColor, string> customColors;
         public static List<byte> winnerList;
         public static List<int> clientIdList;
         public static List<(string, byte, string, bool)> MessagesToSend;
@@ -115,11 +114,12 @@ namespace TownOfHostY
         public static float DefaultCrewmateVision;
         public static float DefaultImpostorVision;
         public static bool IsValentine = DateTime.Now.Month == 2 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
-        public static bool IsWhiteDay = DateTime.Now.Month == 3 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
+        public static bool IsWhiteDay = DateTime.Now.Month == 3 && (DateTime.Now.Day >= 14 && DateTime.Now.Day <= 17);
         public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day is 23 or 24 or 25;
-        public static bool IsAprilFool = DateTime.Now.Month == 4 && DateTime.Now.Day is 1 or 2 or 3;
+        public static bool IsAprilFool = DateTime.Now.Month == 4 && DateTime.Now.Day is 1 or 2 or 3 or 4 or 5;
         public static bool IsInitialRelease = DateTime.Now.Month == 11 && DateTime.Now.Day >= 2 && DateTime.Now.Day <= 15;
         public const float RoleTextSize = 2f;
+        public static List<byte> ShowRoleInfoAtMeeting = new();
 
         public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
         public static IEnumerable<PlayerControl> AllAlivePlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive());
@@ -271,6 +271,7 @@ namespace TownOfHostY
         Misfire,
         Torched,
         Sniped,
+        Shot,
         Revenge,
         Execution,
         Disconnected,
@@ -312,12 +313,6 @@ namespace TownOfHostY
 
         HASTroll = CustomRoles.HASTroll,
     }
-    /*public enum CustomRoles : byte
-    {
-        Default = 0,
-        HASTroll = 1,
-        HASHox = 2
-    }*/
     public enum SuffixModes
     {
         None = 0,
@@ -352,11 +347,5 @@ namespace TownOfHostY
         None,
         Crew,
         Color
-    }
-    public enum CustomColor
-    {
-        Coral,
-        LightCoral,
-        RoyalBlue,
     }
 }

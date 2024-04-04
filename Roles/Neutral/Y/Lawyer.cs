@@ -75,8 +75,8 @@ public sealed class Lawyer : RoleBase
     private static void SetupOptionItem()
     {
         OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 10, GeneralOption.ImpostorVision, false, false);
-        OptionKnowTargetRole = BooleanOptionItem.Create(RoleInfo, 11, OptionName.LawyerTargetKnows, false, false);
-        OptionTargetKnows = BooleanOptionItem.Create(RoleInfo, 12, OptionName.LawyerKnowTargetRole, false, false);
+        OptionKnowTargetRole = BooleanOptionItem.Create(RoleInfo, 11, OptionName.LawyerKnowTargetRole, false, false);
+        OptionTargetKnows = BooleanOptionItem.Create(RoleInfo, 12, OptionName.LawyerTargetKnows, false, false);
         OptionPursuerGuardNum = IntegerOptionItem.Create(RoleInfo, 13, OptionName.PursuerGuardNum, new(0, 20, 1), 1, false)
             .SetValueFormat(OptionFormat.Times);
     }

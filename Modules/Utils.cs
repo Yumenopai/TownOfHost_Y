@@ -273,7 +273,6 @@ public static class Utils
             var count = subRolesList.Count;
             foreach (var subRole in subRolesList)
             {
-                if (subRole <= CustomRoles.NotAssigned) continue;
                 switch (subRole)
                 {
                     //必ず省略せずに表示させる
@@ -412,24 +411,19 @@ public static class Utils
     }
     public static Color GetRoleColor(CustomRoles role)
     {
-        if (!Main.roleColors.TryGetValue(role, out var hexColor)) hexColor = role.GetRoleInfo()?.RoleColorCode;
+        if (!Main.roleColors.TryGetValue(role, out var hexColor))
+        {
+            hexColor = role.GetRoleInfo()?.RoleColorCode;
+        }
         _ = ColorUtility.TryParseHtmlString(hexColor, out Color c);
         return c;
     }
     public static string GetRoleColorCode(CustomRoles role)
     {
-        if (!Main.roleColors.TryGetValue(role, out var hexColor)) hexColor = role.GetRoleInfo()?.RoleColorCode;
-        return hexColor;
-    }
-    public static Color GetCustomColor(CustomColor color)
-    {
-        if (!Main.customColors.TryGetValue(color, out var hexColor)) hexColor = "#ffffff";
-        _ = ColorUtility.TryParseHtmlString(hexColor, out Color c);
-        return c;
-    }
-    public static string GetCustomColorCode(CustomColor color)
-    {
-        if (!Main.customColors.TryGetValue(color, out var hexColor)) hexColor = "#ffffff";
+        if (!Main.roleColors.TryGetValue(role, out var hexColor))
+        {
+            hexColor = role.GetRoleInfo()?.RoleColorCode;
+        }
         return hexColor;
     }
     public static string GetVitalText(byte playerId, bool RealKillerColor = false)
@@ -504,8 +498,8 @@ public static class Utils
             {
                 return false;
             }
-            // 死んでいて，妖狐がいるなら確定でfalse
-            if (p.IsDead && CustomRoles.FoxSpirit.IsPresent() && !p.Object.Is(CustomRoles.Gang))
+            // 死んでいて，妖狐がいるかつ無効化設定ならfalse
+            if (CustomRoles.FoxSpirit.IsPresent() && FoxSpirit.IgnoreGhostTask && p.IsDead && !p.Object.Is(CustomRoles.Gang))
             {
                 return false;
             }
@@ -638,6 +632,12 @@ public static class Utils
 
         var sb = new StringBuilder();
         var myRole = player.GetCustomRole();
+        var roleInfoLong = player.GetRoleInfo(true);
+        if (myRole == CustomRoles.Potentialist)
+        {
+            myRole = CustomRoles.Crewmate;
+            roleInfoLong = GetString("PotentialistInfo");
+        }
         var roleName = myRole.ToString();
         if (myRole == CustomRoles.Bakery && Bakery.IsNeutral(player))
             roleName = "NBakery";
@@ -645,7 +645,8 @@ public static class Utils
             roleName = "Pursuer";
         var roleString = GetString(roleName);
         roleString = $"<size=95%>{roleString}</size>".Color(GetRoleColor(myRole).ToReadableColor());
-        sb.Append(roleString).Append("<size=80%><line-height=1.8pic>").Append(player.GetRoleInfo(true)).Append("</line-height></size>");
+
+        sb.Append(roleString).Append("<size=80%><line-height=1.8pic>").Append(roleInfoLong).Append("</line-height></size>");
 
         if (!myRole.IsDontShowOptionRole())
         {
@@ -835,7 +836,13 @@ public static class Utils
             sb.Append('\n');
             foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 100000 && !x.IsHiddenOn(Options.CurrentGameMode)))
             {
+                // 常時表示しないオプション
                 if (Options.NotShowOption(opt.Name)) continue;
+
+                // アクティブマップ毎に表示しないオプション
+                if (opt.Name == "MapModificationAirship" && !Options.IsActiveAirship) continue;
+                if (opt.Name == "MapModificationFungle" && !Options.IsActiveFungle) continue;
+                if (opt.Name == "DisableButtonInMushroomMixup" && !Options.IsActiveFungle) continue;
 
                 if (opt.Name is "NameChangeMode" && Options.GetNameChangeModes() != NameChange.None)
                     sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u> ：<size=68%>{opt.GetString()}</size>\n</size>");
@@ -966,6 +973,7 @@ public static class Utils
             if (opt.Value.Name == "PolusReactorTimeLimit" && !Options.IsActivePolus) continue;
             if (opt.Value.Name == "AirshipReactorTimeLimit" && !Options.IsActiveAirship) continue;
             if (opt.Value.Name == "FungleReactorTimeLimit" && !Options.IsActiveFungle) continue;
+            if (opt.Value.Name == "FungleMushroomMixupDuration" && !Options.IsActiveFungle) continue;
 
             if (opt.Value.Parent.Name == "AddOnBuffAssign" && !opt.Value.GetBool()) continue;
             if (opt.Value.Parent.Name == "AddOnDebuffAssign" && !opt.Value.GetBool()) continue;

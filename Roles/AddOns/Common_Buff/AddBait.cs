@@ -29,6 +29,8 @@ public static class AddBait
     }
     public static void OnMurderPlayer(MurderInfo info)
     {
+        if (info.IsMeeting) return;
+
         var (killer, target) = info.AttemptTuple;
 
         if (playerIdList.Contains(target.PlayerId) && !info.IsSuicide)

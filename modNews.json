@@ -175,6 +175,14 @@
       "Short": "TOH_Y v503.20",
       "Body": "<b>祝v20！ドドンと新役職が16個！</b>\n　あけましておめでとうございます。本年もよろしくお願いいたします！\n現在開発休止中と言っていたのはどこへやら、約一カ月半かけて沢山の役職を実装しました。久々のTOH_Y大型アップデートです。役職の案は色々溜まりにたまっていたので、ここらで一旦全部放出したろうというわけです。（６月から案を練っていたものも！）\n\n<b>X/Twitterで各役職の説明、簡易動画をアップしています。</b>\n　どんな役職だろう？という方に簡単な役職説明を１つずつアップしています。ぜひ様々な役職を使ってみてね。以下の役職名をクリックすることでX/Twitterに移動します。\n\n【インポスター役職】\n<link=\"https://x.com/yumeno_AmongUs/status/1743458328435720571\">[イビルイグニッション]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1743282580307521830\">[イビル真っ赤]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1743284670148816979\">[エスカレーショナー]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1744917992092352557\">[ベスティーウルフ]</link>\n\n【マッド役職】\n<link=\"https://x.com/yumeno_AmongUs/status/1743288243863576811\">[マッドジェスター]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1743467105645912427\">[マッド科学者]</link>\n\n【クルー役職】\n<link=\"https://x.com/yumeno_AmongUs/status/1743462332586668188\">[ロイヤルドギー]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1743465239902097550\">[ラビット]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1743290078129279093\">[ベントマネージャー]</link>\n\n【ニュートラル役職】\n<link=\"https://x.com/yumeno_AmongUs/status/1744914622354948338\">[妖狐]</link>・<link=\"https://x.com/yumeno_AmongUs/status/1744915754372452540\">[背徳者]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1744922540399894707\">[海賊・一味]</link>\n<link=\"https://x.com/yumeno_AmongUs/status/1744912784301887941\">[鬼]</link>\n\n【コンビネーション役職】\n<link=\"https://x.com/yumeno_AmongUs/status/1744910974111654126\">[カウンセラー・マッドジレンマ]</link>\n\n<b>新機能・仕様変更一覧</b>\n・バカシェリフ、マッドシェリフ、呪狼にキルモーション設定を追加しました。\n　普段のキルモーションとひと味違う？ぜひ試してみてね。\n\n・スカベンジャーのの能力キルの使用制限を追加しました。\n　ダブルクリックモードを採用し、１回クリックで能力キル、ダブルクリックで通常キルを切り替えることが可能です。回数制限も付けられます。\n・ホストのみ、死後はタスクを免除する設定を追加しました。\n　配信者向け。周りを実況するのが第一、タスクなんかやってる暇ないよね(?)\n\nなにか気になったことや不具合報告はTOH_YのDiscordまでご連絡ください。\n\nTown Of Host_Y：Yumeno",
       "Date": "2024-01-11T00:00:00Z"
+    },
+    {
+      "Number": "100101",
+      "Title": "各種ホストMODでの問題の復旧について",
+      "Subtitle": "おまたせしました！",
+      "Short": "MOD復旧について",
+      "Body": "3/7から起こっていた「他人の動きが同期されない」現象について、3/14にInnerSloth側でサーバーアップデートがあり、対応して頂来ました。\nサーバー関係は復旧しておりますが、各種ホストMODが使用可能かについては各MODのお知らせをご確認ください。\n\nまた、TOH_Yでは当初予定していたホワイトデーの「チョコレート屋」復刻の期間を変更するためMODのアップデートを行いました。\n期間は3/17までとなっております。ぜひチョコレート屋でバレンタインのお返しを。\n\nTown Of Host_Y：Yumeno",
+      "Date": "2024-03-14T00:00:00Z"
     }
   ]
 }

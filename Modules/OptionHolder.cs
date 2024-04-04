@@ -121,6 +121,7 @@ public static class Options
     public static OptionItem DisableCatchFish;
     public static OptionItem DisableHelpCritter;
     public static OptionItem DisableTuneRadio;
+    public static OptionItem DisableAssembleArtifact;
 
     //デバイスブロック
     public static OptionItem DisableDevices;
@@ -286,6 +287,7 @@ public static class Options
     // 道連れ設定
     public static OptionItem RevengeNeutral;
     public static OptionItem RevengeMadByImpostor;
+    public static OptionItem RevengeImpostorByImpostor;
 
     public static OptionItem HostGhostIgnoreTasks;
     public static OptionItem DisableForceProtect;
@@ -305,11 +307,11 @@ public static class Options
     public static readonly string[] suffixModes =
     {
         "SuffixMode.None",
-        "SuffixMode.Version",
-        "SuffixMode.Streaming",
-        "SuffixMode.Recording",
-        "SuffixMode.RoomHost",
-        "SuffixMode.OriginalName"
+        //"SuffixMode.Version",
+        //"SuffixMode.Streaming",
+        //"SuffixMode.Recording",
+        //"SuffixMode.RoomHost",
+        //"SuffixMode.OriginalName"
     };
     public static readonly string[] RoleAssigningAlgorithms =
     {
@@ -362,7 +364,11 @@ public static class Options
             .SetGameMode(CustomGameMode.All);
 
         // SpecialEvent
-        SpecialEvent.SetupOptions();
+        if (Main.IsAprilFool)
+        {
+            Potentialist.SetupRoleOptions();
+            Potentialist.RoleInfo.OptionCreator?.Invoke();
+        }
 
         sortedRoleInfo.Where(role => !role.RoleName.IsDontShowOptionRole()).Do(info =>
         {
@@ -615,7 +621,9 @@ public static class Options
         // 道連れ人表記
         ShowRevengeTarget = BooleanOptionItem.Create((int)offsetId.FeatRevenge + 100, "ShowRevengeTarget", true, TabGroup.MainSettings, true)
             .SetColor(Color.cyan);
-        RevengeMadByImpostor = BooleanOptionItem.Create((int)offsetId.FeatRevenge + 200, "RevengeMadByImpostor", false, TabGroup.MainSettings, true)
+        RevengeImpostorByImpostor = BooleanOptionItem.Create((int)offsetId.FeatRevenge + 200, "RevengeImpostorByImpostor", false, TabGroup.MainSettings, true)
+            .SetColor(Palette.ImpostorRed);
+        RevengeMadByImpostor = BooleanOptionItem.Create((int)offsetId.FeatRevenge + 250, "RevengeMadByImpostor", false, TabGroup.MainSettings, true)
             .SetColor(Palette.ImpostorRed);
         RevengeNeutral = BooleanOptionItem.Create((int)offsetId.FeatRevenge + 300, "RevengeNeutral", true, TabGroup.MainSettings, true)
             .SetColor(Palette.Orange);
@@ -639,6 +647,7 @@ public static class Options
         DisableCatchFish = BooleanOptionItem.Create((int)offsetId.FeatTask + 112, "DisableCatchFish", false, TabGroup.MainSettings, false).SetParent(DisableTasks).SetGameMode(CustomGameMode.All);
         DisableHelpCritter = BooleanOptionItem.Create((int)offsetId.FeatTask + 113, "DisableHelpCritter", false, TabGroup.MainSettings, false).SetParent(DisableTasks).SetGameMode(CustomGameMode.All);
         DisableTuneRadio = BooleanOptionItem.Create((int)offsetId.FeatTask + 114, "DisableTuneRadio", false, TabGroup.MainSettings, false).SetParent(DisableTasks).SetGameMode(CustomGameMode.All);
+        DisableAssembleArtifact = BooleanOptionItem.Create((int)offsetId.FeatTask + 115, "DisableAssembleArtifact", false, TabGroup.MainSettings, false).SetParent(DisableTasks).SetGameMode(CustomGameMode.All);
 
         // タスク勝利無効化
         DisableTaskWin = BooleanOptionItem.Create((int)offsetId.FeatTask + 200, "DisableTaskWin", false, TabGroup.MainSettings, false)

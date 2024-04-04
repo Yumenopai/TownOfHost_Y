@@ -56,17 +56,17 @@ namespace TownOfHostY
     {
         public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
         {
-            Logger.Info($"{client.PlayerName}(ClientID:{client.Id})が参加", "Session");
+            Logger.Info($"{client.PlayerName}(ClientID:{client.Id}(HashedPUID:{Blacklist.BlacklistHash.ToHash(client.ProductUserId)}))が参加", "Session");
             if (AmongUsClient.Instance.AmHost && client.FriendCode == "" && Options.KickPlayerFriendCodeNotExist.GetBool())
             {
                 AmongUsClient.Instance.KickPlayer(client.Id, false);
                 Logger.SendInGame(string.Format(GetString("Message.KickedByNoFriendCode"), client.PlayerName));
-                Logger.Info($"フレンドコードがないプレイヤー{client?.PlayerName}をキックしました。", "Kick");
+                Logger.Info($"フレンドコードがないプレイヤー{client?.PlayerName}({client.ProductUserId})をキックしました。", "Kick");
             }
             if (DestroyableSingleton<FriendsListManager>.Instance.IsPlayerBlockedUsername(client.FriendCode) && AmongUsClient.Instance.AmHost)
             {
                 AmongUsClient.Instance.KickPlayer(client.Id, true);
-                Logger.Info($"ブロック済みのプレイヤー{client?.PlayerName}({client.FriendCode})をBANしました。", "BAN");
+                Logger.Info($"ブロック済みのプレイヤー{client?.PlayerName}({client.FriendCode})({client.ProductUserId})をBANしました。", "BAN");
             }
             BanManager.CheckBanPlayer(client);
             BanManager.CheckDenyNamePlayer(client);

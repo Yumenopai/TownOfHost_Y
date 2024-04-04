@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Text;
 using HarmonyLib;
@@ -55,16 +56,21 @@ namespace TownOfHostY
         class VersionShowerStartPatch
         {
             static string[] mainManuText = {
-                "このコメントは10種類らしい",
-                "これからも沢山遊んでね",
+                "このコメントは15種類らしい\nなんか増えてる？",
+                "いつもありがとう！\nこれからも沢山遊んでね",
                 "【今日のおすすめ役職】\nマッドニムロッド",
+                "【今日のおすすめ属性】\nリフュージング",
                 "ランダムな文が\n表示されるって\nなんかいいよね",
                 "今日もシェリフ？\nハンター使ってみない？",
-                "とくになし",
-                "祝！v20",
+                "開発者が1人増えました。\nこんなところで発表します。",
+                "作りたい属性がひとつ。\nいつ作って実装できるかな？",
                 "暫く新役職のリリースは\nないと思うたぶん",
-                "バカシェリフが\nもっとバカに\nなったらしい",
+                "バカシェリフで誤爆して\n相手を吊ろう",
                 "属性を一つ足すだけで\n一気にゲームが変わります",
+                "ラストインポスターとか\nコンプリートクルーとかって\n使ってる？",
+                "パン屋はパン屋でも\nたまにご飯が好きになったりする。",
+                "そろそろ寒さ和らぐかな？\n体調管理には気を付けて。",
+                "COします。占い師です。\nあなたは人狼ですね？",
             };
 
             static TextMeshPro SpecialEventText;
@@ -127,23 +133,22 @@ namespace TownOfHostY
                         SpecialEventText.text += "<size=60%>\n<color=#b58428>チョコレート屋でお返しを。</size></color>";
                     SpecialEventText.color = Utils.GetRoleColor(CustomRoles.Lovers);
                 }
+                else if (Main.IsAprilFool)
+                {
+                    SpecialEventText.text = "<size=70%>";
+                    SpecialEventText.text += DateTime.Now.Day == 1 ? "【朗報】\n大型アップデート決定！\n役職大量追加や新ゲームモード！\n2024年下半期まで待て、、"
+                                                                   : "なにか嘘つきました？\nエイプリルフールで\n「ポテンシャリスト」を\n楽しんでね。(～4/3)";
+                    SpecialEventText.color = Color.yellow;
+                }
                 else if (Main.IsInitialRelease)
                 {
                     SpecialEventText.color = Color.yellow;
                     SpecialEventText.text = $"Happy Birthday to {Main.ModName}!";
-                    if (CultureInfo.CurrentCulture.Name == "ja-JP")
-                    {
-                        SpecialEventText.text += SpecialEvent.TitleText();
-                    }
                 }
                 else if (Main.IsChristmas)
                 {
                     SpecialEventText.color = Color.yellow;
                     SpecialEventText.text = "★Merry Christmas★";
-                    if (CultureInfo.CurrentCulture.Name == "ja-JP")
-                    {
-                        SpecialEventText.text += SpecialEvent.TitleText();
-                    }
                 }
                 else if (CultureInfo.CurrentCulture.Name == "ja-JP")
                 {

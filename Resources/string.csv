@@ -1,4 +1,4 @@
-"id","0","11","13","14","5","2"
+"id","0","11","13","14","5","2","3"
 "## Translators"
 "#5  RusTranslation: Tommy-XL"
 "#13 SChinese:fivefirex&ZeMingOH233  2T&MC-AS-Huier&xiaojin xyjx001(Edit: Tanakanira)"
@@ -88,7 +88,7 @@
 "EvilDyerInfo","Let's going to dye them all red","皆を赤色に染めてやるんだ",
 "BestieWolfInfo","I'll be in support","うちはサポートにまわります",
 "AfterBestieWolfInfo","I lost my friends, why..?","仲間おらんなった、、なんで、、",
-"EvilGuesserInfo","Guess the Player Role","役職を推測しよう","","","",""
+"EvilGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
 "EvilWatcherInfoLong","(Impostors):\nYou can see everyone's votes even if anonymous voting is on.","(インポスター陣営):\n全員の投票先を見ることができる。","(内鬼阵营):\n会议时窥视者可以看到所有人的投票。","(狼人陣營):\n會議時觀察者可以看到所有人的投票。","(Предатель):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Impostores):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -123,7 +123,7 @@
 "EscalationerInfoLong","(Impostors):\nWhen Escalationer kills, everyone's player speed increases.In addition, the killcool is shortened for each kill only for himself.","[インポスター陣営]\n自身がキルすると、全員のプレイヤースピードが上昇する。また、自身のみキルする度にキルクールが短くなる。",
 "EvilDyerInfoLong","(Impostors):\nWhen he kills someone, everyone turns red for a certain period of time.","[インポスター陣営]\n自身が誰かキルすると全員が一定時間、赤色の姿になる。",
 "BestieWolfInfoLong","(Impostors):\nHe is supportive of his partner because of his love for his companions, but when he becomes a lone Impostor, he becomes lonely and goes berserk.\n\nWhen multiple Impostors are alive, the buff Add-On is given to the partner Impostor depending on the number of kills.\nIf you are the sole Impostor and there is someone else within view of the kill target at the time of the kill, you will kill that person at the same time. Additional kills are limited to one person per kill, and when simultaneous kills occur, a kill flash is visible from all viewpoints.","[インポスター陣営]\n仲間想いなため相方へのサポートをするが、単独な狼になった時には孤独が寂しくなり暴走する。\n\n複数インポスターが生存時、キル回数によって相方インポスターにバフ属性を付与する。\n自身が単独インポスターになった場合、キルする時にそのキル対象の見える範囲内に誰かいた場合、その人まで同時にキルする。追加キルは1キル1人までで、同時キルが起こった時は全視点でキルフラッシュが見える。"
-"EvilGuesserInfoLong","(Impostors):\nImpostor guessing the player's role.\nYou can kill a player during a meeting by guessing their role.","(インポスター陣営):\n特殊能力を持つインポスターです。\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡させることができます。","","","",""
+"EvilGuesserInfoLong","(Impostors):\nImpostor guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(インポスター陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
 
 #イビルハッカ
 "EvilHacker","Evil Replicator","イビルハッカー...?",
@@ -177,7 +177,7 @@
 "MadNimrodInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
 "MadScientistInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
 "MadJesterInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
-"MadGuesserInfo","Guess the Player Role","役職を推測しよう","","","",""
+"MadGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
 "SKMadmateInfo","You are now on Team Impostors","サイドキックにされた","你是内鬼的好帮手","你現在是偽裝者的夥伴了，盡你所能幫助他們","Теперь вы в команде Предателя","Você agora está no Time Impostor"
 
 "MadmateInfoLong","(Impostors):\nYou are a crewmate, but you act as the impostors' ally.\nYou and the impostors cannot recognize each other.\nYou can vent, and you have no tasks.","(インポスター陣営):\nクルーだがインポスターの味方をする。\nインポスターと互いに認識できない。\nベントが使え、タスクはない。","(内鬼阵营):\n叛徒伪装成船员来帮助内鬼阵营，但是他们并不知道谁是内鬼。\n叛徒不可以进行击杀或者破坏，可以跳管道且没有任务。","(狼人陣營):\n船員,但是他們屬於狼人陣營.\n狼人無法知道叛徒是誰,\n他可以跳洞且沒有任務。","(Предатель):\nЧлен Экипажа, который на стороне Предателей. \nНо он не знает кто является Предателем в игре. \nМожет использовать вентиляцию, но нет заданий.","(Impostores):\nVocê é um tripulante que se aliou ao impostor.\nOs Impostores não sabem quem você é e vice-versa.\nPode usar a ventilação, e não tem tarefas."
@@ -190,7 +190,7 @@
 "MadNimrodInfoLong","(Impostors)\nCrewmate but takes the side of the Imposter. Unrecognizable to the Imposter and each other. no tasks. \nWhen Nimrod is exiled, a meeting is held again for a vote on Nimrod. Here, only Nimrod is allowed to discuss the matter once exiled, and he may choose one person to be voted in and executed along the way.","[インポスター陣営]:\nクルーだがインポスターの味方をする。インポスターと互いに認識できない。タスクはない。\n自身が追放された時、再びニムロッド投票用の会議が開かれる。ここでは追放されたらニムロッド以外は議論するべからず。1人を投票で選択して道連れ処刑することができる。",
 "MadScientistInfoLong","(Impostors)\nCrewmate but takes the side of the Imposter. Unrecognizable to the Imposter and each other. no tasks. \nMadScientist have Vital.","[インポスター陣営]:\nクルーだがインポスターの味方をする。インポスターと互いに認識できない。タスクはない。\nバイタルを持つ。",
 "MadJesterInfoLong","(Impostors)\nCrewmate but takes the side of the Imposter. Unrecognizable to the Imposter and each other. no tasks. \nIf he himself is expelled, the Impostor team wins.","[インポスター陣営]:\nクルーだがインポスターの味方をする。インポスターと互いに認識できない。タスクはない。\n自身が追放されると、その時点でインポスター陣営の勝利になる。",
-"MadGuesserInfoLong","(Impostors):\nMadmate guessing the player's role.\nYou can kill a player during a meeting by guessing their role.","(インポスター陣営):\n特殊能力を持つマッドスニッチです。\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡させることができます。","","","",""
+"MadGuesserInfoLong","(Impostors):\nMadmate guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(インポスター陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
 "SKMadmateInfoLong","(Impostors):\nThe player closest to a Shapeshifter when they shapeshift will become a Sidekick Madmate. You have no tasks.","(インポスター陣営):\n変身した際に一番近かった人がなれる役職。タスクはない。","(内鬼阵营):\n一些内鬼职业变形时，其附近的与其距离最近的玩家的职业有概率转化为该职业。\n叛徒跟班与内鬼不互认。","(狼人陣營):\n當狼人變形時\n離狼人變形最近的一個人將有機率轉化為叛徒跟班\n他沒有任務,且叛徒跟班與狼人無法互相知道。","(Предатель):\nРоль, которую может занять ближайший к вам игрок, когда вы используете Морф. Нет заданий.","(Impostores):\nO jogador mais próximo de um Metamorfo quando eles se transformam virará um Tripulante Louco Ajudante. Você não tem tarefas."
 
 
@@ -271,7 +271,7 @@
 "LoyalDoggyInfo","How are you doing? Master!","調子はどうですか？ご主人様！",
 "RabbitInfo","I have a good ear, so.","耳がいいので探知できるんだ",
 "VentManagerInfo","Vent,Vent,Vent!","ベント、ベント、ベント！",
-"NiceGuesserInfo","Guess the Player Role","役職を推測しよう","","","",""
+"NiceGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
 
 "CustomCrewmateInfoLong","(Crewmates):\Crewmate with the ability to Add-On to attributes set by the host.","[クルー陣営]\nホストによって設定された属性の能力をもつクルーメイト。",
 "NiceWatcherInfoLong","(Crewmates):\nYou can see everyone's votes even if anonymous voting is on.","(クルー陣営):\n全員の投票先を見ることができる。","(船员阵营:\n会议时窥视者可以看到所有人的投票。","(船員):\n會議時觀察者可以看到所有人的投票。","(Член Экипажа):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Tripulantes):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -309,7 +309,7 @@
 "LoyalDoggyInfoLong","(Crewmates)\nVote for one person of your choice at the very first meeting and nominate them as Master. (Votes are not shown).\nThe position of the master can be detected by the sense of smell. When the master is killed, the arrow will no longer be displayed. By setting, the task disappears after the Master's death.","[クルー陣営]\n一番初めの会議で1人好きな人に投票して、ご主人として指名する。(票は表示されない)\nその人の場所を嗅覚により探知できる。ご主人がキルされた時、ご主人への矢印はなくなる。設定により、ご主人の死亡後はタスクが無くなる。",
 "RabbitInfoLong","(Crewmates)\nWhen a set number of tasks are completed, an arrow will indicate for 5 seconds in which direction a random 1 Impostor is at that time for each task completed.\nEven after all tasks have been completed, uncounted tasks will appear and the ability will be available for each completed task.","[クルー陣営]\n設定タスク完了すると、タスクを1つ完了させる毎にその時のランダムな1インポスターがどの方向にいるかが矢印で5秒間表示される。\nタスク全完了後もカウントされないタスクが発生し、完了するごとに能力を使用できる。",
 "VentManagerInfoLong","(Crewmates)\nClean Vent.","[クルー陣営]\nベントを掃除しよう。ただそれだけ。",
-"NiceGuesserInfoLong","(Crewmates):\nCrewmate guessing the player's role.\nYou can kill a player during a meeting by guessing their role.","(クルー陣営):\n特殊能力を持つクルーメイトです。\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡させることができます。","","","",""
+"NiceGuesserInfoLong","(Crewmates):\nCrewmate guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(クルー陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
 
 "# ニュートラル役職"
 "Jester","Jester","ジェスター","小丑","小丑","Шут","Bobo"
@@ -567,6 +567,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "DisableCatchFish","Disable CatchFish Tasks","魚釣りタスク",
 "DisableHelpCritter","Disable HelpCritter Tasks","卵の孵化タスク",
 "DisableTuneRadio","Disable FindSignal Tasks","電波探しタスク",
+"DisableAssembleArtifact","Disable AssembleArtifact Tasks","宝石組み立てタスク",
 
 "SuffixMode","Suffix","名前の二行目","附加标签","名字標籤","Суффикс","Sufixo"
 "SuffixMode.None","None","なし","无","無","Ничего","Nenhum"
@@ -734,10 +735,12 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "ChangeIntro","(MOD)Change the Intro the Original TOH Specs.","(MOD)第三陣営やマッド役職のイントロを本家TOH仕様に戻す","(MOD)将介绍更改为原始TOH规格。"
 "CanKill","Can Kill","キルできる","可以击杀",
 "RevengeNeutral","Can Revenge Neutrals","道連れ能力持ちがニュートラル役職を道連れ出来る","可以接受同伴为中立",,
+"RevengeImpostorByImpostor","Can Revenge Impostors By Impostor Team","道連れ能力持ちインポスター陣営がインポスター役職を道連れ出来る",,,
 "RevengeMadByImpostor","Can Revenge Madmates By Impostor Team","道連れ能力持ちインポスター陣営がマッド系役職を道連れ出来る",,,
 "TaskTrigger","Trigger Tasks","能力が使用可能になるタスク数",
-"GuesserNumOfGuess","Num Of Guess","推測の回数","","","",""
-"GuesserMultipleInMeeting","Multiple In Meeting","１会議での複数使用","","","",""
+"GuesserNumOfGuess","Number Of Guess","推測の回数","","","",""
+"GuesserMultipleInMeeting","Multiple In Meeting","一会議での複数使用","","","",""
+"GuesserHideMisfire","Hide DeathReason Misfire","死因 誤爆を隠す","","","",""
 
 # インポスター
 "BountyTargetChangeTime","Time Until Target Swaps","ターゲット変更時間","赏金目标切换时间","賞金目標切換時間","Время смены цели","Tempo Para Troca de Alvos"
@@ -911,14 +914,14 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "RabbitRedistributionLongTasks","Long Task Count to be redistributed","再配布されるロングタスク数",
 "RabbitRedistributionShortTasks","Short Task Count to be redistributed","再配布されるショートタスク数",
 
-"Head.LimitedTimeRole","Limited Time Role 12/23～12/25","期間限定役職 12/23～12/25"
-##"Potentialist","Potentialist","ポテンシャリスト",
-"Potentialist","Crewmate","クルーメイト",
+"Head.LimitedTimeRole","Limited Time Role 4/1～4/5","期間限定役職 4/1～4/5"
+"Potentialist","Potentialist","ポテンシャリスト",
 "PotentialistName","Potentialist</color>\n　…At first, Crewmate. Complete tasks and have random abilities.","ポテンシャリスト</color>\n　…初めはクルー。設定タスク完了でランダムな能力を持つ。",
 "PotentialistInfo","do your tasks","タスクを行う",
-"PotentialistInfoLong","do your tasks","タスクを行う",
+"PotentialistInfoLong","do your tasks","[クルー陣営]\n初めはクルーとして表示されるためポテンシャリストの自覚はありませんが、設定タスク数完了させると能力が開花して新たなクルー役職を手に入れられます。\n設定により、マッド系役職やニュートラル役職にも変化します。",
 "poTask","Task Count that Becomes Can Use Ability","能力開花するタスク数",
-"poNeutral","Role To Be Changed May Be Neutral Role","ニュートラル役職の可能性がある",
+"poMad","Role To Be Changed May Be Madmate Role","マッド系役職に変化する可能性がある",
+"poNeutral","Role To Be Changed May Be Neutral Role","ニュートラル役職に変化する可能性がある",
 
 # ニュートラル
 "CanBeforeSchrodingerCatWinTheCrewmate","Can Win With Crewmates If No Team","役職変化前であれば、クルー陣営と勝利できる","薛定谔的猫未加入其他阵营前可以跟随船员阵营获胜","薛定諤的貓的陣營轉變前可以隨船員一起獲勝","Без команды он может победить с Членами Экипажа","Pode Ganhar Com Tripulantes"
@@ -962,6 +965,7 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "GodViewVoteFor","View Where To Vote","投票先が見える","","","",""
 "FoxSpiritTaskCount","Clean Vent Task Count","ベント掃除のタスク数",
 "FoxSpiritKilledAfterFinishTask","Killed After Finish Task","タスク全完了後はキルが通る",
+"FoxSpiritIgnoreGhostTask","Ignore Ghost Tasks","死亡したクルーのタスクを無効化する"
 "ImmoralistCanAlsoBeExposedToFox","Immoralist Also Exposed To FoxSpirit","背徳者が妖狐からも視認できる",
 "ImmoralistOptionAddGuard","Provides Guard","他者へガードを付与できる",
 "ImmoralistOptionAddGuardTiming","Selection Method","選択方法",
@@ -1030,6 +1034,7 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "DeathReason.Misfire","Misfire","誤爆","走火","走火","Убился","Alvo Incorreto"
 "DeathReason.Torched","Torched","焼殺","烧死","燒死","Сожжён","Queimado"
 "DeathReason.Sniped","Sniped","狙撃","狙杀","被狙","Застрелен","Baleado"
+"DeathReason.Shot","Shot","射殺","","","",""
 "DeathReason.Execution","Execution","処刑","处决","處刑","Казнен","Executado"
 "DeathReason.Disconnected","Disconnected","回線切断","断连","斷線","Вышел","Desconectado"
 "DeathReason.Fall","Fall","落下死","摔死","摔死","Упал","Queda"
@@ -1167,8 +1172,9 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Message.SelfVoteForActivate","Vote yourself to activate the ability.","能力を発動するには自投票を行ってください","","","",""
 "Message.SelfVoteUsed","Ability used. The ability cannot be activated.","能力使用済み 能力を発動することはできません","","","",""
 "Message.SelfVoteSuffix","Vote self to use","自投票で能力発動","","","",""
-"Message.GuesserSelectionCancel","【Cancel Guesser Selection】\Guesser selection mode has been canceled.","【ゲッサーモード解除】\nゲッサーモードが解除されました","","","",""
-"Message.GuesserSelectionTarget","【Guesser Selection】\nSelect by voting the target.\n*Skip to cancel Guesser selection mode.\n\nTarget choice","【ゲッサー選択】\nターゲットを投票によって選択してください\n※スキップでゲッサーモード解除\n\nターゲットの選択","","","",""
+"Message.GuesserSelectionCancel","【Cancel Guesser Selection】\nGuesser selection mode has been canceled.","【ゲッサーモード解除】\nゲッサーモードが解除されました","","","",""
+"Message.GuesserSelectionSelfSelect","【Cancel Guesser Selection】\nVoting for yourself and vote is complete.","【ゲッサーモード解除】\n自投票として投票を完了しました","","","",""
+"Message.GuesserSelectionTarget","【Guesser Selection】\nSelect by voting the target.\n*Can't choose yourself as a target.\n(If select yourself be voting for yourself and vote is complete.)\n*Skip to cancel Guesser selection mode.\n\nTarget choice","【ゲッサー選択】\nターゲットを投票によって選択してください\n※自分は選択できません\n（自分選択は自投票として投票完了）\n※スキップでゲッサーモード解除\n\nターゲットの選択","","","",""
 "Message.GuesserSelectionRole","【Guesser Selection】\nSelect by voting the target role.\nSelect by the number on the nameplate.\n*Skip to cancel Guesser selection mode.\nTarget: {0}\n\nRole choice(page {1}){2}","【ゲッサー選択】\nターゲットの役職を投票によって選択してください\nネームプレートにある番号で選択してください\n※スキップでゲッサーモード解除\nターゲット：{0}\n\n役職の選択(ページ{1}){2}","","","",""
 "Message.GuesserAbilityUse","【Guesser Kill】\nGuesser's ability activated","【ゲッサー】\nゲッサーの能力が発動されました","","","",""
 "Message.GuesserDead","died","が死亡しました","","","",""

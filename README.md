@@ -50,8 +50,8 @@ Thank you for finding and using TOH_Y!<br>
 
 ## ★リリース
 
-AmongUsバージョン : **2023.11.28**<br>
-**最新バージョンは[こちら](https://github.com/Yumenopai/TownOfHost_Y/releases/latest)から**<br>
+AmongUsバージョン : **2024.3.5**<br>
+**最新バージョンは[こちらからダウンロード](https://github.com/Yumenopai/TownOfHost_Y/releases/latest)**<br>
 
 ※[TownOfHost](https://github.com/tukasa0001/TownOfHost) Fork<br>
 

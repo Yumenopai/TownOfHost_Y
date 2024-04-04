@@ -1,11 +1,9 @@
 using System;
-using System.Globalization;
 using System.Collections.Generic;
 using UnityEngine;
 using AmongUs.GameOptions;
 
 using TownOfHostY.Roles.Core;
-using TownOfHostY.Roles.Impostor;
 
 namespace TownOfHostY.Roles.Crewmate;
 public sealed class Potentialist : RoleBase
@@ -19,7 +17,8 @@ public sealed class Potentialist : RoleBase
             CustomRoleTypes.Crewmate,
             (int)Options.offsetId.CrewSpecial + 0,
             null,
-            "ポテンシャリスト"
+            "ポテンシャリスト",
+            "#ffff00"
         );
     public Potentialist(PlayerControl player)
     : base(
@@ -28,17 +27,21 @@ public sealed class Potentialist : RoleBase
     )
     {
         TaskTrigger = OptionTaskTrigger.GetInt();
+        CanChangeMad = OptionCanChangeMad.GetBool();
         CanChangeNeutral = OptionCanChangeNeutral.GetBool();
     }
 
     private static OptionItem OptionTaskTrigger; //効果を発動するタスク完了数
+    private static OptionItem OptionCanChangeMad;
     private static OptionItem OptionCanChangeNeutral;
     enum OptionName
     {
         poTask,
+        poMad,
         poNeutral
     }
     private static int TaskTrigger;
+    private static bool CanChangeMad;
     private static bool CanChangeNeutral;
 
     bool isPotentialistChanged;
@@ -62,7 +65,8 @@ public sealed class Potentialist : RoleBase
 
         OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 10, OptionName.poTask, new(1, 30, 1), 5, false)
             .SetValueFormat(OptionFormat.Pieces);
-        OptionCanChangeNeutral = BooleanOptionItem.Create(RoleInfo, 11, OptionName.poNeutral, false, false);
+        OptionCanChangeMad = BooleanOptionItem.Create(RoleInfo, 11, OptionName.poMad, true, false);
+        OptionCanChangeNeutral = BooleanOptionItem.Create(RoleInfo, 12, OptionName.poNeutral, false, false);
     }
 
     public override void Add()
@@ -80,9 +84,6 @@ public sealed class Potentialist : RoleBase
             var rand = IRandom.Instance;
             List<CustomRoles> Rand = new()
                 {
-                    CustomRoles.Madmate,
-                    CustomRoles.MadDictator,
-                    CustomRoles.MadNimrod,
                     CustomRoles.NiceWatcher,
                     CustomRoles.Bait,
                     CustomRoles.Lighter,
@@ -95,7 +96,7 @@ public sealed class Potentialist : RoleBase
                     CustomRoles.Seer,
                     CustomRoles.TimeManager,
                     CustomRoles.Bakery,
-                    CustomRoles.TaskManager,
+                    //CustomRoles.TaskManager,
                     CustomRoles.Nekomata,
                     CustomRoles.Express,
                     CustomRoles.SeeingOff,
@@ -105,8 +106,18 @@ public sealed class Potentialist : RoleBase
                     CustomRoles.FortuneTeller,
                     CustomRoles.Nimrod,
                     CustomRoles.Detector,
+                    CustomRoles.Rabbit,
+                    CustomRoles.NiceGuesser,
                 };
 
+            if (CanChangeMad)
+            {
+                Rand.Add(CustomRoles.Madmate);
+                Rand.Add(CustomRoles.MadDictator);
+                Rand.Add(CustomRoles.MadNimrod);
+                Rand.Add(CustomRoles.MadJester);
+                Rand.Add(CustomRoles.MadGuesser);
+            }
             if (CanChangeNeutral)
             {
                 Rand.Add(CustomRoles.Jester);
@@ -141,30 +152,4 @@ public sealed class Potentialist : RoleBase
         roleText = Utils.GetRoleName(CustomRoles.Crewmate);
         roleColor = Utils.GetRoleColor(CustomRoles.Crewmate);
     }
-}
-
-public static class SpecialEvent
-{
-    public static bool IsEventRole(CustomRoles role) => role is CustomRoles.Potentialist or CustomRoles.EvilHacker;
-
-    public static void SetupOptions()
-    {
-        if (Main.IsChristmas)
-        {
-            if (CultureInfo.CurrentCulture.Name == "ja-JP")
-            {
-                EvilHacker.SetupRoleOptions();
-                EvilHacker.RoleInfo.OptionCreator?.Invoke();
-            }
-            Potentialist.SetupRoleOptions();
-            Potentialist.RoleInfo.OptionCreator?.Invoke();
-        }
-    }
-
-    public static string TitleText() =>
-        "\n<size=50%>周年記念の役職が12/25まで復活★" +
-        "\nパン屋が転職「おにぎり屋」" +
-        "\n途中で役職変化!「ポテンシャリスト」" +
-        "\nインポスターも強くなりたい「イビルハッカー...?」" +
-        "\nこれからもTOH_Yをよろしくお願いします！</size>";
 }

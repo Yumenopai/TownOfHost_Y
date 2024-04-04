@@ -124,8 +124,8 @@ public sealed class FortuneTeller : RoleBase
 
         ForecastResult[ForecastTarget.PlayerId] = ForecastTarget;
         var canSeeRole = ForecastTarget.GetRoleClass() is IKiller;
-        if (canSeeRole && Player != null)
-            NameColorManager.Add(Player.PlayerId, ForecastTarget.PlayerId);
+        //if (canSeeRole && Player != null)
+        //    NameColorManager.Add(Player.PlayerId, ForecastTarget.PlayerId);
         Logger.Info($"SetForecastResult SetTarget player: {Player?.name}, target: {ForecastTarget.name}, canSeeRole: {canSeeRole}", "FortuneTeller");
 
         ForecastTarget = null;

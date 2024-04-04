@@ -34,14 +34,18 @@ public sealed class FoxSpirit : RoleBase, ISystemTypeUpdateHook
     )
     {
         KilledAfterFinishTask = OptionKilledAfterFinishTask.GetBool();
+        IgnoreGhostTask = OptionIgnoreGhostTask.GetBool();
     }
     private static OptionItem OptionTaskCount;
     private static OptionItem OptionKilledAfterFinishTask;
+    private static OptionItem OptionIgnoreGhostTask;
     private bool KilledAfterFinishTask;
+    public static bool IgnoreGhostTask;
     private enum OptionName
     {
         FoxSpiritTaskCount,
         FoxSpiritKilledAfterFinishTask,
+        FoxSpiritIgnoreGhostTask,
     }
 
     private static void SetupOptionItem()
@@ -49,6 +53,7 @@ public sealed class FoxSpirit : RoleBase, ISystemTypeUpdateHook
         OptionTaskCount = IntegerOptionItem.Create(RoleInfo, 10, OptionName.FoxSpiritTaskCount, new(1, 50, 1), 10, false)
                 .SetValueFormat(OptionFormat.Pieces);
         OptionKilledAfterFinishTask = BooleanOptionItem.Create(RoleInfo, 11, OptionName.FoxSpiritKilledAfterFinishTask, true, false);
+        OptionIgnoreGhostTask = BooleanOptionItem.Create(RoleInfo, 12, OptionName.FoxSpiritIgnoreGhostTask, true, false);
     }
     public static (bool, int, int) TaskData => (false, 0, OptionTaskCount.GetInt());
     public static bool CheckWin()

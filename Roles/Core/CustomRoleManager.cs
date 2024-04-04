@@ -143,10 +143,17 @@ public static class CustomRoleManager
             onMurderPlayer(info);
         }
         AddBait.OnMurderPlayer(info);
-        Lovers.KillSuicide(attemptTarget.PlayerId);
+        if (info.IsMeeting)
+        {
+            Lovers.VoteSuicide(attemptTarget.PlayerId);
+        }
+        else
+        {
+            Lovers.KillSuicide(attemptTarget.PlayerId);
+        }
 
         //TargetDeadArrow
-        TargetDeadArrow.UpdateDeadBody();
+        if (!info.IsMeeting) TargetDeadArrow.UpdateDeadBody();
 
         //以降共通処理
         var targetState = PlayerState.GetByPlayerId(attemptTarget.PlayerId);
@@ -394,6 +401,10 @@ public class MurderInfo
     /// 遠距離キル代わりの疑似自殺
     /// </summary>
     public bool IsFakeSuicide => AppearanceKiller.PlayerId == AppearanceTarget.PlayerId;
+    /// <summary>
+    ///会議中キルの場合
+    /// </summary>
+    public bool IsMeeting => GameStates.IsMeeting;
     public MurderInfo(PlayerControl attemptKiller, PlayerControl attemptTarget, PlayerControl appearanceKiller, PlayerControl appearancetarget)
     {
         AttemptKiller = attemptKiller;

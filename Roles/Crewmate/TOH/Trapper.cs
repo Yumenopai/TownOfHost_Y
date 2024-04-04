@@ -42,6 +42,7 @@ public sealed class Trapper : RoleBase
     public override void OnMurderPlayerAsTarget(MurderInfo info)
     {
         if (info.IsSuicide) return;
+        if (info.IsMeeting) return;
 
         var killer = info.AttemptKiller;
         var tmpSpeed = Main.AllPlayerSpeed[killer.PlayerId];

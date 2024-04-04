@@ -6,7 +6,6 @@ using UnityEngine;
 
 using static TownOfHostY.Translator;
 using HarmonyLib;
-
 namespace TownOfHostY.Roles.Core.Class;
 
 public abstract class VoteGuesser : RoleBase
@@ -36,6 +35,7 @@ public abstract class VoteGuesser : RoleBase
 
     protected int NumOfGuess = 1;
     protected bool MultipleInMeeting = false;
+    protected bool HideMisfire = false;
 
     private GuesserInfo guesserInfo;
 
@@ -86,6 +86,15 @@ public abstract class VoteGuesser : RoleBase
 
             if (targetGuess == null)
             {
+                if (votedFor.PlayerId == Player.PlayerId)
+                {
+                    //対象選択での自投票は通常投票（自分へ投票）としてゲッサーモード解除 & 投票完了
+                    selecting = false;
+                    targetGuess = null;
+                    targetForRole = null;
+                    Utils.SendMessage(GetString("Message.GuesserSelectionSelfSelect"), Player.PlayerId);
+                    return true;
+                }
                 targetGuess = votedFor;
                 guesserInfo.ResetList();
                 Logger.Info($"GuesserSetTarget1 guesser: {Player?.name}, target: {targetGuess?.name}", "Guesser.CheckVoteAsVoter");
@@ -170,12 +179,14 @@ public abstract class VoteGuesser : RoleBase
         if (targetGuess.Is(role))
         {
             target = targetGuess;
-            RpcGuesserMurderPlayer(target, CustomDeathReason.Kill);
+            RpcGuesserMurderPlayer(target, CustomDeathReason.Shot);
         }
         else
         {
             target = Player;
-            RpcGuesserMurderPlayer(target, CustomDeathReason.Misfire);
+            var reason = CustomDeathReason.Misfire;
+            if (HideMisfire) reason = CustomDeathReason.Shot;
+            RpcGuesserMurderPlayer(target, reason);
         }
         SendGuessedMessage(target);
     }
@@ -253,7 +264,8 @@ public abstract class VoteGuesser : RoleBase
 
         var targetState = PlayerState.GetByPlayerId(target.PlayerId);
         targetState.DeathReason = reason;
-        targetState.SetDead();
+        CustomRoleManager.CheckMurderInfos[target.PlayerId] = new MurderInfo(Player, target, target, target);
+        CustomRoleManager.OnMurderPlayer(target, target);
 
         //キルフラッシュ表示
         Main.AllPlayerControls.Do(pc => pc.KillFlash());

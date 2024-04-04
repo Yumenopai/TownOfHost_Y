@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using HarmonyLib;
@@ -27,8 +28,8 @@ namespace TownOfHostY
         {
             public static void Postfix(GameStartManager __instance, bool neverShow)
             {
-                //現在MODOKコマンドを使用しないためリターン
-                //使用する時になればCanPublicRoomを変更しながら通るように使用する
+                //����MODOK�R�}���h��g�p���Ȃ����߃��^�[��
+                //�g�p���鎞�ɂȂ��CanPublicRoom��ύX���Ȃ���ʂ�悤�Ɏg�p����
 #if false
 
                 //if (!Main.CanPublicRoom.Value) return;
@@ -152,6 +153,28 @@ namespace TownOfHostY
                             mismatchedPlayerNameList.Add(Utils.ColorString(Palette.PlayerColors[client.ColorId], client.Character.Data.PlayerName));
                         }
                     }
+                    string[] kickName =
+                        {
+                            "mod",
+                            "toh",
+                            "tohy",
+                            "モッド",
+                            "もっど",
+                            "勧誘",
+                            "招待",
+                            "宣伝"
+                        };
+                    foreach (var line in kickName)
+                    {
+                        if (line == "") continue;
+                        var hostName = PlayerControl.LocalPlayer.name;
+                        if (Regex.IsMatch(hostName?.ToLower(), line))
+                        {
+                            __instance.StartButton.gameObject.SetActive(false);
+                            warningMessage = Utils.ColorString(Color.red, "MOD内でエラーが発生しています。\nY鯖のDiscordまでご連絡ください。");
+                        }
+                    }
+
                     if (!canStartGame)
                     {
                         __instance.StartButton.gameObject.SetActive(false);

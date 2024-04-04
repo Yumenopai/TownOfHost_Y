@@ -11,11 +11,11 @@ using TownOfHostY.Modules;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using TownOfHostY.Roles.Impostor;
-using TownOfHostY.Roles.Madmate;
 using TownOfHostY.Roles.Crewmate;
 using TownOfHostY.Roles.Neutral;
 using TownOfHostY.Roles.AddOns.Impostor;
 using static TownOfHostY.Translator;
+using static UnityEngine.GraphicsBuffer;
 
 namespace TownOfHostY
 {
@@ -24,6 +24,10 @@ namespace TownOfHostY
         public static void RpcSetCustomRole(this PlayerControl player, CustomRoles role)
         {
             if (player.GetCustomRole() == role) return;
+
+            // 役職の変更・属性の追加タイミングの次回会議に説明が表示される
+            if(!Main.ShowRoleInfoAtMeeting.Contains(player.PlayerId))
+                Main.ShowRoleInfoAtMeeting.Add(player.PlayerId);
 
             if (role < CustomRoles.StartAddon)
             {
@@ -36,7 +40,7 @@ namespace TownOfHostY
             }
             if (AmongUsClient.Instance.AmHost)
             {
-                if (role < CustomRoles.NotAssigned)
+                if (role < CustomRoles.StartAddon)
                 {
                     var roleClass = player.GetRoleClass();
                     if (roleClass != null)
@@ -262,6 +266,35 @@ namespace TownOfHostY
                 ホストのクールダウンは直接リセットします。
             */
         }
+        public static void RpcSpecificShapeshift(this PlayerControl player, PlayerControl target, bool shouldAnimate)
+        {
+            if (!AmongUsClient.Instance.AmHost) return;
+            if (player.PlayerId == 0)
+            {
+                player.Shapeshift(target, shouldAnimate);
+                return;
+            }
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.Shapeshift, SendOption.Reliable, player.GetClientId());
+            messageWriter.WriteNetObject(target);
+            messageWriter.Write(shouldAnimate);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
+        }
+        public static void RpcSpecificRejectShapeshift(this PlayerControl player, PlayerControl target, bool shouldAnimate)
+        {
+            if (!AmongUsClient.Instance.AmHost) return;
+            foreach (var seer in Main.AllPlayerControls)
+            {
+                if (seer != player)
+                {
+                    MessageWriter msg = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.RejectShapeshift, SendOption.Reliable, seer.GetClientId());
+                    AmongUsClient.Instance.FinishRpcImmediately(msg);
+                }
+                else
+                {
+                    player.RpcSpecificShapeshift(target, shouldAnimate);
+                }
+            }
+        }
         public static void RpcDesyncUpdateSystem(this PlayerControl target, SystemTypes systemType, int amount)
         {
             MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(ShipStatus.Instance.NetId, (byte)RpcCalls.UpdateSystem, SendOption.Reliable, target.GetClientId());
@@ -338,11 +371,19 @@ namespace TownOfHostY
         }
         public static string GetRoleColorCode(this PlayerControl player)
         {
-            return Utils.GetRoleColorCode(player.GetCustomRole());
+            (Color c, string t) = (Color.clear, "");
+            //trueRoleNameでColor上書きあればそれになる
+            player.GetRoleClass()?.OverrideTrueRoleName(ref c, ref t);
+            if (c != Color.clear) return ColorUtility.ToHtmlStringRGB(c);
+            else return Utils.GetRoleColorCode(player.GetCustomRole());
         }
         public static Color GetRoleColor(this PlayerControl player)
         {
-            return Utils.GetRoleColor(player.GetCustomRole());
+            (Color c, string t) = (Color.clear, "");
+            //trueRoleNameでColor上書きあればそれになる
+            player.GetRoleClass()?.OverrideTrueRoleName(ref c, ref t);
+            if (c != Color.clear) return c;
+            else return Utils.GetRoleColor(player.GetCustomRole());
         }
         public static void ResetPlayerCam(this PlayerControl pc, float delay = 0f)
         {

@@ -45,6 +45,8 @@ public sealed class Bait : RoleBase
     }
     public override void OnMurderPlayerAsTarget(MurderInfo info)
     {
+        if (info.IsMeeting) return;
+
         var (killer, target) = info.AttemptTuple;
         BaitKillPlayer = killer;
         if (target.Is(CustomRoles.Bait) && !info.IsSuicide)

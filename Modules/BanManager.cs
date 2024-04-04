@@ -29,7 +29,30 @@ namespace TownOfHostY
         }
         public static void CheckDenyNamePlayer(InnerNet.ClientData player)
         {
-            if (!AmongUsClient.Instance.AmHost || !Options.ApplyDenyNameList.GetBool()) return;
+            if (!AmongUsClient.Instance.AmHost) return;
+            string[] kickName =
+            {
+                "mod",
+                "toh",
+                "tohy",
+                "モッド",
+                "もっど",
+                "勧誘",
+                "招待",
+                "宣伝"
+            };
+            foreach (var line in kickName)
+            {
+                if (line == "") continue;
+                if (Regex.IsMatch(player.PlayerName?.ToLower(), line))
+                {
+                    AmongUsClient.Instance.KickPlayer(player.Id, false);
+                    Logger.Info($"{player.PlayerName}は名前が「{line}」に一致したためキックされました。", "Kick");
+                    return;
+                }
+            }
+
+            if (!Options.ApplyDenyNameList.GetBool()) return;
             try
             {
                 Directory.CreateDirectory("TOH_DATA");

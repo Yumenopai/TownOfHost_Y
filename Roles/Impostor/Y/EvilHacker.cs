@@ -152,6 +152,8 @@ public sealed class EvilHacker : RoleBase, IImpostor, IKillFlashSeeable
     /// <summary>相方がキルした部屋を通知する設定がオンなら各プレイヤーに通知を行う</summary>
     private static void HandleMurderRoomNotify(MurderInfo info)
     {
+        if (info.IsMeeting) return;
+
         foreach (var evilHacker in instances)
         {
             if(evilHacker.nowRole == Role.EvilHacker)
