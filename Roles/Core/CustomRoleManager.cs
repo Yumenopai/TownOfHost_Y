@@ -461,6 +461,7 @@ public enum CustomRoles
     EvilDyer,
     BestieWolf,
     EvilGuesser,
+    Janitor,
     //Madmate
     MadGuardian,
     Madmate,
@@ -519,7 +520,7 @@ public enum CustomRoles
     Rabbit,
     VentManager,
     Counselor,
-    NiceGuesser, 
+    NiceGuesser,
 
     Potentialist,
     //Neutral
