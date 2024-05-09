@@ -117,7 +117,8 @@ public sealed class Janitor : RoleBase, IImpostor
             var target = Utils.GetPlayerById(targetId);
             target.MyPhysics.RpcBootFromVent(GetNearestVent().Id);//[target]を付近のベントへ飛ばす。
             BackBody(target);
-            KillClean(target, true);
+            //KillClean(target, true);
+            KillClean2(target);
             JanitorChance = false;
         }
         CleanPlayer.Clear();
@@ -147,5 +148,12 @@ public sealed class Janitor : RoleBase, IImpostor
         Utils.NotifyRoles(ForceLoop: true);
         target.SetKillCooldown(Options.DefaultKillCooldown);
         target.RpcResetAbilityCooldown();
+    }
+    public void KillClean2(PlayerControl target)
+    {
+        target.RpcMurderPlayer(target);
+        var playerState = PlayerState.GetByPlayerId(target.PlayerId);
+        //playerState.DeathReason = CustomDeathReason.○○;死亡理由をここに、のちほど。
+        playerState.SetDead();
     }
 }
