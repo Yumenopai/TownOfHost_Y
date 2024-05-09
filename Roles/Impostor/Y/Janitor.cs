@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
 using AmongUs.GameOptions;
-
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using UnityEngine;
@@ -65,18 +65,19 @@ public sealed class Janitor : RoleBase, IImpostor
                 target.Data.IsDead = true;
                 AntiBlackout.SendGameData();
                 Utils.NotifyRoles(ForceLoop: true);
+
                 if (!CleanPlayer.ContainsKey(target.PlayerId))
                 {
                     CleanPlayer.Add(target.PlayerId, null);
                 }
-
                 _ = new LateTask(() =>
                 {
                     target.Data.IsDead = false;
                     AntiBlackout.SendGameData();
                     target.SetKillCooldown(2.5f);
                     target.RpcResetAbilityCooldown();
-                }, 5, "ReturnBody");
+                    BackBody(target);
+                }, 5, "");
             }
         }
     }
@@ -110,41 +111,41 @@ public sealed class Janitor : RoleBase, IImpostor
     }
     public override void OnReportDeadBody(PlayerControl _, GameData.PlayerInfo __)
     {
-        ReturnBody = true;
+        //ReturnBody = true;
         foreach (var targetId in CleanPlayer.Keys)
         {
             var target = Utils.GetPlayerById(targetId);
-            if (ReturnBody)//元の姿に戻す処理。
-            {
-                Utils.NotifyRoles(ForceLoop: true);
-                target.SetKillCooldown(Options.DefaultKillCooldown);
-                target.RpcResetAbilityCooldown();
-            }
+            target.MyPhysics.RpcBootFromVent(GetNearestVent().Id);//[target]を付近のベントへ飛ばす。
+            BackBody(target);
             KillClean(target, true);
-            BackBody();
             JanitorChance = false;
         }
         CleanPlayer.Clear();
     }
+    Vent GetNearestVent()
+    {
+        var vents = ShipStatus.Instance.AllVents.OrderBy(v => (Player.transform.position - v.transform.position).magnitude);
+        return vents.First();
+
+    }
     private void KillClean(PlayerControl target, bool isButton = false)
     {
-        var Janitor = Player;
-        target.SetRealKiller(Janitor);
+        var Impostor = Player;
+        target.SetRealKiller(Impostor);
         CustomRoleManager.OnCheckMurder(
-            Janitor, target,
+            Impostor, target,
             target, target
         );
         Logger.Info($"Janitorに消されている{target.name}をキルしました。", "Janitor.KillClean");
-        if (!isButton && Janitor.IsAlive())
+        if (!isButton && Impostor.IsAlive())
         {
-            RPC.PlaySoundRPC(Janitor.PlayerId, Sounds.KillSound);
+            RPC.PlaySoundRPC(Impostor.PlayerId, Sounds.KillSound);
         }
     }
-    public void BackBody()
+    public void BackBody(PlayerControl target)
     {
         Utils.NotifyRoles(ForceLoop: true);
-        Player.SetKillCooldown(Options.DefaultKillCooldown);
-        Player.RpcResetAbilityCooldown();
+        target.SetKillCooldown(Options.DefaultKillCooldown);
+        target.RpcResetAbilityCooldown();
     }
-
 }
