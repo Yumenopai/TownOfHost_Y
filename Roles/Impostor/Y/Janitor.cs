@@ -5,8 +5,9 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using UnityEngine;
 
+using static TownOfHostY.Utils;
 namespace TownOfHostY.Roles.Impostor;
-public sealed class Janitor : RoleBase, IImpostor, IKillFlashSeeable
+public sealed class Janitor : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -63,6 +64,7 @@ public sealed class Janitor : RoleBase, IImpostor, IKillFlashSeeable
                 target.Data.IsDead = true;
                 AntiBlackout.SendGameData();
                 Utils.NotifyRoles(ForceLoop: true);
+                JanitorChance = false;
 
                 if (!CleanPlayer.ContainsKey(target.PlayerId))
                 {
@@ -83,6 +85,7 @@ public sealed class Janitor : RoleBase, IImpostor, IKillFlashSeeable
     {
         (var killer, var target) = info.AttemptTuple;
 
+        JanitorChance = true;
         if (!killer.Is(CustomRoles.Impostor)) return false;
         if (killer.GetCustomRole().IsDirectKillRole()) return false;//直接キルする役職のチェック
         foreach (var player in Main.AllAlivePlayerControls)
@@ -92,20 +95,17 @@ public sealed class Janitor : RoleBase, IImpostor, IKillFlashSeeable
             {
                 if (player.Is(CustomRoles.Janitor))
                 {
-
                     killer.RpcProtectedMurderPlayer(target); //killer側のみ。斬られた側は見れない。
+                    player.RpcProtectedMurderPlayer(target); //Janitor側にも見えるかも？
                     info.CanKill = false;
                     JanitorTarget = target.PlayerId;
-                    JanitorChance = true;
+                    var Target = target.PlayerId;
+
                     break; // Janitorが見つかったらループを終了
                 }
             }
         }
         return true;
-    }
-    public override void AfterMeetingTasks()
-    {
-        JanitorChance = false;
     }
     public override void OnReportDeadBody(PlayerControl _, GameData.PlayerInfo __)
     {
@@ -113,9 +113,9 @@ public sealed class Janitor : RoleBase, IImpostor, IKillFlashSeeable
         {
             var target = Utils.GetPlayerById(targetId);
             target.MyPhysics.RpcBootFromVent(GetNearestVent().Id);//[target]を付近のベントへ飛ばす。
+            JanitorChance = false;
             BackBody(target);
             KillClean(target);
-            JanitorChance = false;
         }
         CleanPlayer.Clear();
     }
