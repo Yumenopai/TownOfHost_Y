@@ -6,7 +6,7 @@ using TownOfHostY.Roles.Core.Interfaces;
 using UnityEngine;
 
 namespace TownOfHostY.Roles.Impostor;
-public sealed class Janitor : RoleBase, IImpostor
+public sealed class Janitor : RoleBase, IImpostor, IKillFlashSeeable
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -29,7 +29,6 @@ public sealed class Janitor : RoleBase, IImpostor
         LookJanitor = OptionLookJanitor.GetFloat();
         JanitorTarget = byte.MaxValue;
         JanitorChance = false;
-        ReturnBody = false;
         CleanPlayer.Clear();
     }
     private static OptionItem OptionCleanCooldown;
@@ -43,7 +42,6 @@ public sealed class Janitor : RoleBase, IImpostor
     private static float LookJanitor;
     public static byte JanitorTarget;
     private static bool JanitorChance;
-    private static bool ReturnBody;
     Dictionary<byte, object> CleanPlayer = new(14);
     private static void SetUpOptionItem()
     {
@@ -61,7 +59,7 @@ public sealed class Janitor : RoleBase, IImpostor
         {
             if (JanitorTarget == target.PlayerId)
             {
-                target.RpcSetPet("");// 変身先のプレイヤーのペットを非表示にする
+                target.RpcSetPet("");
                 target.Data.IsDead = true;
                 AntiBlackout.SendGameData();
                 Utils.NotifyRoles(ForceLoop: true);
@@ -70,7 +68,7 @@ public sealed class Janitor : RoleBase, IImpostor
                 {
                     CleanPlayer.Add(target.PlayerId, null);
                 }
-                _ = new LateTask(() =>
+                _ = new LateTask(() =>//幽霊から元に戻す処理。
                 {
                     target.Data.IsDead = false;
                     AntiBlackout.SendGameData();
@@ -111,14 +109,12 @@ public sealed class Janitor : RoleBase, IImpostor
     }
     public override void OnReportDeadBody(PlayerControl _, GameData.PlayerInfo __)
     {
-        //ReturnBody = true;
         foreach (var targetId in CleanPlayer.Keys)
         {
             var target = Utils.GetPlayerById(targetId);
             target.MyPhysics.RpcBootFromVent(GetNearestVent().Id);//[target]を付近のベントへ飛ばす。
             BackBody(target);
-            //KillClean(target, true);
-            KillClean2(target);
+            KillClean(target);
             JanitorChance = false;
         }
         CleanPlayer.Clear();
@@ -129,27 +125,13 @@ public sealed class Janitor : RoleBase, IImpostor
         return vents.First();
 
     }
-    private void KillClean(PlayerControl target, bool isButton = false)
-    {
-        var Impostor = Player;
-        target.SetRealKiller(Impostor);
-        CustomRoleManager.OnCheckMurder(
-            Impostor, target,
-            target, target
-        );
-        Logger.Info($"Janitorに消されている{target.name}をキルしました。", "Janitor.KillClean");
-        if (!isButton && Impostor.IsAlive())
-        {
-            RPC.PlaySoundRPC(Impostor.PlayerId, Sounds.KillSound);
-        }
-    }
     public void BackBody(PlayerControl target)
     {
         Utils.NotifyRoles(ForceLoop: true);
         target.SetKillCooldown(Options.DefaultKillCooldown);
         target.RpcResetAbilityCooldown();
     }
-    public void KillClean2(PlayerControl target)
+    public void KillClean(PlayerControl target)//完全に実態化して全員から見えるようにする処理。
     {
         target.RpcMurderPlayer(target);
         var playerState = PlayerState.GetByPlayerId(target.PlayerId);
