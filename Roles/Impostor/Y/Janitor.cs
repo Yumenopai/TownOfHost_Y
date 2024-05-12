@@ -28,19 +28,23 @@ public sealed class Janitor : RoleBase, IImpostor
     {
         CleanCooldown = OptionCleanCooldown.GetFloat();
         LookJanitor = OptionLookJanitor.GetFloat();
+        LastImpostorCanKill = OptionLastImpostorCanKill.GetBool();
         JanitorTarget = byte.MaxValue;
         JanitorChance = false;
         CleanPlayer.Clear();
     }
     private static OptionItem OptionCleanCooldown;
     private static OptionItem OptionLookJanitor;
+    public static OptionItem OptionLastImpostorCanKill;
     enum OptionName
     {
         JanitorCleanCooldown,
         LookJanitor,
+        LastImpostorCanKill,
     }
     private static float CleanCooldown;
     private static float LookJanitor;
+    public static bool LastImpostorCanKill;
     public static byte JanitorTarget;
     private static bool JanitorChance;
     Dictionary<byte, object> CleanPlayer = new(14);
@@ -50,16 +54,17 @@ public sealed class Janitor : RoleBase, IImpostor
             .SetValueFormat(OptionFormat.Seconds);//掃除のクールダウン
         OptionLookJanitor = FloatOptionItem.Create(RoleInfo, 11, OptionName.LookJanitor, new(1.0f, 5f, 0.5f), 2f, false)
         .SetValueFormat(OptionFormat.Multiplier);//Janitorの距離
+        OptionLastImpostorCanKill = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LastImpostorCanKill, false, false);
     }
     public float CalculateKillCooldown() => CleanCooldown;
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         (var killer, var target) = info.AttemptTuple;
 
+        info.DoKill = false;
         if (JanitorChance && JanitorTarget == target.PlayerId)
         {
-            // キルをキャンセルし、Janitor の処理を実行
-            info.DoKill = false;
+            // Janitor の処理を実行
             target.RpcSetPet("");
             target.Data.IsDead = true;
             AntiBlackout.SendGameData();
@@ -82,6 +87,14 @@ public sealed class Janitor : RoleBase, IImpostor
                 target.RpcResetAbilityCooldown();
                 BackBody(target);
             }, 5, "Return Body");
+        }
+        else
+        {
+            if (Player.IsAlive() && Main.AliveImpostorCount == 1 && LastImpostorCanKill)
+            {
+                info.DoKill = true;
+                killer.SetKillCooldown();
+            }
         }
     }
     public static bool GuardPlayerCheckMurder(MurderInfo info)
