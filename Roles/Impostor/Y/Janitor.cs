@@ -51,34 +51,37 @@ public sealed class Janitor : RoleBase, IImpostor
         OptionLookJanitor = FloatOptionItem.Create(RoleInfo, 11, OptionName.LookJanitor, new(1.0f, 5f, 0.5f), 2f, false)
         .SetValueFormat(OptionFormat.Multiplier);//Janitorの距離
     }
-    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.ShapeshifterCooldown = CleanCooldown;
+    public float CalculateKillCooldown() => CleanCooldown;
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         (var killer, var target) = info.AttemptTuple;
-        info.DoKill = false;
-        if (JanitorChance)
-        {
-            if (JanitorTarget == target.PlayerId)
-            {
-                target.RpcSetPet("");
-                target.Data.IsDead = true;
-                AntiBlackout.SendGameData();
-                Utils.NotifyRoles(ForceLoop: true);
-                JanitorChance = false;
 
-                if (!CleanPlayer.ContainsKey(target.PlayerId))
-                {
-                    CleanPlayer.Add(target.PlayerId, null);
-                }
-                _ = new LateTask(() =>//幽霊から元に戻す処理。
-                {
-                    target.Data.IsDead = false;
-                    AntiBlackout.SendGameData();
-                    target.SetKillCooldown(2.5f);
-                    target.RpcResetAbilityCooldown();
-                    BackBody(target);
-                }, 5, "");
+        if (JanitorChance && JanitorTarget == target.PlayerId)
+        {
+            // キルをキャンセルし、Janitor の処理を実行
+            info.DoKill = false;
+            target.RpcSetPet("");
+            target.Data.IsDead = true;
+            AntiBlackout.SendGameData();
+            Utils.NotifyRoles(ForceLoop: true);
+            JanitorChance = false;
+            killer.SetKillCooldown();
+
+            // CleanPlayer にターゲットが含まれていない場合は追加
+            if (!CleanPlayer.ContainsKey(target.PlayerId))
+            {
+                CleanPlayer.Add(target.PlayerId, null);
             }
+
+            // 遅延タスクでターゲットを元に戻す処理を実行
+            new LateTask(() =>
+            {
+                target.Data.IsDead = false;
+                AntiBlackout.SendGameData();
+                target.SetKillCooldown(2.5f);
+                target.RpcResetAbilityCooldown();
+                BackBody(target);
+            }, 5, "Return Body");
         }
     }
     public static bool GuardPlayerCheckMurder(MurderInfo info)
@@ -86,25 +89,24 @@ public sealed class Janitor : RoleBase, IImpostor
         (var killer, var target) = info.AttemptTuple;
 
         JanitorChance = true;
-        if (!killer.Is(CustomRoles.Impostor)) return false;
-        if (killer.GetCustomRole().IsDirectKillRole()) return false;//直接キルする役職のチェック
+        if (!killer.Is(CustomRoles.Impostor) || killer.GetCustomRole().IsDirectKillRole())
+        {// Impostor でない場合や、直接キルする役職である場合は処理を行わない
+            return false;
+        }
+
         foreach (var player in Main.AllAlivePlayerControls)
         {
             var distance = Vector2.Distance(killer.transform.position, player.transform.position);
-            if (distance <= LookJanitor)
+            if (distance <= LookJanitor && player.Is(CustomRoles.Janitor))
             {
-                if (player.Is(CustomRoles.Janitor))
-                {
-                    killer.RpcProtectedMurderPlayer(target); //killer側のみ。斬られた側は見れない。
-                    player.RpcProtectedMurderPlayer(target); //Janitor側にも見えるかも？
-                    info.CanKill = false;
-                    JanitorTarget = target.PlayerId;
-                    var Target = target.PlayerId;
-
-                    break; // Janitorが見つかったらループを終了
-                }
+                killer.RpcProtectedMurderPlayer(target); //killer側のみ。斬られた側は見れない。
+                player.RpcProtectedMurderPlayer(target); //Janitor側にも見えるかも？
+                info.CanKill = false;
+                JanitorTarget = target.PlayerId;
+                break; // Janitorが見つかったらループを終了
             }
         }
+        killer.SetKillCooldown();
         return true;
     }
     public override void OnReportDeadBody(PlayerControl _, GameData.PlayerInfo __)
@@ -128,14 +130,13 @@ public sealed class Janitor : RoleBase, IImpostor
     public void BackBody(PlayerControl target)
     {
         Utils.NotifyRoles(ForceLoop: true);
-        target.SetKillCooldown(Options.DefaultKillCooldown);
         target.RpcResetAbilityCooldown();
     }
     public void KillClean(PlayerControl target)//完全に実態化して全員から見えるようにする処理。
     {
         target.RpcMurderPlayer(target);
         var playerState = PlayerState.GetByPlayerId(target.PlayerId);
-        //playerState.DeathReason = CustomDeathReason.○○;死亡理由をここに、のちほど。
+        PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Clean;
         playerState.SetDead();
     }
 }

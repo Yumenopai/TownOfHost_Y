@@ -1041,6 +1041,8 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "DeathReason.Revenge","Revenge","道連れ","复仇","復仇","Месть",""
 "DeathReason.Win","hit","的中","猜着",
 "DeathReason.Poisoning","Poisoning","毒死","毒死",
+"DeathReason.Clean","Clean","掃除","","打扫","почистване","limpeza"
+
 "DeathReason.etc","Other","その他","其他","其他","Другое","Outros"
 
 
