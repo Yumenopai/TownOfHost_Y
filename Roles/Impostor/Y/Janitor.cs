@@ -50,9 +50,9 @@ public sealed class Janitor : RoleBase, IImpostor
     Dictionary<byte, object> CleanPlayer = new(14);
     private static void SetUpOptionItem()
     {
-        OptionCleanCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.JanitorCleanCooldown, new(5.0f, 900f, 2.5f), 10f, false)
+        OptionCleanCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.JanitorCleanCooldown, new(5.0f, 900f, 2.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);//掃除のクールダウン
-        OptionLookJanitor = FloatOptionItem.Create(RoleInfo, 11, OptionName.LookJanitor, new(1.0f, 5f, 0.5f), 2f, false)
+        OptionLookJanitor = FloatOptionItem.Create(RoleInfo, 11, OptionName.LookJanitor, new(1.0f, 20f, 0.5f), 10f, false)
         .SetValueFormat(OptionFormat.Multiplier);//Janitorの距離
         OptionLastImpostorCanKill = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LastImpostorCanKill, false, false);
     }
@@ -151,5 +151,13 @@ public sealed class Janitor : RoleBase, IImpostor
         var playerState = PlayerState.GetByPlayerId(target.PlayerId);
         PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Clean;
         playerState.SetDead();
+    }
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        if (Player.IsAlive() && Main.AliveImpostorCount == 1 && !LastImpostorCanKill)
+        {
+            MyState.DeathReason = CustomDeathReason.FollowingSuicide;//死因：後追い
+            Player.RpcMurderPlayer(Player);//自殺させる
+        }
     }
 }

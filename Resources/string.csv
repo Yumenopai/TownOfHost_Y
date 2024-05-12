@@ -51,6 +51,7 @@
 "EvilDyer","Evil Dyer","イビル真っ赤",
 "BestieWolf","Bestie Wolf","ベスティーウルフ",
 "EvilGuesser","Evil Guesser","イビルゲッサー","","","",""
+"Janitor","Janitor","ジャニター","","","",""
 
 "CustomImpostorInfo","I can now use abilities like that","あんな能力も使えるようになりました",
 "EvilWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
@@ -89,6 +90,7 @@
 "BestieWolfInfo","I'll be in support","うちはサポートにまわります",
 "AfterBestieWolfInfo","I lost my friends, why..?","仲間おらんなった、、なんで、、",
 "EvilGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
+"JanitorInfo","Cover up the evidence","証拠を隠蔽しろ","","","",""
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
 "EvilWatcherInfoLong","(Impostors):\nYou can see everyone's votes even if anonymous voting is on.","(インポスター陣営):\n全員の投票先を見ることができる。","(内鬼阵营):\n会议时窥视者可以看到所有人的投票。","(狼人陣營):\n會議時觀察者可以看到所有人的投票。","(Предатель):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Impostores):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -124,6 +126,7 @@
 "EvilDyerInfoLong","(Impostors):\nWhen he kills someone, everyone turns red for a certain period of time.","[インポスター陣営]\n自身が誰かキルすると全員が一定時間、赤色の姿になる。",
 "BestieWolfInfoLong","(Impostors):\nHe is supportive of his partner because of his love for his companions, but when he becomes a lone Impostor, he becomes lonely and goes berserk.\n\nWhen multiple Impostors are alive, the buff Add-On is given to the partner Impostor depending on the number of kills.\nIf you are the sole Impostor and there is someone else within view of the kill target at the time of the kill, you will kill that person at the same time. Additional kills are limited to one person per kill, and when simultaneous kills occur, a kill flash is visible from all viewpoints.","[インポスター陣営]\n仲間想いなため相方へのサポートをするが、単独な狼になった時には孤独が寂しくなり暴走する。\n\n複数インポスターが生存時、キル回数によって相方インポスターにバフ属性を付与する。\n自身が単独インポスターになった場合、キルする時にそのキル対象の見える範囲内に誰かいた場合、その人まで同時にキルする。追加キルは1キル1人までで、同時キルが起こった時は全視点でキルフラッシュが見える。"
 "EvilGuesserInfoLong","(Impostors):\nImpostor guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(インポスター陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
+"JanitorInfoLong","(Impostors):\nA con artist who can make dead bodies disappear.\nWhen the janitors are nearby,\nWhen a fellow imposter makes a kill,\nPrevent KILL once.\n→(Shield sounds for janitors)\nToward the PLAYER that the fellow tried to KILL,\nJanitor presses the kill button,\nThe target is erased.\n\nWhen the last one is left, the kill ability is released.\nIt can also be set to suicide.\n","(インポスター陣営):\n死体を作らず証拠隠滅できるインポスター。\nジャニターが近くにいる時に、\n仲間のインポスターがキルを行うと\n一旦killを防ぎます。\n※(ジャニターにはシールドの音がなります)\n仲間がキルしようとしたplayerに向かって、\nジャニターがキルボタンを押すと、\n対象者は消されます。\n\nラスト1人になるとキル能力が解放される。\nキル可能の設定がオフの場合後追い自殺をする。\n","","","",""
 
 #イビルハッカ
 "EvilHacker","Evil Replicator","イビルハッカー...?",
@@ -827,6 +830,9 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "BestieWolfBuffAddonAssignTarget3","Buff Add-On To Be Granted ③","付与するバフ属性③",
 "BestieWolfBuffAddonAssignTarget4","Buff Add-On To Be Granted ④","付与するバフ属性④",
 "BestieWolfBuffAddonAssignTarget5","Buff Add-On To Be Granted ⑤","付与するバフ属性⑤",
+"JanitorCleanCooldown","Janitor Cooldown","掃除のクールダウン",,,,
+"LookJanitor","Janitor Distance","ジャニター能力が発動する仲間との距離",,,,
+"LastImpostorCanKill","Can Kill LastImpostor","ラストインポスターでキルが可能になる",,,,
 
 # マッドメイト
 "CanMakeMadmateCount","Sidekick Madmate Max Count","サイドキックマッドメイト","变形者可以招募叛徒的数量","變形者招募叛徒最大人數","Максимум союзников Безумца","Máximo de Tripulantes Loucos Ajudantes"
