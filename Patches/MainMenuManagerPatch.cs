@@ -41,7 +41,7 @@ namespace TownOfHostY
                     new(29, 160, 241, byte.MaxValue),
                     new(169, 215, 242, byte.MaxValue),
                     () => Application.OpenURL("https://twitter.com/yumeno_AmongUs"),
-                    "Twitter",
+                    "Twitter/X",
                     new(1.85f, 0.5f));
             }
             // WIKIWIKIボタンを生成

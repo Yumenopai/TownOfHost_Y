@@ -369,21 +369,35 @@ namespace TownOfHostY
         {
             return $"{player?.Data?.PlayerName}" + (GameStates.IsInGame ? $"({player?.GetAllRoleName()})" : "");
         }
-        public static string GetRoleColorCode(this PlayerControl player)
+        public static string GetRoleColorCode(this PlayerControl player, bool temporaryRole = false)
         {
+            var role = player.GetCustomRole();
+            if (temporaryRole)
+            {
+                if (player.Is(CustomRoles.ChainShifterAddon))
+                    return Utils.GetRoleColorCode(CustomRoles.ChainShifter);
+            }
+
             (Color c, string t) = (Color.clear, "");
             //trueRoleNameでColor上書きあればそれになる
             player.GetRoleClass()?.OverrideTrueRoleName(ref c, ref t);
             if (c != Color.clear) return ColorUtility.ToHtmlStringRGB(c);
-            else return Utils.GetRoleColorCode(player.GetCustomRole());
+            else return Utils.GetRoleColorCode(role);
         }
-        public static Color GetRoleColor(this PlayerControl player)
+        public static Color GetRoleColor(this PlayerControl player, bool temporaryRole = false)
         {
+            var role = player.GetCustomRole();
+            if (temporaryRole)
+            {
+                if (player.Is(CustomRoles.ChainShifterAddon))
+                    return Utils.GetRoleColor(CustomRoles.ChainShifter);
+            }
+
             (Color c, string t) = (Color.clear, "");
             //trueRoleNameでColor上書きあればそれになる
             player.GetRoleClass()?.OverrideTrueRoleName(ref c, ref t);
             if (c != Color.clear) return c;
-            else return Utils.GetRoleColor(player.GetCustomRole());
+            else return Utils.GetRoleColor(role);
         }
         public static void ResetPlayerCam(this PlayerControl pc, float delay = 0f)
         {
@@ -581,11 +595,6 @@ namespace TownOfHostY
             if (seen.IsAlive())
             {
                 return false;
-            }
-            if (EvilHacker.IsExistEvilFaller() &&
-                PlayerState.GetByPlayerId(seen.PlayerId).DeathReason == CustomDeathReason.Fall)
-            {
-                return true;
             }
             if (EvilIgnition.CanBombTarget() &&
                 PlayerState.GetByPlayerId(seen.PlayerId).DeathReason == CustomDeathReason.Bombed)

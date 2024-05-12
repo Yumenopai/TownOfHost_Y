@@ -6,6 +6,8 @@ using UnityEngine;
 
 using static TownOfHostY.Translator;
 using HarmonyLib;
+using TownOfHostY.Roles.Neutral;
+
 namespace TownOfHostY.Roles.Core.Class;
 
 public abstract class VoteGuesser : RoleBase
@@ -28,6 +30,7 @@ public abstract class VoteGuesser : RoleBase
         guesserInfo = null;
 
         selecting = false;
+        voted = false;
         guessed = false;
         targetGuess = null;
         targetForRole = null;
@@ -36,11 +39,13 @@ public abstract class VoteGuesser : RoleBase
     protected int NumOfGuess = 1;
     protected bool MultipleInMeeting = false;
     protected bool HideMisfire = false;
+    protected bool GuessAfterVote = false;
 
     private GuesserInfo guesserInfo;
 
     private bool selecting = false;
     private bool guessed = false;
+    private bool voted = false;
     private PlayerControl targetGuess = null;
     private PlayerControl targetForRole = null;
 
@@ -93,7 +98,7 @@ public abstract class VoteGuesser : RoleBase
                     targetGuess = null;
                     targetForRole = null;
                     Utils.SendMessage(GetString("Message.GuesserSelectionSelfSelect"), Player.PlayerId);
-                    return true;
+                    return DoVote();
                 }
                 targetGuess = votedFor;
                 guesserInfo.ResetList();
@@ -156,7 +161,7 @@ public abstract class VoteGuesser : RoleBase
 
             return false;
         }
-        if (votedFor == null) return true;
+        if (votedFor == null) return DoVote();
         if (Player.PlayerId == votedFor.PlayerId && NumOfGuess > 0)
         {
             Logger.Info($"GuesserSelectStart guesser: {Player?.name}", "Guesser.CheckVoteAsVoter");
@@ -168,7 +173,17 @@ public abstract class VoteGuesser : RoleBase
             return false;
         }
 
-        return true;
+        return DoVote();
+    }
+    private bool DoVote()
+    {
+        if (!GuessAfterVote) return true;
+
+        var vote = !voted;
+        voted = true;
+        _ = new LateTask(() => MeetingHud.Instance.RpcClearVote(Player.GetClientId()), 0.5f, "GuesserClearVote");
+
+        return vote;
     }
     private void UseGuesserAbility(CustomRoles role)
     {
@@ -229,6 +244,7 @@ public abstract class VoteGuesser : RoleBase
     {
         selecting = false;
         guessed = false;
+        voted = false;
         targetGuess = null;
         targetForRole = null;
 
@@ -243,19 +259,7 @@ public abstract class VoteGuesser : RoleBase
         if (NumOfGuess <= 0) return "";
 
         if (guesserInfo == null) guesserInfo = new();
-
-        var mark = "";
-        var suffix = "";
-        if (seer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-        {
-            if (guesserInfo.PlayerNumbers.TryGetValue(seer.PlayerId, out int number))
-            {
-                mark = $"<color=#ff8000><size=110%>{number}</size></color>";
-            }
-            suffix = GetProgressText();
-        }
-
-        return $"{mark} <color=#ff8000><size=1.5>{GetString("Message.SelfVoteSuffix")}</size></color> {suffix}";
+        return $"<color=#ff8000>{GetString("Message.SelfVoteSuffix")}</color>";
     }
     public void RpcGuesserMurderPlayer(PlayerControl target, CustomDeathReason reason)
     {
@@ -314,10 +318,17 @@ public abstract class VoteGuesser : RoleBase
         private void SetRoleList()
         {
             roleList = new();
+            var inChainShifter = false;
             foreach (CustomRoles role in CustomRolesHelper.AllStandardRoles.Where(r => r.IsEnable()))
             {
                 if (role is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse) continue;
                 roleList.Add(role);
+                if (role == CustomRoles.ChainShifter) inChainShifter = true;
+            }
+            if (inChainShifter)
+            {
+                var role = ChainShifter.ShiftedRole;
+                if (!roleList.Contains(role)) roleList.Add(role);
             }
         }
         private void SetDispList()

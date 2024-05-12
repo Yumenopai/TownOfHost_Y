@@ -131,6 +131,16 @@ namespace TownOfHostY
                     }
                     //弁護士且つ追跡者
                     Lawyer.EndGameCheck();
+
+                    //確定敗北陣営
+                    foreach (var pc in Main.AllPlayerControls)
+                    {
+                        if (pc.Is(CustomRoles.ChainShifterAddon))
+                        {
+                            if (CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId))
+                                CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+                        }
+                    }
                 }
                 ShipStatus.Instance.enabled = false;
                 StartEndGame(reason);

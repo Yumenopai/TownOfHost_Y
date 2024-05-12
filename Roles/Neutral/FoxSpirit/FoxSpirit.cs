@@ -19,6 +19,7 @@ public sealed class FoxSpirit : RoleBase, ISystemTypeUpdateHook
             SetupOptionItem,
             "妖狐",
             "#ad6ce0",
+            countType: CountTypes.None,
             introSound: () => GetIntroSound(RoleTypes.Shapeshifter),
             assignInfo: new(CustomRoles.FoxSpirit, CustomRoleTypes.Neutral)
             {

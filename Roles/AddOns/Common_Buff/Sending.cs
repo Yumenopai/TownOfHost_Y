@@ -41,9 +41,9 @@ public static class Sending
     {
         ExiledPlayer = null;
     }
-    public static string RealNameChange(string Name)
+    public static string RealNameChange()
     {
-        if (ExiledPlayer == null) return Name;
+        if (ExiledPlayer == null) return string.Empty;
 
         var ExiledPlayerName = ExiledPlayer.Data.PlayerName;
         if (ExiledPlayer.Is(CustomRoleTypes.Impostor))

@@ -7,7 +7,7 @@ using TownOfHostY.Roles.Core.Interfaces;
 
 namespace TownOfHostY.Roles.Madmate;
 
-public sealed class MadGuesser : VoteGuesser, IKillFlashSeeable, IDeathReasonSeeable
+public sealed class MadGuesser : VoteGuesser
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -16,8 +16,7 @@ public sealed class MadGuesser : VoteGuesser, IKillFlashSeeable, IDeathReasonSee
             CustomRoles.MadGuesser,
             () => OptionCanVent.GetBool() ? RoleTypes.Engineer : RoleTypes.Crewmate,
             CustomRoleTypes.Madmate,
-            //(int)Options.offsetId.MadY + 700,
-            (int)Options.offsetId.MadSpecial + 0,
+            (int)Options.offsetId.MadY + 700,
             SetupOptionItem,
             "マッドゲッサー",
             introSound: () => GetIntroSound(RoleTypes.Impostor)
@@ -29,16 +28,13 @@ public sealed class MadGuesser : VoteGuesser, IKillFlashSeeable, IDeathReasonSee
         //() => HasTask.ForRecompute
         )
     {
-        //CanSeeKillFlash = Options.MadmateCanSeeKillFlash.GetBool();
-        //CanSeeDeathReason = Options.MadmateCanSeeDeathReason.GetBool();
-
-        //CanVent = OptionCanVent.GetBool();
         //CanAlsoBeExposedToImpostor = OptionCanAlsoBeExposedToImpostor.GetBool();
         //TaskTrigger = OptionTaskTrigger.GetInt();
 
         NumOfGuess = OptionNumOfGuess.GetInt();
         MultipleInMeeting = OptionMultipleInMeeting.GetBool();
         HideMisfire = OptionHideMisfire.GetBool();
+        GuessAfterVote = OptionGuessAfterVote.GetBool();
 
         //CustomRoleManager.MarkOthers.Add(GetMarkOthers);
     }
@@ -48,6 +44,7 @@ public sealed class MadGuesser : VoteGuesser, IKillFlashSeeable, IDeathReasonSee
     private static OptionItem OptionNumOfGuess;
     private static OptionItem OptionMultipleInMeeting;
     private static OptionItem OptionHideMisfire;
+    private static OptionItem OptionGuessAfterVote;
     /// <summary>能力発動タスク数</summary>
     //private static OptionItem OptionTaskTrigger;
     //private static Options.OverrideTasksData Tasks;
@@ -59,10 +56,8 @@ public sealed class MadGuesser : VoteGuesser, IKillFlashSeeable, IDeathReasonSee
         GuesserNumOfGuess,
         GuesserMultipleInMeeting,
         GuesserHideMisfire,
+        GuesserGuessAfterVote,
     }
-    //private static bool CanSeeKillFlash;
-    //private static bool CanSeeDeathReason;
-    //private static bool CanVent;
     //private static bool CanAlsoBeExposedToImpostor;
     //private static int TaskTrigger;
 
@@ -74,6 +69,7 @@ public sealed class MadGuesser : VoteGuesser, IKillFlashSeeable, IDeathReasonSee
             .SetValueFormat(OptionFormat.Times);
         OptionMultipleInMeeting = BooleanOptionItem.Create(RoleInfo, 14, OptionName.GuesserMultipleInMeeting, false, false);
         OptionHideMisfire = BooleanOptionItem.Create(RoleInfo, 15, OptionName.GuesserHideMisfire, false, false);
+        OptionGuessAfterVote = BooleanOptionItem.Create(RoleInfo, 17, OptionName.GuesserGuessAfterVote, false, false);
         //OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 12, OptionName.MadSnitchTaskTrigger, new(0, 99, 1), 1, false).SetValueFormat(OptionFormat.Pieces);
         //Tasks = Options.OverrideTasksData.Create(RoleInfo, 20);
         Options.SetUpAddOnOptions(RoleInfo.ConfigId + 30, RoleInfo.RoleName, RoleInfo.Tab);
@@ -118,7 +114,4 @@ public sealed class MadGuesser : VoteGuesser, IKillFlashSeeable, IDeathReasonSee
 
     //    return Utils.ColorString(Utils.GetRoleColor(CustomRoles.MadGuesser), "★");
     //}
-
-    //public bool CheckKillFlash(MurderInfo info) => CanSeeKillFlash;
-    //public bool CheckSeeDeathReason(PlayerControl seen) => CanSeeDeathReason;
 }

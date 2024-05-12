@@ -242,9 +242,10 @@ public static class Options
     // その他
     public static OptionItem FixFirstKillCooldown;
     public static OptionItem DisableTaskWin;
-    public static OptionItem GhostCanSeeOtherRoles;
-    public static OptionItem GhostCanSeeOtherTasks;
-    public static OptionItem GhostCanSeeOtherVotes;
+    public static OptionItem GhostCantSeeOtherRoles;
+    public static OptionItem GhostCantSeeOtherTasks;
+    public static OptionItem GhostCantSeeOtherVotes;
+    public static OptionItem GhostCanSeeOtherTeams;
     public static OptionItem GhostCanSeeDeathReason;
     public static OptionItem GhostIgnoreTasks;
     public static OptionItem CommsCamouflage;
@@ -271,6 +272,9 @@ public static class Options
     public static OptionItem ApplyDenyNameList;
     public static OptionItem KickPlayerFriendCodeNotExist;
     public static OptionItem ApplyBanList;
+    public static OptionItem AntiCheat;
+    public static OptionItem CheaterAutoBan;
+    public static OptionItem CheatLobbyKill;
 
     // ModGameMode
     public static bool IsHASMode => CurrentGameMode == CustomGameMode.HideAndSeek;
@@ -290,8 +294,9 @@ public static class Options
     public static OptionItem RevengeImpostorByImpostor;
 
     public static OptionItem HostGhostIgnoreTasks;
-    public static OptionItem DisableForceProtect;
+    public static OptionItem ForceProtect;
     public static OptionItem ChangeIntro;
+    public static OptionItem DisplayTeamMark;
     public static OptionItem AddonShow;
     public static readonly string[] addonShowModes =
     {
@@ -661,13 +666,16 @@ public static class Options
 
         TextOptionItem.Create((int)offsetId.FeatGhost, "Head.Ghost", TabGroup.MainSettings).SetColor(Palette.LightBlue).SetGameMode(CustomGameMode.All);
         // 幽霊
-        GhostCanSeeOtherRoles = BooleanOptionItem.Create((int)offsetId.FeatGhost + 200, "GhostCanSeeOtherRoles", false, TabGroup.MainSettings, true)
+        GhostCantSeeOtherRoles = BooleanOptionItem.Create((int)offsetId.FeatGhost + 200, "GhostCantSeeOtherRoles", false, TabGroup.MainSettings, true)
             .SetColor(Palette.LightBlue)
             .SetGameMode(CustomGameMode.All);
-        GhostCanSeeOtherTasks = BooleanOptionItem.Create((int)offsetId.FeatGhost + 300, "GhostCanSeeOtherTasks", false, TabGroup.MainSettings, true)
+        GhostCantSeeOtherTasks = BooleanOptionItem.Create((int)offsetId.FeatGhost + 300, "GhostCantSeeOtherTasks", false, TabGroup.MainSettings, true)
             .SetColor(Palette.LightBlue)
             .SetGameMode(CustomGameMode.All);
-        GhostCanSeeOtherVotes = BooleanOptionItem.Create((int)offsetId.FeatGhost + 400, "GhostCanSeeOtherVotes", false, TabGroup.MainSettings, true)
+        GhostCantSeeOtherVotes = BooleanOptionItem.Create((int)offsetId.FeatGhost + 400, "GhostCantSeeOtherVotes", false, TabGroup.MainSettings, true)
+            .SetColor(Palette.LightBlue)
+            .SetGameMode(CustomGameMode.All);
+        GhostCanSeeOtherTeams = BooleanOptionItem.Create((int)offsetId.FeatGhost + 600, "GhostCanSeeOtherTeams", false, TabGroup.MainSettings, true)
             .SetColor(Palette.LightBlue)
             .SetGameMode(CustomGameMode.All);
         GhostCanSeeDeathReason = BooleanOptionItem.Create((int)offsetId.FeatGhost + 500, "GhostCanSeeDeathReason", false, TabGroup.MainSettings, true)
@@ -678,8 +686,13 @@ public static class Options
         KillFlashDuration = FloatOptionItem.Create((int)offsetId.FeatOther + 100, "KillFlashDuration", new(0.1f, 0.45f, 0.05f), 0.3f, TabGroup.MainSettings, true)
             .SetColor(Palette.ImpostorRed)
             .SetValueFormat(OptionFormat.Seconds);
-        // 強制守護天使表示の無効化
-        DisableForceProtect = BooleanOptionItem.Create((int)offsetId.FeatOther + 600, "DisableForceProtect", false, TabGroup.MainSettings, false)
+        // 強制守護天使表示
+        ForceProtect = BooleanOptionItem.Create((int)offsetId.FeatOther + 600, "ForceProtect", false, TabGroup.MainSettings, true)
+            .SetColor(Palette.CrewmateBlue);
+        // CO可否表示(id+499まで使用)
+        DisplayComingOut.SetupCustomOption((int)offsetId.FeatOther + 700);
+        // 陣営マーク表示
+        DisplayTeamMark = BooleanOptionItem.Create((int)offsetId.FeatOther + 1200, "DisplayTeamMark", false, TabGroup.MainSettings, true)
             .SetColor(Palette.CrewmateBlue);
         // 初手キルクール調整
         FixFirstKillCooldown = BooleanOptionItem.Create((int)offsetId.FeatOther + 200, "FixFirstKillCooldown", false, TabGroup.MainSettings, false)
@@ -739,6 +752,12 @@ public static class Options
             .SetGameMode(CustomGameMode.All);
         ApplyBanList = BooleanOptionItem.Create((int)offsetId.Participation + 300, "ApplyBanList", true, TabGroup.MainSettings, true)
             .SetGameMode(CustomGameMode.All);
+        AntiCheat = BooleanOptionItem.Create((int)offsetId.Participation + 400, "AntiCheat", false, TabGroup.MainSettings, true)
+            .SetGameMode(CustomGameMode.All);
+        CheaterAutoBan = BooleanOptionItem.Create((int)offsetId.Participation + 410, "CheaterAutoBan", false, TabGroup.MainSettings, true).SetParent(AntiCheat)
+            .SetGameMode(CustomGameMode.All);
+        CheatLobbyKill = BooleanOptionItem.Create((int)offsetId.Participation + 420, "CheatLobbyKill", false, TabGroup.MainSettings, true).SetParent(AntiCheat)
+            .SetGameMode(CustomGameMode.All);
 
         DebugModeManager.SetupCustomOption();
 
@@ -764,6 +783,9 @@ public static class Options
                         or "ApplyDenyNameList"
                         or "KickPlayerFriendCodeNotExist"
                         or "ApplyBanList"
+                        or "AntiCheat"
+                        or "CheaterAutoBan"
+                        or "CheatLobbyKill"
                         or "ChangeIntro"
                         or "AddonShowMode";
     }

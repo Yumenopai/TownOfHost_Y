@@ -51,6 +51,8 @@
 "EvilDyer","Evil Dyer","イビル真っ赤",
 "BestieWolf","Bestie Wolf","ベスティーウルフ",
 "EvilGuesser","Evil Guesser","イビルゲッサー","","","",""
+"SelfBomber","SelfBomber","自爆魔","","","",""
+"GrudgeCharger","Grudge Charger","グラージチャージャー",
 "Janitor","Janitor","ジャニター","","","",""
 
 "CustomImpostorInfo","I can now use abilities like that","あんな能力も使えるようになりました",
@@ -90,6 +92,8 @@
 "BestieWolfInfo","I'll be in support","うちはサポートにまわります",
 "AfterBestieWolfInfo","I lost my friends, why..?","仲間おらんなった、、なんで、、",
 "EvilGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
+"SelfBomberInfo","Self Bomb!","みんな死んじゃえ","","","",""
+"GrudgeChargerInfo","Resentment builds up and attacks","恨みが溜まり襲い掛かる",
 "JanitorInfo","Cover up the evidence","証拠を隠蔽しろ","","","",""
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
@@ -107,10 +111,10 @@
 "TimeThiefInfoLong","(Impostors):\nEvery kill reduces discussion and voting time in meeting.\nIf you are voted out or killed, the lost time returns to meetings.","(インポスター陣営):\nキルを行うと会議時間が減少する。\nタイムシーフが追放または殺害されると、失われた会議時間が返ってきます。","(内鬼阵营):\n蚀时者每击杀一个人，会议时间就将减少一定时间。\n如果蚀时者死亡，被偷取的时间的会议时间将返还。","(狼人陣營):\n時間小偷每次殺人將會減少會議時間\n如果時間小偷被丟出或被殺死,減少的會議時間將會回來","(Предатель):\nКаждое убийство Вора Времени сокращает время обсуждения и голосования на собраниях. \nВ зависимости от настроек потерянное время возвращается после того, как он будет убит или изгнан.","(Impostores):\nCada morte reduz tempo de votação e discussão.\nSe você for exilado ou morto, o tempo perdido retorna para as reuniões."
 "SniperInfoLong","(Impostors):\nYou can shoot players from afar.\nYour line of fire continues as a straight line in the direction of the spot where you shapeshift to where you unshift.\nYou cannot perform normal kills until you use up all of your ammo.","(インポスター陣営):\n遠くの敵を狙撃できるインポスター。\nシェイプシフトした地点から解除した地点の延長線上の敵を一人撃ち抜く。\n撃ちきるまで通常キル出来ない。","(内鬼阵营):\n狙击手拥有远距离射杀的能力。\n方法为：变形的位置及解除变形位置的连线及其延长线上的一名玩家将被射杀。\n在狙击手的子弹耗尽前，狙击手无法进行常规击杀。","(狼人陣營):\n狙擊手\狙擊手可以進行遠程殺人\n他的子彈將從變形處延伸到取消變形處並往直線前進並殺死在這條線上非狼人陣營的人。\n在狙擊手用光子彈前,狙擊手無法正常殺人。","(Предатель):\nСнайпер может стрелять в игроков на расстоянии. \nОн убивает игрока который, находится с ним на одной линии, от точки Морфа до точки возвращения в свой облик. \nОн может совершать обычные убийства после того, как все его патроны закончатся.","(Impostor):\nVocê pode atirar em jogadores de longe.\nSua linha de fogo continua numa linha reta, do ponto que você se metamorfa ao ponto que você volta ao normal.\nVocê não pode fazer mortes normais até usar toda a sua munição."
 "EvilTrackerInfoLong","(Impostors):\nYou can see where others are.\nYou will see arrows pointing to the other impostors and anyone you shapeshift into.\nYou will see a ""kill flash"" when your fellow impostors kill.","(インポスター陣営):\n他人の位置が分かるインポスター。\n味方のインポスターとシェイプシフトで選んだ一人の位置が矢印で表示される。\n味方インポスターのキルによるキルフラッシュも見える。","(内鬼阵营):\n邪恶追踪者可以追踪其他内鬼以及其所变形的玩家。\n玩家名称下面的箭头代表着目标的方向。\n当内鬼队友杀人时，邪恶追踪者将会看到击杀闪烁提示。","(狼人陣營):\n邪惡的追蹤者:\他有一個箭頭指向他的隊友以及他變形的玩家,\n當他的隊友殺人時將出現閃光顯示。","(Предатель):\nЗлой Следопыт может отслеживать других игроков. \nОн может видеть стрелки, которые указывают на Предателей или на того, в кого он превратился. \nОн может видеть когда было совершено убийство с помощью вспышки убийства.","(Impostores):\nVocê consegue ver a posição de outros.\nÉ possível ver setas apontando para outros Impostores e qualquer um em que você se transforme.\nVocê também verá uma piscada de tela quando um aliado Impostor matar alguém."
-"StealthInfoLong","When the Stealth kills, players in the same room are blinded for a short while.","キルを行うと、同じ部屋にいる他のプレイヤーの視界が少しの間暗転する。","当暗杀者完成击杀后，与暗杀者处于同一房间内的玩家会短暂失明。","","Когда Хитрец убивает, игроки в одной локации будут ненадолго ослеплены","Quando o Furtivo mata, os jogadores na mesma sala ficam cegos por um curto período."
-"NekoKabochaInfoLong","The Neko-Kabocha kills back their killer.","キルされた際、自分を殺してきたプレイヤーを殺し返す。","当猫又被击杀时，猫又也会击杀凶手。","","Неко-Кабоча убивает своего убийцу","O Neko-Kabocha mata de volta o seu assassino."
-"PenguinInfoLong","Penguins can restrain target by pressing the kill button, and drag around.\While dragging, the target dies by pressing the kill button again or after a certain period of time.\nPress the kill button twice for a direct kill.","キルボタン一回で相手を拘束して連れまわすことが出来る。\nもう一度キルボタンを押すか一定時間経過でキルする。\nキルボタン2回で直接キル可能。","企鹅使用击杀键可以拖拽目标。\n等到倒计时结束或再次按下击杀键则可以正常击杀目标。","","Пингвины могут удерживать цель, нажимая кнопку убийства, и перетаскивать ее.\Во время перетаскивания цель умирает, нажав кнопку убийства еще раз или через определенный промежуток времени.\nНажмите кнопку убийства дважды, чтобы убить напрямую.","Os Pinguins podem prender o alvo pressionando o botão de matar e arrastá-lo.\nEnquanto estiver arrastando, o alvo morre ao pressionar o botão de matar novamente ou após um determinado período de tempo.\nPressione o botão de matar duas vezes para matar imediatamente."
-"InsiderInfoLong","You can see roles whose you killed.\nYou can also see roles and abilities of all Impostors.\nKIlling specified times tells you Madmate as well.","キルした相手の役職が分かる。\nまた、味方インポスターの役職と能力が見える。\nさらに、特定回数キルするとマッドメイトも分かる。","内幕人可以看到自己击杀的人的职业。\n还可以看到队友的位置和能力。\n此外，如果内幕人完成了指定的击杀数，则可以看到谁是叛徒。","","Вы можете увидеть роли, которых  Вы убили\nВы также можете увидеть роли и способности всех Предателей.\nУбийство в указанное время также сообщает вам о Безумце.","Você pode ver as classes de quem matou.\nVocê também pode ver as classes e as habilidades de todos os Impostores.\nAo matar em horários específicos, você verá o Tripulante Louco."
+"StealthInfoLong","(Impostors)\nWhen the Stealth kills, players in the same room are blinded for a short while.","(インポスター陣営):\nキルを行うと、同じ部屋にいる他のプレイヤーの視界が少しの間暗転する。","当暗杀者完成击杀后，与暗杀者处于同一房间内的玩家会短暂失明。","","Когда Хитрец убивает, игроки в одной локации будут ненадолго ослеплены","Quando o Furtivo mata, os jogadores na mesma sala ficam cegos por um curto período."
+"NekoKabochaInfoLong","(Impostors)\nThe Neko-Kabocha kills back their killer.","(インポスター陣営):\nキルされた際、自分を殺してきたプレイヤーを殺し返す。","当猫又被击杀时，猫又也会击杀凶手。","","Неко-Кабоча убивает своего убийцу","O Neko-Kabocha mata de volta o seu assassino."
+"PenguinInfoLong","(Impostors)\nPenguins can restrain target by pressing the kill button, and drag around.\While dragging, the target dies by pressing the kill button again or after a certain period of time.\nPress the kill button twice for a direct kill.","(インポスター陣営):\nキルボタン一回で相手を拘束して連れまわすことが出来る。\nもう一度キルボタンを押すか一定時間経過でキルする。\nキルボタン2回で直接キル可能。","企鹅使用击杀键可以拖拽目标。\n等到倒计时结束或再次按下击杀键则可以正常击杀目标。","","Пингвины могут удерживать цель, нажимая кнопку убийства, и перетаскивать ее.\Во время перетаскивания цель умирает, нажав кнопку убийства еще раз или через определенный промежуток времени.\nНажмите кнопку убийства дважды, чтобы убить напрямую.","Os Pinguins podem prender o alvo pressionando o botão de matar e arrastá-lo.\nEnquanto estiver arrastando, o alvo morre ao pressionar o botão de matar novamente ou após um determinado período de tempo.\nPressione o botão de matar duas vezes para matar imediatamente."
+"InsiderInfoLong","(Impostors)\nYou can see roles whose you killed.\nYou can also see roles and abilities of all Impostors.\nKIlling specified times tells you Madmate as well.","(インポスター陣営):\nキルした相手の役職が分かる。\nまた、味方インポスターの役職と能力が見える。\nさらに、特定回数キルするとマッドメイトも分かる。","内幕人可以看到自己击杀的人的职业。\n还可以看到队友的位置和能力。\n此外，如果内幕人完成了指定的击杀数，则可以看到谁是叛徒。","","Вы можете увидеть роли, которых  Вы убили\nВы также можете увидеть роли и способности всех Предателей.\nУбийство в указанное время также сообщает вам о Безумце.","Você pode ver as classes de quem matou.\nVocê também pode ver as classes e as habilidades de todos os Impostores.\nAo matar em horários específicos, você verá o Tripulante Louco."
 "EvilNekomataInfoLong","(Impostors)\nWhen he is hanged，he takes one random person other than the imposter with him. (When the next discussion starts after he is hanged, he will be marked with an "X" without a corpse direction.)","[インポスター陣営]\n自身が吊られた際、インポスター以外のランダムな1人を道連れにする。(吊られた次の議論開始時に死体演出無しで×マークが付く)","(内鬼阵营)\n当他被绞死时，除了内鬼，他会随机带走一个人。(当他被绞死后的下一次会议开始时，他将被标记为“X”，但没有尸体的方向。)",,
 "AntiAdminerInfoLong","(Impostors)\nI can tell if someone is in front of the Admin，Door Log，or Vital equipment. It does not know if the person is actually using the equipment.","[インポスター陣営]\nアドミン・ドアログ・バイタル機器の前に人がいるか分かる。実際に機器を使用しているかは分からない。","(内鬼阵营)\n我可以告诉如果有人在管理地图，门日志，或重要设备的前面时。但它不知道这个人是否真的在使用设备。",,
 "CursedWolfInfoLong","(Impostors)\nWhen someone is about to be killed by someone else, Guard the kill from that person and Spell them to death.\nWhen the spell, its own killcool is set to half its usual level.","[インポスター陣営]\n誰かにキルされそうになった時、その人からキルをガードして呪殺する。(設定回数まで)\n呪殺した時、自身のキルクールは通常の半分にセットされる。","(内鬼阵营)\n当一个人要被别人杀死时。保护他不被那个人杀死。"
@@ -126,34 +130,9 @@
 "EvilDyerInfoLong","(Impostors):\nWhen he kills someone, everyone turns red for a certain period of time.","[インポスター陣営]\n自身が誰かキルすると全員が一定時間、赤色の姿になる。",
 "BestieWolfInfoLong","(Impostors):\nHe is supportive of his partner because of his love for his companions, but when he becomes a lone Impostor, he becomes lonely and goes berserk.\n\nWhen multiple Impostors are alive, the buff Add-On is given to the partner Impostor depending on the number of kills.\nIf you are the sole Impostor and there is someone else within view of the kill target at the time of the kill, you will kill that person at the same time. Additional kills are limited to one person per kill, and when simultaneous kills occur, a kill flash is visible from all viewpoints.","[インポスター陣営]\n仲間想いなため相方へのサポートをするが、単独な狼になった時には孤独が寂しくなり暴走する。\n\n複数インポスターが生存時、キル回数によって相方インポスターにバフ属性を付与する。\n自身が単独インポスターになった場合、キルする時にそのキル対象の見える範囲内に誰かいた場合、その人まで同時にキルする。追加キルは1キル1人までで、同時キルが起こった時は全視点でキルフラッシュが見える。"
 "EvilGuesserInfoLong","(Impostors):\nImpostor guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(インポスター陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
+"SelfBomberInfoLong","(Impostors):\nCan perform self-destruct range kills.Shapeshifting kills all crew members around you and you die.","(インポスター陣営):\n自爆による特攻キルを行う事ができるインポスター。\nシェイプシフトすることで自身の周囲にいるクルーを全員キルして自分も死にます。\nさあ! 私と共に死んでもらうぞ!!\n爆破!!!!","","","",""
+"GrudgeChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills, use shapeshift to select a kill target, and automatically make a kill when approaching the target.\nNormal kills and transformations are not possible. Target cannot be changed until next turn or kill. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible by one when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、シェイプ選択でキルターゲットを選択し、ターゲットに近づくと自動でキルをする。\n通常キル・変身不可。ターゲットは次のターンになるかキルするまで変更ができない。同ターン2人目以降はクールダウン無しでターゲットを選択できる。\nチャージは１ゲージ溜まり切るとキル可能回数が１増加する。"
 "JanitorInfoLong","(Impostors):\nA con artist who can make dead bodies disappear.\nWhen the janitors are nearby,\nWhen a fellow imposter makes a kill,\nPrevent KILL once.\n→(Shield sounds for janitors)\nToward the PLAYER that the fellow tried to KILL,\nJanitor presses the kill button,\nThe target is erased.\n\nWhen the last one is left, the kill ability is released.\nIt can also be set to suicide.\n","(インポスター陣営):\n死体を作らず証拠隠滅できるインポスター。\nジャニターが近くにいる時に、\n仲間のインポスターがキルを行うと\n一旦killを防ぎます。\n※(ジャニターにはシールドの音がなります)\n仲間がキルしようとしたplayerに向かって、\nジャニターがキルボタンを押すと、\n対象者は消されます。\n\nラスト1人になるとキル能力が解放される。\nキル可能の設定がオフの場合後追い自殺をする。\n","","","",""
-
-#イビルハッカ
-"EvilHacker","Evil Replicator","イビルハッカー...?",
-"REvilHacker","Evil Hacker","イビルハッカー",
-"REvilWhiter","Evil Whiter","イビル白化",
-"REvilReder","Evil Reder","イビル真っ赤",
-"REvilFaller","Evil Faller","イビル落下",
-"REvilFire","Evil Fire","イビル発火",
-"REvilVipper","Evil Vipper","イビル閣下",
-"REvilHakka","Evil Hakka","イビルハッカ",
-"EvilHackerTInfo",,"会議時に直前のアドミン情報がチャットで見れる。",
-"EvilWhiterTInfo",,"自身がキルした時、7秒間全員の姿が白色のカモフラージュがかかる",
-"EvilRederTInfo",,"自身がキルした時、7秒間全員の姿が赤色のカモフラージュがかかる",
-"EvilFallerTInfo",,"自身がキルした死体の死因が「落下死」になる。\n全員視点、落下死の死体は死因が表示される。",
-"EvilFireTInfo",,"キル時に発火させる。そのキルされたプレイヤーの周り(目安視界x0.5範囲内)に誰かいた場合、一番近いプレイヤーを爆死させる。\n爆死は1人まで。",
-"EvilVipperTInfo",,"閣下なので属性能力を様々持つ。\n属性：ライティング、ウォッチング、オートプシー、マネジメント、シーイング、VIP、タイブレーカー",
-"EvilHakkaTInfo",,"キルボタンを押されたプレイヤーはハッカでスースーしすぎて死ぬ。それ以外何もない。",
-"EvilHackerInfo","First Anniversary!","一周年記念楽しんでね",
-"EvilHackerInfoLong","(Impostors):\nFirst Anniversary Role\nThis Role that becomes a random ability for each match. In Japanese, it is a pun.","[インポスター陣営]\nイビルハッカーになりたいインポスター。1ゲームごとに能力がランダム。\nイビルハッカー(本家TOH仕様)になれるのは約16%",
-
-"EvilHackerFixedRole","Set on the Role that appears","出現する役職を設定する",
-"SetEHRole%role%","Can Assign %role%","%role%が現れる",
-
-"MDisplay.EHnowRoleText","In Here!","出現！",
-"MDisplay.EHText","Evil Hacker In Here!","イビルハッカー出現！",
-"MDisplay.EH?Text","Replicator In Here!","イビルハッカー、、？",
-"message.ReplicatorTitle","【Types of Replicator In This Game】","【今回のイビルハッカー】",
 
 "# マッドメイト系役職"
 "Madmate","Madmate","マッドメイト","叛徒","叛徒","Безумец","Tripulante Louco"
@@ -344,6 +323,8 @@ DSchrodingerCat,(Dark)SCat,(Dark)シュレ猫,(潜藏)薛定谔的猫,(Dark)薛�
 "Ogre","Ogre","鬼",
 "Pirate","Pirate","海賊",
 "Gang","Gang","一味",
+"ChainShifter","ChainShifter","チェインシフター",
+"ChainShifterAddon","ㅤ","ㅤ",
 
 "ArsonistInfo","Burn them to crisps","燃やせ","火焰给我燃烧起来吧！","燒吧，燒吧，燃燒吧","Облейте и подожгите всех игроков","Queime tudo em pedacinhos"
 "JesterInfo","Get voted out","追放されよう","让他们把你这个假货投出去","想個辦法讓你被投出去","Заставь игроков изгнать себя","Seja exilado"
@@ -375,6 +356,8 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "OgreInfo","I held the club!","金棒を持たせたな？",
 "PirateInfo","I am the captain of the pirates","海賊団船長とはこの私だ",
 "GangInfo","As Gang, we're going to make sure the captain wins","一味として船長を勝たせるんだ",
+"ChainShifterInfo","You Have a Joker","あなたは負けよっ！",
+"ChainShifterAddonInfo","ㅤ","ㅤ",
 
 "ArsonistInfoLong","(Neutrals):\nWhen you use the kill button, you douse your target in oil.\nAfter dousing all living players, you set everything ablaze and win by venting.","(ニュートラル):\nキルボタンを使おうとすると、ターゲットに油を塗れる。\nすべてのクルーに油を塗ったら船を燃やして勝利する。","(独立阵营):\n纵火犯可以通过对玩家点击击杀按钮并在跟随其数秒来完成涂油行为。\n当所有存活玩家都被纵火犯涂油后，纵火犯可以通过跳通风管来点火，并单独获得胜利。","(中立):\n當縱火犯嘗試使用殺人鍵,它將對他身邊最近的一個人澆上油,\n當他對所有玩家澆上油之後,縱火縱火犯點火即勝利。","(Нейтрал):\nПоджигатель может обливать игроков, нажав на кнопку 'Убить' и находясь рядом с игроком в течение нескольких секунд. \nПосле того как он обольёт всех живых игроков Поджигатель сможет запрыгнуть в вентиляцию, чтобы поджечь всех игроков, что приводит к победе Поджигателя.","(Neutros):\nAo apertar o botão de matar, você encharca o seu inimigo em óleo.\nApós ter encharcado todos os jogadores vivos, você coloca tudo em chamas e ganha entrando na ventilação."
 "JesterInfoLong","(Neutrals):\nYou solo victory by getting voted out during a meeting.\nIf the game ends without you getting voted out, or if you are killed, you lose.","(ニュートラル):\n会議で追放された時に単独勝利できる。\n追放されず試合が終了orキルされると敗北。","(独立阵营):\n小丑被放逐则小丑单独游戏胜利。\n游戏结束时若小丑仍存活则小丑输掉游戏。","(中立):\n當小丑被丟出時即宣告小丑獲勝,\n但是小丑在遊戲結束時活下來或是在遊戲中被殺即宣告失敗","(Нейтрал):\nШут сможет выиграть игру, если за него проголосуют во время голосования и он будет изгнан.\nВ противном случае Шут проиграет.","(Neutros): \nVocê ganha sozinho ao ser exilado durante uma reunião. \nSe o jogo terminar com você não sendo votado, ou você for morto, você perde."
@@ -400,6 +383,8 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "OgreInfoLong","(Neutrals):\nAdditional victory is awarded if the impostor survives Ogre with at least one impostor remaining at the end of the game.\nIt has a kill button and can kill, but the probability of a successful kill decreases with each successful kill.\nWhen about to be killed by an impostor, it will guard the kill with a set probability. If the kill is from a non-impostor, it will guard the kill with a set probability and rebound to kill.","[ニュートラル]:\nゲーム決着時に、インポスターが1人以上残った状態で自身が生存していると追加で勝利する。\nキルボタンを持ちキルできるが、キル成功確率はキルに成功する毎に下がる。\nインポスターからキルされそうになった時、設定確率でキルガードする。インポスター以外からのキルの場合、設定確率でキルガードし、はね返してキルする。",
 "PirateInfoLong","(Neutrals):\nFirst, someone kills.The killed Crew member dies, but becomes a member of the pirate Gang and the victory condition changes to Pirate Victory.\nThe gang has a task, and the pirate's ability is expanded according to the gang's completion of the task.\nIf the Impostor is wiped out and the number of pirates equals or exceeds the number of crew members, wins alone.\n[Pirate ability by Gang task]\n25%：Can Vent\n50%：Can Kill\n75%：Grant Buff-Add-On\n100%：Know Impostor","[ニュートラル]\nはじめに誰かキルする。そのキルされた人は死亡するが、海賊の一味となり勝利条件が「海賊の勝利」に変化する。\n一味はタスクを持ち、一味のタスク完了度により海賊の能力が拡大する。\nインポスターの全滅かつ、海賊の数がクルーと同数または上回ると単独で勝利する。\n[一味のタスクによる海賊の能力]\n25%完了：ベント使用可能\n50%完了：キル可能\n75%完了：バフ属性の付与\n100%完了：インポスターが誰か分かる",
 "GangInfoLong","(Neutrals):\nLet's aim for a pirate victory. The gang has a task, and the pirate's ability is expanded according to the gang's completion of the task.\n[task]\n25%：Can Vent\n50%：Can Kill\n75%：Grant Buff-Add-On\n100%：Know Impostor","[ニュートラル]\n海賊の勝利を目指そう。一味のタスク完了度により海賊の能力が拡大する。\n[タスク]\n25%完了：ベント使用可能\n50%完了：キル可能\n75%完了：バフ属性の付与\n100%完了：インポスターが誰か分かる",
+"ChainShifterInfoLong","(Neutrals):\nYou lose if you end the game with ChainShifter.\nChainShifter can be transferred to another opponent by being nearby for a while.\nYou can win with the changed role after transferring the ChainShifter.","[ニュートラル]\nチェインシフターでゲームを終了すると負けになる役職。\nチェインシフターは他のクルーの近くにしばらくいることで相手に移すことができる。\nチェインシフターを移した後に変化した役職で勝利できる。","","","",""
+"ChainShifterAddonInfoLong","ㅤ","ㅤ",
 
 
 # Unit-Role
@@ -589,9 +574,10 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "NoDuplicateHat","No duplicate hats","他の人と同じハット使用禁止",,,,
 "NoDuplicateSkin","No duplicate skins","他の人と同じスキン使用禁止",,,,
 "FixFirstKillCooldown","Normalize First Kill Cooldown","初期スポーン時のクールダウン修正","修正首刀冷却时间","修正開場時的殺人冷卻時間","Нормализовать откат убийства в начале Игры","Normalizar Tempo de Recarga do Primeiro Abate"
-GhostCanSeeOtherRoles,Ghost Can't See Other Roles,幽霊が他人の役職を見ることができない,幽灵不可见他人职业,幽靈不可以看見所有玩家職業,
-GhostCanSeeOtherVotes,Ghost Can't See Other Votes,幽霊が他人の投票先を見ることができない,幽灵不可见投票情况,幽靈不可以看見所有玩家的投票,
-GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタスク進捗を見ることができない"
+"GhostCantSeeOtherRoles","Ghost Can't See Other Roles","幽霊が他人の役職を見ることができない","幽灵不可见他人职业","幽靈不可以看見所有玩家職業",
+"GhostCantSeeOtherVotes","Ghost Can't See Other Votes","幽霊が他人の投票先を見ることができない","幽灵不可见投票情况","幽靈不可以看見所有玩家的投票",
+"GhostCantSeeOtherTasks","Ghosts Can't See Other Tasks","幽霊が他人のタスク進捗を見ることができない"
+"GhostCanSeeOtherTeams","Ghost Can See Other Teams","幽霊が他人の陣営を見ることができる",
 "GhostCanSeeDeathReason","Ghost Can See Cause Of Death","幽霊が死因を見ることができる","幽灵可以看见死因","幽靈可以看見死因","Призраки могут видеть Причины Смерти","Fantasmas Podem Ver Causa da Morte"
 "HostGhostIgnoreTasks","Host Ghosts Exempt From Tasks","ホストは死後タスクを免除する",
 "GhostIgnoreTasks","Ghosts Exempt From Tasks","死人のタスクを免除する","幽灵无视任务","幽靈可以免除任務","Призраки игнорируют Задания","Fantasmas Isentos de Tarefas"
@@ -675,10 +661,14 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "ApplyDenyNameList","Apply DenyName List","DenyNameリストを適用する","启用违禁昵称名单","","Применить файл запрещённых имён (DenyName)",""
 "KickPlayerFriendCodeNotExist","Kick Players Whose Friend Code Does Not Exist","フレンドコードが存在しないプレイヤーをキックする","踢出好友编号无效的玩家","","Кикнуть игроков у которых нет Кода Друга",""
 "ApplyBanList","Apply BanList","BANリストを適用する","启用封禁名单","","Применить файл с забаненными игроками (BanList)",""
+"AntiCheat","Anti Cheat","チート対策","","","",""
+"CheaterAutoBan","Automatically Ban Cheater","自動BANリスト追加","","","",""
+"CheatLobbyKill","Lobby Kill Cheat","ロビーキルチート","","","",""
 "ShowReportReason","Show button or report","ボタンかレポートか表示させる","显示按钮或报告"
 "ShowRevengeTarget","Show Revenge player at Meeting","道連れされた人を会議で表示する","在会议上显示复仇玩家"
 "ShowRoleInfoAtFirstMeeting","Show Role description at the first meeting","初めの会議で役職説明を表示する","在第一次会议上显示角色介绍"
-"DisableForceProtect","Disable Force GuardianAngel Display","強制守護天使表示を無効にする"
+"ForceProtect","Force GuardianAngel Display","強制的に会議初めの守護天使を表示する"
+"DisplayTeamMark","Display Team Mark","陣営マークを表示する"
 "## モード説明"
 "HideAndSeekInfo","Hide and Seek:\nNo emergency meetings. Crewmates (Blue) can only win by finishing tasks\nand impostors (Red) can only win by killing all crewmates.","かくれんぼ:\n会議を開くことはできず、クルーはタスク完了、インポスターは全クルー殺害でのみ勝利することができる。\nインポスターは赤、クルーは青に体の色が変更される。","躲猫猫:\n不能开会；船员只能通过完成任务获得胜利；\n内鬼需要杀死所有船员来获得胜利；\n内鬼的皮肤颜色将变为红色，船员变为蓝色，以示区分。","躲貓貓:\n不能拍桌或舉報，船員只能做任務\n偽裝者的勝利條件為殺光所有船員\n狼人的顏色會轉變為紅色，船員則會變為藍色。","Прятки:\nНикто не может созвать срочное собрание, Члены Экипажа могут победить, только выполняя задания. \nПредатели меняют цвет тела на красный, а экипажи на синий.","Esconde-Esconde:\nNão há reuniões de emergência. Tripulantes (Azul) podem ganhar apenas ao completar todas as tarefas,\ne Impostores (Vermelho) ganham apenas quando matarem todos os tripulantes."
 "StandardHASInfo","Hide and Seek with Roles:\nNo emergency meetings. Crewmates can only win by finishing tasks and impostors can only win by killing all crewmates.","役職入りでかくれんぼ:\n会議を開くことはできず、クルーはタスク完了、インポスターは全クルー殺害でのみ勝利することができる。","躲猫猫（模组）:\n没有会议阶段；船员只能完成任务；\n内鬼需要杀死所有船员来获得胜利。","躲貓貓(附加普通模式職業):\n不能拍桌或舉報，船員只能做任務\n偽裝者的勝利條件為殺光所有船員\n偽裝者的顏色會轉變為紅色，船員則會變為藍色。","Прятки с Ролями:\nНикто не может созвать срочное собрание, Члены Экипажа могут победить, только выполнив задания, А Предатели могут победить, только убив всех Членов Экипажа.","Esconde-Esconde com Classes:\nNão há reuniões de emergência. Tripulantes podem ganhar apenas ao completar todas as tarefas, e Impostores ganham apenas quando matarem todos os tripulantes."
@@ -744,6 +734,7 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "GuesserNumOfGuess","Number Of Guess","推測の回数","","","",""
 "GuesserMultipleInMeeting","Multiple In Meeting","一会議での複数使用","","","",""
 "GuesserHideMisfire","Hide DeathReason Misfire","死因 誤爆を隠す","","","",""
+"GuesserGuessAfterVote","Guess After Voted","投票後の能力使用","","","",""
 
 # インポスター
 "BountyTargetChangeTime","Time Until Target Swaps","ターゲット変更時間","赏金目标切换时间","賞金目標切換時間","Время смены цели","Tempo Para Troca de Alvos"
@@ -830,9 +821,15 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "BestieWolfBuffAddonAssignTarget3","Buff Add-On To Be Granted ③","付与するバフ属性③",
 "BestieWolfBuffAddonAssignTarget4","Buff Add-On To Be Granted ④","付与するバフ属性④",
 "BestieWolfBuffAddonAssignTarget5","Buff Add-On To Be Granted ⑤","付与するバフ属性⑤",
+"SelfBomberBombRadius","Bomb Explosion Radius","自爆の爆発半径","","","",""
+"SelfBomberBombCooldown","Bomb Cooldown","自爆クールダウン","","","",""
+"GrudgeChargerSelectTargetCooldown","Select Target Cooldown","一人目の対象選択クールダウン",
+"GrudgeChargerChargeKillCooldown","Charge Kill Cooldown","チャージ(キルボタン)クールダウン",
+"GrudgeChargerOneGaugeChargeCount","One Gauge Accumulate Charge Count","一ゲージが溜まるチャージ数",
+"GrudgeChargerKillCountAtStartGame","Possible Kill Count At the Start Of the Game","ゲーム開始時のキル可能回数",
 "JanitorCleanCooldown","Janitor Cooldown","掃除のクールダウン",,,,
 "LookJanitor","Janitor Distance","ジャニター能力が発動する仲間との距離",,,,
-"LastImpostorCanKill","Can Kill LastImpostor","ラストインポスターでキルが可能になる",,,,
+"LastImpostorCanKill","Can Kill LastImpostor","ラストインポスターでキルが可能になる",,,,>>>>>>> janitor
 
 # マッドメイト
 "CanMakeMadmateCount","Sidekick Madmate Max Count","サイドキックマッドメイト","变形者可以招募叛徒的数量","變形者招募叛徒最大人數","Максимум союзников Безумца","Máximo de Tripulantes Loucos Ajudantes"
@@ -985,6 +982,11 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "PirateMadmateCanBeGang","Madmate Can Be Gang","マッドメイトが一味になれる",
 "PirateNeutralCanBeGang","Neutral Can Be Gang","ニュートラルが一味になれる",
 "PirateBuffAddonAssignTarget","Buff Add-On To Be Granted (Gang Task 75%)","一味のタスク75%で付与するバフ属性",
+"ChainShifterShiftTime","Shift Time","シフトする時間",
+"ChainShifterShiftDistance","Shift Distance","シフトする距離",
+"ChainShifterShiftInactiveTime","Shift Inactive Time","シフト無効時間",
+"ChainShifterShiftedRole","Role Changes Shifted","シフト後に変化する役職",
+"ChainShifterShiftWhenKilled","Shift By Killed","キルで強制シフトする",
 "Random","Random","ランダム","随机",
 
 # Unit
@@ -1016,6 +1018,13 @@ GhostCanSeeOtherTasks,"Ghosts Can't See Other Tasks","幽霊が他人のタス�
 "addonShowModes.All","All","全て表示",
 "addonShowModes.TOH","TOH Original","本家TOH",
 
+"DisplayComingOutEnable","Display Coming Out Mark","CO可否マークを表示する",
+"displayComingOut.NG","NG","×",
+"displayComingOut.None","None","なし",
+"displayComingOut.OK","OK","○",
+"displayComingOut.Limit","Limit","△",
+"displayComingOut%type%","%type%","%type%","%type%","%type%"
+"displayComingOut%role%","%role%","%role%","%role%","%role%"
 
 "## 能力発動条件"
 "TaskProgressRate","Task Progress","タスク進捗率","","",""
@@ -1258,6 +1267,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "FireworksPutPhase","{0} Fireworks Left","あと{0}個置け","还要安放{0}枚烟花","還需要安裝{0}枚煙火","Осталось {0} Фейерверков","Restam {0} Fogos de Artifício"
 "FireworksWaitPhase","Wait for it...","時を待て...","耐心等待....","等待時機...","Подожди время...","Espere o momento certo..."
 "FireworksReadyFirePhase","Fire!","打ち上げろ！","烟花来咯，大型烟花秀开始！","準備就緒，煙火秀開始!","Огонь!","Lançar!"
+"SelfBomberFirePhase","Fire by Shapeshift","シェイプシフトで自爆","","","",""
 "StandardHAS","Hide And Seek with Roles","役職入りでかくれんぼ","在躲猫猫模式中加入职业","在躲貓貓中加入多職業模式中的職業","Прятки с Ролями","Esconde-Esconde com Classes"
 "StandardHASWaitingTime","Standby","待機時間","躲猫猫猎人等待时间","躲貓貓偽裝者等待時間","Время ожидания","Tempo de Espera"
 "InvalidArgs","Invalid Args","無効な引数","无效参数","無效的參數","Недопустимые Аргументы","Argumento Inválido"
@@ -1337,6 +1347,8 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Deadbody","DEAD","死体","","","",""
 "PenguinKillButtonText","Drag","拉致","拖拽","","ПЕРЕТАСКИВАТЬ","Arrastar"
 "PenguinTimerText","Drag Timer","残り時間","剩余时间","","Время перетаскивания","Tempo para Arrastar"
+"SelfBomberExplosionButtonText","Fire","爆破","引爆","引爆","Зажечь","Explodir"
+"GrudgeChargerSelectTarget","Select","キル対象選択",
 
 "killer","Killer","キラー","杀手",
 "AntiAdminerAD","Warning Admin","アドミン注意！","管理室地图注意",,
@@ -1350,6 +1362,8 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "SelectPlayerTagMini","Selected：","選択中：",
 "SelectPlayerTagBefore","You can choose which player in the vent.","ベントでプレイヤーを選択できます。",
 "SelectPlayerTagMiniBefore","Select player in vent.","ベントでプレイヤーを選択",
+"ShapeSelectPlayerTagBefore","You can choose which target at Shape select.","シェイプ選択画面でターゲットを選択できます。",
+"ShapeSelectPlayerTagMiniBefore","Select target at Shape select.","シェイプ選択画面で対象を選択",
 "NameChangeMode","Name Change Mode","名前変更モード",
 "nameChangeMode.None","None","なし",
 "nameChangeMode.Crew","Crewmate","クルー","船员","船員","Экипаж","Tripulante"

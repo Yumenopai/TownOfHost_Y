@@ -41,7 +41,6 @@ namespace TownOfHostY.Roles.Impostor
         private static float KillCooldown;
         private static float TimeLimit;
 
-        public bool CanBeLastImpostor { get; } = false;
         public float? SuicideTimer;
 
         private static void SetUpOptionItem()

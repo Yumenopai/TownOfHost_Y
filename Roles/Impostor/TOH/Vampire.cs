@@ -42,7 +42,6 @@ namespace TownOfHostY.Roles.Impostor
 
         static float KillDelay;
 
-        public bool CanBeLastImpostor { get; } = false;
         Dictionary<byte, float> BittenPlayers = new(14);
 
         private static void SetupOptionItem()

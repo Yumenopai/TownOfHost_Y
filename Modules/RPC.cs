@@ -79,6 +79,17 @@ namespace TownOfHostY
                     var p = Utils.GetPlayerById(subReader.ReadByte());
                     Logger.Info($"{__instance.GetNameWithRole()} => {p?.GetNameWithRole() ?? "null"}", "StartMeeting");
                     break;
+                case RpcCalls.MurderPlayer: //MurderPlayerRPC
+                    if (GameStates.IsLobby && Options.CheatLobbyKill.GetBool())
+                    {
+                        //ロビーキルチート
+                        var client = __instance.GetClient();
+                        if (Options.CheaterAutoBan.GetBool()) BanManager.AddBanPlayer(client, true);
+                        AmongUsClient.Instance.KickPlayer(client.Id, false);
+                        Logger.Info($"LobbyKillCancel {client.PlayerName}, FriendCode={client.FriendCode}, ProductUserId={client.ProductUserId}", "RPCHandlerPatch");
+                        return false;
+                    }
+                    break;
             }
             if (__instance.PlayerId != 0
                 && Enum.IsDefined(typeof(CustomRPC), (int)callId)

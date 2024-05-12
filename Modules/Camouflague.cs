@@ -66,7 +66,7 @@ namespace TownOfHostY
         }
         public static void RpcSetSkin(bool isCamouflage, PlayerControl target, GameData.PlayerOutfit camouflageOutfit = null, bool ForceRevert = false, bool RevertToDefault = false)
         {
-            if (!(AmongUsClient.Instance.AmHost && (Options.CommsCamouflage.GetBool() || EvilHacker.IsExistEvilWhiterOrReder() || Roles.Core.CustomRoles.EvilDyer.IsEnable()))) return;
+            if (!(AmongUsClient.Instance.AmHost && (Options.CommsCamouflage.GetBool() || Roles.Core.CustomRoles.EvilDyer.IsEnable()))) return;
             if (target == null) return;
 
             var id = target.PlayerId;

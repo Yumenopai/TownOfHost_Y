@@ -81,8 +81,9 @@ namespace TownOfHostY
                 or CustomRoles.StrayWolf
                 or CustomRoles.DarkHide
                 or CustomRoles.Pirate
+                or CustomRoles.ChainShifter
                 or CustomRoles.PlatonicLover
-                or CustomRoles.FoxSpirit;;
+                or CustomRoles.FoxSpirit;
         }
 
         public static bool IsDontShowOptionRole(this CustomRoles role)
@@ -90,7 +91,7 @@ namespace TownOfHostY
             return role is CustomRoles.Counselor or CustomRoles.MadDilemma
                 or CustomRoles.Gang
                 
-                or CustomRoles.Potentialist or CustomRoles.EvilHacker
+                or CustomRoles.Potentialist
                 or CustomRoles.Impostor or CustomRoles.Crewmate;
         }
 
@@ -112,6 +113,7 @@ namespace TownOfHostY
                 or CustomRoles.Sniper
                 or CustomRoles.StrayWolf
                 or CustomRoles.Totocalcio
+                or CustomRoles.ChainShifter
                 //VentSelect
                 or CustomRoles.Medic
                 or CustomRoles.GrudgeSheriff

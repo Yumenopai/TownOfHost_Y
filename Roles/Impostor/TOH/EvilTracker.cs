@@ -224,9 +224,7 @@ public sealed class EvilTracker : RoleBase, IImpostor, IKillFlashSeeable, ISidek
         seen ??= seer;
         if (isForMeeting)
         {
-            var roomName = GetLastRoom(seen);
-            // 空のときにタグを付けると，suffixが空ではない判定となりなにもない3行目が表示される
-            return roomName.Length == 0 ? "" : $"<size=1.5>{roomName}</size>";
+            return GetLastRoom(seen);
         }
         else
         {

@@ -140,10 +140,10 @@ public sealed class AntiAdminer : RoleBase, IImpostor
         if (isForMeeting) return "";
 
         StringBuilder sb = new();
-        if (IsAdminWatch) sb.Append("★").Append(GetString("AntiAdminerAD"));
-        if (IsVitalWatch) sb.Append("★").Append(GetString("AntiAdminerVI"));
-        if (IsDoorLogWatch) sb.Append("★").Append(GetString("AntiAdminerDL"));
-        if (IsCameraWatch) sb.Append("★").Append(GetString("AntiAdminerCA"));
+        if (IsAdminWatch) sb.Append('★').Append(GetString("AntiAdminerAD"));
+        if (IsVitalWatch) sb.Append('★').Append(GetString("AntiAdminerVI"));
+        if (IsDoorLogWatch) sb.Append('★').Append(GetString("AntiAdminerDL"));
+        if (IsCameraWatch) sb.Append('★').Append(GetString("AntiAdminerCA"));
 
         return sb.ToString();
     }

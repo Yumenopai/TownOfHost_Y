@@ -46,18 +46,12 @@ namespace TownOfHostY
             var state = PlayerState.GetByPlayerId(seer.PlayerId);
             if (!state.TargetColorData.TryGetValue(target.PlayerId, out var value)) return false;
             colorCode = value;
+            if (colorCode == "") colorCode = target.GetRoleColorCode();
             return true;
         }
 
         public static void Add(byte seerId, byte targetId, string colorCode = "")
         {
-            if (colorCode == "")
-            {
-                var target = Utils.GetPlayerById(targetId);
-                if (target == null) return;
-                colorCode = target.GetRoleColorCode();
-            }
-
             var state = PlayerState.GetByPlayerId(seerId);
             if (state.TargetColorData.TryGetValue(targetId, out var value) && colorCode == value) return;
             state.TargetColorData.Add(targetId, colorCode);

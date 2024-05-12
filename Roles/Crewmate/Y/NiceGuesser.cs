@@ -13,8 +13,7 @@ public sealed class NiceGuesser : VoteGuesser
             CustomRoles.NiceGuesser,
             () => RoleTypes.Crewmate,
             CustomRoleTypes.Crewmate,
-            //(int)Options.offsetId.CrewY + 1800,
-            (int)Options.offsetId.CrewSpecial + 100,
+            (int)Options.offsetId.CrewY + 1800,
             SetupOptionItem,
             "ナイスゲッサー",
             "#ffff00"
@@ -28,15 +27,18 @@ public sealed class NiceGuesser : VoteGuesser
         NumOfGuess = OptionNumOfGuess.GetInt();
         MultipleInMeeting = OptionMultipleInMeeting.GetBool();
         HideMisfire = OptionHideMisfire.GetBool();
+        GuessAfterVote = OptionGuessAfterVote.GetBool();
     }
     private static OptionItem OptionNumOfGuess;
     private static OptionItem OptionMultipleInMeeting;
     private static OptionItem OptionHideMisfire;
+    private static OptionItem OptionGuessAfterVote;
     enum OptionName
     {
         GuesserNumOfGuess,
         GuesserMultipleInMeeting,
         GuesserHideMisfire,
+        GuesserGuessAfterVote,
     }
     public static void SetupOptionItem()
     {
@@ -44,5 +46,6 @@ public sealed class NiceGuesser : VoteGuesser
             .SetValueFormat(OptionFormat.Times);
         OptionMultipleInMeeting = BooleanOptionItem.Create(RoleInfo, 11, OptionName.GuesserMultipleInMeeting, false, false);
         OptionHideMisfire = BooleanOptionItem.Create(RoleInfo, 12, OptionName.GuesserHideMisfire, false, false);
+        OptionGuessAfterVote = BooleanOptionItem.Create(RoleInfo, 13, OptionName.GuesserGuessAfterVote, false, false);
     }
 }

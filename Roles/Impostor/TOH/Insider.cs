@@ -65,7 +65,7 @@ namespace TownOfHostY.Roles.Impostor
             if (Player == null || target == null) return false;
             if (Player == target) return false;
             if (target.Is(CustomRoles.GM)) return false;
-            if (!Player.IsAlive() && Options.GhostCanSeeOtherRoles.GetBool()) return false;
+            if (!Player.IsAlive() && Options.GhostCantSeeOtherRoles.GetBool()) return false;
             return true;
         }
         ///<summary>

@@ -7,7 +7,7 @@ public static class HauntMenuMinigameSetFilterTextPatch
 {
     public static bool Prefix(HauntMenuMinigame __instance)
     {
-        if (__instance.HauntTarget != null && Options.GhostCanSeeOtherRoles.GetBool())
+        if (__instance.HauntTarget != null && Options.GhostCantSeeOtherRoles.GetBool())
         {
             // 役職表示をカスタムロール名で上書き
             __instance.FilterText.text = Utils.GetDisplayRoleName(PlayerControl.LocalPlayer, __instance.HauntTarget);

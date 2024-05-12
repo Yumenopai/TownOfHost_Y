@@ -18,12 +18,14 @@ namespace TownOfHostY
             if (!File.Exists(DENY_NAME_LIST_PATH)) File.Create(DENY_NAME_LIST_PATH).Close();
             if (!File.Exists(BAN_LIST_PATH)) File.Create(BAN_LIST_PATH).Close();
         }
-        public static void AddBanPlayer(InnerNet.ClientData player)
+        public static void AddBanPlayer(InnerNet.ClientData player, bool cheat = false)
         {
             if (!AmongUsClient.Instance.AmHost || player == null) return;
-            if (!CheckBanList(player) && player.FriendCode != "")
+            if (!CheckBanList(player))
             {
-                File.AppendAllText(BAN_LIST_PATH, $"{player.FriendCode},{player.PlayerName}\n");
+                var addName = cheat ? " (Cheat)" : "";
+                if (player.FriendCode != "") File.AppendAllText(BAN_LIST_PATH, $"{player.FriendCode},{player.PlayerName}{addName}\n");
+                if (cheat && player.ProductUserId != "") File.AppendAllText(BAN_LIST_PATH, $"{player.ProductUserId},{player.PlayerName}{addName}\n");
                 Logger.SendInGame(string.Format(GetString("Message.AddedPlayerToBanList"), player.PlayerName));
             }
         }
@@ -89,7 +91,7 @@ namespace TownOfHostY
         }
         public static bool CheckBanList(InnerNet.ClientData player)
         {
-            if (player == null || player?.FriendCode == "") return false;
+            if (player == null) return false;
             try
             {
                 Directory.CreateDirectory("TOH_DATA");
@@ -100,6 +102,7 @@ namespace TownOfHostY
                 {
                     if (line == "") continue;
                     if (player.FriendCode == line.Split(",")[0]) return true;
+                    if (player.ProductUserId == line.Split(",")[0]) return true;
                 }
             }
             catch (Exception ex)

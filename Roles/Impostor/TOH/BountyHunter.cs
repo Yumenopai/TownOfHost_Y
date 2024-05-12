@@ -54,7 +54,6 @@ public sealed class BountyHunter : RoleBase, IImpostor
     private static float FailureKillCooldown;
     private static bool ShowTargetArrow;
 
-    public bool CanBeLastImpostor { get; } = false;
     public PlayerControl Target;
     public float ChangeTimer;
 
