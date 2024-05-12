@@ -53,6 +53,7 @@
 "EvilGuesser","Evil Guesser","イビルゲッサー","","","",""
 "SelfBomber","SelfBomber","自爆魔","","","",""
 "GrudgeCharger","Grudge Charger","グラージチャージャー",
+"Janitor","Janitor","ジャニター","","","",""
 
 "CustomImpostorInfo","I can now use abilities like that","あんな能力も使えるようになりました",
 "EvilWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
@@ -93,6 +94,7 @@
 "EvilGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
 "SelfBomberInfo","Self Bomb!","みんな死んじゃえ","","","",""
 "GrudgeChargerInfo","Resentment builds up and attacks","恨みが溜まり襲い掛かる",
+"JanitorInfo","Cover up the evidence","証拠を隠蔽しろ","","","",""
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
 "EvilWatcherInfoLong","(Impostors):\nYou can see everyone's votes even if anonymous voting is on.","(インポスター陣営):\n全員の投票先を見ることができる。","(内鬼阵营):\n会议时窥视者可以看到所有人的投票。","(狼人陣營):\n會議時觀察者可以看到所有人的投票。","(Предатель):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Impostores):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -130,6 +132,7 @@
 "EvilGuesserInfoLong","(Impostors):\nImpostor guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(インポスター陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
 "SelfBomberInfoLong","(Impostors):\nCan perform self-destruct range kills.Shapeshifting kills all crew members around you and you die.","(インポスター陣営):\n自爆による特攻キルを行う事ができるインポスター。\nシェイプシフトすることで自身の周囲にいるクルーを全員キルして自分も死にます。\nさあ! 私と共に死んでもらうぞ!!\n爆破!!!!","","","",""
 "GrudgeChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills, use shapeshift to select a kill target, and automatically make a kill when approaching the target.\nNormal kills and transformations are not possible. Target cannot be changed until next turn or kill. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible by one when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、シェイプ選択でキルターゲットを選択し、ターゲットに近づくと自動でキルをする。\n通常キル・変身不可。ターゲットは次のターンになるかキルするまで変更ができない。同ターン2人目以降はクールダウン無しでターゲットを選択できる。\nチャージは１ゲージ溜まり切るとキル可能回数が１増加する。"
+"JanitorInfoLong","(Impostors):\nA con artist who can make dead bodies disappear.\nWhen the janitors are nearby,\nWhen a fellow imposter makes a kill,\nPrevent KILL once.\n→(Shield sounds for janitors)\nToward the PLAYER that the fellow tried to KILL,\nJanitor presses the kill button,\nThe target is erased.\n\nWhen the last one is left, the kill ability is released.\nIt can also be set to suicide.\n","(インポスター陣営):\n死体を作らず証拠隠滅できるインポスター。\nジャニターが近くにいる時に、\n仲間のインポスターがキルを行うと\n一旦killを防ぎます。\n※(ジャニターにはシールドの音がなります)\n仲間がキルしようとしたplayerに向かって、\nジャニターがキルボタンを押すと、\n対象者は消されます。\n\nラスト1人になるとキル能力が解放される。\nキル可能の設定がオフの場合後追い自殺をする。\n","","","",""
 
 "# マッドメイト系役職"
 "Madmate","Madmate","マッドメイト","叛徒","叛徒","Безумец","Tripulante Louco"
@@ -824,6 +827,9 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "GrudgeChargerChargeKillCooldown","Charge Kill Cooldown","チャージ(キルボタン)クールダウン",
 "GrudgeChargerOneGaugeChargeCount","One Gauge Accumulate Charge Count","一ゲージが溜まるチャージ数",
 "GrudgeChargerKillCountAtStartGame","Possible Kill Count At the Start Of the Game","ゲーム開始時のキル可能回数",
+"JanitorCleanCooldown","Janitor Cooldown","掃除のクールダウン",,,,
+"LookJanitor","Janitor Distance","ジャニター能力が発動する仲間との距離",,,,
+"LastImpostorCanKill","Can Kill LastImpostor","ラストインポスターでキルが可能になる",,,,>>>>>>> janitor
 
 # マッドメイト
 "CanMakeMadmateCount","Sidekick Madmate Max Count","サイドキックマッドメイト","变形者可以招募叛徒的数量","變形者招募叛徒最大人數","Максимум союзников Безумца","Máximo de Tripulantes Loucos Ajudantes"
@@ -1050,6 +1056,8 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "DeathReason.Revenge","Revenge","道連れ","复仇","復仇","Месть",""
 "DeathReason.Win","hit","的中","猜着",
 "DeathReason.Poisoning","Poisoning","毒死","毒死",
+"DeathReason.Clean","Clean","掃除","","打扫","почистване","limpeza"
+
 "DeathReason.etc","Other","その他","其他","其他","Другое","Outros"
 
 
