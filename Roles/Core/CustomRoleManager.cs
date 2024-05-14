@@ -68,7 +68,6 @@ public static class CustomRoleManager
                 if (Guarding.OnCheckMurder(info)) { }
                 // メディックの対象プレイヤー
                 else if (Medic.GuardPlayerCheckMurder(info)) { }
-                else if (Janitor.GuardPlayerCheckMurder(info)) { }
                 // 背徳者の対象プレイヤー
                 else if (Immoralist.GuardPlayerCheckMurder(info)) { }
                 // ターゲットのキルチェック処理実行
@@ -464,8 +463,9 @@ public enum CustomRoles
     EvilGuesser,
     SelfBomber,
     GrudgeCharger,
+    GotFather,
     Janitor,
-    
+
     //Madmate
     Madmate,
     MadGuardian,
@@ -523,7 +523,7 @@ public enum CustomRoles
     LoyalDoggy,
     Rabbit,
     VentManager,
-    NiceGuesser, 
+    NiceGuesser,
 
     Counselor,
     Potentialist,
@@ -555,6 +555,7 @@ public enum CustomRoles
 
     GM,
     CounselorAndMadDilemma,
+    GotFather_Janitor,
     MaxMain,
     /************/
 
