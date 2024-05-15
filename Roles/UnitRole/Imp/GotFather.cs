@@ -1,6 +1,7 @@
 using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
+using UnityEngine;
 using static TownOfHostY.Roles.Impostor.GotFather_Janitor;
 
 namespace TownOfHostY.Roles.Impostor;
@@ -24,8 +25,22 @@ public sealed class GotFather : RoleBase, IImpostor
     )
     {
         GotFatherKillCooldown = OptionGotFatherKillCooldown.GetFloat();
-
+        LookJanitor = OptionLookJanitor.GetFloat();
     }
     private static float GotFatherKillCooldown;
+    private static float LookJanitor;
     public float CalculateKillCooldown() => GotFatherKillCooldown;
+    public void OnCheckMurderAsKiller(MurderInfo info)
+    {
+        var (killer, target) = info.AttemptTuple;
+        if (!killer.Is(CustomRoles.GotFather)) return;
+        foreach (var player in Main.AllAlivePlayerControls)
+        {
+            var distance = Vector2.Distance(killer.transform.position, player.transform.position);
+            if (distance <= LookJanitor && player.Is(CustomRoles.Janitor))
+            {
+                info.DoKill = false;
+            }
+        }
+    }
 }

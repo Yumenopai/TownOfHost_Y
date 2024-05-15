@@ -25,10 +25,8 @@ public sealed class Janitor : RoleBase, IImpostor
     )
     {
         CleanCooldown = OptionCleanCooldown.GetFloat();
-        LastImpostorCanKill = OptionLastImpostorCanKill.GetBool();
     }
     private static float CleanCooldown;
-    public static bool LastImpostorCanKill;
     public float CalculateKillCooldown() => CleanCooldown;
     public void OnCheckMurderAsKiller(MurderInfo info)
     {

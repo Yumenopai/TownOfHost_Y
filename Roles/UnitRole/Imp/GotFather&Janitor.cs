@@ -31,22 +31,19 @@ public sealed class GotFather_Janitor : RoleBase, IImpostor
     public static OptionItem OptionGotFatherKillCooldown;
     public static OptionItem OptionCleanCooldown;
     public static OptionItem OptionLookJanitor;
-    public static OptionItem OptionLastImpostorCanKill;
     enum OptionName
     {
         GotFatherKillCooldown,
         JanitorCleanCooldown,
         LookJanitor,
-        LastImpostorCanKill,
     }
     private static void SetupOptionItem()
     {
         OptionGotFatherKillCooldown = FloatOptionItem.Create(RoleInfo, 10, OptionName.GotFatherKillCooldown, new(5.0f, 900f, 2.5f), 30f, false)
             .SetValueFormat(OptionFormat.Seconds);
         OptionCleanCooldown = FloatOptionItem.Create(RoleInfo, 11, OptionName.JanitorCleanCooldown, new(5.0f, 900f, 2.5f), 30f, false)
-            .SetValueFormat(OptionFormat.Seconds);//掃除のクールダウン
+            .SetValueFormat(OptionFormat.Seconds);
         OptionLookJanitor = FloatOptionItem.Create(RoleInfo, 12, OptionName.LookJanitor, new(1.0f, 20f, 0.5f), 10f, false)
-        .SetValueFormat(OptionFormat.Multiplier);//Janitorの距離
-        OptionLastImpostorCanKill = BooleanOptionItem.Create(RoleInfo, 13, OptionName.LastImpostorCanKill, false, false);
+        .SetValueFormat(OptionFormat.Multiplier);
     }
 }
