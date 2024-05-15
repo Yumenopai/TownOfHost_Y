@@ -1,14 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
 using AmongUs.GameOptions;
-using TownOfHostY.Modules;
 using TownOfHostY.Roles.Core;
+using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Roles.Impostor.GotFather_Janitor;
 
 namespace TownOfHostY.Roles.Impostor;
-public sealed class GotFather : RoleBase
+public sealed class GotFather : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
@@ -17,7 +13,7 @@ public sealed class GotFather : RoleBase
             CustomRoles.GotFather,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
-            (int)Options.offsetId.UnitImp + 0,//使用しない
+            (int)Options.offsetId.UnitImp + 300,
             null,
             "ゴットファーザー"
         );
@@ -31,4 +27,5 @@ public sealed class GotFather : RoleBase
 
     }
     private static float GotFatherKillCooldown;
+    public float CalculateKillCooldown() => GotFatherKillCooldown;
 }
