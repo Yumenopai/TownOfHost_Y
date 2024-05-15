@@ -26,6 +26,7 @@ public sealed class GotFather : RoleBase, IImpostor
     {
         GotFatherKillCooldown = OptionGotFatherKillCooldown.GetFloat();
         LookJanitor = OptionLookJanitor.GetFloat();
+        JanitorChance = false;
     }
     private static float GotFatherKillCooldown;
     private static float LookJanitor;
@@ -33,13 +34,18 @@ public sealed class GotFather : RoleBase, IImpostor
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (!killer.Is(CustomRoles.GotFather)) return;
-        foreach (var player in Main.AllAlivePlayerControls)
+        if (killer.Is(CustomRoles.GotFather))
         {
-            var distance = Vector2.Distance(killer.transform.position, player.transform.position);
-            if (distance <= LookJanitor && player.Is(CustomRoles.Janitor))
+            foreach (var player in Main.AllAlivePlayerControls)
             {
-                info.DoKill = false;
+                var distance = Vector2.Distance(killer.transform.position, player.transform.position);
+                if (distance <= LookJanitor && player.Is(CustomRoles.Janitor))
+                {
+                    info.DoKill = false;
+                    JanitorChance = true;
+                    JanitorTarget = target.PlayerId;
+                    break;
+                }
             }
         }
     }

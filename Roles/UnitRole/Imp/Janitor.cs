@@ -1,7 +1,10 @@
+using System.Text;
 using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
+using static TownOfHostY.Utils;
 using static TownOfHostY.Roles.Impostor.GotFather_Janitor;
+using UnityEngine;
 
 namespace TownOfHostY.Roles.Impostor;
 
@@ -45,5 +48,37 @@ public sealed class Janitor : RoleBase, IImpostor
             PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Clean;
             killer.SetKillCooldown();
         }
+        else if (killer.Is(CustomRoles.GotFather))
+        {
+            JanitorTarget = target.PlayerId;
+            Logger.CurrentMethod();
+        }
     }
+    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    {
+        seen ??= seer;
+        if (isForMeeting)
+        {
+            return GetArrows(seen);
+        }
+        else
+        {
+            return GetArrows(seen);
+        }
+    }
+    private string GetArrows(PlayerControl seen)
+    {
+
+        var janitorTarget = GetPlayerById(JanitorTarget); // JanitorTarget のプレイヤーを取得
+        var sb = new StringBuilder(80);//矢印の文字列を構築するためのインスタンスを作成
+        if (JanitorChance)// && janitorTarget != null
+        {
+            sb.Append($"<color={GetRoleColorCode(CustomRoles.Impostor)}>");
+            sb.Append(TargetArrow.GetArrows(Player, janitorTarget.PlayerId));
+            sb.Append($"</color>");
+            Logger.CurrentMethod();
+        }
+        return sb.ToString();
+    }
+
 }
