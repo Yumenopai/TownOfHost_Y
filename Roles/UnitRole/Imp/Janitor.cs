@@ -4,7 +4,6 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Utils;
 using static TownOfHostY.Roles.Impostor.GotFather_Janitor;
-using UnityEngine;
 
 namespace TownOfHostY.Roles.Impostor;
 
@@ -36,17 +35,21 @@ public sealed class Janitor : RoleBase, IImpostor
         var (killer, target) = info.AttemptTuple; // 殺害を試みたキラーとターゲットを取得
         if (killer.Is(CustomRoles.Janitor))
         {
+            info.DoKill = false;// Janitorはキルを防ぐ
+            if (JanitorChance)
+            {
+                var targetPlayerState = PlayerState.GetByPlayerId(target.PlayerId); // ターゲットの状態を取得
 
-            var targetPlayerState = PlayerState.GetByPlayerId(target.PlayerId); // ターゲットの状態を取得
 
-            // キルを防ぐ
-            info.DoKill = false;
 
-            // ターゲットを死亡状態に設定し、追放する処理
-            targetPlayerState.SetDead();
-            Utils.GetPlayerById(target.PlayerId)?.RpcExileV2();
-            PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Clean;
-            killer.SetKillCooldown();
+                // ターゲットを死亡状態に設定し、追放する処理
+                targetPlayerState.SetDead();
+                Utils.GetPlayerById(target.PlayerId)?.RpcExileV2();
+                PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Clean;
+                killer.SetKillCooldown();
+                JanitorChance = false;
+                JanitorTarget = 0;
+            }
         }
         else if (killer.Is(CustomRoles.GotFather))
         {
@@ -80,5 +83,17 @@ public sealed class Janitor : RoleBase, IImpostor
         }
         return sb.ToString();
     }
+    public override void OnReportDeadBody(PlayerControl _, GameData.PlayerInfo __)
+    {
+        if (JanitorChance && JanitorTarget != 0)
+        {
+            var janitorTarget = GetPlayerById(JanitorTarget); // JanitorTarget のプレイヤーを取得
+            var targetPlayerState = PlayerState.GetByPlayerId(janitorTarget.PlayerId); // ターゲットの状態を取得
 
+            // ターゲットを死亡状態に設定し、追放する処理
+            targetPlayerState.SetDead();
+            Utils.GetPlayerById(janitorTarget.PlayerId)?.RpcExileV2();
+            PlayerState.GetByPlayerId(janitorTarget.PlayerId).DeathReason = CustomDeathReason.Clean;
+        }
+    }
 }
