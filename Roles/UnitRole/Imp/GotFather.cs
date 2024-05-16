@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
@@ -27,9 +28,11 @@ public sealed class GotFather : RoleBase, IImpostor
         GotFatherKillCooldown = OptionGotFatherKillCooldown.GetFloat();
         LookJanitor = OptionLookJanitor.GetFloat();
         JanitorChance = false;
+        JanitorTarget.Clear();
     }
     private static float GotFatherKillCooldown;
     private static float LookJanitor;
+    public HashSet<byte> JanitorTarget = new(3);
     public float CalculateKillCooldown() => GotFatherKillCooldown;
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
@@ -43,7 +46,11 @@ public sealed class GotFather : RoleBase, IImpostor
                 {
                     info.DoKill = false;
                     JanitorChance = true;
-                    JanitorTarget = target.PlayerId;
+
+                    var targetId = target.PlayerId;
+                    MeetingKillTarget = target.PlayerId;
+                    JanitorTarget.Add(targetId);
+                    TargetArrow.Add(killer.PlayerId, player.PlayerId);
                     break;
                 }
             }

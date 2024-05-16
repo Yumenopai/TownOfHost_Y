@@ -4,6 +4,7 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Utils;
 using static TownOfHostY.Roles.Impostor.GotFather_Janitor;
+using System.Collections.Generic;
 
 namespace TownOfHostY.Roles.Impostor;
 
@@ -27,19 +28,20 @@ public sealed class Janitor : RoleBase, IImpostor
     )
     {
         CleanCooldown = OptionCleanCooldown.GetFloat();
+        JanitorTarget.Clear();
     }
     private static float CleanCooldown;
     public float CalculateKillCooldown() => CleanCooldown;
+    public HashSet<byte> JanitorTarget = new(3);
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
-        var (killer, target) = info.AttemptTuple; // 殺害を試みたキラーとターゲットを取得
-        if (killer.Is(CustomRoles.Janitor))
+        if (JanitorChance)
         {
-            info.DoKill = false;// Janitorはキルを防ぐ
-            if (JanitorChance)
+            var (killer, target) = info.AttemptTuple; // 殺害を試みたキラーとターゲットを取得
+            if (killer.Is(CustomRoles.Janitor))
             {
+                info.DoKill = false;// Janitorはキルを防ぐ
                 var targetPlayerState = PlayerState.GetByPlayerId(target.PlayerId); // ターゲットの状態を取得
-
 
 
                 // ターゲットを死亡状態に設定し、追放する処理
@@ -48,13 +50,8 @@ public sealed class Janitor : RoleBase, IImpostor
                 PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Clean;
                 killer.SetKillCooldown();
                 JanitorChance = false;
-                JanitorTarget = 0;
+                JanitorTarget.Clear();
             }
-        }
-        else if (killer.Is(CustomRoles.GotFather))
-        {
-            JanitorTarget = target.PlayerId;
-            Logger.CurrentMethod();
         }
     }
     public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
@@ -72,28 +69,50 @@ public sealed class Janitor : RoleBase, IImpostor
     private string GetArrows(PlayerControl seen)
     {
 
-        var janitorTarget = GetPlayerById(JanitorTarget); // JanitorTarget のプレイヤーを取得
+        //var janitorTarget = GetPlayerById(JanitorTarget); // JanitorTarget のプレイヤーを取得
+        //var janitorTarget = PlayerState.GetByPlayerId(JanitorTarget);
+        JanitorTarget.RemoveWhere(id => PlayerState.GetByPlayerId(id) == null);
+
         var sb = new StringBuilder(80);//矢印の文字列を構築するためのインスタンスを作成
         if (JanitorChance)// && janitorTarget != null
         {
             sb.Append($"<color={GetRoleColorCode(CustomRoles.Impostor)}>");
-            sb.Append(TargetArrow.GetArrows(Player, janitorTarget.PlayerId));
+            foreach (var impostorId in JanitorTarget)
+            {
+                //sb.Append(TargetArrow.GetArrows(Player, janitorTarget.PlayerId));
+                sb.Append(TargetArrow.GetArrows(Player, impostorId));
+            }
             sb.Append($"</color>");
-            Logger.CurrentMethod();
         }
         return sb.ToString();
     }
     public override void OnReportDeadBody(PlayerControl _, GameData.PlayerInfo __)
     {
-        if (JanitorChance && JanitorTarget != 0)
+        if (JanitorChance)
         {
-            var janitorTarget = GetPlayerById(JanitorTarget); // JanitorTarget のプレイヤーを取得
-            var targetPlayerState = PlayerState.GetByPlayerId(janitorTarget.PlayerId); // ターゲットの状態を取得
+            var meetingKillTarget = GetPlayerById(MeetingKillTarget); // MeetingKillTarget のプレイヤーを取得
+            var targetPlayerState = PlayerState.GetByPlayerId(meetingKillTarget.PlayerId); // ターゲットの状態を取得
 
             // ターゲットを死亡状態に設定し、追放する処理
             targetPlayerState.SetDead();
-            Utils.GetPlayerById(janitorTarget.PlayerId)?.RpcExileV2();
-            PlayerState.GetByPlayerId(janitorTarget.PlayerId).DeathReason = CustomDeathReason.Clean;
+            Utils.GetPlayerById(meetingKillTarget.PlayerId)?.RpcExileV2();
+            PlayerState.GetByPlayerId(meetingKillTarget.PlayerId).DeathReason = CustomDeathReason.Clean;
+            JanitorChance = false;
+            MeetingKillTarget = 0;
+            JanitorTarget.Clear();
+        }
+    }
+    public override void OnFixedUpdate(PlayerControl player)
+    {
+        base.OnFixedUpdate(player);
+        if (JanitorChance)
+        {
+            foreach (var targetId in JanitorTarget)
+            {
+                // Janitorからターゲットへの矢印を追加
+                TargetArrow.Add(player.PlayerId, targetId);
+
+            }
         }
     }
 }
