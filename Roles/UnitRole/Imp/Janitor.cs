@@ -29,6 +29,8 @@ public sealed class Janitor : RoleBase, IImpostor
     {
         CleanCooldown = OptionCleanCooldown.GetFloat();
         JanitorTarget.Clear();
+        var playerId = player.PlayerId;
+        var trackerId = Player.PlayerId;
     }
     private static float CleanCooldown;
     public float CalculateKillCooldown() => CleanCooldown;
@@ -68,9 +70,6 @@ public sealed class Janitor : RoleBase, IImpostor
     }
     private string GetArrows(PlayerControl seen)
     {
-
-        //var janitorTarget = GetPlayerById(JanitorTarget); // JanitorTarget のプレイヤーを取得
-        //var janitorTarget = PlayerState.GetByPlayerId(JanitorTarget);
         JanitorTarget.RemoveWhere(id => PlayerState.GetByPlayerId(id) == null);
 
         var sb = new StringBuilder(80);//矢印の文字列を構築するためのインスタンスを作成
@@ -79,7 +78,6 @@ public sealed class Janitor : RoleBase, IImpostor
             sb.Append($"<color={GetRoleColorCode(CustomRoles.Impostor)}>");
             foreach (var impostorId in JanitorTarget)
             {
-                //sb.Append(TargetArrow.GetArrows(Player, janitorTarget.PlayerId));
                 sb.Append(TargetArrow.GetArrows(Player, impostorId));
             }
             sb.Append($"</color>");
