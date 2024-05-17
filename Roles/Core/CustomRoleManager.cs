@@ -463,7 +463,7 @@ public enum CustomRoles
     EvilGuesser,
     SelfBomber,
     GrudgeCharger,
-    GotFather,
+    Gotfather,
     Janitor,
 
     //Madmate
@@ -555,7 +555,7 @@ public enum CustomRoles
 
     GM,
     CounselorAndMadDilemma,
-    GotFather_Janitor,
+    Gotfather_Janitor,
     MaxMain,
     /************/
 

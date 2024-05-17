@@ -3,7 +3,7 @@ using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Utils;
-using static TownOfHostY.Roles.Impostor.GotFather_Janitor;
+using static TownOfHostY.Roles.Impostor.Gotfather_Janitor;
 using System.Collections.Generic;
 
 namespace TownOfHostY.Roles.Impostor;

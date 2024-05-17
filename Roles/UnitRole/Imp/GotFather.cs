@@ -3,41 +3,41 @@ using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using UnityEngine;
-using static TownOfHostY.Roles.Impostor.GotFather_Janitor;
+using static TownOfHostY.Roles.Impostor.Gotfather_Janitor;
 
 namespace TownOfHostY.Roles.Impostor;
-public sealed class GotFather : RoleBase, IImpostor
+public sealed class Gotfather : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.Create(
-            typeof(GotFather),
-            player => new GotFather(player),
-            CustomRoles.GotFather,
+            typeof(Gotfather),
+            player => new Gotfather(player),
+            CustomRoles.Gotfather,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Impostor,
             (int)Options.offsetId.UnitImp + 300,
             null,
             "ゴットファーザー"
         );
-    public GotFather(PlayerControl player)
+    public Gotfather(PlayerControl player)
     : base(
         RoleInfo,
         player
     )
     {
-        GotFatherKillCooldown = OptionGotFatherKillCooldown.GetFloat();
+        GotfatherKillCooldown = OptionGotfatherKillCooldown.GetFloat();
         LookJanitor = OptionLookJanitor.GetFloat();
         JanitorChance = false;
         JanitorTarget.Clear();
     }
-    private static float GotFatherKillCooldown;
+    private static float GotfatherKillCooldown;
     private static float LookJanitor;
     public HashSet<byte> JanitorTarget = new(3);
-    public float CalculateKillCooldown() => GotFatherKillCooldown;
+    public float CalculateKillCooldown() => GotfatherKillCooldown;
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        if (killer.Is(CustomRoles.GotFather))
+        if (killer.Is(CustomRoles.Gotfather))
         {
             foreach (var player in Main.AllAlivePlayerControls)
             {
