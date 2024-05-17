@@ -32,7 +32,6 @@ public sealed class Gotfather_Janitor : RoleBase, IImpostor
     public static OptionItem OptionCleanCooldown;
     public static OptionItem OptionLookJanitor;
     public static bool JanitorChance;
-    public static byte MeetingKillTarget;
     enum OptionName
     {
         GotfatherKillCooldown,

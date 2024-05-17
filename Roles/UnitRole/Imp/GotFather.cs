@@ -32,7 +32,7 @@ public sealed class Gotfather : RoleBase, IImpostor
     }
     private static float GotfatherKillCooldown;
     private static float LookJanitor;
-    public HashSet<byte> JanitorTarget = new(3);
+    public HashSet<byte> JanitorTarget = new(15);
     public float CalculateKillCooldown() => GotfatherKillCooldown;
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
@@ -48,9 +48,9 @@ public sealed class Gotfather : RoleBase, IImpostor
                     JanitorChance = true;
 
                     var targetId = target.PlayerId;
-                    MeetingKillTarget = target.PlayerId;
+                    var playerId = player.PlayerId;
                     JanitorTarget.Add(targetId);
-                    TargetArrow.Add(killer.PlayerId, player.PlayerId);
+                    TargetArrow.Add(playerId, targetId);
                     break;
                 }
             }
