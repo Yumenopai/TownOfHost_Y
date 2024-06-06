@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using AmongUs.GameOptions;
+using Hazel;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using UnityEngine;
@@ -51,9 +52,23 @@ public sealed class Gotfather : RoleBase, IImpostor
                     var playerId = player.PlayerId;
                     JanitorTarget.Add(targetId);
                     TargetArrow.Add(playerId, targetId);
+                    SendRPC(targetId);
                     break;
                 }
             }
         }
+    }
+    private void SendRPC(byte targetId)
+    {
+        using var sender = CreateSender(CustomRPC.SetJanitorTarget);
+        sender.Writer.Write(targetId);
+        Logger.CurrentMethod();
+    }
+    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
+    {
+        Logger.CurrentMethod();
+        if (rpcType != CustomRPC.SetJanitorTarget) return;
+        byte targetId = reader.ReadByte();
+        if (JanitorChance) TargetArrow.Add(Player.PlayerId, targetId);
     }
 }
