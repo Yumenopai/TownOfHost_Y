@@ -45,6 +45,7 @@ namespace TownOfHostY
         SetEvilDiviner,
         SetLawyerTarget,
         SetRemoveLawyerTarget,
+        SetJanitorTarget,
     }
     public enum Sounds
     {
