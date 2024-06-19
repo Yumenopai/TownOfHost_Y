@@ -53,6 +53,7 @@
 "EvilGuesser","Evil Guesser","イビルゲッサー","","","",""
 "SelfBomber","SelfBomber","自爆魔","","","",""
 "GrudgeCharger","Grudge Charger","グラージチャージャー",
+"Chaser","Chaser","チェイサー","","","",""
 
 "CustomImpostorInfo","I can now use abilities like that","あんな能力も使えるようになりました",
 "EvilWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
@@ -93,6 +94,7 @@
 "EvilGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
 "SelfBomberInfo","Self Bomb!","みんな死んじゃえ","","","",""
 "GrudgeChargerInfo","Resentment builds up and attacks","恨みが溜まり襲い掛かる",
+"ChaserInfo","I will chase you to the ends of the earth.","地の果てまで追いかける...。","","","",""
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
 "EvilWatcherInfoLong","(Impostors):\nYou can see everyone's votes even if anonymous voting is on.","(インポスター陣営):\n全員の投票先を見ることができる。","(内鬼阵营):\n会议时窥视者可以看到所有人的投票。","(狼人陣營):\n會議時觀察者可以看到所有人的投票。","(Предатель):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Impostores):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -130,6 +132,7 @@
 "EvilGuesserInfoLong","(Impostors):\nImpostor guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(インポスター陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
 "SelfBomberInfoLong","(Impostors):\nCan perform self-destruct range kills.Shapeshifting kills all crew members around you and you die.","(インポスター陣営):\n自爆による特攻キルを行う事ができるインポスター。\nシェイプシフトすることで自身の周囲にいるクルーを全員キルして自分も死にます。\nさあ! 私と共に死んでもらうぞ!!\n爆破!!!!","","","",""
 "GrudgeChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills, use shapeshift to select a kill target, and automatically make a kill when approaching the target.\nNormal kills and transformations are not possible. Target cannot be changed until next turn or kill. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible by one when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、シェイプ選択でキルターゲットを選択し、ターゲットに近づくと自動でキルをする。\n通常キル・変身不可。ターゲットは次のターンになるかキルするまで変更ができない。同ターン2人目以降はクールダウン無しでターゲットを選択できる。\nチャージは１ゲージ溜まり切るとキル可能回数が１増加する。"
+"ChaserInfoLong","(Impostors):\nA role that allows you to warp by transforming.\nDetects a nearby vent with a transformed target and warps there.\nYou can also return to the original position in the settings.\nIt would be funny if there were other players in front of you.\n","[インポスター陣営]\nシェイプでワープする事ができる役職。\nシェイプシフトしたTargetの最寄りのベントを、\n検知して、飛ぶことができます、\n設定で元の付近に戻る事も可能です。\n元居た位置の近くのベントに戻ります。\n飛んだ先に他のplayerが居たらドンマイ...。"
 
 "# マッドメイト系役職"
 "Madmate","Madmate","マッドメイト","叛徒","叛徒","Безумец","Tripulante Louco"
@@ -824,6 +827,10 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "GrudgeChargerChargeKillCooldown","Charge Kill Cooldown","チャージ(キルボタン)クールダウン",
 "GrudgeChargerOneGaugeChargeCount","One Gauge Accumulate Charge Count","一ゲージが溜まるチャージ数",
 "GrudgeChargerKillCountAtStartGame","Possible Kill Count At the Start Of the Game","ゲーム開始時のキル可能回数",
+"ChaserChaseCooldown","Chase Cooldown","チェイスクールダウン","追逐冷却时间","追逐冷卻時間","Перезарядка погони","Tempo de espera da perseguição"
+"ChaserReturnPosition","ReturnPosition","元の位置に戻る","返回原位","返回原位","Вернуться в исходное положение","Retornar à posição original"
+"ChaserPositionTime","Time to return to original position","何秒後に戻るか","几秒钟后返回原来位置","多少秒後它會回到原來的位置","Через сколько секунд он вернется в исходное положение","Depois de quantos segundos ele retornará à sua posição original"
+
 
 # マッドメイト
 "CanMakeMadmateCount","Sidekick Madmate Max Count","サイドキックマッドメイト","变形者可以招募叛徒的数量","變形者招募叛徒最大人數","Максимум союзников Безумца","Máximo de Tripulantes Loucos Ajudantes"

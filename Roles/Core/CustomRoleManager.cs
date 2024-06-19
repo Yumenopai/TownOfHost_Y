@@ -463,6 +463,7 @@ public enum CustomRoles
     EvilGuesser,
     SelfBomber,
     GrudgeCharger,
+    Chaser,
     //Madmate
     Madmate,
     MadGuardian,
@@ -520,7 +521,7 @@ public enum CustomRoles
     LoyalDoggy,
     Rabbit,
     VentManager,
-    NiceGuesser, 
+    NiceGuesser,
 
     Counselor,
     Potentialist,
