@@ -213,6 +213,7 @@
 "Rabbit","Rabbit","ラビット",
 "VentManager","Vent Manager","ベントマネージャー",
 "NiceGuesser","Nice Guesser","ナイスゲッサー","","","",""
+"Elder","Elder","長老","","","","",
 
 "CustomCrewmateInfo","I can now use abilities like that.","あんな能力も使えるようになりました。",
 "NiceWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
@@ -251,6 +252,7 @@
 "RabbitInfo","I have a good ear, so.","耳がいいので探知できるんだ",
 "VentManagerInfo","Vent,Vent,Vent!","ベント、ベント、ベント！",
 "NiceGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
+"ElderInfo","I am still not as young as I used to be.","ﾌｫｯﾌｫｯﾌｫ...まだ若者には負けんわい(˙灬˙)","","","",""
 
 "CustomCrewmateInfoLong","(Crewmates):\Crewmate with the ability to Add-On to attributes set by the host.","[クルー陣営]\nホストによって設定された属性の能力をもつクルーメイト。",
 "NiceWatcherInfoLong","(Crewmates):\nYou can see everyone's votes even if anonymous voting is on.","(クルー陣営):\n全員の投票先を見ることができる。","(船员阵营:\n会议时窥视者可以看到所有人的投票。","(船員):\n會議時觀察者可以看到所有人的投票。","(Член Экипажа):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Tripulantes):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -289,6 +291,7 @@
 "RabbitInfoLong","(Crewmates)\nWhen a set number of tasks are completed, an arrow will indicate for 5 seconds in which direction a random 1 Impostor is at that time for each task completed.\nEven after all tasks have been completed, uncounted tasks will appear and the ability will be available for each completed task.","[クルー陣営]\n設定タスク完了すると、タスクを1つ完了させる毎にその時のランダムな1インポスターがどの方向にいるかが矢印で5秒間表示される。\nタスク全完了後もカウントされないタスクが発生し、完了するごとに能力を使用できる。",
 "VentManagerInfoLong","(Crewmates)\nClean Vent.","[クルー陣営]\nベントを掃除しよう。ただそれだけ。",
 "NiceGuesserInfoLong","(Crewmates):\nCrewmate guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(クルー陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
+"ElderInfoLong","(Crewmates):\nIt can prevent the first kill only once.\n※Kill comes through the second time.\nIf I die, my crewmates will change their role.\nAll crewmates become just that, crewmates.\nIt is possible to die suddenly by life expectancy in the setting. (Cause of death: senility)\nThe timer will stop during the meeting.\nIf you are killed after completing the task, you can kill the killer side.\nEven if you die after completing a task, the roles of those around you will not change.\nSo let's finish the task quickly!\n","(クルー陣営):\n1度だけ最初のキルを防ぐ事ができる。\n※2回目からキルが通ります。\nもし自身が死ぬとクルー陣営の役職が変更される。\nクルー陣営は全員、素のクルーメイトになる。\n設定で唐突に寿命で死ぬ事もできる。(死因:老衰)\n※会議中はタイマーは止まってます。\nタスク完了後にキルされると道連れにできる。(死因:反撃)\nタスク完了後に死んでも回りの役職は変更されない。\nなので早くタスク終わらせよう！","","","",""
 
 "# ニュートラル役職"
 "Jester","Jester","ジェスター","小丑","小丑","Шут","Bobo"
@@ -910,6 +913,8 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "LoyalDoggyIsClumsy","After the Death of Master, Cannot Fix Lights And Fix Comms","ご主人死亡後、停電・通信妨害が直せない",
 "RabbitRedistributionLongTasks","Long Task Count to be redistributed","再配布されるロングタスク数",
 "RabbitRedistributionShortTasks","Short Task Count to be redistributed","再配布されるショートタスク数",
+"ElderDiaInLife","Get Senile","寿命で死ぬ",
+"ElderLifetime","Life time","寿命までの秒数",
 
 "Head.LimitedTimeRole","Limited Time Role 4/1～4/5","期間限定役職 4/1～4/5"
 "Potentialist","Potentialist","ポテンシャリスト",
@@ -1051,7 +1056,8 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "DeathReason.Win","hit","的中","猜着",
 "DeathReason.Poisoning","Poisoning","毒死","毒死",
 "DeathReason.etc","Other","その他","其他","其他","Другое","Outros"
-
+"DeathReason.Senility","Senility","老衰","惛耄","노쇠","дряхлость","senilidade"
+"DeathReason.CounterAttack","CounterAttack","反撃","反击","反擊","контр-атака","contra ataque"
 
 "Alive","Alive","生存","存活","存活","Выжил","Vivo"
 "Win"," Wins","勝利","胜利","勝利"," Победили","Vitória"

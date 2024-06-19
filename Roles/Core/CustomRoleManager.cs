@@ -520,7 +520,8 @@ public enum CustomRoles
     LoyalDoggy,
     Rabbit,
     VentManager,
-    NiceGuesser, 
+    NiceGuesser,
+    Elder,
 
     Counselor,
     Potentialist,
