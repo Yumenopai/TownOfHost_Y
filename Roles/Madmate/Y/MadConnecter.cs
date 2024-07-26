@@ -195,14 +195,15 @@ public sealed class MadConnecter : RoleBase, IKiller, IKillFlashSeeable
         //seerが自分でない、
         if (!Is(seer)) return string.Empty;
 
-        // インポスターへの丸印表示
-        if (seen.Is(CustomRoleTypes.Impostor) && KnowsImpostor())
+        // コネクトしたインポスターへの丸印表示
+        if (ConnectImpostorId.Contains(seen.PlayerId))
         {
-            // 名前に色が付かない時があったため、予備でマーク付け
+            // コネクト済みなら丸印を付ける
             return Utils.ColorString(Palette.ImpostorRed, "●");
         }
-
+        // 相手につけるのはここまで
         if (!Is(seen)) return string.Empty;
+
         // タスク完了による能力解放マーク
         var mark = new StringBuilder();
         if (KnowsImpostor()) mark.Append(Utils.ColorString(Palette.ImpostorRed, "Ｉ"));
