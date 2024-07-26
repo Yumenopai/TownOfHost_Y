@@ -101,6 +101,7 @@ namespace TownOfHostY
                 or CustomRoles.SKMadmate
 
                 or CustomRoles.Charger //通常版では今回出さない
+                or CustomRoles.NormalPhantom //通常版では今回出さない
                 or CustomRoles.Potentialist
                 or CustomRoles.Impostor or CustomRoles.Crewmate;
         }
