@@ -25,7 +25,7 @@ namespace TownOfHostY
             if (player.GetCustomRole() == role) return;
 
             // 役職の変更・属性の追加タイミングの次回会議に説明が表示される
-            if(!Main.ShowRoleInfoAtMeeting.Contains(player.PlayerId))
+            if (!Main.ShowRoleInfoAtMeeting.Contains(player.PlayerId))
                 Main.ShowRoleInfoAtMeeting.Add(player.PlayerId);
 
             if (role < CustomRoles.StartAddon)
@@ -577,7 +577,7 @@ namespace TownOfHostY
         public static bool IsNeutralKiller(this PlayerControl player)
         {
             if (player.Is(CustomRoles.Opportunist) && Opportunist.CanKill) return true;
-            return 
+            return
                 player.GetCustomRole() is
                 CustomRoles.Egoist or
                 CustomRoles.Jackal or
@@ -622,13 +622,13 @@ namespace TownOfHostY
         {
             var roleClass = player.GetRoleClass();
             var role = player.GetCustomRole();
-            
+
             role = role.IsVanillaRoleConversion();//変換
 
             var Prefix = "";
             var text = role.ToString();
             var Info = "";
-            switch(role)
+            switch (role)
             {
                 case CustomRoles.Crewmate:
                 case CustomRoles.Impostor:
@@ -692,6 +692,19 @@ namespace TownOfHostY
         public static void RpcSnapTo(this PlayerControl pc, Vector2 position)
         {
             pc.NetTransform.RpcSnapTo(position);
+        }
+        public static void SnapToTeleport(this PlayerControl pc, Vector2 position)
+        {
+            var netTransform = pc.NetTransform;
+            if (AmongUsClient.Instance.AmClient)
+            {
+                netTransform.SnapTo(position, (ushort)(netTransform.lastSequenceId + 128));
+            }
+            ushort newSid = (ushort)(netTransform.lastSequenceId + 2);
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(netTransform.NetId, (byte)RpcCalls.SnapTo, SendOption.Reliable);
+            NetHelpers.WriteVector2(position, messageWriter);
+            messageWriter.Write(newSid);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
         }
         public static void RpcSnapToDesync(this PlayerControl pc, PlayerControl target, Vector2 position)
         {

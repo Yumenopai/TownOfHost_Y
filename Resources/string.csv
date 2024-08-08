@@ -62,6 +62,7 @@
 "Charger","Charger","チャージャー",
 "Chaser","Chaser","チェイサー","","","",""
 "CharismaStar","Charisma Star","カリスマスター",
+"EvilHacker","EvilHacker","イビルハッカー",
 
 "CustomImpostorInfo","I can now use abilities like that","あんな能力も使えるようになりました",
 "EvilWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
@@ -105,6 +106,7 @@
 "ChargerInfo","Release the power all at once.","力を一気に解放する、、今だ！",
 "ChaserInfo","I will chase you to the ends of the earth.","地の果てまで追いかける…","","","",""
 "CharismaStarInfo","AAre you coming to my place？","オレんとこ来ないか？",
+"EvilHackerInfo","Hack Systmes and kill the crewmate","アドミンを駆使しクルーをキルせよ",
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
 "EvilWatcherInfoLong","(Impostors):\nYou can see everyone's votes even if anonymous voting is on.","(インポスター陣営):\n全員の投票先を見ることができる。","(内鬼阵营):\n会议时窥视者可以看到所有人的投票。","(狼人陣營):\n會議時觀察者可以看到所有人的投票。","(Предатель):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Impostores):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -145,6 +147,7 @@
 "ChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills,Use the Vanish button to kill.\nNormal kills and Vanish are not possible. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible by one when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、消えるボタンで溜まったキル回数を使ってキルをする。\n通常キル・透明化不可。同ターン2人目以降はクールダウン無しでキルできる。\nチャージは１ゲージ溜まり切るとキル可能回数が１増加する。"
 "ChaserInfoLong","(Impostors):\nA role that allows you to warp by transforming.\nDetects a nearby vent with a transformed target and warps there.\nYou can also return to the original position in the settings.\nIt would be funny if there were other players in front of you.\n","[インポスター陣営]\n近くに移動したいターゲットをシェイプボタンで選択すると、そのターゲットから一番近いベントにワープすることができる。ワープ時、他視点からチェイサーはそのベントから出てきたように見える(ベント開閉あり)。\n元の位置に戻る設定がONの時、設定時間後に元居た場所の近くのベントに戻る。"
 "CharismaStarInfoLong","(Impostors):\nImpostor that allows any player to assemble to the nearest vent from himself.\nThe kill button uses double clicks. The single-click kill button allows the user to select a member, while the double-click kill button is used for normal kills. Multiple members can be set up, and by pressing the disappear button, the members can be gathered into a vent near you.\nWhen the setting that allows everyone to assemble is turned on, if no one has decided on a member, everyone can assemble.\nWhen a gathering is called, if the target player is using a ladder or lift, the gathering cannot take place. If a player cannot assemble, he or she will self-suiside.","[インポスター陣営]\nプレイヤーを自身から近いベントへ集合させることができるインポスター。\nキルボタンはダブルクリックを使い分ける。シングルクリックでは集合メンバーを決め、ダブルクリックでは通常キルをする。集合メンバーは複数人設定することができ、消えるボタンを押すことでそのメンバーを自身付近のベントに集めることができる。\n全員集合できる設定をONにしている時、誰もメンバーを決めていないと全員を集合させることができる。\n集合をかけた時、対象プレイヤーがはしごを使用していると集まることが出来ない。設定により、集まれないプレイヤーは自爆する。",
+"EvilHackerInfoLong","(Impostors):\nImposter that allows Admin to be seen from anywhere.\nUse the disappear button to move to the Admin location.\nIt can be viewed by pressing the View button at the destination.\nAfter a few seconds it returns to its original position.\nNote that you have to press the View button to see it.\nYou can't move while watching.\n","[インポスター陣営]\n遠隔でアドミンが見れるインポスター。\n消えるボタンでアドミンの位置へ移動します。\n移動先で見るボタンを押す事で見る事ができます。\n数秒後元の位置へと戻ります。\n見るボタンを押さないと見れないので注意。\n見てる最中は動けません。",
 
 "# マッドメイト系役職"
 "Madmate","Madmate","マッドメイト","叛徒","叛徒","Безумец","Tripulante Louco"
@@ -880,6 +883,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "CharismaStarGatherMaxCount","Gather Max Count","集合能力の使用回数",
 "CharismaStarNotGatherPlayerKill","Not Gather Player Kill","集合出来ないプレイヤーは自爆する",
 "CharismaStarCanAllPlayerGather","Can All Player Gather","全員を一気に集合できる"
+"EvilHackerAdminCooldown","Admin Cooldown","アドミンクールダウン",
 
 # マッドメイト
 "CanMakeMadmateCount","Sidekick Madmate Max Count","サイドキックマッドメイト","变形者可以招募叛徒的数量","變形者招募叛徒最大人數","Максимум союзников Безумца","Máximo de Tripulantes Loucos Ajudantes"
