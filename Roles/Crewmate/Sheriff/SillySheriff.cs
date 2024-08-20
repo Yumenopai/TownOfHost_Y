@@ -246,4 +246,11 @@ public sealed class SillySheriff : RoleBase, IKiller, ISchrodingerCatOwner
             _ => false,
         };
     }
+    public void OnSchrodingerCatKill(SchrodingerCat schrodingerCat)
+    {
+        if (SchrodingerCat.ConsumeBullet)
+        {
+            ShotLimit--;
+        }
+    }
 }

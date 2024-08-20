@@ -191,7 +191,7 @@ public abstract class VoteGuesser : RoleBase
         NumOfGuess--;
 
         PlayerControl target;
-        if (targetGuess.Is(role))
+        if (TargetIs(targetGuess, role))
         {
             target = targetGuess;
             RpcGuesserMurderPlayer(target, CustomDeathReason.Shot);
@@ -204,6 +204,18 @@ public abstract class VoteGuesser : RoleBase
             RpcGuesserMurderPlayer(target, reason);
         }
         SendGuessedMessage(target);
+    }
+    private bool TargetIs(PlayerControl target, CustomRoles role)
+    {
+        if (target.Is(role)) return true;
+        switch (role)
+        {
+            case CustomRoles.SchrodingerCat:
+                if (target.Is(CustomRoles.SchrodingerCatKiller)) return true;
+                break;
+        }
+
+        return false;
     }
     private void SendMessageGuide()
     {
@@ -334,7 +346,7 @@ public abstract class VoteGuesser : RoleBase
             }
         }
         public CustomRoles[] GetAdditionalRole(CustomRoles role)
-            {
+        {
             switch (role)
             {
                 case CustomRoles.ChainShifter: return ChainShifter.AdditionalRoles;

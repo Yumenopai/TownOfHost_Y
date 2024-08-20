@@ -254,4 +254,11 @@ public sealed class GrudgeSheriff : RoleBase
     public override string GetProgressText(bool comms = false)
         => Utils.ColorString(RoleInfo.RoleColor, $"〈{ShotLimit}〉");
     public override string GetAbilityButtonText() => GetString("ChangeButtonText");
+    public void OnSchrodingerCatKill(SchrodingerCat schrodingerCat)
+    {
+        if (SchrodingerCat.ConsumeBullet)
+        {
+            ShotLimit--;
+        }
+    }
 }

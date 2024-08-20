@@ -9,7 +9,7 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.AddOns.Common;
 using static TownOfHostY.Translator;
 using TownOfHostY.Roles.Impostor;
-
+using TownOfHostY.Roles.Neutral;
 namespace TownOfHostY;
 
 [HarmonyPatch]
@@ -311,6 +311,7 @@ public static class MeetingHudPatch
         //道連れ能力持たない時は下を通さない
         if (!((player.Is(CustomRoles.SKMadmate) && Options.MadmateRevengeCrewmate.GetBool())
             || (player.Is(CustomRoles.NekoKabocha) && NekoKabocha.revengeOnExile)
+            || (player.Is(CustomRoles.SchrodingerCat) && SchrodingerCat.RevengeOnExile)
             || player.Is(CustomRoles.EvilNekomata) || player.Is(CustomRoles.Nekomata)
             || player.Is(CustomRoles.Immoralist) || player.Is(CustomRoles.Revenger))) return;
 

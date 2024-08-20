@@ -660,6 +660,38 @@ namespace TownOfHostY
             Info += InfoLong ? "Long" : "";
             return GetString($"{Prefix}{text}{Info}");
         }
+        public static void SetRoleEx(this PlayerControl player, RoleTypes role)
+        {
+            bool ghostRole = RoleManager.IsGhostRole(role);
+            if (!player.Data || GameManager.Instance == null || !GameManager.Instance) return;
+
+            DestroyableSingleton<RoleManager>.Instance.SetRole(player, role);
+            player.Data.Role.SpawnTaskHeader(player);
+            if (!ghostRole) player.MyPhysics.SetBodyType(player.BodyType);
+
+            if (!player.AmOwner) return;
+
+            if (ghostRole)
+            {
+                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                if (player.Data.Role.IsImpostor)
+                {
+                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesImpostor);
+                    StatsManager.Instance.ResetStat(StringNames.StatsCrewmateStreak);
+                }
+                else
+                {
+                    StatsManager.Instance.IncrementStat(StringNames.StatsGamesCrewmate);
+                    StatsManager.Instance.IncrementStat(StringNames.StatsCrewmateStreak);
+                }
+                DestroyableSingleton<HudManager>.Instance.MapButton.gameObject.SetActive(true);
+                DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(true);
+                DestroyableSingleton<HudManager>.Instance.UseButton.gameObject.SetActive(true);
+            }
+        }
         public static void SetRealKiller(this PlayerControl target, PlayerControl killer, bool NotOverRide = false)
         {
             if (target == null)
