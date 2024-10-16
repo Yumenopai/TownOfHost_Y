@@ -172,9 +172,12 @@ public abstract class RoleBase : IDisposable
     /// <summary>
     /// 透明化チェック時に呼ばれる
     /// 自分自身が透明化したときのみ呼ばれる
+    /// ※透明化キャンセルの場合にキルクールが10秒に強制されてしまうため、
+    /// falseで返す時があれば能力に応じた任意のキルクールを設定しておく。
     /// </summary>
     /// <returns>falseを返すと透明化がキャンセルされる</returns>
-    public virtual bool OnCheckVanish() => true;
+    /// <param name="killCooldown">キルクール</param>
+    public virtual bool OnCheckVanish(ref float killCooldown) => true;
 
     /// <summary>
     /// タスクターンに常時呼ばれる関数

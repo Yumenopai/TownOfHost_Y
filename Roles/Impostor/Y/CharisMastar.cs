@@ -94,8 +94,11 @@ public sealed class CharismaStar : RoleBase, IImpostor
             Utils.NotifyRoles(SpecifySeer: killer);
         });
     }
-    public override bool OnCheckVanish()
+    public override bool OnCheckVanish(ref float killCooldown)
     {
+        // キルクール設定
+        killCooldown = KillCooldown;
+
         // 使用回数がない時は無視
         if (GatherLimitCount == 0) return false;
 

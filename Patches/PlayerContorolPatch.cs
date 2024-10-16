@@ -352,7 +352,8 @@ namespace TownOfHostY
 
             // 役職の処理
             var role = phantom.GetRoleClass();
-            if (role?.OnCheckVanish() == false)
+            float killCooldown = 10.0f; // 初期10秒設定 下記Vanishがfalseの場合何かしら設定する
+            if (role?.OnCheckVanish(ref killCooldown) == false)
             {
                 Logger.Info($"{phantom.GetNameWithRole()} : OnCheckVanish() == false", "CheckVanish");
 
@@ -361,6 +362,9 @@ namespace TownOfHostY
                 {
                     SendDummyClearCharge(phantom);
                 }
+                // キルクールが10秒に設定されてしまうため、ここで任意の秒数に設定する
+                // ホストは仕様上キルクールは強制されないが、バニラの仕様に合わせここでセットする
+                phantom.SetKillCooldown(killCooldown);
 
                 return false;
             }

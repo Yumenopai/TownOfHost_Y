@@ -99,8 +99,11 @@ public sealed class Charger : RoleBase, IImpostor
         Player.RpcResetAbilityCooldown();
     }
 
-    public override bool OnCheckVanish()
+    public override bool OnCheckVanish(ref float killCooldown)
     {
+        // キルクール設定
+        killCooldown = chargeKillCooldown;
+
         if (killLimit <= 0) return false;
 
         // 全体内での最短距離のターゲット
