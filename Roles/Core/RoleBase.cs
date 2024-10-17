@@ -177,7 +177,8 @@ public abstract class RoleBase : IDisposable
     /// </summary>
     /// <returns>falseを返すと透明化がキャンセルされる</returns>
     /// <param name="killCooldown">キルクール</param>
-    public virtual bool OnCheckVanish(ref float killCooldown) => true;
+    /// <param name="canResetAbilityCooldown">使用後アビリティクールをリセットするか</param>
+    public virtual bool OnCheckVanish(ref float killCooldown, ref bool canResetAbilityCooldown) => true;
 
     /// <summary>
     /// タスクターンに常時呼ばれる関数

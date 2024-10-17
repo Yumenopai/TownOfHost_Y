@@ -99,7 +99,7 @@ public sealed class Charger : RoleBase, IImpostor
         Player.RpcResetAbilityCooldown();
     }
 
-    public override bool OnCheckVanish(ref float killCooldown)
+    public override bool OnCheckVanish(ref float killCooldown, ref bool canResetAbilityCooldown)
     {
         // キルクール設定
         killCooldown = chargeKillCooldown;

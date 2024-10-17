@@ -69,7 +69,7 @@ public sealed class EvilHacker : RoleBase, IImpostor
                 return new Vector2(0f, 0f);
         }
     }
-    public override bool OnCheckVanish(ref float killCooldown)
+    public override bool OnCheckVanish(ref float killCooldown, ref bool canResetAbilityCooldown)
     {
         // 移動前の位置を保持
         LastPosition = Player.GetTruePosition();
