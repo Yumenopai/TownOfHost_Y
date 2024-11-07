@@ -175,10 +175,6 @@ public sealed class GrudgeSheriff : RoleBase
         var KillRange = GameOptionsData.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
         if (targetDistance <= KillRange && Player.CanMove && target.CanMove)
         {
-            ShotLimit--;
-            Logger.Info($"{Player.GetNameWithRole()} : 残り{ShotLimit}発", "GrudgeSheriff");
-            Player.RpcResetAbilityCooldown();
-
             if (!CanBeKilledBy(target))
             {
                 PlayerState.GetByPlayerId(Player.PlayerId).DeathReason = CustomDeathReason.Misfire;
@@ -192,9 +188,16 @@ public sealed class GrudgeSheriff : RoleBase
                     Utils.NotifyRoles(); return;
                 }
             }
-            target.SetRealKiller(Player);
-            Player.RpcMurderPlayer(target);
-            Utils.MarkEveryoneDirtySettings();
+
+            if (CustomRoleManager.OnCheckMurder(Player, target))
+            {
+                ShotLimit--;
+                Logger.Info($"{Player.GetNameWithRole()} : 残り{ShotLimit}発", "GrudgeSheriff");
+                target.SetRealKiller(Player);
+            }
+
+            Player.RpcResetAbilityCooldown();
+            Player.MarkDirtySettings();
             KillWaitPlayerSelect = null;
             KillWaitPlayer = null;
             Utils.NotifyRoles();
