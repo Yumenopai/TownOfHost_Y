@@ -806,6 +806,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "GuesserMultipleInMeeting","Multiple In Meeting","一会議での複数使用","","","",""
 "GuesserHideMisfire","Hide DeathReason Misfire","死因 誤爆を隠す","","","",""
 "GuesserGuessAfterVote","Guess After Voted","投票後の能力使用","","","",""
+"MadGuesserAlwaysSuicide","Always Misfire Judge","必ず誤爆判定になる",
 
 # インポスター
 "BountyTargetChangeTime","Time Until Target Swaps","ターゲット変更時間","赏金目标切换时间","賞金目標切換時間","Время смены цели","Tempo Para Troca de Alvos"
