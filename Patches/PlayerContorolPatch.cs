@@ -71,7 +71,7 @@ namespace TownOfHostY
         }
 
         // 不正キル防止チェック
-        public static bool CheckForInvalidMurdering(MurderInfo info)
+        public static bool CheckForInvalidMurdering(MurderInfo info, bool killerMyselfInvoke)
         {
             (var killer, var target) = info.AttemptTuple;
 
@@ -108,13 +108,16 @@ namespace TownOfHostY
             }
 
             // 連打キルでないか
-            float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / 1000f * 6f); //※AmongUsClient.Instance.Pingの値はミリ秒(ms)なので÷1000
-            //TimeSinceLastKillに値が保存されていない || 保存されている時間がminTime以上 => キルを許可
-            //↓許可されない場合
-            if (TimeSinceLastKill.TryGetValue(killer.PlayerId, out var time) && time < minTime)
+            if (!killerMyselfInvoke)
             {
-                Logger.Info("前回のキルからの時間が早すぎるため、キルをブロックしました。", "CheckMurder");
-                return false;
+                float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / 1000f * 6f); //※AmongUsClient.Instance.Pingの値はミリ秒(ms)なので÷1000
+                //TimeSinceLastKillに値が保存されていない || 保存されている時間がminTime以上 => キルを許可
+                //↓許可されない場合
+                if (TimeSinceLastKill.TryGetValue(killer.PlayerId, out var time) && time < minTime)
+                {
+                    Logger.Info("前回のキルからの時間が早すぎるため、キルをブロックしました。", "CheckMurder");
+                    return false;
+                }
             }
             TimeSinceLastKill[killer.PlayerId] = 0f;
 

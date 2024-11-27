@@ -114,11 +114,12 @@ public sealed class GrudgeCharger : RoleBase, IImpostor
         if (targetDistance <= KillRange && Player.CanMove && target.CanMove)
         {
             KillWaitPlayer = null;
-            if (CustomRoleManager.OnCheckMurder(Player, target))
+            if (CustomRoleManager.OnCheckMurder(Player, target, true))
             {
                 killLimit--;
                 target.SetRealKiller(Player);
                 Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "GrudgeCharger");
+                Utils.NotifyRoles(SpecifySeer: Player);
             }
 
             killThisTurn = true;
