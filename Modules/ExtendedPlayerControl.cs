@@ -600,7 +600,7 @@ namespace TownOfHostY
                 return false;
             }
             if (EvilIgnition.CanBombTarget() &&
-                PlayerState.GetByPlayerId(seen.PlayerId).DeathReason == CustomDeathReason.Bombed)
+                PlayerState.GetByPlayerId(seen.PlayerId).DeathReason == CustomDeathReason.IgnitionBombed)
             {
                 return true;
             }
