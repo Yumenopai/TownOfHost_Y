@@ -493,6 +493,7 @@ public enum CustomRoles
     CharismaStar,
     EvilHacker,
     Telekinetic,
+    Administer,
 
     Godfather,
     Janitor,
