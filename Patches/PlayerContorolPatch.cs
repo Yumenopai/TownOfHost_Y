@@ -529,6 +529,12 @@ namespace TownOfHostY
                 role.OnReportDeadBody(__instance, target);
             }
 
+            foreach (var kvp in PlayerState.AllPlayerStates)
+            {
+                var pc = Utils.GetPlayerById(kvp.Key);
+                kvp.Value.LastRoom = pc.GetPlainShipRoom();
+            }
+
             Main.AllPlayerControls
                 .Where(pc => Main.CheckShapeshift.ContainsKey(pc.PlayerId))
                 .Do(pc => Camouflage.RpcSetSkin(Camouflage.IsCamouflage, pc, RevertToDefault: true));
@@ -563,11 +569,11 @@ namespace TownOfHostY
     {
         public static void Prefix()
         {
-            foreach (var kvp in PlayerState.AllPlayerStates)
-            {
-                var pc = Utils.GetPlayerById(kvp.Key);
-                kvp.Value.LastRoom = pc.GetPlainShipRoom();
-            }
+            //foreach (var kvp in PlayerState.AllPlayerStates)
+            //{
+            //    var pc = Utils.GetPlayerById(kvp.Key);
+            //    kvp.Value.LastRoom = pc.GetPlainShipRoom();
+            //}
         }
     }
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]

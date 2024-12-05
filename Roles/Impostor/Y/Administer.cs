@@ -27,21 +27,25 @@ public sealed class Administer : RoleBase, IImpostor
     {
     }
 
-    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
         if (!isForMeeting || !seen.IsAlive()) return string.Empty;
 
         // 最終場所の表示
         var room = PlayerState.GetByPlayerId(seen.PlayerId).LastRoom;
+        var color = Color.green;
+        var roomName = "";
+
         if (room == null)
         {
-            return Utils.ColorString(Color.gray, "@" + GetString("FailToTrack"));
+            roomName = GetString("FailToTrack");
+            color = Color.gray;
         }
         else
         {
-            return Utils.ColorString(Color.green, "@" + GetString(room.RoomId.ToString()));
+            roomName = GetString(room.RoomId.ToString());
         }
+        return Utils.ColorString(color, $"<size=80%>\n@{roomName}</size>");
     }
-
 }
