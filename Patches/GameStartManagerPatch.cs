@@ -280,7 +280,7 @@ namespace TownOfHostY
                     if (Options.AddedTheSkeld.GetBool()) randomMaps.Add(0);
                     if (Options.AddedMiraHQ.GetBool()) randomMaps.Add(1);
                     if (Options.AddedPolus.GetBool()) randomMaps.Add(2);
-                    if (Options.AddedTheAirShip.GetBool()) randomMaps.Add(4);
+                    if (Options.AddedTheAirship.GetBool()) randomMaps.Add(4);
                     if (Options.AddedTheFungle.GetBool()) randomMaps.Add(5);
 
                     if (randomMaps.Count <= 0) return;

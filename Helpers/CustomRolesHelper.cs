@@ -58,7 +58,7 @@ namespace TownOfHostY
                 CustomRoles.Shapeshifter or
                 CustomRoles.Phantom;
         }
-        public static CustomRoles IsVanillaRoleConversion(this CustomRoles role)
+        public static CustomRoles VanillaRoleConversion(this CustomRoles role)
         {
             return role switch
             {
@@ -71,6 +71,17 @@ namespace TownOfHostY
                 CustomRoles.NormalNoisemaker => CustomRoles.Noisemaker,
                 _ => role
             };
+        }
+        public static bool IsNormalVanillaRole(this CustomRoles role)
+        {
+            return role is
+                CustomRoles.NormalImpostor or
+                CustomRoles.NormalShapeshifter or
+                CustomRoles.NormalPhantom or
+                CustomRoles.NormalEngineer or
+                CustomRoles.NormalScientist or
+                CustomRoles.NormalTracker or
+                CustomRoles.NormalNoisemaker;
         }
 
         // 新役職等(トップ掲載の常設役職)

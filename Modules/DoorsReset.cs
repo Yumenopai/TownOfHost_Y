@@ -1,3 +1,4 @@
+using Sentry;
 using TownOfHostY.Attributes;
 
 namespace TownOfHostY.Modules;
@@ -13,13 +14,27 @@ public static class DoorsReset
     public static void Initialize()
     {
         // AirshipとPolusとFungle以外は非対応
-        if ((MapNames)Main.NormalOptions.MapId is not (MapNames.Airship or MapNames.Polus or MapNames.Fungle))
+        switch ((MapNames)Main.NormalOptions.MapId)
         {
-            isEnabled = false;
-            return;
+            case MapNames.Skeld:
+                isEnabled = false;
+                return;
+            case MapNames.Mira:
+                isEnabled = false;
+                return;
+            case MapNames.Polus:
+                isEnabled = Options.ResetDoorsEveryTurns_Polus.GetBool();
+                mode = (ResetMode)Options.DoorsResetMode_Polus.GetValue();
+                break;
+            case MapNames.Airship:
+                isEnabled = Options.ResetDoorsEveryTurns_Airship.GetBool();
+                mode = (ResetMode)Options.DoorsResetMode_Airship.GetValue();
+                break;
+            case MapNames.Fungle:
+                isEnabled = Options.ResetDoorsEveryTurns_Fungle.GetBool();
+                mode = (ResetMode)Options.DoorsResetMode_Fungle.GetValue();
+                break;
         }
-        isEnabled = Options.ResetDoorsEveryTurns.GetBool();
-        mode = (ResetMode)Options.DoorsResetMode.GetValue();
         logger.Info($"初期化: [ {isEnabled}, {mode} ]");
     }
 

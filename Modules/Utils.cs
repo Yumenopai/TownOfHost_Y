@@ -748,9 +748,8 @@ public static class Utils
                 if (role is CustomRoles.NormalImpostor) continue;
 
                 string infoLongText = "";
-                if (role is CustomRoles.NormalShapeshifter or CustomRoles.NormalEngineer or CustomRoles.NormalScientist or
-                            CustomRoles.NormalPhantom or CustomRoles.NormalTracker or CustomRoles.NormalNoisemaker)
-                    infoLongText = '\n' + GetString(Enum.GetName(typeof(CustomRoles), role.IsVanillaRoleConversion()) + "BlurbLong");
+                if (role.IsNormalVanillaRole())
+                    infoLongText = '\n' + GetString(Enum.GetName(typeof(CustomRoles), role.VanillaRoleConversion()) + "BlurbLong");
                 else
                     infoLongText = GetString(Enum.GetName(typeof(CustomRoles), role) + "InfoLong");
 

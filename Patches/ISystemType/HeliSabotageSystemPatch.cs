@@ -33,7 +33,7 @@ public static class HeliSabotageSystemPatch
 {
     public static void Prefix(HeliSabotageSystem __instance)
     {
-        if (!__instance.IsActive || !Options.SabotageTimeControl.GetBool())
+        if (!__instance.IsActive || !Options.SabotageTimeControl_Airship.GetBool())
             return;
         if (AirshipStatus.Instance != null)
             if (__instance.Countdown >= Options.AirshipReactorTimeLimit.GetFloat())

@@ -20,9 +20,9 @@ public static class SecurityCameraSystemTypeUpdateSystemPatch
         {
             var camerasDisabled = (MapNames)Main.NormalOptions.MapId switch
             {
-                MapNames.Skeld => Options.DisableSkeldCamera.GetBool(),
-                MapNames.Polus => Options.DisablePolusCamera.GetBool(),
-                MapNames.Airship => Options.DisableAirshipCamera.GetBool(),
+                MapNames.Skeld => Options.DisableCamera_Skeld.GetBool(),
+                MapNames.Polus => Options.DisableCamera_Polus.GetBool(),
+                MapNames.Airship => Options.DisableCamera_Airship.GetBool(),
                 _ => false,
             };
             return !camerasDisabled;
