@@ -5,7 +5,6 @@ using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Translator;
-using MS.Internal.Xml.XPath;
 
 namespace TownOfHostY.Roles.Impostor;
 public sealed class Charger : RoleBase, IImpostor
@@ -124,11 +123,12 @@ public sealed class Charger : RoleBase, IImpostor
         Logger.Info($"距離 : {minDistance.dist}m <= {KillRange}m", "Charger");
         if (minDistance.dist <= KillRange && Player.CanMove && minDistance.target.CanMove)
         {
-            if (CustomRoleManager.OnCheckMurder(Player, minDistance.target))
+            if (CustomRoleManager.OnCheckMurder(Player, minDistance.target, true))
             {
                 killLimit--;
                 minDistance.target.SetRealKiller(Player);
                 Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "Charger");
+                Utils.NotifyRoles(SpecifySeer: Player);
             }
 
             killThisTurn = true;

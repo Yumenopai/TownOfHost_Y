@@ -154,7 +154,8 @@ public sealed class BestieWolf : RoleBase, IImpostor
                 EnableKillFlash = nearTarget.pc;
                 if (CustomRoleManager.OnCheckMurder(
                         killer, nearTarget.pc,
-                        nearTarget.pc, nearTarget.pc))
+                        nearTarget.pc, nearTarget.pc,
+                        true))
                 {
                     nearTarget.pc.SetRealKiller(killer);
                 }

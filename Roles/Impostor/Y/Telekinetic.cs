@@ -51,7 +51,7 @@ public sealed class Telekinetic : RoleBase, IImpostor
         info.CanKill = false;
 
         // キルモーションなし（相手の自爆）を起こす
-        if (CustomRoleManager.OnCheckMurder(Player, target, target, target))
+        if (CustomRoleManager.OnCheckMurder(Player, target, target, target, true))
         {
             // 死因変更
             if (ChangeDeathReason) {
