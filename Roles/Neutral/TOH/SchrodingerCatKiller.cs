@@ -31,14 +31,9 @@ public sealed class SchrodingerCatKiller : RoleBase, IKiller, IAdditionalWinner,
         player
     )
     {
-        canSeeKillableTeammate = SchrodingerCat.CanSeeKillableTeammate;
-        deadDelay = SchrodingerCat.DeadDelay;
-
         planedCats = new();
         changeCheckList = new();
     }
-    static bool canSeeKillableTeammate = true;
-    static float deadDelay = 15f;
 
     private static Dictionary<byte, (PlayerControl cat, PlayerControl owner, CustomRoles ownerRole,
         TeamType team, CountTypes countType)> planedCats = new();
@@ -195,7 +190,11 @@ public sealed class SchrodingerCatKiller : RoleBase, IKiller, IAdditionalWinner,
 
         if (GameStates.IsMeeting ||
             team == TeamType.Crew) CheckCatKiller(cat.PlayerId);
-        else _ = new LateTask(() => CheckCatKiller(cat.PlayerId), deadDelay, "ChangeCatKiller");
+        else _ = new LateTask(() =>
+        {
+            CheckCatKiller(cat.PlayerId);
+            logger.Info($"{DeadDelay}");
+        }, DeadDelay, "ChangeCatKiller");
     }
     public static void CheckCatKiller()
     {

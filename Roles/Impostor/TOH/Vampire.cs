@@ -117,17 +117,21 @@ namespace TownOfHostY.Roles.Impostor
                 else
                 {
 
-
-                    PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Bite;
-                    target.SetRealKiller(vampire);
-                    CustomRoleManager.OnCheckMurder(
+                    if (CustomRoleManager.OnCheckMurder(
                         vampire, target,
-                        target, target
-                    );
-                    Logger.Info($"Vampireに噛まれている{target.name}を自爆させました。", "Vampire.KillBitten");
-                    if (!isButton && vampire.IsAlive())
+                        target, target))
                     {
-                        RPC.PlaySoundRPC(vampire.PlayerId, Sounds.KillSound);
+                        PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Bite;
+                        target.SetRealKiller(vampire);
+                        Logger.Info($"Vampireに噛まれている{target.name}を自爆させました。", "Vampire.KillBitten");
+                        if (!isButton && vampire.IsAlive())
+                        {
+                            RPC.PlaySoundRPC(vampire.PlayerId, Sounds.KillSound);
+                        }
+                    }
+                    else
+                    {
+                        Logger.Info($"Vampireに噛まれている{target.name}はキルされませんでした。", "Vampire.KillBitten");
                     }
                 }
             }
