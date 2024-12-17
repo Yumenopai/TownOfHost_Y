@@ -905,7 +905,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "ChaserChaseMaxCount","Chase Max Count","チェイスの最大回数",
 "ChaserReturnPosition","Return Position After Chase","チェイス後、元の位置に戻る","返回原位","返回原位","Вернуться в исходное положение","Retornar à posição original"
 "ChaserPositionTime","Time to return to original position","元の位置に戻るまでの時間","几秒钟后返回原来位置","多少秒後它會回到原來的位置","Через сколько секунд он вернется в исходное положение","Depois de quantos segundos ele retornará à sua posição original"
-"CharismaStarGatherCooldown","Gather Cooldown","集合能力のクールダウン"
+"CharismaStarGatherCooldown","Gather Cooldown(>= Kill Cooldown)","集合能力のクールダウン(>=キルクール)"
 "CharismaStarGatherMaxCount","Gather Max Count","集合能力の使用回数",
 "CharismaStarNotGatherPlayerKill","Not Gather Player Kill","集合出来ないプレイヤーは自爆する",
 "CharismaStarCanAllPlayerGather","Can All Player Gather","全員を一気に集合できる"

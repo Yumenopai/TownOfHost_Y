@@ -65,7 +65,7 @@ public sealed class SelfBomber : RoleBase, IImpostor
         Player.RpcResetAbilityCooldown();
         Logger.Info($"ResetBombTimer(afterMeeting) bomber: {Player?.name}", "SelfBomber");
     }
-    public override bool OnCheckVanish()
+    public override bool OnCheckVanish(ref float killCooldown, ref bool canResetAbilityCooldown)
     {
         if (!AmongUsClient.Instance.AmHost) return false; // 爆破処理はホストのみ
 
