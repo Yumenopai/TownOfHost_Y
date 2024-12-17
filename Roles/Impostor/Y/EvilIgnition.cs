@@ -118,7 +118,7 @@ public sealed class EvilIgnition : RoleBase, IImpostor
                 OccurredBombed = true;
                 Logger.Info($"{killer.GetNameWithRole()}：発火爆破 爆破先→{nearTarget.pc.GetNameWithRole()}", "EvilFire");
 
-                PlayerState.GetByPlayerId(nearTarget.pc.PlayerId).DeathReason = CustomDeathReason.Bombed;
+                PlayerState.GetByPlayerId(nearTarget.pc.PlayerId).DeathReason = CustomDeathReason.IgnitionBombed;
                 nearTarget.pc.SetRealKiller(killer);
                 nearTarget.pc.RpcMurderPlayer(nearTarget.pc, true);
                 killer.MarkDirtySettings();

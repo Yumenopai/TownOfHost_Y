@@ -290,6 +290,7 @@ namespace TownOfHostY
         Senility,
         CounterAttack,
         Telekinesis,
+        IgnitionBombed,
 
         Win,
         etc = -1
