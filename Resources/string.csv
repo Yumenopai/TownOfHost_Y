@@ -64,6 +64,7 @@
 "CharismaStar","Charisma Star","カリスマスター",
 "EvilHacker","EvilHacker","イビルハッカー",
 "Telekinetic","Telekinetic","テレキネス",
+"Administer","Administer","アドミニスター",
 
 "CustomImpostorInfo","I can now use abilities like that","あんな能力も使えるようになりました",
 "EvilWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
@@ -109,6 +110,7 @@
 "CharismaStarInfo","AAre you coming to my place？","オレんとこ来ないか？",
 "EvilHackerInfo","Hack Systmes and kill the crewmate","アドミンを駆使しクルーをキルせよ",
 "TelekineticInfo","Kill them with TK","念力で殺せ",
+"AdministerInfo","Get everybody in position","最終位置を監視し優位に付け",
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
 "EvilWatcherInfoLong","(Impostors):\nYou can see everyone's votes even if anonymous voting is on.","(インポスター陣営):\n全員の投票先を見ることができる。","(内鬼阵营):\n会议时窥视者可以看到所有人的投票。","(狼人陣營):\n會議時觀察者可以看到所有人的投票。","(Предатель):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Impostores):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -151,6 +153,7 @@
 "CharismaStarInfoLong","(Impostors):\nImpostor that allows any player to assemble to the nearest vent from himself.\nThe kill button uses double clicks. The single-click kill button allows the user to select a member, while the double-click kill button is used for normal kills. Multiple members can be set up, and by pressing the disappear button, the members can be gathered into a vent near you.\nWhen the setting that allows everyone to assemble is turned on, if no one has decided on a member, everyone can assemble.\nWhen a gathering is called, if the target player is using a ladder or lift, the gathering cannot take place. If a player cannot assemble, he or she will self-suiside.","[インポスター陣営]\nプレイヤーを自身から近いベントへ集合させることができるインポスター。\nキルボタンはダブルクリックを使い分ける。シングルクリックでは集合メンバーを決め、ダブルクリックでは通常キルをする。集合メンバーは複数人設定することができ、消えるボタンを押すことでそのメンバーを自身付近のベントに集めることができる。\n全員集合できる設定をONにしている時、誰もメンバーを決めていないと全員を集合させることができる。\n集合をかけた時、対象プレイヤーがはしごを使用していると集まることが出来ない。設定により、集まれないプレイヤーは自爆する。",
 "EvilHackerInfoLong","(Impostors):\nImposter that allows Admin to be seen from anywhere.\nUse the disappear button to move to the Admin location.\nIt can be viewed by pressing the View button at the destination.\nAfter a few seconds it returns to its original position.\nNote that you have to press the View button to see it.\nYou can't move while watching.\n","[インポスター陣営]\n※本家TOHと仕様が異なります。\nアドミンが見れるインポスター。消えるボタンでアドミン前へワープし、手動でアドミンボタンを押すことで見ることが出来る。アドミン前へワープした時、アドミン前に立っている姿は他の人から見えないが、元の位置からも姿は消える。なお、約3秒後に元の位置へ戻る。戻った先でもアドミンを見続けることが出来るが、見ている最中は動けない。",
 "TelekineticInfoLong","(Impostors):\nA kill can be made without causing a kill motion. Also, setting makes death reason of a Telekinetic kill a Telekinesis.","[インポスター陣営]\nキルモーション無しでキルができる。設定により、テレキネスキルの死因が念殺になる。",
+"AdministerInfoLong","(Impostors):\nDuring the meeting, he will know the room all the survivors were in before the meeting.","[インポスター陣営]\n会議中、生存者全員の会議前にいた部屋を知ることができる。",
 
 "# マッドメイト系役職"
 "Madmate","Madmate","マッドメイト","叛徒","叛徒","Безумец","Tripulante Louco"

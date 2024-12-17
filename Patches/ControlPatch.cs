@@ -188,9 +188,21 @@ namespace TownOfHostY
             //現在の座標を取得
             if (Input.GetKeyDown(KeyCode.I))
             {
+                var room = PlayerControl.LocalPlayer.GetPlainShipRoom();
+                var roomName = "";
+
+                if (room == null)
+                {
+                    roomName = Translator.GetString("FailToTrack");
+                }
+                else
+                {
+                    roomName = Translator.GetString(room.RoomId.ToString());
+                }
+
                 var pos = PlayerControl.LocalPlayer.GetTruePosition().ToString();
                 Logger.Info(pos, "GetLocalPlayerPos");
-                Logger.SendInGame($"position: {pos}");
+                Logger.SendInGame($"position: {pos}/ [@{roomName}]");
             }//マスゲーム用コード
             /*if (Input.GetKeyDown(KeyCode.C))
             {
