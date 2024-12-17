@@ -169,18 +169,18 @@
 
 "MadmateInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼","幫助偽裝者","Помогите Предателям","Ajude os Impostores"
 "BeforeMadmateInfo","Finish your tasks","タスクを済ませろ","完成你的任务","完成你的任務","Завершите свои задания","Termine as suas tarefas"
-"MadGuardianInfo","Finish your tasks and help the Impostors","タスクを済ませ、インポスターの援助をしよう","完成任务后来帮助内鬼","完成你的任務並幫助偽裝者","Завершите свои задания чтобы помочь Предателям","Termine as suas tarefas e ajude os Impostores"
-"MadSnitchInfo","Finish your tasks and help the Impostors","タスクを済ませ、インポスターの援助をしよう","完成任务后来帮助内鬼","完成你的任務並幫助偽裝者","Завершите свои задания чтобы помочь Предателям","Termine as suas tarefas e ajude os Impostores"
-"MadSheriffInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
-"MadDictatorInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
-"MadNatureCallsInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
-"MadBrackOuterInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
-"MadNimrodInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
-"MadScientistInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
-"MadJesterInfo","Help the Impostors","インポスターの援助をしよう","帮助内鬼",,
+"MadGuardianInfo","Finish your tasks and help the Impostors","タスクを済ませ、キルを防げ","完成任务后来帮助内鬼","完成你的任務並幫助偽裝者","Завершите свои задания чтобы помочь Предателям","Termine as suas tarefas e ajude os Impostores"
+"MadSnitchInfo","Finish your tasks and help the Impostors","タスクを済ませ、インポスターと内通せよ","完成任务后来帮助内鬼","完成你的任務並幫助偽裝者","Завершите свои задания чтобы помочь Предателям","Termine as suas tarefas e ajude os Impostores"
+"MadSheriffInfo","Help the Impostors","自爆により混乱させろ","帮助内鬼",,
+"MadDictatorInfo","Help the Impostors","独裁者となり道連れせよ","帮助内鬼",,
+"MadNatureCallsInfo","Help the Impostors","ベントでトイレのドアが開く","帮助内鬼",,
+"MadBrackOuterInfo","Help the Impostors","ベント開閉で停電を起こせ","帮助内鬼",,
+"MadNimrodInfo","Help the Impostors","誰か選んで道連れせよ","帮助内鬼",,
+"MadScientistInfo","Help the Impostors","バイタルを見ながら援助しろ","帮助内鬼",,
+"MadJesterInfo","Help the Impostors","追放されて勝利せよ","帮助内鬼",,
 "MadGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
-"MadConnecterInfo","Connect with Impostors","インポスターと内通し合おう",
-"SKMadmateInfo","You are now on Team Impostors","サイドキックにされた","你是内鬼的好帮手","你現在是偽裝者的夥伴了，盡你所能幫助他們","Теперь вы в команде Предателя","Você agora está no Time Impostor"
+"MadConnecterInfo","Connect with Impostors","インポスターと内通し合え",
+"SKMadmateInfo","You have been appointed madmate","あなたはマッドに任命された","你是内鬼的好帮手","你現在是偽裝者的夥伴了，盡你所能幫助他們","Теперь вы в команде Предателя","Você agora está no Time Impostor"
 
 "MadmateInfoLong","(Impostors):\nYou are a crewmate, but you act as the impostors' ally.\nYou and the impostors cannot recognize each other.\nYou can vent, and you have no tasks.","(インポスター陣営):\nクルーだがインポスターの味方をする。\nインポスターと互いに認識できない。\nベントが使え、タスクはない。","(内鬼阵营):\n叛徒伪装成船员来帮助内鬼阵营，但是他们并不知道谁是内鬼。\n叛徒不可以进行击杀或者破坏，可以跳管道且没有任务。","(狼人陣營):\n船員,但是他們屬於狼人陣營.\n狼人無法知道叛徒是誰,\n他可以跳洞且沒有任務。","(Предатель):\nЧлен Экипажа, который на стороне Предателей. \nНо он не знает кто является Предателем в игре. \nМожет использовать вентиляцию, но нет заданий.","(Impostores):\nVocê é um tripulante que se aliou ao impostor.\nOs Impostores não sabem quem você é e vice-versa.\nPode usar a ventilação, e não tem tarefas."
 "MadGuardianInfoLong","(Impostors):\nYou are a crewmate, but you act as the impostors' ally.\nYou and the impostors cannot recognize each other.\nOnce you finish your tasks, you will be shielded from impostor kills.","(インポスター陣営):\nクルーだがインポスターの味方をする。\nインポスターと互いに認識できない。\nタスクを全て完了させるとｼｰﾙﾄﾞが付与される。","(内鬼阵营):\n背叛的守卫不可以击杀、破坏或使用管道。\n背叛的守卫完成任务之后，可以免疫所有击杀。","(狼人陣營):\n船員,但是他們屬於狼人陣營.\n狼人和他們無法互相知道誰是叛徒,誰是狼\n當背叛的天使完成所有任務時,他將有一個盾牌。","(Предатель):\nЧлен Экипажа, который на стороне Предателей. \nНо он не знает кто является Предателем в игре. \nЕсли он выполнит все задания, то он получит щит, с помощью которого он может предотвратить свое убийство.","(Impostores):\nVocê é um tripulante que se aliou ao impostor.\nOs Impostores não sabem quem você é e vice-versa.\nQuando terminar as suas tarefas, o Impostor não poderá te matar."
@@ -239,7 +239,7 @@
 "NiceGuesser","Nice Guesser","ナイスゲッサー","","","",""
 "Elder","Elder","長老","","","","",
 
-"CustomCrewmateInfo","I can now use abilities like that.","あんな能力も使えるようになりました。",
+"CustomCrewmateInfo","I can now use abilities like that","あんな能力も使えるようになりました",
 "NiceWatcherInfo","Gaze upon all votes","みんなの投票に目を光らせよう","你可以看见所有人的投票，注意他们的选择","注意所有人的投票","Вы видите цвета голосов","Veja todos os votos"
 "BaitInfo","Bait your enemies","敵を罠にはめよう","诱骗敌人，让敌人落入你的陷阱","犧牲小我，完成大我","Убийца моментально зарепортит ваш труп","Engane os seus inimigos"
 "LighterInfo","Light 'em up","すべてを照らそう","驱散黑暗，照亮前路","夜空中最亮的星","Увеличьте свой обзор выполнив свои задания","Luz para todo lado"
@@ -434,15 +434,15 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "Lantern","Lantern","ランタン",
 
 ## Info
-"CounselorAndMadDilemmaInfo","Unit","ユニット",
+"CounselorAndMadDilemmaInfo","Isn't it time for a change of heart?","改心させろ/インポスターを援助しろ",
 "CounselorInfo","Isn't it time for a change of heart?","そろそろ改心しませんか？",
 "MadDilemmaInfo","I'm trying to help Impostor..!","私はインポスターを助けるんだ、、！",
 
-"GodfatherAndJanitorInfo","Unit","ユニット",
+"GodfatherAndJanitorInfo","Cover up the evidence","連携して証拠を隠蔽しろ",
 "GodfatherInfo","Let's have Janitor clean up the target","連携して証拠を隠蔽させろ",
 "JanitorInfo","Cover up the evidence","連携して証拠を隠蔽しろ",
 
-"JackOLanternInfo","Unit","ユニット",
+"JackOLanternInfo","Happy Halloween!","ハッピー・ハロウィン！",
 "JackInfo","Take away the Role, don't reinstate","役職を奪い、復活させるな",
 "jOInfo","Detect Role and send to Jack","役職を検知し、ジャックに送信せよ",
 "LanternInfo","Receive Role from the dead","死者から役職を受け取れ",
@@ -565,6 +565,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "ArchenemyInfoLong","(Add-ons):\nA duelist challenged him to a fight.The name of the duelist is displayed, and the Archenemy's condition for victory is 'If you are alive at the time of the victory decision and the duelist dies, you win an additional victory.'","[属性]:\n決闘者に闘いを申し込まれた。決闘者が誰か表示され、宿敵の勝利条件は「勝利判定時に自身が生存、且つ決闘者が死亡で追加勝利」となる。",
 
 "# GM"
+"EnableGM","Enable GM","ゲームマスターを有効にする","GM(管理员)","GM(遊戲大師)","GM(Призрак)","GM(Fantasma)"
 "GM","GM","ゲームマスター","GM(管理员)","GM(遊戲大師)","GM(Призрак)","GM(Fantasma)"
 "GMInfo","You are the Game Master","霊界から見守ろう","你是管理员，在旁边看戏吧","當吃瓜群眾在一旁看戲吧","Вы Мастер Игры","Você é o Mestre do Jogo (GM)"
 "GMInfoLong","(None):\nThe GM (Game Master) is an observer role.\nTheir presence has no effect on the game, and all players know who the GM is. The GM role will be assigned to the host, who will automatically become a ghost at the start of the game.","(なし):\nGM(ゲームマスター)はオブザーバー役職である。\nGMはゲーム自体には何の影響も与えず、すべてのプレイヤーは誰がGMであるかがわかる。必ずホストに割り当てられ、始めから幽霊状態になっている。","（无阵营）：\nGM(管理员)是房主专属的观察者职业。从游戏开始时便以幽灵状态在旁边观战。 \n该职业本身对游戏没有影响，且会议中对所有玩家可见。 ","（不屬於任何陣營）：\nGM(遊戲大師)是遊戲的觀察者, \nGM對遊戲進行過程沒有影響,所有玩家都知道GM是誰,該職業絕對會分配給房主。\nGM(遊戲大師)從開始遊戲時就處於死亡狀態。","(Никто):\nМастер Игры — это роль, которая наблюдает за игрой в роле призрака. \nОн не влияет на игру, и все игроки всегда знают кто Мастер Игры. Всегда назначается только хосту лобби и становится призраком в самом начале игры.","(Nenhum): \nO GM (Mestre do Jogo) é uma classe de observação. \nA sua presença não afeta o jogo, e todos os jogadores sabem quem é o GM. A classe de GM será dada ao anfitrião, que será um fantasma desde o começo do jogo."
@@ -587,13 +588,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "HideAndSeek","Hide and Seek","かくれんぼ","躲猫猫","躲貓貓","Прятки","Esconde-Esconde"
 "NoGameEnd","NoGameEnd","ゲームを終了しない","测试模式","遊戲不會結束模式","Игра не закончится","Jogo Sem Fim"
 "SyncButtonMode","SyncButtonMode","ボタン回数同期モード","所有船员共享会议次数","全場拍桌數同步模式","Общая кнопка встречи","Modo de Botão Sincronizado"
-"RandomMapsMode","RandomMapsMode","ランダムマップモード","随机地图模式","隨機地圖模式","Случайная карта","Modo de Mapas Aleatórios"
 "SyncedButtonCount","Max Number of Buttons Allowed","合計ボタン使用可能回数","紧急会议可用次数","全場最大拍桌數量","Максимальное количество нажатий на Кнопку","Número Máximo de Usos do Botão"
-"AddedTheSkeld","Include TheSkeld","TheSkeldを追加","添加骷髅舰地图","將The Skeld地圖列入選項","Добавить TheSkeld","Incluir TheSkeld"
-"AddedMIRAHQ","Include MIRAHQ","MIRAHQを追加","添加米拉总部地图","將MIRA HQ地圖列入選項","Добавить MiraHQ","Incluir MIRAHQ"
-"AddedPolus","Include Polus","Polusを追加","添加波鲁斯地图","將Polus地圖列入選項","Добавить Polus","Incluir Polus"
-"AddedTheAirShip","Include TheAirShip","TheAirShipを追加","添加飞艇地图","將The AirShip列入選項","Добавить TheAirship","Incluir TheAirShip"
-"AddedTheFungle","Include TheFungle","TheFungleを追加",
 "AllAliveMeeting","Meeting When No One is Dead","全員生存時の会議","全员存活时的会议设定","全員存活會議","Все живые на собрании","Reunião Com Todos Vivos"
 "AllAliveMeetingTime","Meeting Time When No One is Dead","全員生存時の会議時間","全员存活时的会议时间","全員存活會議時間","Время когда все живы на собрании","Tempo de Reunião Com Todos Vivos"
 "AdditionalEmergencyCooldown","Additional Emergency Cooldown","追加の緊急ボタンクールダウン","附加紧急会议冷却时间","附加緊急會議冷卻時間","Дополнительный откат Собраний","Tempo de Emergência Adicional"
@@ -617,6 +612,75 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "DisableHelpCritter","Disable HelpCritter Tasks","卵の孵化タスク",
 "DisableTuneRadio","Disable FindSignal Tasks","電波探しタスク",
 "DisableAssembleArtifact","Disable AssembleArtifact Tasks","宝石組み立てタスク",
+
+"MapOption_Skeld","The Skeld Map option","The Skeldのマップ設定"
+"MapOption_Mira","MIRA HQ Map option","MIRA HQのマップ設定"
+"MapOption_Polus","Polus Map option","Polusのマップ設定"
+"MapOption_Airship","The Airship Map option","The Airshipのマップ設定"
+"MapOption_Fungle","The Fungle Map option","The Fungleのマップ設定"
+
+"RandomSpawn","Random Spawn","ランダムスポーン","随机出生点","隨機出生點","Случайный спавн","Spawn Aleatório"
+"AdditionalSpawn","Additional Spawn","スポーン位置を追加する",
+"AdditionalSpawn_Airship","Additional All Spawn","全てのスポーン位置を追加する",
+"AdditionalSpawn_AirshipTAKADA","Additional Spawn(Cockpit,Security,Medical)","ｺｯｸﾋﾟｯﾄ･ｾｷｭﾘﾃｨ･診察室を追加する",
+"DisableNearButton","Exclude Near Button","緊急ボタン近くを除く",
+"FirstFixedSpawn","First Fixed Spawn","最初の固定スポーン",
+
+"DisableDevices","Disable Devices","デバイスを無効化",
+"DisableAdmin","Disable Admin","アドミン無効化","禁用管理室地图","禁用管理室地圖","Отключить Стол Администратора","Desativar Admin"
+"DisableAirshipCockpitAdmin","Disable Cockpit Admin","アドミン無効化（コックピット）","禁用飞艇(驾驶舱)管理室地图","禁用The Airship(駕駛艙)的管理室地圖","Отключить Стол Администратора В Кабине","Desativar Admin da Cabine"
+"DisableAirshipRecordsAdmin","Disable Records Admin","アドミン無効化（アーカイブ）","禁用飞艇(档案室)管理室地图","禁用The Airship(檔案室)的管理室地圖","Отключить Стол Администратора В Архиве","Desativar Admin da Sala de Arquivos"
+"DisableCamera","Disable Camera","カメラ無効化",
+"DisableMiraHQDoorLog","Disable DoorLog","ドアログ無効化","禁用米拉总部门禁记录","禁用米拉总部门禁日志","Отключить Журналы","Desativar Portaria"
+"DisableVital","Disable Vital","バイタル無効化",
+
+"ResetDoorsEveryTurns","Reset Doors After Meeting","会議後にドア状況をリセットする",
+"DoorsResetMode","Reset Mode","リセットモード",
+"AllOpen","All Open","全て開放",
+"AllClosed","All Closed","全て閉鎖",
+"RandomByDoor","Random By Door","ドアごとにランダム",
+
+"## リアクターの時間制御"
+"SabotageTimeControl","Sabotage Duration Control","サボタージュの時間制御","更改修理时限","重新設定緊急任務時間","Изменить время Саботажа","Controle da Duração de Sabotagem"
+"ReactorTimeLimit","Reactor Duration","リアクター制限時間",
+"FungleMushroomMixupDuration","Mushroom Mixup Duration","キノコカオス効果時間",
+
+"LightsOutSpecialSettings_Airship","Restrictions On Where Fix Lights Can Take Place","停電解除場所の制限","停电特殊设定","關燈特殊設定","Специальные настройки при отключении Света","Configuração Especial de Consertar Luzes"
+"DisableAirshipViewingDeckLightsPanel","Disable Viewing Deck Lights Panel","展望の配電盤を無効化","禁用瞭望台配电箱","關閉觀景台的配電箱","Отключить починку Света на Смотровой Палубе","Desativar Painel de Luzes do Deck Panorâmico"
+"DisableAirshipGapRoomLightsPanel","Disable Gap Room Lights Panel","昇降機の配電盤を無効化","禁用升降机配电箱","關閉間隙室右側的配電箱","Отключить починку Света в Комнате Пролета","Desativar Painel de Luzes da Sala Suspensa"
+"DisableAirshipCargoLightsPanel","Disable Cargo Lights Panel","貨物室の配電盤を無効化","禁用货舱配电箱","關閉貨艙的配電箱","Отключить починку Света в Грузовом Отсеке","Desativar Painel de Luzes das Cargas"
+
+"AirShipVariableElectrical","Variable Electrical","電気室の構造変化","改变配电室构造","電力室構造變化","Двери в Электрощитовой меняются случайно",""
+"DisableAirshipMovingPlatform","Disable Moving Platform","昇降機のリフトを無効化","禁用升降机","","Отключить движущуюся платформу",""
+
+"FungleCanUseZipline","Can Use Zipline","ジップラインの方向制限",
+"FungleCanUseZiplineFromTop","Can't Use From Top","上からの下降を禁止",
+"FungleCanUseZiplineFromUnder","Can't Use From Under","下からの上昇を禁止",
+"FungleCanSporeTrigger","Can Spore Trigger","キノコ胞子モヤをなくす",
+"DisableButtonInMushroomMixup","Disable Button In MushroomMixup","キノコカオス中のボタンを無効化","","","",""
+
+
+"IgnoreConditions","Disable Device Ignore Conditions","デバイス無効化の除外条件",
+"IgnoreImpostors","Ignore Impostors","インポスターを除く","忽略内鬼","偽裝者陣營除外","Игнорируют Предатели","Ignorar Impostores"
+"IgnoreMadmates","Ignore Madmates","マッドメイト系を除く","忽略叛徒","叛徒職業除外","Игнорируют Безумцы","Ignorar Tripulantes Loucos"
+"IgnoreNeutrals","Ignore Neutrals","ニュートラルを除く","忽略独立阵营","中立陣營除外","Игнорируют Нейтралы","Ignorar Neutros"
+"IgnoreCrewmates","Ignore Crewmates","クルーを除く","忽略船员","船員陣營除外","Игнорируют Члены Экипажа","Ignorar Tripulantes"
+"IgnoreAfterAnyoneDied","Ignore After Anyone Has Died","死人が出た後を除く","忽略幽灵","當所有人都死亡時除外","Игнорируют умершие игроки","Ignorar Depois de Alguém Morrer"
+
+"RandomMapsMode","RandomMapsMode","ランダムマップモード","随机地图模式","隨機地圖模式","Случайная карта","Modo de Mapas Aleatórios"
+"AddedTheSkeld","Include TheSkeld","The Skeldを追加","添加骷髅舰地图","將The Skeld地圖列入選項","Добавить TheSkeld","Incluir TheSkeld"
+"AddedMIRAHQ","Include MIRAHQ","MIRA HQを追加","添加米拉总部地图","將MIRA HQ地圖列入選項","Добавить MiraHQ","Incluir MIRAHQ"
+"AddedPolus","Include Polus","Polusを追加","添加波鲁斯地图","將Polus地圖列入選項","Добавить Polus","Incluir Polus"
+"AddedTheAirship","Include The Airship","The Airshipを追加","添加飞艇地图","將The AirShip列入選項","Добавить TheAirship","Incluir TheAirShip"
+"AddedTheFungle","Include TheFungle","The Fungleを追加",
+
+"## サボタージュのクールダウン変更"
+"ModifySabotageCooldown","Sabotage Cooldown Control","サボタージュのクールダウン制御","","","",""
+"SabotageCooldown","Sabotage Cooldown","サボタージュのクールダウン","","","",""
+
+"BlockDisturbancesToSwitches","Block Disturbances To Switches","配電盤妨害を無効化","","","",""
+"CommsCamouflage","Camouflage During Comms","コミュサボ時のカモフラージュ","通信破坏时伪装","通訊破壞時所有玩家變成小灰人","Камуфляж при Саботаже Связи","Camuflagem Durante Comunicação"
+
 
 "SuffixMode","Suffix","名前の二行目","附加标签","名字標籤","Суффикс","Sufixo"
 "SuffixMode.None","None","なし","无","無","Ничего","Nenhum"
@@ -662,56 +726,6 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "TieMode.Default","Default","デフォルト","默认","預設","Обычное","Padrão"
 "TieMode.All","Eject All","全員追放","全体放逐","全員放逐","Изгнать всех","Exilar Todos"
 "TieMode.Random","Eject Random","ランダムに追放","随机放逐","隨機放逐","Изгнать случайно","Exilar Aleatório"
-"DisableDevices","Disable Devices","デバイスを無効化","禁用设备","禁用裝置","Отключить устройства","Desativar Dispositivos"
-"DisableSkeldDevices","Disable Skeld Devices","スケルドのデバイス無効化","禁用骷髅舰设备","禁用The Skeld中的設備","Отключить устройства на TheSkeld","Desativar Dispositivos de Skeld"
-"DisableMiraHQDevices","Disable MiraHQ Device","ミラHQのデバイス無効化","禁用米拉总部设备","禁用Mira HQ中的設備","Отключить устройства на MiraHQ","Desativar Dispositivos de MiraHQ"
-"DisablePolusDevices","Disable Polus Device","ポーラスのデバイス無効化","禁用波鲁斯设备","禁用Polus中的設備","Отключить устройства на Polus","Desativar Dispositivos de Polus"
-"DisableAirshipDevices","Disable Airship Device","エアシップのデバイス無効化","禁用飞艇设备","禁用The Airship中的設備","Отключить устройства на Airship","Desativar Dispositivos de Airship"
-"DisableFungleDevices","Disable Fungle Device","ファングルのデバイス無効化"
-"DisableSkeldAdmin","Disable Admin","アドミン無効化","禁用管理室地图","禁用管理室地圖","Отключить Стол Администратора","Desativar Admin"
-"DisableMiraHQAdmin","Disable Admin","アドミン無効化","禁用管理室地图","禁用管理室地圖","Отключить Стол Администратора","Desativar Admin"
-"DisablePolusAdmin","Disable Admin","アドミン無効化","禁用管理室地图","禁用管理室地圖","Отключить Стол Администратора","Desativar Admin"
-"DisableAirshipCockpitAdmin","Disable Cockpit Admin","アドミン無効化（コックピット）","禁用飞艇(驾驶舱)管理室地图","禁用The Airship(駕駛艙)的管理室地圖","Отключить Стол Администратора В Кабине","Desativar Admin da Cabine"
-"DisableAirshipRecordsAdmin","Disable Records Admin","アドミン無効化（アーカイブ）","禁用飞艇(档案室)管理室地图","禁用The Airship(檔案室)的管理室地圖","Отключить Стол Администратора В Архиве","Desativar Admin da Sala de Arquivos"
-"DisableSkeldCamera","Disable Camera","カメラ無効化","禁用骷髅舰监控","禁用骷髅舰监控设备","Отключить Камеры","Desativar Câmeras"
-"DisablePolusCamera","Disable Camera","カメラ無効化","禁用波鲁斯监控设备","禁用波鲁斯监控设备","Отключить Камеры","Desativar Câmeras"
-"DisableAirshipCamera","Disable Camera","カメラ無効化","禁用飞艇监控","禁用飞艇监控设备","Отключить Камеры","Desativar Câmeras"
-"DisableMiraHQDoorLog","Disable DoorLog","ドアログ無効化","禁用米拉总部门禁记录","禁用米拉总部门禁日志","Отключить Журналы","Desativar Portaria"
-"DisablePolusVital","Disable Vital","バイタル無効化","禁用波鲁斯生命监测装置","禁用波鲁斯生命监测装置","Отключить Пульсы","Desativar Vitais"
-"DisableAirshipVital","Disable Vital","バイタル無効化","禁用飞艇生命监测装置","禁用飞艇生命监测装置","Отключить Пульсы","Desativar Vitais"
-"DisableFungleVital","Disable Vital","バイタル無効化","禁用飞艇生命监测装置","禁用飞艇生命监测装置","Отключить Пульсы","Desativar Vitais"
-"DisableFungleTelescope","Disable Telescope","望遠鏡無効化","禁用骷髅舰监控","禁用骷髅舰监控设备","Отключить Камеры","Desativar Câmeras"
-"IgnoreConditions","Ignore Conditions","除外条件","忽略条件","忽略條件","Игнорируют условия","Ignorar Condições"
-"IgnoreImpostors","Ignore Impostors","インポスターを除く","忽略内鬼","偽裝者陣營除外","Игнорируют Предатели","Ignorar Impostores"
-"IgnoreMadmates","Ignore Madmates","マッドメイト系を除く","忽略叛徒","叛徒職業除外","Игнорируют Безумцы","Ignorar Tripulantes Loucos"
-"IgnoreNeutrals","Ignore Neutrals","ニュートラルを除く","忽略独立阵营","中立陣營除外","Игнорируют Нейтралы","Ignorar Neutros"
-"IgnoreCrewmates","Ignore Crewmates","クルーを除く","忽略船员","船員陣營除外","Игнорируют Члены Экипажа","Ignorar Tripulantes"
-"IgnoreAfterAnyoneDied","Ignore After Anyone Has Died","死人が出た後を除く","忽略幽灵","當所有人都死亡時除外","Игнорируют умершие игроки","Ignorar Depois de Alguém Morrer"
-"LightsOutSpecialSettings","Fix Lights Special Settings","停電の特殊設定","停电特殊设定","關燈特殊設定","Специальные настройки при отключении Света","Configuração Especial de Consertar Luzes"
-"DisableAirshipViewingDeckLightsPanel","Disable Viewing Deck Lights Panel(Airship)","展望の配電盤を無効化（エアシップ）","禁用瞭望台配电箱(飞艇地图)","關閉觀景台的配電箱 (Airship)","Отключить починку Света на Смотровой Палубе (Airship)","Desativar Painel de Luzes do Deck Panorâmico(Airship)"
-"DisableAirshipGapRoomLightsPanel","Disable Gap Room Lights Panel(Airship)","昇降機の配電盤を無効化（エアシップ）","禁用升降机配电箱(飞艇地图)","關閉間隙室右側的配電箱 (Airship)","Отключить починку Света в Комнате Пролета (Airship)","Desativar Painel de Luzes da Sala Suspensa(Airship)"
-"DisableAirshipCargoLightsPanel","Disable Cargo Lights Panel(Airship)","貨物室の配電盤を無効化（エアシップ）","禁用货舱配电箱(飞艇地图)","關閉貨艙的配電箱 (Airship)","Отключить починку Света в Грузовом Отсеке (Airship)","Desativar Painel de Luzes das Cargas(Airship)"
-"BlockDisturbancesToSwitches","Block Disturbances To Switches","配電盤妨害を無効化","","","",""
-"DisableButtonInMushroomMixup","Disable Button In MushroomMixup","キノコカオス中のボタンを無効化","","","",""
-"MapModificationAirship","Map Modifications(Airship)","マップ改造（エアシップ）",
-"DisableAirshipMovingPlatform","Disable Moving Platform","昇降機のリフトを無効化","禁用升降机","","Отключить движущуюся платформу",""
-"AirShipVariableElectrical","Variable Electrical","電気室の構造変化","改变配电室构造","電力室構造變化","Двери в Электрощитовой меняются случайно",""
-"ResetDoorsEveryTurns","Reset Doors After Meeting(Airship/Polus/Fungle)","会議後にドア状況をリセットする（ポーラス・エアシップ・ファングル）","","","",""
-"DoorsResetMode","Reset Mode","リセットモード","","","",""
-"AllOpen","All Open","全て開放","","","",""
-"AllClosed","All Closed","全て閉鎖","","","",""
-"RandomByDoor","Random By Door","ドアごとにランダム","","","",""
-"MapModificationFungle","Map Modifications(Fungle)","マップ改造（ファングル）",
-"FungleCanSporeTrigger","Can Spore Trigger","キノコ胞子モヤをなくす",
-"FungleCanUseZipline","Can Use Zipline","ジップラインの方向制限",
-"FungleCanUseZiplineFromTop","Can't Use From Top","上からの下降を禁止",
-"FungleCanUseZiplineFromUnder","Can't Use From Under","下からの上昇を禁止",
-"RandomSpawn","Random Spawn","ランダムスポーン","随机出生点","隨機出生點","Случайный спавн","Spawn Aleatório"
-"AdditionalSpawn","Additional Spawn","スポーン位置を追加する",
-"AdditionalSpawn_AirshipTAKADA","Airship Additional Spawn(Cockpit,Security,Medical)","ｺｯｸﾋﾟｯﾄ･ｾｷｭﾘﾃｨ･診察室を追加する（エアシップ）",
-"DisableNearButton","Exclude Near Button","緊急ボタン近くを除く",
-"FirstFixedSpawn","First Fixed Spawn(Except Airship)","最初の固定スポーン（エアシップ以外）",
-"CommsCamouflage","Camouflage During Comms","コミュサボ時のカモフラージュ","通信破坏时伪装","通訊破壞時所有玩家變成小灰人","Камуфляж при Саботаже Связи","Camuflagem Durante Comunicação"
 "EnableDebugMode","Enable Debug Mode","デバッグモードを有効化する","开启调试模式","啟用偵錯模式","Включить режим отладки","Ativar Modo de Depuração"
 "ChangeNameToRoleInfo","Show Role Descriptions to Unmodded Client","役職説明を非modクライアントにも表示する","对未安装本mod的玩家显示职业说明","對未安裝本模組的玩家顯示職業說明","Показать описания Ролей игрокам играющие без Мода","Mostrar Descrição de Classe para Clientes Não Modificados"
 "RoleAssigningAlgorithm","Role Assigning Algorithm","役職割り当てのアルゴリズム","职业分配算法","職業分配算法","Алгоритм назначения Ролей",""
@@ -730,6 +744,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "ShowRevengeTarget","Show Revenge player at Meeting","道連れされた人を会議で表示する","在会议上显示复仇玩家"
 "ShowRoleInfoAtFirstMeeting","Show Role description at the first meeting","初めの会議で役職説明を表示する","在第一次会议上显示角色介绍"
 "DisplayTeamMark","Display Team Mark","陣営マークを表示する"
+
 
 "FixSpawnPacketSize","(Experimental) Only if disconnection occurs with above 8 people.","(試験的機能) ８人以上で切断が発生する場合のみオン"
 
@@ -752,7 +767,9 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "Head.BuffAddOn","Buff Add-On","バフ属性"
 "Head.DebuffAddOn","Debuff Add-On","デバフ属性"
 
-"Head.Sabotage","Sabotage Setting","サボタージュ設定"
+"Head.RoleAssign","Role Assign Setting","役職割り当て設定"
+"Head.MapCommon","Map Setting : Map Common","マップ設定:マップ共通"
+"Head.Sabotage","Sabotage Setting : Map Common","サボタージュ設定:マップ共通"
 "Head.Meeting","Meeting Setting","会議設定"
 "Head.Revenge","Revenge Setting","道連れ設定"
 "Head.Task","Task Setting","タスク設定"
@@ -1189,16 +1206,6 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "MenuDescriptionText.UnitRoles","Edit unit role settings for your game lobby.","ユニット役職の設定を編集する。",
 "MenuDescriptionText.Addons","Edit add-on settings for your game lobby.","属性の設定を編集する。",
 
-"## リアクターの時間制御"
-"SabotageTimeControl","Sabotage Duration Control","サボタージュの時間制御","更改修理时限","重新設定緊急任務時間","Изменить время Саботажа","Controle da Duração de Sabotagem"
-"PolusReactorTimeLimit","Polus Reactor Duration","ポーラスのリアクター制限時間","波鲁斯抗震稳定器修理时限","Polus地震抑制器破壞最大時間","Polus время саботажа Реактора","Duração do Reator em Polus"
-"AirshipReactorTimeLimit","Airship Reactor Duration","エアシップのリアクター制限時間","飞艇坠毁路线修理时限","Airship間隙室破壞最大時間","Airship время саботажа Реактора","Duração do Reator em Airship"
-"FungleReactorTimeLimit","Fungle Reactor Duration","ファングルのリアクター制限時間",
-"FungleMushroomMixupDuration","Fungle Mushroom Mixup Duration","ファングルのキノコカオス効果時間","","","","",""
-
-"## サボタージュのクールダウン変更"
-"ModifySabotageCooldown","Sabotage Cooldown Control","サボタージュのクールダウン制御","","","",""
-"SabotageCooldown","Sabotage Cooldown","サボタージュのクールダウン","","","",""
 
 "## クライアント設定"
 "Close","Close","閉じる","","","",""

@@ -624,7 +624,7 @@ namespace TownOfHostY
             var roleClass = player.GetRoleClass();
             var role = player.GetCustomRole();
 
-            role = role.IsVanillaRoleConversion();//変換
+            role = role.VanillaRoleConversion();//変換
 
             var Prefix = "";
             var text = role.ToString();

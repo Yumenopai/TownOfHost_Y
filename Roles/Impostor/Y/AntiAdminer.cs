@@ -67,36 +67,36 @@ public sealed class AntiAdminer : RoleBase, IImpostor
                 switch (Main.NormalOptions.MapId)
                 {
                     case 0:
-                        if (!DisableSkeldAdmin.GetBool())
+                        if (!DisableAdmin_Skeld.GetBool())
                             Admin |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["SkeldAdmin"]) <= DisableDevice.UsableDistance();
-                        if (!DisableSkeldCamera.GetBool())
+                        if (!DisableCamera_Skeld.GetBool())
                             Camera |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["SkeldCamera"]) <= DisableDevice.UsableDistance();
                         break;
                     case 1:
-                        if (!DisableMiraHQAdmin.GetBool())
+                        if (!DisableAdmin_Mira.GetBool())
                             Admin |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["MiraHQAdmin"]) <= DisableDevice.UsableDistance();
-                        if (!DisableMiraHQDoorLog.GetBool())
+                        if (!DisableDoorLog_Mira.GetBool())
                             DoorLog |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["MiraHQDoorLog"]) <= DisableDevice.UsableDistance();
                         break;
                     case 2:
-                        if (!DisablePolusAdmin.GetBool())
+                        if (!DisableAdmin_Polus.GetBool())
                         {
                             Admin |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["PolusLeftAdmin"]) <= DisableDevice.UsableDistance();
                             Admin |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["PolusRightAdmin"]) <= DisableDevice.UsableDistance();
                         }
-                        if (!DisablePolusCamera.GetBool())
+                        if (!DisableCamera_Polus.GetBool())
                             Camera |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["PolusCamera"]) <= DisableDevice.UsableDistance();
-                        if (!DisablePolusVital.GetBool())
+                        if (!DisableVital_Polus.GetBool())
                             Vital |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["PolusVital"]) <= DisableDevice.UsableDistance();
                         break;
                     case 4:
-                        if (!DisableAirshipCockpitAdmin.GetBool())
+                        if (!DisableCockpitAdmin_Airship.GetBool())
                             Admin |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["AirshipCockpitAdmin"]) <= DisableDevice.UsableDistance();
-                        if (!DisableAirshipRecordsAdmin.GetBool())
+                        if (!DisableRecordsAdmin_Airship.GetBool())
                             Admin |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["AirshipRecordsAdmin"]) <= DisableDevice.UsableDistance();
-                        if (!DisableAirshipCamera.GetBool())
+                        if (!DisableCamera_Airship.GetBool())
                             Camera |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["AirshipCamera"]) <= DisableDevice.UsableDistance();
-                        if (!DisableAirshipVital.GetBool())
+                        if (!DisableVital_Airship.GetBool())
                             Vital |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["AirshipVital"]) <= DisableDevice.UsableDistance();
                         break;
                     case 5:

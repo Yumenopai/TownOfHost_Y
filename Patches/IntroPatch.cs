@@ -378,28 +378,33 @@ class IntroCutsceneDestroyPatch
                 PlayerControl.LocalPlayer.RpcExile();
                 PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SetDead();
             }
-            if (Options.RandomSpawn.GetBool() && !Options.FirstFixedSpawn.GetBool())
+            // 初手のランダムスポーン
+            switch ((MapNames)Main.NormalOptions.MapId)
             {
-                RandomSpawn.SpawnMap map;
-                switch ((MapNames)Main.NormalOptions.MapId)
-                {
-                    case MapNames.Skeld:
-                        map = new RandomSpawn.SkeldSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                    case MapNames.Mira:
-                        map = new RandomSpawn.MiraHQSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                    case MapNames.Polus:
-                        map = new RandomSpawn.PolusSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                    case MapNames.Fungle:
-                        map = new RandomSpawn.FungleSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                }
+                case MapNames.Skeld:
+                    if (Options.RandomSpawn_Skeld.GetBool() && !Options.FirstFixedSpawn_Skeld.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.SkeldSpawnMap().RandomTeleport);
+                    }
+                    break;
+                case MapNames.Mira:
+                    if (Options.RandomSpawn_Mira.GetBool() && !Options.FirstFixedSpawn_Mira.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.MiraHQSpawnMap().RandomTeleport);
+                    }
+                    break;
+                case MapNames.Polus:
+                    if (Options.RandomSpawn_Polus.GetBool() && !Options.FirstFixedSpawn_Polus.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.PolusSpawnMap().RandomTeleport);
+                    }
+                    break;
+                case MapNames.Fungle:
+                    if (Options.RandomSpawn_Fungle.GetBool() && !Options.FirstFixedSpawn_Fungle.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.FungleSpawnMap().RandomTeleport);
+                    }
+                    break;
             }
 
             // そのままだとホストのみDesyncImpostorの暗室内での視界がクルー仕様になってしまう
