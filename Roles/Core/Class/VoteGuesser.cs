@@ -40,6 +40,8 @@ public abstract class VoteGuesser : RoleBase
     protected bool MultipleInMeeting = false;
     protected bool HideMisfire = false;
     protected bool GuessAfterVote = false;
+    // マッドに使用
+    protected bool AlwaysSuicide = false;
 
     private GuesserInfo guesserInfo;
 
@@ -191,7 +193,7 @@ public abstract class VoteGuesser : RoleBase
         NumOfGuess--;
 
         PlayerControl target;
-        if (TargetIs(targetGuess, role))
+        if (TargetIs(targetGuess, role) && !AlwaysSuicide)
         {
             target = targetGuess;
             RpcGuesserMurderPlayer(target, CustomDeathReason.Shot);
