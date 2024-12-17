@@ -633,7 +633,10 @@ namespace TownOfHostY
             {
                 case CustomRoles.Crewmate:
                 case CustomRoles.Impostor:
-                    InfoLong = false;
+                    if (InfoLong)
+                    {
+                        return "\n" + GetString($"{text}Blurb");
+                    }
                     break;
                 case CustomRoles.Mafia:
                     if (InfoLong) break;
@@ -656,8 +659,22 @@ namespace TownOfHostY
                     Prefix = Main.AliveImpostorCount >= 2 ? "" : "After";
                     break;
             }
-            Info = role.IsVanilla() ? "Blurb" : "Info";
-            Info += InfoLong ? "Long" : "";
+
+            if (role.IsVanilla())
+            {
+                if (InfoLong)
+                {
+                    Info = "BlurbLong";
+                    return "\n" + GetString($"{Prefix}{text}{Info}");
+                }
+
+                Info = "Blurb";
+            }
+            else
+            {
+                Info = InfoLong ? "InfoLong" : "Info";
+            }
+
             return GetString($"{Prefix}{text}{Info}");
         }
         public static void SetRoleEx(this PlayerControl player, RoleTypes role)

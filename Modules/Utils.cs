@@ -709,6 +709,37 @@ public static class Utils
         }
         return sb.ToString();
     }
+    public static string GetRoleInfoLong(CustomRoles role)
+    {
+        var sb = new StringBuilder();
+        var r = role.VanillaRoleConversion(); //変換
+        string roleInfoLong = "";
+        if (r.IsVanilla())
+        {
+            var tag = "BlurbLong";
+            if (r is CustomRoles.Impostor or CustomRoles.Crewmate)
+            {
+                tag = "Blurb";
+            }
+            roleInfoLong = "\n" + GetString(r + tag);
+        }
+        else
+        {
+            roleInfoLong = GetString(role.ToString() + "InfoLong");
+        }
+
+        var roleString = $"<size=95%>{GetString(role.ToString())}</size>".Color(GetRoleColor(role).ToReadableColor());
+        sb.Append(roleString).Append("<size=80%><line-height=1.8pic>").Append(roleInfoLong).Append("</line-height></size>");
+
+        if (!role.IsDontShowOptionRole() && role != CustomRoles.GM)
+        {
+            //setting
+            sb.Append("\n<size=65%><line-height=1.5pic>");
+            ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
+            sb.Append("</size></line-height>");
+        }
+        return sb.ToString();
+    }
     // Help Now
     public static void ShowActiveSettingsHelp(byte PlayerId = byte.MaxValue)
     {
@@ -879,9 +910,11 @@ public static class Utils
                 if (Options.NotShowOption(opt.Name)) continue;
 
                 // アクティブマップ毎に表示しないオプション
-                if (opt.Name == "MapModificationAirship" && !Options.IsActiveAirship) continue;
-                if (opt.Name == "MapModificationFungle" && !Options.IsActiveFungle) continue;
-                if (opt.Name == "DisableButtonInMushroomMixup" && !Options.IsActiveFungle) continue;
+                if (opt.Name == "MapOption_Skeld" && !Options.IsActiveSkeld) continue;
+                if (opt.Name == "MapOption_Mira" && !Options.IsActiveMiraHQ) continue;
+                if (opt.Name == "MapOption_Polus" && !Options.IsActivePolus) continue;
+                if (opt.Name == "MapOption_Airship" && !Options.IsActiveAirship) continue;
+                if (opt.Name == "MapOption_Fungle" && !Options.IsActiveFungle) continue;
 
                 if (opt.Name is "NameChangeMode" && Options.GetNameChangeModes() != NameChange.None)
                     sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u> ：<size=68%>{opt.GetString()}</size>\n</size>");
@@ -1014,15 +1047,6 @@ public static class Utils
         foreach (var opt in option.Children.Select((v, i) => new { Value = v, Index = i + 1 }))
         {
             if (opt.Value.Name == "Maximum") continue; //Maximumの項目は飛ばす
-            if (opt.Value.Name == "DisableSkeldDevices" && !Options.IsActiveSkeld) continue;
-            if (opt.Value.Name == "DisableMiraHQDevices" && !Options.IsActiveMiraHQ) continue;
-            if (opt.Value.Name == "DisablePolusDevices" && !Options.IsActivePolus) continue;
-            if (opt.Value.Name == "DisableAirshipDevices" && !Options.IsActiveAirship) continue;
-            if (opt.Value.Name == "PolusReactorTimeLimit" && !Options.IsActivePolus) continue;
-            if (opt.Value.Name == "AirshipReactorTimeLimit" && !Options.IsActiveAirship) continue;
-            if (opt.Value.Name == "FungleReactorTimeLimit" && !Options.IsActiveFungle) continue;
-            if (opt.Value.Name == "FungleMushroomMixupDuration" && !Options.IsActiveFungle) continue;
-
             if (opt.Value.Parent.Name == "displayComingOut%type%" && !opt.Value.GetBool()) continue;
 
             if (opt.Value.Parent.Name == "AddOnBuffAssign" && !opt.Value.GetBool()) continue;
