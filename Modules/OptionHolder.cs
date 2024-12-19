@@ -406,7 +406,7 @@ public static class Options
             .SetGameMode(CustomGameMode.All);
 
         // SpecialEvent
-        if (Main.IsInitialRelease)
+        if (Main.IsChristmas)
         {
             Potentialist.SetupRoleOptions();
             Potentialist.RoleInfo.OptionCreator?.Invoke();

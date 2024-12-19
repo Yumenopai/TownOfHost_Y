@@ -53,9 +53,10 @@ public sealed class Potentialist : RoleBase
     {
         TextOptionItem.Create(40, "Head.LimitedTimeRole", TabGroup.CrewmateRoles)
             .SetColor(Color.yellow);
-        var spawnOption = IntegerOptionItem.Create(RoleInfo.ConfigId, "PotentialistName", new(0, 100, 10), 0, TabGroup.CrewmateRoles, false)
+        var spawnOption = IntegerOptionItem.Create(RoleInfo.ConfigId, "Potentialist", new(0, 100, 10), 0, TabGroup.CrewmateRoles, false)
             .SetColor(RoleInfo.RoleColor)
             .SetValueFormat(OptionFormat.Percent)
+            .SetHeader(true, Translator.GetString("PotentialistHedderInfo"))
             .SetGameMode(CustomGameMode.Standard) as IntegerOptionItem;
         var countOption = IntegerOptionItem.Create(RoleInfo.ConfigId + 1, "Maximum", new(1, 15, 1), 1, TabGroup.CrewmateRoles, false)
             .SetParent(spawnOption)

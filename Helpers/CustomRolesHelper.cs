@@ -90,8 +90,7 @@ namespace TownOfHostY
             if (Main.IsInitialRelease && role == CustomRoles.Bakery)
                 return true;
 
-            return role is CustomRoles.SchrodingerCat
-                or CustomRoles.CharismaStar;
+            return role is CustomRoles.Administer;
         }
 
         public static bool IsPairRole(this CustomRoles role)

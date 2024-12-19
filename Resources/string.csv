@@ -1025,9 +1025,10 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "ElderLifetime","Life time","寿命までの秒数",
 "ElderTimeMoveMeeting","Time Move Even During Meeting","会議中も寿命までの時間をカウントする",
 
-"Head.LimitedTimeRole","Limited Time Role 11/1～11/10","期間限定役職 11/1～11/10"
+"Head.LimitedTimeRole","Limited Time Role 12/19～12/25","期間限定役職 12/19～12/25"
 "Potentialist","Potentialist","ポテンシャリスト",
 "PotentialistName","Potentialist</color>…At first, Crewmate. \n  Complete tasks and have random abilities.","ポテンシャリスト</color>…初めはクルー。\n  設定タスク完了でランダムな能力を持つ。",
+"PotentialistHedderInfo","At first, Crewmate. Complete tasks and have random abilities.","初めはクルー。設定タスク完了でランダムな能力を持つ。",
 "PotentialistInfo","do your tasks","タスクを行う",
 "PotentialistInfoLong","do your tasks","[クルー陣営]\n初めはクルーとして表示されるためポテンシャリストの自覚はありませんが、設定タスク数完了させると能力が開花して新たなクルー役職を手に入れられます。\n設定により、マッド系役職やニュートラル役職にも変化します。",
 "poTask","Task Count that Becomes Can Use Ability","能力開花するタスク数",
