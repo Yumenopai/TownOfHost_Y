@@ -2,9 +2,8 @@ using System.Linq;
 using UnityEngine;
 using AmongUs.GameOptions;
 
-using TownOfHostY.Modules;
 using TownOfHostY.Roles.Core;
-using static TownOfHostY.Roles.Crewmate.CounselorAndMadDilemma;
+using static TownOfHostY.Roles.Unit.CounselorAndMadDilemma;
 
 namespace TownOfHostY.Roles.Crewmate;
 public sealed class Counselor : RoleBase

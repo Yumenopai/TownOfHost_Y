@@ -70,8 +70,10 @@ public sealed class Egoist : RoleBase, ISidekickable, IKiller, ISchrodingerCatOw
     public bool CanUseSabotageButton() => true;
     public static bool CheckWin()
     {
-        if (Main.AllAlivePlayerControls.All(p => !p.Is(RoleTypes.Impostor)) &&
-            egoist.IsAlive()) //インポスター全滅でエゴイストが生存
+        if (Main.AllAlivePlayerControls.All(p => !p.GetCustomRole().IsImpostor()) &&
+            (egoist.IsAlive() ||
+             Main.AllAlivePlayerControls.Any(p => p.GetRoleClass() is SchrodingerCatKiller cat &&
+                                             cat.Team == SchrodingerCat.TeamType.Egoist))) //インポスター全滅でエゴイストが生存
         {
             Win();
             return true;

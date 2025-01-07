@@ -275,6 +275,7 @@ namespace TownOfHostY
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Jackal);
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Jackal);
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JClient);
+                    CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JSidekick);
                 }
                 else if (Imp == 0 && Jackal == 0 && Crew <= Pirate) //海賊勝利
                 {

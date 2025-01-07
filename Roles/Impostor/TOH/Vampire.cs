@@ -62,6 +62,8 @@ namespace TownOfHostY.Roles.Impostor
             {
                 killer.SetKillCooldown();
                 BittenPlayers.Add(target.PlayerId, 0f);
+                // プレイヤーがプラットフォームに乗ることを防ぐ
+                PlayerState.GetByPlayerId(target.PlayerId).CanUseMovingPlatform = false;
             }
             info.DoKill = false;
         }
@@ -103,16 +105,34 @@ namespace TownOfHostY.Roles.Impostor
             var vampire = Player;
             if (target.IsAlive())
             {
-                PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Bite;
-                target.SetRealKiller(vampire);
-                CustomRoleManager.OnCheckMurder(
-                    vampire, target,
-                    target, target
-                );
-                Logger.Info($"Vampireに噛まれている{target.name}を自爆させました。", "Vampire.KillBitten");
-                if (!isButton && vampire.IsAlive())
+
+                if (target.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
                 {
-                    RPC.PlaySoundRPC(vampire.PlayerId, Sounds.KillSound);
+                    // プレイヤーが梯子を使用している場合の特別なキル処理
+                    target.SetRealKiller(vampire);
+                    target.RpcMurderPlayer(target);
+                    PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Bite;
+                    Logger.Info($"Vampireに噛まれている{target.name}は梯子を使用中にキルされました。", "Vampire.KillBitten");
+                }
+                else
+                {
+
+                    if (CustomRoleManager.OnCheckMurder(
+                        vampire, target,
+                        target, target))
+                    {
+                        PlayerState.GetByPlayerId(target.PlayerId).DeathReason = CustomDeathReason.Bite;
+                        target.SetRealKiller(vampire);
+                        Logger.Info($"Vampireに噛まれている{target.name}を自爆させました。", "Vampire.KillBitten");
+                        if (!isButton && vampire.IsAlive())
+                        {
+                            RPC.PlaySoundRPC(vampire.PlayerId, Sounds.KillSound);
+                        }
+                    }
+                    else
+                    {
+                        Logger.Info($"Vampireに噛まれている{target.name}はキルされませんでした。", "Vampire.KillBitten");
+                    }
                 }
             }
             else

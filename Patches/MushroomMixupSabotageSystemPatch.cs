@@ -32,7 +32,7 @@ public static class MushroomMixupUpdateSystemPatch
             if (pc.PlayerId != PlayerControl.LocalPlayer.PlayerId &&
                 role is IKiller && role is not IImpostor &&
                 !pc.Is(CustomRoles.Egoist) &&
-                !(pc.Is(CustomRoles.Jackal) && Jackal.CanSeeNameMushroomMixup))
+                !((pc.Is(CustomRoles.Jackal) || pc.Is(CustomRoles.JSidekick)) && Jackal.CanSeeNameMushroomMixup))
             {
                 ChangedPlayers.Add(pc);
                 foreach (PlayerControl target in TargetPlayers)

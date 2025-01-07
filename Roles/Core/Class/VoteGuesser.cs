@@ -40,6 +40,8 @@ public abstract class VoteGuesser : RoleBase
     protected bool MultipleInMeeting = false;
     protected bool HideMisfire = false;
     protected bool GuessAfterVote = false;
+    // マッドに使用
+    protected bool AlwaysSuicide = false;
 
     private GuesserInfo guesserInfo;
 
@@ -191,7 +193,7 @@ public abstract class VoteGuesser : RoleBase
         NumOfGuess--;
 
         PlayerControl target;
-        if (targetGuess.Is(role))
+        if (TargetIs(targetGuess, role) && !AlwaysSuicide)
         {
             target = targetGuess;
             RpcGuesserMurderPlayer(target, CustomDeathReason.Shot);
@@ -204,6 +206,18 @@ public abstract class VoteGuesser : RoleBase
             RpcGuesserMurderPlayer(target, reason);
         }
         SendGuessedMessage(target);
+    }
+    private bool TargetIs(PlayerControl target, CustomRoles role)
+    {
+        if (target.Is(role)) return true;
+        switch (role)
+        {
+            case CustomRoles.SchrodingerCat:
+                if (target.Is(CustomRoles.SchrodingerCatKiller)) return true;
+                break;
+        }
+
+        return false;
     }
     private void SendMessageGuide()
     {
@@ -318,18 +332,31 @@ public abstract class VoteGuesser : RoleBase
         private void SetRoleList()
         {
             roleList = new();
-            var inChainShifter = false;
             foreach (CustomRoles role in CustomRolesHelper.AllStandardRoles.Where(r => r.IsEnable()))
             {
-                if (role is CustomRoles.LastImpostor or CustomRoles.Lovers or CustomRoles.Workhorse) continue;
-                roleList.Add(role);
-                if (role == CustomRoles.ChainShifter) inChainShifter = true;
+                foreach (var targetRole in role.GetRoleAssignInfo()?.AssignUnitRoles)
+                {
+                    if (targetRole != CustomRoles.Crewmate && targetRole != CustomRoles.Impostor &&
+                        !roleList.Contains(targetRole)) roleList.Add(targetRole);
+                }
+                foreach (var targetRole in GetAdditionalRole(role))
+                {
+                    if (targetRole != CustomRoles.Crewmate && targetRole != CustomRoles.Impostor &&
+                        !roleList.Contains(targetRole)) roleList.Add(targetRole);
+                }
             }
-            if (inChainShifter)
+        }
+        public CustomRoles[] GetAdditionalRole(CustomRoles role)
+        {
+            switch (role)
             {
-                var role = ChainShifter.ShiftedRole;
-                if (!roleList.Contains(role)) roleList.Add(role);
+                case CustomRoles.ChainShifter: return ChainShifter.AdditionalRoles;
+                case CustomRoles.Jackal: return Jackal.AdditionalRoles;
+                case CustomRoles.Executioner: return Executioner.AdditionalRoles;
+                case CustomRoles.Lawyer: return Lawyer.AdditionalRoles;
             }
+
+            return [];
         }
         private void SetDispList()
         {

@@ -56,6 +56,7 @@ public sealed class Executioner : RoleBase, IAdditionalWinner
     public static HashSet<Executioner> Executioners = new(15);
     public byte TargetId;
     private bool TargetExiled;
+    public static CustomRoles[] AdditionalRoles => [ChangeRolesAfterTargetKilled];
     public static readonly CustomRoles[] ChangeRoles =
     {
             CustomRoles.Crewmate, CustomRoles.Jester, CustomRoles.Opportunist,

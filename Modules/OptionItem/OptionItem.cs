@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TownOfHostY.Modules;
 using UnityEngine;
+using static Il2CppSystem.Net.Mail.SmtpClient;
 
 namespace TownOfHostY
 {
@@ -29,6 +30,7 @@ namespace TownOfHostY
         public OptionFormat ValueFormat { get; protected set; }
         public CustomGameMode GameMode { get; protected set; }
         public bool IsHeader { get; protected set; }
+        public string IsHeaderName { get; protected set; }
         public bool IsHidden { get; protected set; }
         public bool IsFixValue { get; protected set; }
         public bool IsText { get; protected set; }
@@ -79,6 +81,7 @@ namespace TownOfHostY
             ValueFormat = OptionFormat.None;
             GameMode = CustomGameMode.Standard;
             IsHeader = false;
+            IsHeaderName = "";
             IsHidden = false;
             IsFixValue = false;
             IsText = false;
@@ -127,7 +130,7 @@ namespace TownOfHostY
         public OptionItem SetColor(Color value) => Do(i => i.NameColor = value);
         public OptionItem SetValueFormat(OptionFormat value) => Do(i => i.ValueFormat = value);
         public OptionItem SetGameMode(CustomGameMode value) => Do(i => i.GameMode = value);
-        public OptionItem SetHeader(bool value) => Do(i => i.IsHeader = value);
+        public OptionItem SetHeader(bool value, string str = "") => Do(i => { i.IsHeader = value; if (str != "") i.IsHeaderName = str; });
         public OptionItem SetHidden(bool value) => Do(i => i.IsHidden = value);
         public OptionItem SetFixValue(bool value) => Do(i => i.IsFixValue = value);
         public OptionItem SetText(bool value) => Do(i => i.IsText = value);
@@ -153,11 +156,11 @@ namespace TownOfHostY
             => Do(i => ReplacementDictionary?.Remove(key));
 
         // Getter
-        public virtual string GetName(bool disableColor = false)
+        public virtual string GetName(bool disableColor = false, bool colorLighter = false)
         {
             return disableColor ?
                 Translator.GetString(Name, ReplacementDictionary) :
-                Utils.ColorString(NameColor, Translator.GetString(Name, ReplacementDictionary));
+                Utils.ColorString(colorLighter ? NameColor.ShadeColor(-0.3f) : NameColor, Translator.GetString(Name, ReplacementDictionary));
         }
         public virtual bool GetBool() => CurrentValue != 0 && (Parent == null || Parent.GetBool());
         public virtual int GetInt() => CurrentValue;

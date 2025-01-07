@@ -46,7 +46,9 @@ namespace TownOfHostY.Roles.AddOns.Impostor
                 and not CustomRoles.BountyHunter
                 and not CustomRoles.SerialKiller
                 and not CustomRoles.Greedier
-                and not CustomRoles.Ambitioner;
+                and not CustomRoles.Ambitioner
+                and not CustomRoles.GrudgeCharger
+                and not CustomRoles.Charger;
 
         public static void SetSubRole()
         {

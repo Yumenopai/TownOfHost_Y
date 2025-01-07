@@ -50,20 +50,25 @@ public static class SwitchSystemUpdateSystemPatch
             if (Options.DisableAirshipCargoLightsPanel.GetBool() && Vector2.Distance(truePosition, new(30.56f, 2.12f)) <= 2f) return false;
         }
 
+        // amount分だけ1を左にずらす
+        // 各桁が各ツマミに対応する
+        // 一番左のツマミが操作されたら(amount: 0) 00001
+        // 一番右のツマミが操作されたら(amount: 4) 10000
+        // ref: SwitchSystem.RepairDamage, SwitchMinigame.FixedUpdate
+        var switchedKnob = (byte)(0b_00001 << amount);
+        // ExpectedSwitches: すべてONになっているときのスイッチの上下状態
+        // ActualSwitches: 実際のスイッチの上下状態
+        // 操作されたツマミについて，ExpectedとActualで同じならそのツマミは既に直ってる
+        var repair = (__instance.ActualSwitches & switchedKnob) != (__instance.ExpectedSwitches & switchedKnob);
+        Logger.Info($"SwitchCondition actual: {__instance.ActualSwitches}, expected: {__instance.ExpectedSwitches}, player: {player?.name}, amount: {amount}, repair: {repair}", "SwitchSystem.UpdateSystem");
+
         // サボタージュによる破壊ではない && 配電盤を下げられなくするオプションがオン
         if (Options.BlockDisturbancesToSwitches.GetBool())
         {
-            // amount分だけ1を左にずらす
-            // 各桁が各ツマミに対応する
-            // 一番左のツマミが操作されたら(amount: 0) 00001
-            // 一番右のツマミが操作されたら(amount: 4) 10000
-            // ref: SwitchSystem.RepairDamage, SwitchMinigame.FixedUpdate
-            var switchedKnob = (byte)(0b_00001 << amount);
-            // ExpectedSwitches: すべてONになっているときのスイッチの上下状態
-            // ActualSwitches: 実際のスイッチの上下状態
-            // 操作されたツマミについて，ExpectedとActualで同じならそのツマミは既に直ってる
-            if ((__instance.ActualSwitches & switchedKnob) == (__instance.ExpectedSwitches & switchedKnob))
+            if (!repair)
             {
+                __instance.IsDirty = true; //同期ずれ状態解消のため
+                Logger.Info($"BlockDisturbances player: {player?.name}, amount: {amount}", "SwitchSystem.UpdateSystem");
                 return false;
             }
         }

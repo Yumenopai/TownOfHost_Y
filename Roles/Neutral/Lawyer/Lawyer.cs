@@ -67,6 +67,7 @@ public sealed class Lawyer : RoleBase
 
     private static HashSet<Lawyer> Lawyers = new(15);
     private PlayerControl Target = null;
+    public static CustomRoles[] AdditionalRoles => [CustomRoles.Pursuer];
 
     private static void SetupOptionItem()
     {

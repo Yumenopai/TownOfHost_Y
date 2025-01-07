@@ -2,6 +2,7 @@ using AmongUs.Data;
 using HarmonyLib;
 using TownOfHostY.Roles.AddOns.Common;
 using TownOfHostY.Roles.Core;
+using TownOfHostY.Roles.Crewmate;
 using TownOfHostY.Roles.Neutral;
 
 namespace TownOfHostY
@@ -16,11 +17,11 @@ namespace TownOfHostY
             {
                 try
                 {
-                    WrapUpPostfix(__instance.exiled);
+                    WrapUpPostfix(__instance.initData.networkedPlayer);
                 }
                 finally
                 {
-                    WrapUpFinalizer(__instance.exiled);
+                    WrapUpFinalizer(__instance.initData.networkedPlayer);
                 }
             }
         }
@@ -32,11 +33,11 @@ namespace TownOfHostY
             {
                 try
                 {
-                    WrapUpPostfix(__instance.exiled);
+                    WrapUpPostfix(__instance.initData.networkedPlayer);
                 }
                 finally
                 {
-                    WrapUpFinalizer(__instance.exiled);
+                    WrapUpFinalizer(__instance.initData.networkedPlayer);
                 }
             }
         }
@@ -75,28 +76,33 @@ namespace TownOfHostY
             {
                 pc.ResetKillCooldown();
             }
-            if (Options.RandomSpawn.GetBool())
+            // ランダムスポーン
+            switch ((MapNames)Main.NormalOptions.MapId)
             {
-                RandomSpawn.SpawnMap map;
-                switch ((MapNames)Main.NormalOptions.MapId)
-                {
-                    case MapNames.Skeld:
-                        map = new RandomSpawn.SkeldSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                    case MapNames.Mira:
-                        map = new RandomSpawn.MiraHQSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                    case MapNames.Polus:
-                        map = new RandomSpawn.PolusSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                    case MapNames.Fungle:
-                        map = new RandomSpawn.FungleSpawnMap();
-                        Main.AllPlayerControls.Do(map.RandomTeleport);
-                        break;
-                }
+                case MapNames.Skeld:
+                    if (Options.RandomSpawn_Skeld.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.SkeldSpawnMap().RandomTeleport);
+                    }
+                    break;
+                case MapNames.Mira:
+                    if (Options.RandomSpawn_Mira.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.MiraHQSpawnMap().RandomTeleport);
+                    }
+                    break;
+                case MapNames.Polus:
+                    if (Options.RandomSpawn_Polus.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.PolusSpawnMap().RandomTeleport);
+                    }
+                    break;
+                case MapNames.Fungle:
+                    if (Options.RandomSpawn_Fungle.GetBool())
+                    {
+                        Main.AllPlayerControls.Do(new RandomSpawn.FungleSpawnMap().RandomTeleport);
+                    }
+                    break;
             }
             FallFromLadder.Reset();
             Utils.CountAlivePlayers(true);
@@ -141,6 +147,9 @@ namespace TownOfHostY
                             player?.ResetPlayerCam(1f);
                         Executioner.ChangeRoleByTarget(playerId);
                         Lawyer.ChangeRoleByTarget(player);
+                        if (roleClass is Jackal jackal)
+                            Jackal.CheckPromoted();
+                        Elder.DeadByRevenge(playerId);
                     });
                     Main.AfterMeetingDeathPlayers.Clear();
                 }, 0.5f, "AfterMeetingDeathPlayers Task");

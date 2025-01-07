@@ -60,7 +60,8 @@ namespace TownOfHostY.Roles
         private static List<CustomRoles> AssignRoleList = new(CustomRolesHelper.AllRoles.Length);
         public static void SetupOptionItem()
         {
-            OptionAssignMode = StringOptionItem.Create(idStart, "AssignMode", AssignModeSelections, 0, TabGroup.ModMainSettings, false);
+            OptionAssignMode = StringOptionItem.Create(idStart, "AssignMode", AssignModeSelections, 0, TabGroup.ModMainSettings, false)
+                .SetColor(Palette.LightBlue);
 
             assignMode = () => (AssignAlgorithm)OptionAssignMode.GetInt();
             RandomAssignOptionsCollection.Clear();
@@ -140,7 +141,7 @@ namespace TownOfHostY.Roles
                 if (numImpostorsLeft <= 0 && numOthersLeft <= 0) break;
 
                 var targetRoles = role.GetAssignUnitRolesArray();
-                var numImpostorAssign = targetRoles.Count(role => role.IsImpostor());
+                var numImpostorAssign = targetRoles.Count(role => role.GetAssignRoleType() == CustomRoleTypes.Impostor);
                 var numOthersAssign = targetRoles.Length - numImpostorAssign;
                 //アサイン枠が足りてない場合
                 if (numImpostorAssign > numImpostorsLeft
@@ -306,7 +307,7 @@ namespace TownOfHostY.Roles
             }
             return candidateRoleList;
         }
-        private static RoleAssignInfo GetRoleAssignInfo(this CustomRoles role) =>
+        public static RoleAssignInfo GetRoleAssignInfo(this CustomRoles role) =>
             CustomRoleManager.GetRoleInfo(role)?.AssignInfo;
         private static CustomRoleTypes GetAssignRoleType(this CustomRoles role) =>
             role.GetRoleAssignInfo()?.AssignRoleType ?? role.GetCustomRoleTypes();

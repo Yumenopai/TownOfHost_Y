@@ -145,6 +145,8 @@ public class MeetingVoteManager
             }
         }
 
+        if (exiled != null) AntiBlackout.ExiledPlayerId = exiled.PlayerId;
+        Logger.Info($"ExiledPlayerIdSet exiled: {exiled?.name}", "AntiBlackout");
         if (AntiBlackout.OverrideExiledPlayer)
         {
             meetingHud.RpcVotingComplete(states.ToArray(), null, true);

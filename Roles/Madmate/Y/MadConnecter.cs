@@ -17,8 +17,7 @@ public sealed class MadConnecter : RoleBase, IKiller, IKillFlashSeeable
             CustomRoles.MadConnecter,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Madmate,
-            (int)Options.offsetId.MadSpecial + 0,
-            //(int)Options.offsetId.MadY + 800,
+            (int)Options.offsetId.MadY + 800,
             SetupOptionItem,
             "マッドコネクター",
             isDesyncImpostor: true

@@ -4,7 +4,6 @@ using HarmonyLib;
 using UnityEngine;
 
 namespace TownOfHostY;
-
 public static class ModGameOptionsMenu
 {
     public static int TabIndex = 0;
@@ -69,9 +68,20 @@ public static class GameOptionsMenuPatch
             {
                 CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, __instance.settingsContainer);
                 categoryHeaderMasked.SetHeader(StringNames.RolesCategory, 20);
-                categoryHeaderMasked.Title.text = option.GetName();
-                categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
+
+                categoryHeaderMasked.Title.text = option.IsHeaderName == "" ? option.GetName(colorLighter: true) : option.IsHeaderName.Color(option.NameColor.ShadeColor(-0.3f));
                 categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, pos_z);
+                categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
+
+                if (option.Tab != TabGroup.ModMainSettings && option is not TextOptionItem)
+                {
+                    categoryHeaderMasked.transform.FindChild("LabelSprite").transform.localPosition -= new Vector3(0f, 0.06f, 0f);
+                    categoryHeaderMasked.transform.FindChild("LabelSprite").transform.localScale = new Vector3(1.5f, 1.25f, 1f);
+
+                    categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<RectTransform>().sizeDelta = new Vector2(4.4f, 0.38f);
+                    categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<RectTransform>().localPosition = new Vector3(0.55f, -0.22f, -1f);
+                }
+
                 categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<TMPro.TextMeshPro>().fontStyle = TMPro.FontStyles.Bold;
                 categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<TMPro.TextMeshPro>().outlineWidth = 0.17f;
                 categoryHeaderMasked.gameObject.SetActive(enabled);
@@ -165,6 +175,7 @@ public static class GameOptionsMenuPatch
         Vector3 scaleOffset = new(0f, 0f, 0f);
         Color color = new(0.7f, 0.7f, 0.7f);
         float sizeDelta_x = 5.7f;
+        float sizeDelta_y = 0.37f;
 
         if (option.Parent?.Parent?.Parent != null)
         {
@@ -187,13 +198,17 @@ public static class GameOptionsMenuPatch
             color = new(0.5f, 0.7f, 0.5f);
             sizeDelta_x = 5.5f;
         }
+        else if (option.Parent == null && option.Tab != TabGroup.ModMainSettings)
+        {
+            sizeDelta_y = 0.43f;
+        }
 
         optionBehaviour.transform.FindChild("LabelBackground").GetComponent<SpriteRenderer>().color = color;
         optionBehaviour.transform.FindChild("LabelBackground").localScale += new Vector3(0.9f, -0.2f, 0f) + scaleOffset;
         optionBehaviour.transform.FindChild("LabelBackground").localPosition += new Vector3(-0.4f, 0f, 0f) + positionOffset;
 
         optionBehaviour.transform.FindChild("Title Text").localPosition += new Vector3(-0.4f, 0f, 0f) + positionOffset; ;
-        optionBehaviour.transform.FindChild("Title Text").GetComponent<RectTransform>().sizeDelta = new Vector2(sizeDelta_x, 0.37f);
+        optionBehaviour.transform.FindChild("Title Text").GetComponent<RectTransform>().sizeDelta = new Vector2(sizeDelta_x, sizeDelta_y);
         optionBehaviour.transform.FindChild("Title Text").GetComponent<TMPro.TextMeshPro>().alignment = TMPro.TextAlignmentOptions.MidlineLeft;
         optionBehaviour.transform.FindChild("Title Text").GetComponent<TMPro.TextMeshPro>().fontStyle = TMPro.FontStyles.Bold;
         optionBehaviour.transform.FindChild("Title Text").GetComponent<TMPro.TextMeshPro>().outlineWidth = 0.17f;
@@ -205,8 +220,8 @@ public static class GameOptionsMenuPatch
                 break;
 
             case OptionTypes.String:
-                optionBehaviour.transform.FindChild("PlusButton (1)").localPosition += new Vector3(option.IsFixValue ? 100f : 1.7f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
-                optionBehaviour.transform.FindChild("MinusButton (1)").localPosition += new Vector3(option.IsFixValue ? 100f : 0.9f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
+                optionBehaviour.transform.FindChild("PlusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 1.7f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
+                optionBehaviour.transform.FindChild("MinusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 0.9f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
                 optionBehaviour.transform.FindChild("Value_TMP (1)").localPosition += new Vector3(1.3f, 0f, 0f);
                 optionBehaviour.transform.FindChild("Value_TMP (1)").GetComponent<RectTransform>().sizeDelta = new Vector2(2.3f, 0.4f);
                 goto default;
@@ -440,6 +455,11 @@ public static class NumberOptionPatch
         }
         return true;
     }
+    [HarmonyPatch(nameof(NumberOption.AdjustButtonsActiveState)), HarmonyPrefix]
+    private static bool AdjustButtonsActiveStatePrefix(NumberOption __instance)
+    {
+        return false;
+    }
     [HarmonyPatch(nameof(NumberOption.FixedUpdate)), HarmonyPrefix]
     private static bool FixedUpdatePrefix(NumberOption __instance)
     {
@@ -547,6 +567,11 @@ public static class StringOptionPatch
             return false;
         }
         return true;
+    }
+    [HarmonyPatch(nameof(StringOption.AdjustButtonsActiveState)), HarmonyPrefix]
+    private static bool AdjustButtonsActiveStatePrefix(StringOption __instance)
+    {
+        return false;
     }
     [HarmonyPatch(nameof(StringOption.FixedUpdate)), HarmonyPrefix]
     private static bool FixedUpdatePrefix(StringOption __instance)

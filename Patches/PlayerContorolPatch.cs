@@ -16,6 +16,7 @@ using TownOfHostY.Roles.AddOns.Common;
 using TownOfHostY.Roles.AddOns.Crewmate;
 using static TownOfHostY.Translator;
 using TownOfHostY.Roles.Impostor;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace TownOfHostY
 {
@@ -70,7 +71,7 @@ namespace TownOfHostY
         }
 
         // 不正キル防止チェック
-        public static bool CheckForInvalidMurdering(MurderInfo info)
+        public static bool CheckForInvalidMurdering(MurderInfo info, bool killerMyselfInvoke)
         {
             (var killer, var target) = info.AttemptTuple;
 
@@ -107,13 +108,16 @@ namespace TownOfHostY
             }
 
             // 連打キルでないか
-            float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / 1000f * 6f); //※AmongUsClient.Instance.Pingの値はミリ秒(ms)なので÷1000
-            //TimeSinceLastKillに値が保存されていない || 保存されている時間がminTime以上 => キルを許可
-            //↓許可されない場合
-            if (TimeSinceLastKill.TryGetValue(killer.PlayerId, out var time) && time < minTime)
+            if (!killerMyselfInvoke)
             {
-                Logger.Info("前回のキルからの時間が早すぎるため、キルをブロックしました。", "CheckMurder");
-                return false;
+                float minTime = Mathf.Max(0.02f, AmongUsClient.Instance.Ping / 1000f * 6f); //※AmongUsClient.Instance.Pingの値はミリ秒(ms)なので÷1000
+                //TimeSinceLastKillに値が保存されていない || 保存されている時間がminTime以上 => キルを許可
+                //↓許可されない場合
+                if (TimeSinceLastKill.TryGetValue(killer.PlayerId, out var time) && time < minTime)
+                {
+                    Logger.Info("前回のキルからの時間が早すぎるため、キルをブロックしました。", "CheckMurder");
+                    return false;
+                }
             }
             TimeSinceLastKill[killer.PlayerId] = 0f;
 
@@ -347,14 +351,99 @@ namespace TownOfHostY
             }
 
             var phantom = __instance;
+            Logger.Info($"{phantom.GetNameWithRole()} : CheckVanishStart", "CheckVanish");
+
             // 役職の処理
             var role = phantom.GetRoleClass();
-            if (role?.OnCheckVanish() == false)
+
+            /***************************** 
+             * ◆下記OnCheckVanishがfalseの場合は設定できる
+             * ・killCooldown : キルクールが10秒に設定されてしまうため任意に設定する
+             * 　　ホストは仕様上キルクールは強制されないが、バニラの仕様に合わせセットする
+             * ・canResetAbilityCooldown : アビリティクールダウンをリセットするか設定する
+             *****************************/
+            float killCooldown = 10.0f;
+            bool canResetAbilityCooldown = false;
+            if (role?.OnCheckVanish(ref killCooldown, ref canResetAbilityCooldown) == false)
             {
+                Logger.Info($"{phantom.GetNameWithRole()} : OnCheckVanish() == false", "CheckVanish");
+
+                if (phantom.PlayerId != PlayerControl.LocalPlayer.PlayerId &&
+                    phantom.IsAlive())
+                {
+                    SendDummyClearCharge(phantom);
+                }
+
+                // キルクールリセット
+                phantom.SetKillCooldown(killCooldown);
+                // アビリティクールリセット
+                if (canResetAbilityCooldown)
+                {
+                    phantom.RpcResetAbilityCooldown();
+                }
                 return false;
             }
 
             return true;
+        }
+        private static void SendDummyClearCharge(PlayerControl phantom)
+        {
+            int clientId = phantom.GetClientId();
+            var stream = MessageWriter.Get(SendOption.Reliable);
+            stream.StartMessage(6);
+            stream.Write(AmongUsClient.Instance.GameId);
+            stream.WritePacked(clientId);
+            {
+                stream.StartMessage(2);
+                stream.WritePacked(phantom.NetId);
+                stream.Write((byte)RpcCalls.SetRole);
+                stream.Write((ushort)RoleTypes.Impostor);
+                stream.Write(true);     //canOverrideRole
+                stream.EndMessage();
+
+                stream.StartMessage(2);
+                stream.WritePacked(phantom.NetId);
+                stream.Write((byte)RpcCalls.SetRole);
+                stream.Write((ushort)RoleTypes.Phantom);
+                stream.Write(true);     //canOverrideRole
+                stream.EndMessage();
+            }
+            stream.EndMessage();
+            AmongUsClient.Instance.SendOrDisconnect(stream);
+            stream.Recycle();
+        }
+    }
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdCheckVanish))]
+    public static class PlayerControlCmdCheckVanishPatch
+    {
+        public static bool Prefix(PlayerControl __instance)
+        {
+            __instance?.CheckVanish();
+            return false;
+        }
+    }
+    [HarmonyPatch(typeof(PhantomRole), nameof(PhantomRole.UseAbility))]
+    public static class PhantomRoleUseAbilityPatch
+    {
+        public static bool Prefix(PhantomRole __instance)
+        {
+            if (__instance.Player.AmOwner && !__instance.Player.Data.IsDead && __instance.Player.moveable && !Minigame.Instance && !__instance.IsCoolingDown && !__instance.fading)
+            {
+                System.Func<RoleEffectAnimation, bool> roleEffectAnimation = x => x.effectType == RoleEffectAnimation.EffectType.Vanish_Charge;
+                if (!__instance.Player.currentRoleAnimations.Find(roleEffectAnimation) && !__instance.Player.walkingToVent && !__instance.Player.inMovingPlat)
+                {
+                    if (__instance.isInvisible)
+                    {
+                        __instance.MakePlayerVisible(true, true);
+                        return false;
+                    }
+                    DestroyableSingleton<HudManager>.Instance.AbilityButton.SetSecondImage(__instance.Ability);
+                    DestroyableSingleton<HudManager>.Instance.AbilityButton.OverrideText(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.PhantomAbilityUndo, new Il2CppReferenceArray<Il2CppSystem.Object>(0)));
+                    __instance.Player.CmdCheckVanish(GameManager.Instance.LogicOptions.GetPhantomDuration());
+                    return false;
+                }
+            }
+            return false;
         }
     }
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
@@ -459,6 +548,12 @@ namespace TownOfHostY
                 role.OnReportDeadBody(__instance, target);
             }
 
+            foreach (var kvp in PlayerState.AllPlayerStates)
+            {
+                var pc = Utils.GetPlayerById(kvp.Key);
+                kvp.Value.LastRoom = pc.GetPlainShipRoom();
+            }
+
             Main.AllPlayerControls
                 .Where(pc => Main.CheckShapeshift.ContainsKey(pc.PlayerId))
                 .Do(pc => Camouflage.RpcSetSkin(Camouflage.IsCamouflage, pc, RevertToDefault: true));
@@ -493,11 +588,11 @@ namespace TownOfHostY
     {
         public static void Prefix()
         {
-            foreach (var kvp in PlayerState.AllPlayerStates)
-            {
-                var pc = Utils.GetPlayerById(kvp.Key);
-                kvp.Value.LastRoom = pc.GetPlainShipRoom();
-            }
+            //foreach (var kvp in PlayerState.AllPlayerStates)
+            //{
+            //    var pc = Utils.GetPlayerById(kvp.Key);
+            //    kvp.Value.LastRoom = pc.GetPlainShipRoom();
+            //}
         }
     }
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -806,8 +901,10 @@ namespace TownOfHostY
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetRole))]
     class PlayerControlSetRolePatch
     {
-        public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType)
+        public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType, bool canOverrideRole)
         {
+            if (RpcSetRoleReplacer.DoReplace()) return true;
+
             var target = __instance;
             var targetName = __instance.GetNameWithRole();
             Logger.Info($"{targetName} =>{roleType}", "PlayerControl.RpcSetRole");
@@ -849,7 +946,10 @@ namespace TownOfHostY
                     return false;
                 }
             }
-            return true;
+
+            target.RpcSetRoleNormal(roleType, canOverrideRole);
+
+            return false;
         }
     }
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Die))]

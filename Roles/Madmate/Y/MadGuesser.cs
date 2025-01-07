@@ -28,6 +28,7 @@ public sealed class MadGuesser : VoteGuesser
         //() => HasTask.ForRecompute
         )
     {
+        AlwaysSuicide = OptionAlwaysSuicide.GetBool();
         //CanAlsoBeExposedToImpostor = OptionCanAlsoBeExposedToImpostor.GetBool();
         //TaskTrigger = OptionTaskTrigger.GetInt();
 
@@ -40,6 +41,7 @@ public sealed class MadGuesser : VoteGuesser
     }
 
     private static OptionItem OptionCanVent;
+    private static OptionItem OptionAlwaysSuicide;
     //private static OptionItem OptionCanAlsoBeExposedToImpostor;
     private static OptionItem OptionNumOfGuess;
     private static OptionItem OptionMultipleInMeeting;
@@ -51,6 +53,7 @@ public sealed class MadGuesser : VoteGuesser
     enum OptionName
     {
         CanVent,
+        MadGuesserAlwaysSuicide,
         //MadSnitchCanAlsoBeExposedToImpostor,
         //MadSnitchTaskTrigger,
         GuesserNumOfGuess,
@@ -64,6 +67,7 @@ public sealed class MadGuesser : VoteGuesser
     public static void SetupOptionItem()
     {
         OptionCanVent = BooleanOptionItem.Create(RoleInfo, 10, OptionName.CanVent, false, false);
+        OptionAlwaysSuicide = BooleanOptionItem.Create(RoleInfo, 16, OptionName.MadGuesserAlwaysSuicide, false, false);
         //OptionCanAlsoBeExposedToImpostor = BooleanOptionItem.Create(RoleInfo, 11, OptionName.MadSnitchCanAlsoBeExposedToImpostor, false, false);
         OptionNumOfGuess = IntegerOptionItem.Create(RoleInfo, 13, OptionName.GuesserNumOfGuess, new(1, 15, 1), 1, false)
             .SetValueFormat(OptionFormat.Times);

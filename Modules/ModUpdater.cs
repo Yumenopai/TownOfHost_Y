@@ -177,7 +177,11 @@ namespace TownOfHostY
                     button.gameObject.SetActive(showButton);
                     button.GetComponentInChildren<TextTranslatorTMP>().TargetText = StringNames.QuitLabel;
                     button.GetComponent<PassiveButton>().OnClick = new();
-                    button.GetComponent<PassiveButton>().OnClick.AddListener((Action)(() => Application.Quit()));
+                    button.GetComponent<PassiveButton>().OnClick.AddListener((Action)(() =>
+                    {
+                        Application.OpenURL("https://github.com/Yumenopai/TownOfHost_Y/releases/latest");
+                        Application.Quit();
+                    }));
                 }
             }
         }

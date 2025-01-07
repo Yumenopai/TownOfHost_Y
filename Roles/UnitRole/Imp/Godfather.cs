@@ -3,7 +3,7 @@ using UnityEngine;
 
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
-using static TownOfHostY.Roles.Impostor.GodfatherAndJanitor;
+using static TownOfHostY.Roles.Unit.GodfatherAndJanitor;
 
 namespace TownOfHostY.Roles.Impostor;
 public sealed class Godfather : RoleBase, IImpostor
@@ -107,13 +107,18 @@ public sealed class Godfather : RoleBase, IImpostor
         foreach (var targetId in JanitorTarget)
         {
             var target = Utils.GetPlayerById(targetId);
-            target.SetRealKiller(Player);
-            target.RpcMurderPlayer(target, true);
 
-            // ターゲットの足止め解除
-            Main.AllPlayerSpeed[target.PlayerId] = Main.RealOptionsData.GetFloat(FloatOptionNames.PlayerSpeedMod);
-            target.MarkDirtySettings();
-            Logger.Info($"{target.GetNameWithRole()} : ジャニター未掃除のターゲット死亡", "G&J");
+            // ターゲットが生存している場合のみキルを実行
+            if (target.IsAlive())
+            {
+                target.SetRealKiller(Player);
+                target.RpcMurderPlayer(target, true);
+
+                // ターゲットの足止め解除
+                Main.AllPlayerSpeed[target.PlayerId] = Main.RealOptionsData.GetFloat(FloatOptionNames.PlayerSpeedMod);
+                target.MarkDirtySettings();
+                Logger.Info($"{target.GetNameWithRole()} : ジャニター未掃除のターゲット死亡", "G&J");
+            }
         }
 
         // ターゲットをリセット
@@ -138,7 +143,7 @@ public sealed class Godfather : RoleBase, IImpostor
         if (isChange)
         {
             canLockKill = canDist;
-            Utils.NotifyRoles(SpecifySeer:Player);
+            Utils.NotifyRoles(SpecifySeer: Player);
         }
     }
 

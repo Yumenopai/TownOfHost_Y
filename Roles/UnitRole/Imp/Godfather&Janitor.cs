@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 
-namespace TownOfHostY.Roles.Impostor;
+namespace TownOfHostY.Roles.Unit;
 public sealed class GodfatherAndJanitor : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -12,8 +12,7 @@ public sealed class GodfatherAndJanitor : RoleBase
             CustomRoles.GodfatherAndJanitor,
             () => RoleTypes.Impostor,
             CustomRoleTypes.Unit,
-            //(int)Options.offsetId.UnitImp + 100,
-            (int)Options.offsetId.UnitSpecial + 0,
+            (int)Options.offsetId.UnitImp + 100,
             SetupOptionItem,
             "ゴッドファーザー&ジャニター",
             "#ffffff",

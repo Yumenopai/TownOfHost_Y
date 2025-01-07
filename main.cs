@@ -52,13 +52,16 @@ namespace TownOfHostY
         // ==========
         //Sorry for many Japanese comments.
         public const string PluginGuid = "com.yumenopai.townofhosty";
-        public const string PluginVersion = "517.23";
+        public const string PluginVersion = "519.26";
         // サポートされている最低のAmongUsバージョン
-        public static readonly string LowestSupportedVersion = "2024.6.18";
+        public static readonly string LowestSupportedVersion = "2024.8.13";
         // このバージョンのみで公開ルームを無効にする場合
         public static readonly bool IsPublicAvailableOnThisVersion = false;
         // プレリリースかどうか
         public static bool IsPrerelease { get; } = false;
+        public const string PluginSubVersion = "β";
+        public const string PluginVersionName = "";
+
         public Harmony Harmony { get; } = new Harmony(PluginGuid);
         public static Version version = Version.Parse(PluginVersion);
         public static BepInEx.Logging.ManualLogSource Logger;
@@ -114,21 +117,22 @@ namespace TownOfHostY
         public static bool introDestroyed = false;
         public static float DefaultCrewmateVision;
         public static float DefaultImpostorVision;
-        public static bool IsValentine = DateTime.Now.Month == 2 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
-        public static bool IsWhiteDay = DateTime.Now.Month == 3 && (DateTime.Now.Day >= 14 && DateTime.Now.Day <= 17);
-        public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day is 23 or 24 or 25;
-        public static bool IsAprilFool = DateTime.Now.Month == 4 && DateTime.Now.Day is 1 or 2 or 3 or 4 or 5;
-        public static bool IsInitialRelease = DateTime.Now.Month == 11 && DateTime.Now.Day >= 2 && DateTime.Now.Day <= 15;
         public const float RoleTextSize = 2f;
         public static List<byte> ShowRoleInfoAtMeeting = new();
+
+        // 期間限定
+        public static bool IsValentine = DateTime.Now.Month == 2 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
+        public static bool IsWhiteDay = DateTime.Now.Month == 3 && (DateTime.Now.Day >= 14 && DateTime.Now.Day <= 17);
+        public static bool IsAprilFool = DateTime.Now.Month == 4 && DateTime.Now.Day is 1 or 2 or 3 or 4 or 5;
+        public static bool IsHalloween = (DateTime.Now.Month == 10 && DateTime.Now.Day >= 26) || (DateTime.Now.Month == 11 && DateTime.Now.Day <= 4);
+        public static bool IsInitialRelease = DateTime.Now.Month == 11 && DateTime.Now.Day >= 1 && DateTime.Now.Day <= 10;
+        public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day <= 25;
 
         public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
         public static IEnumerable<PlayerControl> AllAlivePlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive());
         public static IEnumerable<PlayerControl> AllDeadPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && !p.IsAlive());
 
         public static Main Instance;
-
-        public static int tempImpostorNum = 0;
 
         public override void Load()
         {
@@ -260,6 +264,7 @@ namespace TownOfHostY
             ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
 
             Harmony.PatchAll();
+            Application.quitting += new Action(Utils.SaveNowLog);
         }
     }
     public enum CustomDeathReason
@@ -281,8 +286,11 @@ namespace TownOfHostY
         Fall,
         Poisoning,
         Clean,
+        NotGather,
         Senility,
         CounterAttack,
+        Telekinesis,
+        IgnitionBombed,
 
         Win,
         etc = -1

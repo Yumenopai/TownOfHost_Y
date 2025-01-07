@@ -35,7 +35,7 @@ namespace TownOfHostY
                         player.RpcResetAbilityCooldown();
                         if (Options.FixFirstKillCooldown.GetBool() && MeetingStates.FirstMeeting)
                             player.SetKillCooldown(Main.AllPlayerKillCooldown[player.PlayerId]);
-                        if (Options.RandomSpawn.GetBool()) //ランダムスポーン
+                        if (Options.RandomSpawn_Airship.GetBool()) //ランダムスポーン
                             new AirshipSpawnMap().RandomTeleport(player);
                     }
                 }
@@ -88,15 +88,15 @@ namespace TownOfHostY
             };
             public override Vector2 GetLocation()
             {
-                if (Options.DisableNearButton.GetBool())
+                if (Options.DisableNearButton_Skeld.GetBool())
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Skeld.GetBool()
                         ? positions.ToArray()[4..].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                         : positions.ToArray()[4..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
                 else
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Skeld.GetBool()
                         ? positions.ToArray().OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                         : positions.ToArray()[3..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
@@ -123,15 +123,15 @@ namespace TownOfHostY
             };
             public override Vector2 GetLocation()
             {
-                if (Options.DisableNearButton.GetBool())
+                if (Options.DisableNearButton_Mira.GetBool())
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Mira.GetBool()
                     ? positions.ToArray()[3..].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[3..7].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
                 else
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Mira.GetBool()
                     ? positions.ToArray().OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[2..7].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
@@ -159,15 +159,15 @@ namespace TownOfHostY
             };
             public override Vector2 GetLocation()
             {
-                if (Options.DisableNearButton.GetBool())
+                if (Options.DisableNearButton_Polus.GetBool())
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Polus.GetBool()
                     ? positions.ToArray()[3..].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[3..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
                 else
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Polus.GetBool()
                     ? positions.ToArray().OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[2..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
@@ -185,30 +185,34 @@ namespace TownOfHostY
                 ["CargoBay"] = new(33.5f, -1.5f),
                 ["Records"] = new(20.0f, 10.5f),
                 ["MainHall"] = new(15.5f, 0.0f),
+                ["Cockpit"] = new(-23.5f, -1.6f),
+                ["Security"] = new(5.8f, -10.8f),
+                ["Medical"] = new(29.0f, -6.2f),
                 ["NapRoom"] = new(6.3f, 2.5f),
                 ["Vault"] = new(-8.9f, 12.2f),
                 ["Communications"] = new(-13.3f, 1.3f),
-                ["Cockpit"] = new(-23.5f, -1.6f),
                 ["Armory"] = new(-10.3f, -5.9f),
                 ["ViewingDeck"] = new(-13.7f, -12.6f),
-                ["Security"] = new(5.8f, -10.8f),
                 ["Electrical"] = new(16.3f, -8.8f),
-                ["Medical"] = new(29.0f, -6.2f),
                 ["Toilet"] = new(30.9f, 6.8f),
                 ["Showers"] = new(21.2f, -0.8f)
             };
             public override Vector2 GetLocation()
             {
-                if (Options.DisableNearButton.GetBool())
+                if (Options.DisableNearButton_Airship.GetBool())
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Airship.GetBool()
                     ? positions.ToArray()[3..].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
+                    : Options.AdditionalSpawn_AirshipTAKADA.GetBool()
+                    ? positions.ToArray()[3..11].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[3..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
                 else
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Airship.GetBool()
                     ? positions.ToArray().OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
+                    : Options.AdditionalSpawn_AirshipTAKADA.GetBool()
+                    ? positions.ToArray()[2..11].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[2..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
             }
@@ -235,15 +239,15 @@ namespace TownOfHostY
             };
             public override Vector2 GetLocation()
             {
-                if (Options.DisableNearButton.GetBool())
+                if (Options.DisableNearButton_Fungle.GetBool())
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Fungle.GetBool()
                     ? positions.ToArray()[3..].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[3..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
                 else
                 {
-                    return Options.AdditionalSpawn.GetBool()
+                    return Options.AdditionalSpawn_Fungle.GetBool()
                     ? positions.ToArray().OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[2..8].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }

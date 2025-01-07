@@ -19,7 +19,7 @@ public static class SpawnInMinigameSpawnAtPatch
                 PlayerControl.LocalPlayer.SetKillCooldown(Main.AllPlayerKillCooldown[PlayerControl.LocalPlayer.PlayerId]);
             }
 
-            if (Options.RandomSpawn.GetBool())
+            if (Options.RandomSpawn_Airship.GetBool())
             {
                 new RandomSpawn.AirshipSpawnMap().RandomTeleport(PlayerControl.LocalPlayer);
             }

@@ -47,30 +47,23 @@ public sealed class Nimrod : RoleBase
     {
         if (Exiled == null || !playerIdList.Contains(Exiled.PlayerId)) return Exiled;
 
+        // 会議終了後にニムロッド会議を開く
         _ = new LateTask(() =>
         {
-            ExecutionMeetingPlayerId = Exiled.PlayerId;
-            Utils.GetPlayerById(Exiled.PlayerId).ReportDeadBody(Exiled);
-        }, 15f, "NimrodExiled");
+            if (!Exiled.IsDead)
+            {
+                // ニムロッド会議
+                ExecutionMeetingPlayerId = Exiled.PlayerId;
+                Logger.Info($"{Utils.GetPlayerById(ExecutionMeetingPlayerId).GetNameWithRole()} : ニムロッド会議", "Nimrod");
+                // バニラ側の表示更新
+                Utils.NotifyRoles(true, ForceLoop: true);
+                Utils.GetPlayerById(Exiled.PlayerId).ReportDeadBody(Exiled);
+            }
+        }, 14.5f, "NimrodExiled");
+
+        // 一旦誰も追放されずに終わる
         return null;
     }
-    public override void OnStartMeeting()
-    {
-        if (ExecutionMeetingPlayerId == byte.MaxValue) return;
-
-        Utils.SendMessage(Translator.GetString("IsNimrodMeetingText"),
-            title: $"<color={RoleInfo.RoleColorCode}>{Translator.GetString("IsNimrodMeetingTitle")}</color>");
-    }
-
-    public static (string, int) AddMeetingDisplay()
-    {
-        if (ExecutionMeetingPlayerId == byte.MaxValue) return ("", 0);
-
-        string text = Translator.GetString("MDisplay.NimrodTitle").Color(RoleInfo.RoleColor);
-        text += "\n";
-        return (text, 1);
-    }
-
     public override (byte? votedForId, int? numVotes, bool doVote) ModifyVote(byte voterId, byte sourceVotedForId, bool isIntentional)
     {
         // 既定値
@@ -80,15 +73,47 @@ public sealed class Nimrod : RoleBase
         {
             return baseVote;
         }
-        MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Vote, Player.PlayerId);
 
+        // 誰かに投票していたら、その人を追放する
         if (sourceVotedForId <= 15)
         {
             Utils.GetPlayerById(sourceVotedForId).SetRealKiller(Player);
             PlayerState.GetByPlayerId(sourceVotedForId).DeathReason = CustomDeathReason.Execution;
+            Logger.Info($"{Utils.GetPlayerById(ExecutionMeetingPlayerId).GetNameWithRole()} : ニムロッド追放→{Utils.GetPlayerById(sourceVotedForId).GetNameWithRole()}", "Nimrod");
         }
+        // 会議の強制終了
         MeetingVoteManager.Instance.ClearAndExile(Player.PlayerId, sourceVotedForId);
-        ExecutionMeetingPlayerId = byte.MaxValue;
         return (votedForId, numVotes, false);
+    }
+    public override void AfterMeetingTasks()
+    {
+        if (!IsExecutionMeeting()) return;
+
+        // ニムロッド会議終了の共通処理
+        FinishNimrodMeeting();
+    }
+    private static void FinishNimrodMeeting()
+    {
+        // 自身は死亡する
+        MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Vote, ExecutionMeetingPlayerId);
+        // ニムロッド会議を解除する
+        ExecutionMeetingPlayerId = byte.MaxValue;
+        Logger.Info($"{Utils.GetPlayerById(ExecutionMeetingPlayerId).GetNameWithRole()} : ニムロッド会議の解除", "Nimrod");
+    }
+
+    public override void OnStartMeeting()
+    {
+        if (!IsExecutionMeeting()) return;
+
+        Utils.SendMessage(Translator.GetString("IsNimrodMeetingText"),
+            title: $"<color={RoleInfo.RoleColorCode}>{Translator.GetString("IsNimrodMeetingTitle")}</color>");
+    }
+    public static (string, int) AddMeetingDisplay()
+    {
+        if (!IsExecutionMeeting()) return ("", 0);
+
+        string text = Translator.GetString("MDisplay.NimrodTitle").Color(RoleInfo.RoleColor);
+        text += "\n";
+        return (text, 1);
     }
 }

@@ -11,6 +11,7 @@ namespace TownOfHostY
         private static ClientActionItem JapaneseRoleName;
         private static ClientActionItem UnloadMod;
         private static ClientActionItem DumpLog;
+        private static ClientActionItem OpenLogFolder;
         private static ClientActionItem IsMuteLobbyBGM;
 
         public static void Postfix(OptionsMenuBehaviour __instance)
@@ -35,6 +36,10 @@ namespace TownOfHostY
             if (DumpLog == null || DumpLog.ToggleButton == null)
             {
                 DumpLog = ClientActionItem.Create("DumpLog", Utils.DumpLog, __instance);
+            }
+            if (OpenLogFolder == null || OpenLogFolder.ToggleButton == null)
+            {
+                OpenLogFolder = ClientActionItem.Create("OpenLogFolder", Utils.OpenLogFolder, __instance);
             }
             if (IsMuteLobbyBGM == null || IsMuteLobbyBGM.ToggleButton == null)
             {

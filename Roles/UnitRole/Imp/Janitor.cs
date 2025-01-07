@@ -1,12 +1,11 @@
 using System.Text;
-using AmongUs.GameOptions;
+using System.Linq;
 using UnityEngine;
+using AmongUs.GameOptions;
 
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
-using static TownOfHostY.Roles.Impostor.GodfatherAndJanitor;
-using System.Linq;
-using TownOfHostY.CatchCat;
+using static TownOfHostY.Roles.Unit.GodfatherAndJanitor;
 
 namespace TownOfHostY.Roles.Impostor;
 public sealed class Janitor : RoleBase, IImpostor

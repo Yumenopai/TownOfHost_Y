@@ -84,6 +84,7 @@ namespace TownOfHostY
             {
                 StandbyTimer.Clear();
                 SelectTarget.Clear();
+                NowSelectNumber.Clear();
                 SelectedAction.Clear();
                 return;
             }

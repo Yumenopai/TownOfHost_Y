@@ -1,9 +1,8 @@
 using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
-
-namespace TownOfHostY.Roles.Crewmate;
 using static TownOfHostY.Utils;
 
+namespace TownOfHostY.Roles.Crewmate;
 public sealed class Sympathizer : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =

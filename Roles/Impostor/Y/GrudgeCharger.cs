@@ -87,6 +87,7 @@ public sealed class GrudgeCharger : RoleBase, IImpostor
             killLimit++;
             chargeCount = 0;
         }
+        Logger.Info($"{Player.GetNameWithRole()} : チャージ({chargeCount}/{oneGaugeChargeCount})", "GrudgeCharger");
         Utils.NotifyRoles(SpecifySeer: Player);
 
         killer.SetKillCooldown();
@@ -112,15 +113,19 @@ public sealed class GrudgeCharger : RoleBase, IImpostor
         var KillRange = GameOptionsData.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
         if (targetDistance <= KillRange && Player.CanMove && target.CanMove)
         {
-            killThisTurn = true;
             KillWaitPlayer = null;
-            killLimit--;
-            target.SetRealKiller(Player);
-            Player.RpcMurderPlayer(target);
-            Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "GrudgeCharger");
+            if (CustomRoleManager.OnCheckMurder(Player, target, true))
+            {
+                killLimit--;
+                target.SetRealKiller(Player);
+                Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "GrudgeCharger");
+                Utils.NotifyRoles(SpecifySeer: Player);
+            }
 
+            killThisTurn = true;
             Player.MarkDirtySettings();
             Player.RpcResetAbilityCooldown();
+            killThisTurn = false;
         }
     }
 
@@ -130,7 +135,7 @@ public sealed class GrudgeCharger : RoleBase, IImpostor
         {
             TargetArrow.Remove(Player.PlayerId, KillWaitPlayer.PlayerId);
         }
-        killThisTurn = false;
+        Player.MarkDirtySettings();
         Player.RpcResetAbilityCooldown();
     }
 

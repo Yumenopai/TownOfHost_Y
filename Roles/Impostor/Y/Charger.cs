@@ -16,8 +16,7 @@ public sealed class Charger : RoleBase, IImpostor
             CustomRoles.Charger,
             () => RoleTypes.Phantom,
             CustomRoleTypes.Impostor,
-            (int)Options.offsetId.ImpSpecial + 0,
-            //(int)Options.offsetId.ImpY + 1700,
+            (int)Options.offsetId.ImpY + 1700,
             SetUpOptionItem,
             "チャージャー"
         );
@@ -86,6 +85,7 @@ public sealed class Charger : RoleBase, IImpostor
             killLimit++;
             chargeCount = 0;
         }
+        Logger.Info($"{Player.GetNameWithRole()} : チャージ({chargeCount}/{oneGaugeChargeCount})", "Charger");
         Utils.NotifyRoles(SpecifySeer: Player);
 
         killer.SetKillCooldown();
@@ -94,11 +94,15 @@ public sealed class Charger : RoleBase, IImpostor
 
     public override void AfterMeetingTasks()
     {
+        Player.MarkDirtySettings();
         Player.RpcResetAbilityCooldown();
     }
 
-    public override bool OnCheckVanish()
+    public override bool OnCheckVanish(ref float killCooldown, ref bool canResetAbilityCooldown)
     {
+        // キルクール設定
+        killCooldown = chargeKillCooldown;
+
         if (killLimit <= 0) return false;
 
         // 全体内での最短距離のターゲット
@@ -106,24 +110,31 @@ public sealed class Charger : RoleBase, IImpostor
         Vector2 playerPos = Player.transform.position;
         foreach (var target in Main.AllAlivePlayerControls)
         {
+            if (target == Player) continue;
             float targetDistance = Vector2.Distance(playerPos, target.transform.position);
-            if (minDistance.dist < targetDistance)
+            if (targetDistance < minDistance.dist)
             {
                 minDistance = (target, targetDistance);
             }
         }
+        Logger.Info($"最短距離プレイヤー確定 : {minDistance.target.GetNameWithRole()}・{minDistance.dist}m", "Charger");
 
         var KillRange = GameOptionsData.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
+        Logger.Info($"距離 : {minDistance.dist}m <= {KillRange}m", "Charger");
         if (minDistance.dist <= KillRange && Player.CanMove && minDistance.target.CanMove)
         {
-            killThisTurn = true;
-            killLimit--;
-            minDistance.target.SetRealKiller(Player);
-            Player.RpcMurderPlayer(minDistance.target);
-            Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "GrudgeCharger");
+            if (CustomRoleManager.OnCheckMurder(Player, minDistance.target, true))
+            {
+                killLimit--;
+                minDistance.target.SetRealKiller(Player);
+                Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "Charger");
+                Utils.NotifyRoles(SpecifySeer: Player);
+            }
 
+            killThisTurn = true;
             Player.MarkDirtySettings();
             Player.RpcResetAbilityCooldown();
+            killThisTurn = false;
         }
         return false;
     }

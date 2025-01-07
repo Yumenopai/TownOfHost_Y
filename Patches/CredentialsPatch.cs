@@ -56,25 +56,25 @@ namespace TownOfHostY
             static string[] mainManuText = {
                 "このコメントは21種類らしい\nなんか増えてる？",
                 "いつもありがとう！\nこれからも沢山遊んでね",
-                "【今日のおすすめ役職】\nマッドニムロッド",
+                "【今日のおすすめ役職】\nアドミニスター",
                 "【今日のおすすめ属性】\nリフュージング",
                 "ランダムな文が\n表示されるって\nなんかいいよね",
-                "今日もシェリフ？\nハンター使ってみない？",
-                "開発者が1人増えました。\nこんなところで発表します。",
+                "今日もシェリフ？\nバカシェリフ100%で使ってみない？",
+                "大型アップデートの予定があります。",
                 "作りたい属性がひとつ。\nいつ作って実装できるかな？",
-                "暫く新役職のリリースは\nないと思うたぶん",
-                "バカシェリフで誤爆して\n相手を吊ろう",
+                "YSSの定期開催がしたいです。\nメンバーいつでも募集中。",
+                "マッドシェリフで相手がキルする\nモーション設定があります",
                 "属性を一つ足すだけで\n一気にゲームが変わります",
                 "ラストインポスターとか\nコンプリートクルーとかって\n使ってる？",
                 "パン屋はパン屋でも\nたまにご飯が好きになったりする",
-                "バカシェリフはもっとバカに\nなってもいいと思うんだ",
-                "新しい要素を考えるのって\n結構大変なんだよな",
+                "新しいニュートラル役職を\n考えたいんだけどな、、",
+                "道連れ表記は複数の場合、\nちゃんと複数発生と出ます",
                 "COしていいかどうか\n表示させることができます",
-                "ひいた役職の陣営がわからない？\n陣営表示機能を追加したよ",
-                "グラージチャージャー新登場。\nゲージを溜めてキル回数を増やそう",
-                "チェインシフター新登場。\nまるでババ抜きのババのよう",
-                "自爆魔新登場。\n自分も死ぬけど、周りも道連れに。",
-                "COします。占い師です。\nあなたは人狼ですね？",
+                "ひいた役職の陣営がわからない？\n陣営表示機能を使ってね",
+                "シンクロカラーモードという\nカオスなモードがありました",
+                "ジャッカルサイドキックが登場。\nご主人の想いを受け継ぎキルせよ。",
+                "ファントム(亡霊)・ノイズメーカー・トラッカー\n新しいバニラ役職も使えます。",
+                "ワンナイトモードを早く復活させたい。",
             };
 
             static TextMeshPro SpecialEventText;
@@ -84,7 +84,7 @@ namespace TownOfHostY
                 Main.credentialsText = $"<color={Main.ModColor}>{Main.ModName}</color> v{Main.PluginVersion}";
                 if (Main.IsPrerelease)
                 {
-                    Main.credentialsText += $"\r\n<#F39C12>Pre-Release</color>";
+                    Main.credentialsText += $"{Main.PluginSubVersion}\r\n<#F39C12>{Main.PluginVersionName}</color>";
                 }
 #if DEBUG
                 Main.credentialsText += $"\r\n<color={Main.ModColor}>{ThisAssembly.Git.Branch}({ThisAssembly.Git.Commit})</color>";
@@ -152,11 +152,22 @@ namespace TownOfHostY
                 {
                     SpecialEventText.color = Color.yellow;
                     SpecialEventText.text = $"Happy Birthday to {Main.ModName}!";
+                    if (CultureInfo.CurrentCulture.Name == "ja-JP")
+                        SpecialEventText.text += "<size=60%>\n期間限定：ポテンシャリスト・おにぎり屋復刻！</size>";
+                }
+                else if (Main.IsHalloween)
+                {
+                    SpecialEventText.text = "★happy Halloween★";
+                    if (CultureInfo.CurrentCulture.Name == "ja-JP")
+                        SpecialEventText.text += "<size=60%>\n期間限定：ジャック・オー・ランタン登場！</size>";
+                    SpecialEventText.color = Utils.GetRoleColor(CustomRoles.JackOLantern);
                 }
                 else if (Main.IsChristmas)
                 {
                     SpecialEventText.color = Color.yellow;
                     SpecialEventText.text = "★Merry Christmas★";
+                    if (CultureInfo.CurrentCulture.Name == "ja-JP")
+                        SpecialEventText.text += "<size=60%>\n新インポスター、アドミニスター登場！</size>";
                 }
                 else if (CultureInfo.CurrentCulture.Name == "ja-JP")
                 {

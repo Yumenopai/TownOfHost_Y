@@ -257,8 +257,9 @@ namespace TownOfHostY
         {
             sender.AutoStartRpc(player.NetId, (byte)RpcCalls.SetRole, targetClientId)
                 .Write((ushort)role)
-                .Write(canOverrideRole)
+                .Write(true) //canOverrideRole
                 .EndRpc();
+            Logger.Info($"CustomRpcSenderExtensions toClientId:{targetClientId} player:{player?.name}({role})", "RpcSetRole");
         }
         public static void RpcMurderPlayer(this CustomRpcSender sender, PlayerControl player, PlayerControl target, int targetClientId = -1)
         {

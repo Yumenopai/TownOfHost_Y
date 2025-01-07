@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using HarmonyLib;
 using UnityEngine;
 using AmongUs.GameOptions;
 
@@ -7,7 +8,6 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Translator;
 using static TownOfHostY.Utils;
-using HarmonyLib;
 
 namespace TownOfHostY.Roles.Impostor;
 

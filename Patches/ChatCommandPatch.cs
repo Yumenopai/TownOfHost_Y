@@ -191,53 +191,6 @@ namespace TownOfHostY
                                 GetRolesInfo(subArgs);
                                 break;
 
-                            case "a":
-                            case "addons":
-                                subArgs = args.Length < 3 ? "" : args[2];
-                                switch (subArgs)
-                                {
-                                    case "lastimpostor":
-                                    case "limp":
-                                        Utils.SendMessage(Utils.GetRoleName(CustomRoles.LastImpostor) + GetString("LastImpostorInfoLong"));
-                                        break;
-
-                                    default:
-                                        Utils.SendMessage($"{GetString("Command.h_args")}:\n lastimpostor(limp)");
-                                        break;
-                                }
-                                break;
-
-                            case "m":
-                            case "modes":
-                                subArgs = args.Length < 3 ? "" : args[2];
-                                switch (subArgs)
-                                {
-                                    case "hideandseek":
-                                    case "has":
-                                        Utils.SendMessage(GetString("HideAndSeekInfo"));
-                                        break;
-
-                                    case "nogameend":
-                                    case "nge":
-                                        Utils.SendMessage(GetString("NoGameEndInfo"));
-                                        break;
-
-                                    case "syncbuttonmode":
-                                    case "sbm":
-                                        Utils.SendMessage(GetString("SyncButtonModeInfo"));
-                                        break;
-
-                                    case "randommapsmode":
-                                    case "rmm":
-                                        Utils.SendMessage(GetString("RandomMapsModeInfo"));
-                                        break;
-
-                                    default:
-                                        Utils.SendMessage($"{GetString("Command.h_args")}:\n hideandseek(has), nogameend(nge), syncbuttonmode(sbm), randommapsmode(rmm)");
-                                        break;
-                                }
-                                break;
-
                             case "n":
                             case "now":
                                 Utils.ShowActiveSettingsHelp();
@@ -407,7 +360,7 @@ namespace TownOfHostY
             sender.SetName(name);
         }
 
-        public static void GetRolesInfo(string role)
+        public static void GetRolesInfo(string role, byte PlayerId = byte.MaxValue)
         {
             // 初回のみ処理
             if (roleCommands == null)
@@ -474,11 +427,11 @@ namespace TownOfHostY
 
                 if (String.Compare(role, roleName, true) == 0 || String.Compare(role, roleShort, true) == 0)
                 {
-                    Utils.SendMessage(GetString(roleName) + GetString($"{roleName}InfoLong"));
+                    Utils.SendMessage(Utils.GetRoleInfoLong(r.Key), PlayerId);
                     return;
                 }
             }
-            Utils.SendMessage(GetString("Message.HelpRoleNone"));
+            Utils.SendMessage(GetString("Message.HelpRoleNone"), PlayerId);
         }
         private static void ConcatCommands(CustomRoleTypes roleType)
         {
@@ -551,6 +504,12 @@ namespace TownOfHostY
                         case "n":
                         case "now":
                             Utils.ShowActiveSettingsHelp(player.PlayerId);
+                            break;
+
+                        case "r":
+                        case "roles":
+                            subArgs = args.Length < 3 ? "" : args[2];
+                            GetRolesInfo(subArgs, player.PlayerId);
                             break;
                     }
                     break;

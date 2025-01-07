@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 
 using TownOfHostY.Roles.Core;
 
-namespace TownOfHostY.Roles.Crewmate;
+namespace TownOfHostY.Roles.Unit;
 public sealed class CounselorAndMadDilemma : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -41,9 +42,11 @@ public sealed class CounselorAndMadDilemma : RoleBase
     }
     private static void SetupOptionItem()
     {
-        OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 10, OptionName.CounselorTaskTrigger, new(0, 20, 1), 5, false)
+        Dictionary<string, string> counselorDic = new() { { "%counselor%", Utils.ColorString(Utils.GetRoleColor(CustomRoles.Counselor), Utils.GetRoleName(CustomRoles.Counselor)) } };
+
+        OptionTaskTrigger = IntegerOptionItem.Create(RoleInfo, 10, OptionName.CounselorTaskTrigger, new(0, 20, 1), 5, false).SetReplacementDictionary(counselorDic)
             .SetValueFormat(OptionFormat.Pieces);
-        OptionChallengeMaxCount = IntegerOptionItem.Create(RoleInfo, 11, OptionName.CounselorChallengeMaxCount, new(1, 15, 1), 3, false)
+        OptionChallengeMaxCount = IntegerOptionItem.Create(RoleInfo, 11, OptionName.CounselorChallengeMaxCount, new(1, 15, 1), 3, false).SetReplacementDictionary(counselorDic)
             .SetValueFormat(OptionFormat.Times);
         //OptionResetAddonChangeCrew = BooleanOptionItem.Create(RoleInfo, 12, OptionName.MadDilemmaResetAddonChangeCrew, false, false);
 

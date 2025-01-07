@@ -23,15 +23,6 @@
 - TOHとなにがちがうの？
   - 様々な役職や機能がたくさん追加されています。本家TOHの機能も一部を除いて同じように使用できます。本家TOHの仕様についてはTOH_Yでは現在WIKIWIKIなどでは記載を省略しているため、本家TOHのGitHubをご確認ください。<br>
 
-## 10/27更新 TOH_Yは更新休止期間です。
-TOH_Yの更新は本体アプデやTOHアプデ、不具合修正などを除き休止させていただいております。
-
-なお、不具合などの報告は引き続きdiscordで受け付けております。発見した際は #不具合報告 まで提出してください。
-休止期間中でもお手伝いさんによってアップデートされる可能性はあります。
-
-開発再開は2024年春～夏頃を予定していますが、ゆめのの就職活動の期間によって前後します。
-引き続き末永くTOH_Yをよろしくお願い致します。
-
 ## ★この Mod について
 
 この Mod は非公式のものであり、この Mod の開発に関して Among Us の開発元である"Innersloth"は一切関与していません。<br>
@@ -52,8 +43,6 @@ We also use a translator for all in-game translations into English. If there is 
 Thank you for finding and using TOH_Y!<br>
 
 ## ★リリース
-
-AmongUsバージョン : **2024.6.18**<br>
 **最新バージョンは[こちらからダウンロード](https://github.com/Yumenopai/TownOfHost_Y/releases/latest)**<br>
 
 ※[TownOfHost](https://github.com/tukasa0001/TownOfHost) Fork<br>

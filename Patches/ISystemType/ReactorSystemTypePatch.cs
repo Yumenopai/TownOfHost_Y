@@ -29,7 +29,8 @@ public static class ReactorSystemTypeUpdateSystemPatch
         // サボタージュ発動時
         if (__state == ReactorSystemType.StartCountdown)
         {
-            if (!Options.SabotageTimeControl.GetBool())
+            if (((MapNames)Main.NormalOptions.MapId == MapNames.Polus && !Options.SabotageTimeControl_Polus.GetBool())
+                || ((MapNames)Main.NormalOptions.MapId == MapNames.Fungle && !Options.SabotageTimeControl_Fungle.GetBool()))
             {
                 return;
             }

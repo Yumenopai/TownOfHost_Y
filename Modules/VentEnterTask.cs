@@ -223,7 +223,8 @@ static class VentEnterTask
         {
             Vent v;
             var rand = IRandom.Instance;
-            v.id = rand.Next((int)VentPoint.MaxCount);
+            var randNum = rand.Next((int)VentPoint.MaxCount - 1); // Miraは0がない為1減らして番号確定
+            v.id = randNum + 1; // +1でベント番号設定
             v.name = Translator.GetString(((VentPoint)v.id).ToString());
             return v;
         }

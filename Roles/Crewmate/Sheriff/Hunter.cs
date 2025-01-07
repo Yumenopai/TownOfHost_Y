@@ -157,4 +157,11 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
     {
         isImpostor = 0;
     }
+    public void OnSchrodingerCatKill(SchrodingerCat schrodingerCat)
+    {
+        if (SchrodingerCat.ConsumeBullet)
+        {
+            ShotLimit--;
+        }
+    }
 }

@@ -15,8 +15,7 @@ public sealed class Chaser : RoleBase, IImpostor, ISidekickable
             CustomRoles.Chaser,
             () => RoleTypes.Shapeshifter,
             CustomRoleTypes.Impostor,
-            (int)Options.offsetId.ImpSpecial + 100,
-            //(int)Options.offsetId.ImpY + 1800,
+            (int)Options.offsetId.ImpY + 1800,
             SetUpOptionItem,
             "チェイサー"
         );
@@ -83,8 +82,10 @@ public sealed class Chaser : RoleBase, IImpostor, ISidekickable
     {
         // 変身アニメーションを起こさない
         animate = false;
-        // 回数制限
-        if (chaseLimitCount <= 0) return false;
+
+        // 回数制限,自身以外の変身かどうか
+        var shapeshifting = !Is(target);
+        if (chaseLimitCount <= 0 || !shapeshifting) return false;
 
         // 変身前の位置を記録する
         lastTransformPosition = Player.transform.position;
@@ -96,13 +97,13 @@ public sealed class Chaser : RoleBase, IImpostor, ISidekickable
         // 回数消化
         chaseLimitCount--;
         Logger.Info($"{Player.GetNameWithRole()} : 残り{chaseLimitCount}発", "Chaser");
-        Utils.NotifyRoles(SpecifySeer:Player);
+        Utils.NotifyRoles(SpecifySeer: Player);
 
         // 以下、元の場所に戻れる時の処理
         if (!ReturnPosition) return false;
 
         // 元の位置に戻る時はぬーんを使わせない。
-        MyState.CanUseMovingPlatform = false;                   
+        MyState.CanUseMovingPlatform = false;
 
         // 戻る時間後の処理
         _ = new LateTask(() =>
@@ -122,7 +123,7 @@ public sealed class Chaser : RoleBase, IImpostor, ISidekickable
             MyState.CanUseMovingPlatform = true;
 
         }, PositionTime, "ReturnPosition");
-        
+
         return false;
     }
     // ターゲットから一番近いベントを探す

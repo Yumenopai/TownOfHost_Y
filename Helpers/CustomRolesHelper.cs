@@ -58,7 +58,7 @@ namespace TownOfHostY
                 CustomRoles.Shapeshifter or
                 CustomRoles.Phantom;
         }
-        public static CustomRoles IsVanillaRoleConversion(this CustomRoles role)
+        public static CustomRoles VanillaRoleConversion(this CustomRoles role)
         {
             return role switch
             {
@@ -72,13 +72,34 @@ namespace TownOfHostY
                 _ => role
             };
         }
+        public static bool IsNormalVanillaRole(this CustomRoles role)
+        {
+            return role is
+                CustomRoles.NormalImpostor or
+                CustomRoles.NormalShapeshifter or
+                CustomRoles.NormalPhantom or
+                CustomRoles.NormalEngineer or
+                CustomRoles.NormalScientist or
+                CustomRoles.NormalTracker or
+                CustomRoles.NormalNoisemaker;
+        }
+
+        // 新役職等(トップ掲載の常設役職)
+        public static bool IsNewRole(this CustomRoles role)
+        {
+            if (Main.IsInitialRelease && role == CustomRoles.Bakery)
+                return true;
+
+            return role is CustomRoles.Administer;
+        }
 
         public static bool IsPairRole(this CustomRoles role)
         {
             return role is CustomRoles.Lovers
                 or CustomRoles.Sympathizer
                 or CustomRoles.CounselorAndMadDilemma
-                or CustomRoles.GodfatherAndJanitor;
+                or CustomRoles.GodfatherAndJanitor
+                or CustomRoles.JackOLantern;
         }
         public static bool IsFixedCountRole(this CustomRoles role)
         {
@@ -97,11 +118,13 @@ namespace TownOfHostY
         {
             return role is CustomRoles.Counselor or CustomRoles.MadDilemma
                 or CustomRoles.Godfather or CustomRoles.Janitor
+                // 期間限定で
+                or CustomRoles.JackOLantern
+                or CustomRoles.Jack or CustomRoles.jO or CustomRoles.Lantern
                 or CustomRoles.Gang
                 or CustomRoles.SKMadmate
-
-                or CustomRoles.Charger //通常版では今回出さない
-                or CustomRoles.NormalPhantom //通常版では今回出さない
+              
+                or CustomRoles.EvilHacker //一旦封印
                 or CustomRoles.Potentialist
                 or CustomRoles.Impostor or CustomRoles.Crewmate;
         }
@@ -111,41 +134,10 @@ namespace TownOfHostY
                 or CustomRoles.MadSnitch
                 or CustomRoles.MadDilemma
                 or CustomRoles.MadConnecter
+                or CustomRoles.jO
 
                 or CustomRoles.Jackal or CustomRoles.JClient or
                 CustomRoles.LastImpostor or CustomRoles.CompleteCrew;
-        }
-
-        public static bool IsProtectRole(this CustomRoles role)
-        {
-            return role is CustomRoles.AntiComplete
-                or CustomRoles.CursedWolf
-                or CustomRoles.FoxSpirit
-                or CustomRoles.Guarding
-                or CustomRoles.Immoralist
-                or CustomRoles.Lawyer
-                or CustomRoles.LoveCutter
-                or CustomRoles.Medic
-                or CustomRoles.Ogre
-                or CustomRoles.Pirate
-                or CustomRoles.PlatonicLover
-                or CustomRoles.Psychic
-                or CustomRoles.SchrodingerCat
-                or CustomRoles.Sniper
-                or CustomRoles.StrayWolf
-                or CustomRoles.Totocalcio
-                or CustomRoles.ChainShifter
-                // VentTask
-                or CustomRoles.MadConnecter
-
-                //VentSelect
-                or CustomRoles.Medic
-                or CustomRoles.GrudgeSheriff
-                //DoubleClick
-                or CustomRoles.EvilDiviner
-                or CustomRoles.Scavenger
-                or CustomRoles.EvilIgnition
-                or CustomRoles.Witch;
         }
 
         public static bool IsAddAddOn(this CustomRoles role)
@@ -198,7 +190,8 @@ namespace TownOfHostY
                 CustomRoles.PlatonicLover or
                 CustomRoles.Totocalcio or
                 CustomRoles.MadSheriff or
-                CustomRoles.MadConnecter;
+                CustomRoles.MadConnecter or
+                CustomRoles.jO;
         }
 
         //CC

@@ -51,6 +51,8 @@ public sealed class ChainShifter : RoleBase
     public static float ShiftInactiveTime;
     public static CustomRoles ShiftedRole = CustomRoles.Opportunist;
     public static bool ShiftWhenKilled;
+
+    public static CustomRoles[] AdditionalRoles => [ShiftedRole];
     enum OptionName
     {
         ChainShifterShiftTime,

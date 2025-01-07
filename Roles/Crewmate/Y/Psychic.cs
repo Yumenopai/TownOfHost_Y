@@ -2,12 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using HarmonyLib;
+using UnityEngine;
 
 using AmongUs.GameOptions;
-
-using TownOfHostY.Modules;
 using TownOfHostY.Roles.Core;
-using UnityEngine;
 using static TownOfHostY.Translator;
 
 namespace TownOfHostY.Roles.Crewmate;
@@ -114,7 +112,7 @@ public sealed class Psychic : RoleBase
         if (!VentSelect.IsShowTargetRole(Player, seen)) return;
         if (KillerOnly.GetBool() &&
             !(seen.GetCustomRole().IsImpostor() || seen.IsNeutralKiller() || seen.IsCrewKiller()
-            || seen.Is(CustomRoles.MadSheriff)|| seen.Is(CustomRoles.GrudgeSheriff) || seen.Is(CustomRoles.MadConnecter))) return;
+            || seen.Is(CustomRoles.MadSheriff) || seen.Is(CustomRoles.GrudgeSheriff))) return;
 
         enabled = true;
 
@@ -143,7 +141,7 @@ public sealed class Psychic : RoleBase
         if (!ConfirmCamp.GetBool()) return false;   //役職表示
         if (KillerOnly.GetBool() &&
         !(target.GetCustomRole().IsImpostor() || target.IsNeutralKiller() || target.IsCrewKiller()
-        || target.Is(CustomRoles.MadSheriff) || target.Is(CustomRoles.GrudgeSheriff) || target.Is(CustomRoles.MadConnecter))) return false;
+        || target.Is(CustomRoles.MadSheriff) || target.Is(CustomRoles.GrudgeSheriff))) return false;
         return true;
     }
 

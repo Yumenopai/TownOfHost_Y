@@ -214,22 +214,24 @@ public sealed class EvilTracker : RoleBase, IImpostor, IKillFlashSeeable, ISidek
     }
 
     // 表示系の関数群
-    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool _ = false)
+    public override string GetMark(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
-        return TargetId == seen.PlayerId ? Utils.ColorString(Palette.ImpostorRed, "◀") : "";
+        if (TargetId != seen.PlayerId) return string.Empty;
+
+        string mark = "";
+        if (isForMeeting)
+        {
+            mark = "\n<size=80%>" + GetLastRoom(seen) + "</size>";
+        }
+        return Utils.ColorString(Palette.ImpostorRed, "◀") + mark;
     }
     public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
         seen ??= seer;
-        if (isForMeeting)
-        {
-            return GetLastRoom(seen);
-        }
-        else
-        {
-            return GetArrows(seen);
-        }
+        if (isForMeeting) return string.Empty;
+
+        return GetArrows(seen);
     }
     private string GetArrows(PlayerControl seen)
     {

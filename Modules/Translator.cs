@@ -131,7 +131,7 @@ namespace TownOfHostY
                         _ => res
                     };
                 }
-                else if (Main.IsChristmas)
+                else if (Main.IsInitialRelease)
                 {
                     res = str switch
                     {

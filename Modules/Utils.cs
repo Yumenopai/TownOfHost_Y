@@ -709,6 +709,37 @@ public static class Utils
         }
         return sb.ToString();
     }
+    public static string GetRoleInfoLong(CustomRoles role)
+    {
+        var sb = new StringBuilder();
+        var r = role.VanillaRoleConversion(); //変換
+        string roleInfoLong = "";
+        if (r.IsVanilla())
+        {
+            var tag = "BlurbLong";
+            if (r is CustomRoles.Impostor or CustomRoles.Crewmate)
+            {
+                tag = "Blurb";
+            }
+            roleInfoLong = "\n" + GetString(r + tag);
+        }
+        else
+        {
+            roleInfoLong = GetString(role.ToString() + "InfoLong");
+        }
+
+        var roleString = $"<size=95%>{GetString(role.ToString())}</size>".Color(GetRoleColor(role).ToReadableColor());
+        sb.Append(roleString).Append("<size=80%><line-height=1.8pic>").Append(roleInfoLong).Append("</line-height></size>");
+
+        if (!role.IsDontShowOptionRole() && role != CustomRoles.GM)
+        {
+            //setting
+            sb.Append("\n<size=65%><line-height=1.5pic>");
+            ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
+            sb.Append("</size></line-height>");
+        }
+        return sb.ToString();
+    }
     // Help Now
     public static void ShowActiveSettingsHelp(byte PlayerId = byte.MaxValue)
     {
@@ -748,9 +779,8 @@ public static class Utils
                 if (role is CustomRoles.NormalImpostor) continue;
 
                 string infoLongText = "";
-                if (role is CustomRoles.NormalShapeshifter or CustomRoles.NormalEngineer or CustomRoles.NormalScientist or
-                            CustomRoles.NormalPhantom or CustomRoles.NormalTracker or CustomRoles.NormalNoisemaker)
-                    infoLongText = '\n' + GetString(Enum.GetName(typeof(CustomRoles), role.IsVanillaRoleConversion()) + "BlurbLong");
+                if (role.IsNormalVanillaRole())
+                    infoLongText = '\n' + GetString(Enum.GetName(typeof(CustomRoles), role.VanillaRoleConversion()) + "BlurbLong");
                 else
                     infoLongText = GetString(Enum.GetName(typeof(CustomRoles), role) + "InfoLong");
 
@@ -880,9 +910,11 @@ public static class Utils
                 if (Options.NotShowOption(opt.Name)) continue;
 
                 // アクティブマップ毎に表示しないオプション
-                if (opt.Name == "MapModificationAirship" && !Options.IsActiveAirship) continue;
-                if (opt.Name == "MapModificationFungle" && !Options.IsActiveFungle) continue;
-                if (opt.Name == "DisableButtonInMushroomMixup" && !Options.IsActiveFungle) continue;
+                if (opt.Name == "MapOption_Skeld" && !Options.IsActiveSkeld) continue;
+                if (opt.Name == "MapOption_Mira" && !Options.IsActiveMiraHQ) continue;
+                if (opt.Name == "MapOption_Polus" && !Options.IsActivePolus) continue;
+                if (opt.Name == "MapOption_Airship" && !Options.IsActiveAirship) continue;
+                if (opt.Name == "MapOption_Fungle" && !Options.IsActiveFungle) continue;
 
                 if (opt.Name is "NameChangeMode" && Options.GetNameChangeModes() != NameChange.None)
                     sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u> ：<size=68%>{opt.GetString()}</size>\n</size>");
@@ -1015,15 +1047,6 @@ public static class Utils
         foreach (var opt in option.Children.Select((v, i) => new { Value = v, Index = i + 1 }))
         {
             if (opt.Value.Name == "Maximum") continue; //Maximumの項目は飛ばす
-            if (opt.Value.Name == "DisableSkeldDevices" && !Options.IsActiveSkeld) continue;
-            if (opt.Value.Name == "DisableMiraHQDevices" && !Options.IsActiveMiraHQ) continue;
-            if (opt.Value.Name == "DisablePolusDevices" && !Options.IsActivePolus) continue;
-            if (opt.Value.Name == "DisableAirshipDevices" && !Options.IsActiveAirship) continue;
-            if (opt.Value.Name == "PolusReactorTimeLimit" && !Options.IsActivePolus) continue;
-            if (opt.Value.Name == "AirshipReactorTimeLimit" && !Options.IsActiveAirship) continue;
-            if (opt.Value.Name == "FungleReactorTimeLimit" && !Options.IsActiveFungle) continue;
-            if (opt.Value.Name == "FungleMushroomMixupDuration" && !Options.IsActiveFungle) continue;
-
             if (opt.Value.Parent.Name == "displayComingOut%type%" && !opt.Value.GetBool()) continue;
 
             if (opt.Value.Parent.Name == "AddOnBuffAssign" && !opt.Value.GetBool()) continue;
@@ -1396,6 +1419,7 @@ public static class Utils
                 || seer.Is(CustomRoles.Totocalcio)
                 || seer.Is(CustomRoles.Immoralist)
                 || seer.Is(CustomRoles.LoyalDoggy)
+                || seer.Is(CustomRoles.jO)
                 || VentEnterTask.HaveTask(seer)
 
                 || Duelist.CheckNotify(seer)
@@ -1549,23 +1573,46 @@ public static class Utils
         foreach (char c in t) bc += Encoding.GetEncoding("UTF-8").GetByteCount(c.ToString()) == 1 ? 1 : 2;
         return t?.PadRight(Mathf.Max(num - (bc - t.Length), 0));
     }
+    public static DirectoryInfo GetLogFolder(bool auto = false)
+    {
+        var folder = Directory.CreateDirectory($"{Application.persistentDataPath}/TownOfHost_Y/Logs");
+        if (auto)
+        {
+            folder = Directory.CreateDirectory($"{folder.FullName}/AutoLogs");
+        }
+        return folder;
+    }
     public static void DumpLog()
     {
-        string t = DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss");
-        string filename = $"{System.Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory)}/TOH_Y-v{Main.PluginVersion}-{t}.log";
-        FileInfo file = new(@$"{System.Environment.CurrentDirectory}/BepInEx/LogOutput.log");
-        file.CopyTo(@filename);
-        OpenDirectory(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+        var logs = GetLogFolder();
+        var filename = CopyLog(logs.FullName);
+        OpenDirectory(filename);
         if (PlayerControl.LocalPlayer != null)
-            HudManager.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, "デスクトップにログを保存しました。バグ報告チケットを作成してこのファイルを添付してください。");
+            HudManager.Instance?.Chat?.AddChat(PlayerControl.LocalPlayer, Translator.GetString("Message.LogsSavedInLogsFolder"));
+    }
+    public static void SaveNowLog()
+    {
+        var logs = GetLogFolder(true);
+        // 7日以上前のログを削除
+        logs.EnumerateFiles().Where(f => f.CreationTime < DateTime.Now.AddDays(-7)).ToList().ForEach(f => f.Delete());
+        CopyLog(logs.FullName);
+    }
+    public static string CopyLog(string path)
+    {
+        string t = DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss");
+        string fileName = $"{path}/TownOfHost-v{Main.PluginVersion}-{t}.log";
+        FileInfo file = new(@$"{System.Environment.CurrentDirectory}/BepInEx/LogOutput.log");
+        var logFile = file.CopyTo(fileName);
+        return logFile.FullName;
+    }
+    public static void OpenLogFolder()
+    {
+        var logs = GetLogFolder(true);
+        OpenDirectory(logs.FullName);
     }
     public static void OpenDirectory(string path)
     {
-        var startInfo = new ProcessStartInfo(path)
-        {
-            UseShellExecute = true,
-        };
-        Process.Start(startInfo);
+        Process.Start("Explorer.exe", $"/select,{path}");
     }
     public static string SummaryTexts(byte id, bool isForChat)
     {
