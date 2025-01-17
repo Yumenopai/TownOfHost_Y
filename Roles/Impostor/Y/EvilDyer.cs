@@ -16,7 +16,11 @@ public sealed class EvilDyer : RoleBase, IImpostor
             CustomRoleTypes.Impostor,
             (int)Options.offsetId.ImpY + 1100,
             SetupOptionItem,
-            "イビル真っ赤"
+            "イビル真っ赤",
+            assignInfo: new(CustomRoles.EvilDyer, CustomRoleTypes.Impostor)
+            {
+                IsInitiallyAssignableCallBack = () => !Options.IsSyncColorMode
+            }
         );
     public EvilDyer(PlayerControl player)
     : base(

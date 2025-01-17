@@ -185,6 +185,10 @@ namespace TownOfHostY
                     }
                 }
                 Camouflage.RpcSetSkin(Camouflage.IsCamouflage, target, ForceRevert: true, RevertToDefault: true);
+                if (Options.IsSyncColorMode && Options.SCM_RestoredDeadPlayer.GetBool())
+                {
+                    SkinChangeMode.RpcSetSkin(target, target);
+                }
             }
         }
         public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, bool __state)
@@ -752,7 +756,7 @@ namespace TownOfHostY
                     /*if(main.AmDebugger.Value && main.BlockKilling.TryGetValue(target.PlayerId, out var isBlocked)) {
                         Mark = isBlocked ? "(true)" : "(false)";
                     }*/
-                    if (Utils.IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool())
+                    if (Utils.IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool() && !Options.IsSyncColorMode)
                         RealName = $"<size=0>{RealName}</size> ";
                     if (EvilDyer.IsColorCamouflage)
                         RealName = $"<size=0>{RealName}</size> ";

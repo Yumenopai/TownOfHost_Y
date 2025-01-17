@@ -39,7 +39,11 @@ namespace TownOfHostY
             {
                 Logger.Info($"GameEnd winner: {CustomWinnerHolder.WinnerTeam}, reason: {reason}", "GameEndChecker");
                 //カモフラージュ強制解除
-                Main.AllPlayerControls.Do(pc => Camouflage.RpcSetSkin(false, pc, ForceRevert: true, RevertToDefault: true));
+                Main.AllPlayerControls.Do(pc =>
+                    {
+                        Camouflage.RpcSetSkin(false, pc, ForceRevert: true, RevertToDefault: true);
+                        SkinChangeMode.RpcSetSkin(pc, pc);
+                    });
 
                 switch (CustomWinnerHolder.WinnerTeam)
                 {

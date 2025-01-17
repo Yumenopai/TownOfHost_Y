@@ -363,4 +363,12 @@ namespace TownOfHostY
         Crew,
         Color
     }
+    public enum SyncColorMode
+    {
+        None,
+        Clone,
+        fif_fif,
+        ThreeCornered,
+        Twin,
+    }
 }
