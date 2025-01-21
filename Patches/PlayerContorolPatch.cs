@@ -543,15 +543,15 @@ namespace TownOfHostY
             }
             MushroomMixupDeterioratePatch.RestorName();
 
-            foreach (var role in CustomRoleManager.AllActiveRoles.Values)
-            {
-                role.OnReportDeadBody(__instance, target);
-            }
-
             foreach (var kvp in PlayerState.AllPlayerStates)
             {
                 var pc = Utils.GetPlayerById(kvp.Key);
                 kvp.Value.LastRoom = pc.GetPlainShipRoom();
+            }
+
+            foreach (var role in CustomRoleManager.AllActiveRoles.Values)
+            {
+                role.OnReportDeadBody(__instance, target);
             }
 
             Main.AllPlayerControls
