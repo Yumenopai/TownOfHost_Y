@@ -41,7 +41,6 @@ namespace TownOfHostY
         SetOppoKillerShotLimit,
         SetCursedWolfSpellCount,
         SetNBakryPoison,
-        SetBlinderVisionPlayer,
         SetEvilDiviner,
         SetLawyerTarget,
         SetRemoveLawyerTarget,
