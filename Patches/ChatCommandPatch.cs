@@ -274,11 +274,6 @@ namespace TownOfHostY
                         canceled = true;
                         Utils.SetKillFlashAfterDead(PlayerControl.LocalPlayer, true);
                         break;
-                    case "/kkk":
-                        canceled = true;
-
-                        Main.KillFlashAfterDead.Do(pc => Utils.SendMessage(pc, 0));
-                        break;
 
                     case "/offhat":
                     case "/offskin":
