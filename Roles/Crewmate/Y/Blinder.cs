@@ -66,6 +66,8 @@ public sealed class Blinder : RoleBase
     }
     public static void ApplyGameOptionsByOther(byte id, IGameOptions opt)
     {
+        if (!CustomRoles.Blinder.IsPresent()) return;
+
         if (BlindPlayerIdList.Contains(id))
         {
             opt.SetFloat(FloatOptionNames.CrewLightMod, BlinderVision);
