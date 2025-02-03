@@ -36,6 +36,14 @@ namespace TownOfHostY
                 AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
                 if (AURoleOptions.ShapeshifterCooldown == 0f)
                     AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
+
+                _ = new LateTask(() =>
+                {
+                    if (Main.KillFlashAfterDeadByHost.Value)
+                    {
+                        Main.KillFlashAfterDead.Add(PlayerControl.LocalPlayer.Data.PlayerName);
+                    }
+                }, 3f, "KillFlashAfterDeadByHost");
             }
         }
     }

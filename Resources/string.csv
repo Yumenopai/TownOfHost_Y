@@ -1276,15 +1276,10 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "Message.VoiceNow","Changed the reading of the {0} to {1}.","{0} の現在の読上げは {1} です",,,,
 "Message.VoiceChange","Changed the reading of the {0} to {1}.","{0} の読上げを {1} に変更しました",,,,
 "Message.VoiceChangeFailed","Failed to change {0} chat reading.","{0} の読上げを変更できませんでした",,,,
-"Message.ModCheckCommandInvalid","Mod check command invalid in current mode.","公開ルーム不可のため/modcheckコマンド無効です",,,,
-"Message.ModCheckAllOK","All players consented to the mod.","全プレイヤーがMod同意しました",,,,
-"Message.ModCheckNotOKColor","Not consented color: {0}","Mod未同意の色: {0}",,,,
-"Message.ModCheckMessageSend","A confirmation message has been sent to players who have not consented to the mod.","Mod未同意のプレイヤーに確認メッセージを送信しました",,,,
-"Message.ModCheckAgree","I agree to use mods. Player: {0}\n\nPlease exit the room to cancel.","MODの使用に同意しました。\n　Player: {0}\n\n※取り消す場合は部屋を抜けてください",,,,
-"Message.ModCheckKick","{0} has been kicked due to lack of agreement to use mods.","{0} はMOD使用の同意がないためキックされました",,,,
-"Message.isProtectRoleExist","It is a setting that always displays the guardian angel at the beginning of the meeting.","必ず会議初めに守護天使の表示が出る設定です。\nランダムな一人のプレイヤーにはスポーン時にバリア表示が出ます。",
 "Message.NowNimrodMeeting","Don't speak while Nimrod is choosing.","ニムロッド選択中は話してはいけません。"
 "Message.LogsSavedInLogsFolder","Logs saved in the logs folder.","ログフォルダにログを保存しました。Discordの不具合報告フォーラムにこのファイルを添付してください。"
+"Message.KillFlashAfterDeadOn","[Kill Flash After Dead] {0} / Set ON","{0} の霊界キルフラッシュをONにしました",
+"Message.KillFlashAfterDeadOff","[Kill Flash After Dead] {0} / Set OFF","{0} の霊界キルフラッシュをOFFにしました",
 
 "MDisplay.NimrodTitle","The Nimrod's Choice","ニムロッドの処刑選択"
 "IsNimrodMeetingTitle","【The Nimrod's choice】","【ニムロッドの処刑選択】"
