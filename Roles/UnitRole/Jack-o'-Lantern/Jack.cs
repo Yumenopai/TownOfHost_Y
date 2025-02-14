@@ -73,7 +73,7 @@ public sealed class Jack : RoleBase, IImpostor
         });
     }
 
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
         if (SentPlayer.Contains(seen.PlayerId))
         {

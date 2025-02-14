@@ -107,7 +107,7 @@ public sealed class Psychic : RoleBase
             Utils.NotifyRoles(SpecifySeer: Player);
         }
     }
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
         if (!VentSelect.IsShowTargetRole(Player, seen)) return;
         if (KillerOnly.GetBool() &&
@@ -121,18 +121,15 @@ public sealed class Psychic : RoleBase
         //陣営表示
         if (seen.GetCustomRole().IsImpostor() || seen.GetCustomRole().IsMadmate())
         {
-            roleColor = Palette.ImpostorRed;
-            roleText = GetString("TeamImpostor");
+            roleText = GetString("TeamImpostor").Color(Palette.ImpostorRed);
         }
         else if (seen.GetCustomRole().IsNeutral())
         {
-            roleColor = Color.gray;
-            roleText = GetString("Neutral");
+            roleText = GetString("Neutral").Color(Palette.Orange);
         }
         else
         {
-            roleColor = Palette.CrewmateBlue;
-            roleText = GetString("TeamCrewmate");
+            roleText = GetString("TeamCrewmate").Color(Palette.CrewmateBlue);
         }
     }
     public bool KnowTargetRoleColor(PlayerControl target)

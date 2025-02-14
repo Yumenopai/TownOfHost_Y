@@ -91,7 +91,7 @@ public sealed class Workaholic : RoleBase
         return true;
     }
 
-    public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, bool isMeeting, ref bool enabled, ref string roleText)
     {
         if (Seen) enabled = true;
     }

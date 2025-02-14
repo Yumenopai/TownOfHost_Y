@@ -33,7 +33,7 @@ class SetUpRoleTextPatch
                 if (subRole == CustomRoles.ChainShifterAddon) continue;
                 __instance.RoleBlurbText.text += "\n" + Utils.ColorString(Utils.GetRoleColor(subRole), GetString($"{subRole}Info"));
             }
-            __instance.RoleText.text = Utils.GetTrueRoleName(PlayerControl.LocalPlayer.PlayerId, false, true);
+            __instance.RoleText.text = RoleText.GetRoleNameText(PlayerControl.LocalPlayer.PlayerId, showSubRole: false);
 
         }, 0.01f, "Override Role Text");
 
