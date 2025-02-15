@@ -1335,6 +1335,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Message.GuesserAbilityUse","【Guesser Kill】\nGuesser's ability activated","【ゲッサー】\nゲッサーの能力が発動されました","","","",""
 "Message.GuesserDead","died","が死亡しました","","","",""
 "Message.NextPage","Next page","次ページ","","","",""
+"AdministerMessage","【Administer List】","【生存者の最終位置リスト】"
 
 "## 警告"
 "Warning.EgoistCannotWin","Egoist cannot win","エゴイストが勝利できません","野心家无法获胜","利己主義者無法獲勝","Эгоист не может победить!","Egoísta não pode vencer"
