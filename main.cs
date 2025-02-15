@@ -78,6 +78,7 @@ public class Main : BasePlugin
     public static ConfigEntry<bool> JapaneseRoleName { get; private set; }
     public static ConfigEntry<bool> IsMuteLobbyBGM { get; private set; }
     public static ConfigEntry<float> MessageWait { get; private set; }
+    public static ConfigEntry<bool> KillFlashAfterDeadByHost { get; private set; }
 
     public static Dictionary<byte, PlayerVersion> playerVersion = new();
     //Preset Name Options
@@ -102,7 +103,7 @@ public class Main : BasePlugin
     public static List<(string, byte, string, bool)> MessagesToSend;
     public static bool isChatCommand = false;
     public static Dictionary<byte, float> AllPlayerKillCooldown = new();
-    public static Dictionary<int, string> ConsentModUse = new();
+    public static HashSet<string> KillFlashAfterDead = new();
     /// <summary>
     /// 基本的に速度の代入は禁止.スピードは増減で対応してください.
     /// </summary>
