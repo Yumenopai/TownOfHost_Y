@@ -97,7 +97,7 @@ public sealed class Bakery : RoleBase
         }
         return false;
     }
-    public override void OverrideTrueRoleName(ref Color roleColor, ref string roleText)
+    public override void OverrideShowMainRoleText(ref Color roleColor, ref string roleText)
     {
         if (IsNeutral(Player))
         {

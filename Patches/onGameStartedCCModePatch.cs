@@ -42,8 +42,8 @@ class SelectRolesCCModePatch
         if (Options.EnableGM.GetBool())
         {
             AllPlayers.RemoveAll(x => x == PlayerControl.LocalPlayer);
-            PlayerControl.LocalPlayer.RpcSetCustomRole(CustomRoles.GM);
             PlayerControl.LocalPlayer.RpcSetRole(RoleTypes.Crewmate);
+            PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SetMainRole(CustomRoles.GM);
         }
 
         SelectRolesPatch.AssignDesyncRole(CustomRoles.CCYellowLeader, AllPlayers, ref assignedNum, BaseRole: RoleTypes.Impostor);
@@ -85,7 +85,7 @@ class SelectRolesCCModePatch
         foreach (var pair in PlayerState.AllPlayerStates)
         {
             //RPCによる同期
-            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.MainRole);
+            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.GetNowMainRole());
         }
 
         foreach (var pc in Main.AllPlayerControls)

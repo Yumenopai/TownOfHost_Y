@@ -232,207 +232,11 @@ public static class Utils
         seen ??= seer;
         // CO可否表示
         var coDisplay = (seer == seen && isMeeting) ? DisplayComingOut.GetString(seer.GetCustomRole()) : "";
-        var teamMark = GetDisplayTeamMark(seer, seen);
-        var roleName = GetDisplayRoleName(isMeeting, seer, seen);
+        var teamMark = RoleText.GetDisplayTeamMark(seer, seen);
+        var roleName = RoleText.GetDisplayRoleName(isMeeting, seer, seen);
         var progressText = GetProgressText(seer, seen);
         var text = coDisplay + teamMark + roleName + (roleName != "" ? " " : "") + progressText;
         return (text != "", text);
-    }
-    /// <summary>
-    /// GetDisplayRoleNameDataからRoleNameを構築
-    /// </summary>
-    /// <param name="seer">見る側</param>
-    /// <param name="seen">見られる側</param>
-    /// <returns>構築されたRoleName</returns>
-    public static string GetDisplayRoleName(bool isMeeting, PlayerControl seer, PlayerControl seen = null)
-    {
-        seen ??= seer;
-        //デフォルト値
-        bool enabled = seer == seen
-            || seen.Is(CustomRoles.GM)
-            || (Main.VisibleTasksCount && !seer.IsAlive() && !Options.GhostCantSeeOtherRoles.GetBool());
-        //オーバーライドによる表示ではサブロールは見えないようにする/上記場合のみ表示
-        var (roleColor, roleText) = GetTrueRoleNameData(seen.PlayerId, enabled);
-
-        //seen側による変更
-        seen.GetRoleClass()?.OverrideDisplayRoleNameAsSeen(seer, isMeeting, ref enabled, ref roleColor, ref roleText);
-
-        //seer側による変更
-        seer.GetRoleClass()?.OverrideDisplayRoleNameAsSeer(seen, isMeeting, ref enabled, ref roleColor, ref roleText);
-
-        return enabled ? ColorString(roleColor, roleText) : "";
-    }
-    /// <summary>
-    /// GetTeamMarkから取得
-    /// </summary>
-    /// <param name="seer">見る側</param>
-    /// <param name="seen">見られる側</param>
-    /// <returns>TeamMark</returns>
-    public static string GetDisplayTeamMark(PlayerControl seer, PlayerControl seen = null)
-    {
-        seen ??= seer;
-        bool enabled = false;
-
-        // 陣営表示ONのとき
-        if (Options.DisplayTeamMark.GetBool())
-        {
-            enabled = seer == seen // 自分自身はtrue
-                || seen.Is(CustomRoles.GM) // GMはtrue
-                || (Main.VisibleTasksCount && !seer.IsAlive() && !Options.GhostCantSeeOtherRoles.GetBool()); // 幽霊で役職見れるとき
-        }
-
-        // 幽霊が陣営のみ見れる設定ならtrue
-        enabled |= Main.VisibleTasksCount && !seer.IsAlive()
-            && Options.GhostCantSeeOtherRoles.GetBool() && Options.GhostCanSeeOtherTeams.GetBool();
-
-        return enabled ? GetTeamMark(seen.GetCustomRole(), 90) : "";
-    }
-    /// <summary>
-    /// 引数の指定通りのRoleNameを表示
-    /// </summary>
-    /// <param name="mainRole">表示する役職</param>
-    /// <param name="subRolesList">表示する属性のList</param>
-    /// <returns>RoleNameを構築する色とテキスト(Color, string)</returns>
-    public static (Color color, string text) GetRoleNameData(CustomRoles mainRole, List<CustomRoles> subRolesList, bool showSubRoleMarks = true, byte PlayerId = 255, bool TOHSubRoleAll = false)
-    {
-        var isTOHDisplay = Options.GetAddonShowModes() == AddonShowMode.TOH;
-        if (TOHSubRoleAll && isTOHDisplay) showSubRoleMarks = false;
-        StringBuilder roleText = new();
-        Color roleColor = Color.white;
-
-        //Addonが先に表示されるので前に持ってくる
-        if (subRolesList != null)
-        {
-            var count = subRolesList.Count;
-            foreach (var subRole in subRolesList)
-            {
-                switch (subRole)
-                {
-                    //必ず省略せずに表示させる
-                    case CustomRoles.LastImpostor:
-                        roleText.Append(ColorString(Palette.ImpostorRed, GetRoleString("Last-")));
-                        count--;
-                        break;
-                    case CustomRoles.CompleteCrew:
-                        roleText.Append(ColorString(Color.yellow, GetRoleString("Complete-")));
-                        count--;
-                        break;
-                    case CustomRoles.Archenemy:
-                        roleText.Append(ColorString(Utils.GetRoleColor(subRole), GetRoleString("Archenemy")));
-                        count--;
-                        break;
-                    case CustomRoles.ChainShifterAddon:
-                        //AddOnとしては表示しない
-                        count--;
-                        break;
-                }
-            }
-
-            if (showSubRoleMarks && !isTOHDisplay)
-            {
-                if (count >= 2 && Options.GetAddonShowModes() == AddonShowMode.Default)
-                {
-                    //var text = roleText.ToString();
-                    roleText.Insert(0, ColorString(Color.gray, "＋")/* + text*/);
-                }
-                else
-                {
-                    int i = 0;
-                    foreach (var subRole in subRolesList)
-                    {
-                        if (subRole is CustomRoles.LastImpostor or CustomRoles.CompleteCrew or CustomRoles.Archenemy or CustomRoles.ChainShifterAddon) continue;
-
-                        roleText.Append(ColorString(GetRoleColor(subRole), GetRoleName(subRole)));
-                        i++;
-                        if (i % 2 == 0) roleText.Append('\n');
-                    }
-                }
-            }
-        }
-
-        if (subRolesList.Contains(CustomRoles.ChainShifterAddon))
-            mainRole = CustomRoles.ChainShifter;
-        else if (mainRole == CustomRoles.ChainShifter)
-            mainRole = ChainShifter.ShiftedRole;
-
-        if (mainRole < CustomRoles.StartAddon)
-        {
-            roleText.Append(GetRoleName(mainRole));
-            roleColor = GetRoleColor(mainRole);
-
-            if (mainRole == CustomRoles.Opportunist && Opportunist.CanKill)
-                roleText.Append(GetString("killer"));
-        }
-
-        string subRoleMarks = string.Empty;
-        if (TOHSubRoleAll && isTOHDisplay)
-        {
-            roleText.Append(GetSubRolesText(PlayerId)); //メイン役職の後に記載
-        }
-        else if (showSubRoleMarks && isTOHDisplay)
-        {
-            subRoleMarks = GetSubRoleMarks(subRolesList);
-            if (roleText.ToString() != string.Empty && subRoleMarks != string.Empty)
-                roleText.Append((subRolesList.Count >= 2) ? "\n" : " ").Append(subRoleMarks); //空じゃなければ空白を追加
-        }
-
-        return (roleColor, roleText.ToString());
-    }
-    public static string GetSubRoleMarks(List<CustomRoles> subRolesList)
-    {
-        var sb = new StringBuilder(100);
-        if (subRolesList != null)
-        {
-            foreach (var subRole in subRolesList)
-            {
-                if (subRole is CustomRoles.LastImpostor or CustomRoles.CompleteCrew or CustomRoles.Archenemy or CustomRoles.ChainShifterAddon) continue;
-                switch (subRole)
-                {
-                    case CustomRoles.AddWatch: sb.Append(AddWatch.SubRoleMark); break;
-                    case CustomRoles.AddLight: sb.Append(AddLight.SubRoleMark); break;
-                    case CustomRoles.AddSeer: sb.Append(AddSeer.SubRoleMark); break;
-                    case CustomRoles.Autopsy: sb.Append(Autopsy.SubRoleMark); break;
-                    case CustomRoles.VIP: sb.Append(VIP.SubRoleMark); break;
-                    case CustomRoles.Revenger: sb.Append(Revenger.SubRoleMark); break;
-                    case CustomRoles.Management: sb.Append(Management.SubRoleMark); break;
-                    case CustomRoles.Sending: sb.Append(Sending.SubRoleMark); break;
-                    case CustomRoles.TieBreaker: sb.Append(TieBreaker.SubRoleMark); break;
-                    case CustomRoles.Loyalty: sb.Append(Loyalty.SubRoleMark); break;
-                    case CustomRoles.PlusVote: sb.Append(PlusVote.SubRoleMark); break;
-                    case CustomRoles.Guarding: sb.Append(Guarding.SubRoleMark); break;
-                    case CustomRoles.AddBait: sb.Append(AddBait.SubRoleMark); break;
-                    case CustomRoles.Refusing: sb.Append(Refusing.SubRoleMark); break;
-
-                    case CustomRoles.Sunglasses: sb.Append(Sunglasses.SubRoleMark); break;
-                    case CustomRoles.Clumsy: sb.Append(Clumsy.SubRoleMark); break;
-                    case CustomRoles.InfoPoor: sb.Append(InfoPoor.SubRoleMark); break;
-                    case CustomRoles.NonReport: sb.Append(NonReport.SubRoleMark); break;
-                }
-            }
-        }
-        return sb.ToString();
-    }
-    /// <summary>
-    /// 対象のRoleNameを全て正確に表示
-    /// </summary>
-    /// <param name="playerId">見られる側のPlayerId</param>
-    /// <returns>RoleNameを構築する色とテキスト(Color, string)</returns>
-    private static (Color color, string text) GetTrueRoleNameData(byte playerId, bool showSubRoleMarks = true, bool TOHSubRoleAll = false)
-    {
-        var state = PlayerState.GetByPlayerId(playerId);
-        var (color, text) = GetRoleNameData(state.MainRole, state.SubRoles, showSubRoleMarks, playerId, TOHSubRoleAll);
-        CustomRoleManager.GetByPlayerId(playerId)?.OverrideTrueRoleName(ref color, ref text);
-        return (color, text);
-    }
-    /// <summary>
-    /// 対象のRoleNameを全て正確に表示
-    /// </summary>
-    /// <param name="playerId">見られる側のPlayerId</param>
-    /// <returns>構築したRoleName</returns>
-    public static string GetTrueRoleName(byte playerId, bool showSubRoleMarks = true, bool TOHSubRoleAll = false)
-    {
-        var (color, text) = GetTrueRoleNameData(playerId, showSubRoleMarks, TOHSubRoleAll);
-        return ColorString(color, text);
     }
     public static string GetRoleName(CustomRoles role)
     {
@@ -524,11 +328,11 @@ public static class Utils
         if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
         {
             if (p.IsDead) hasTasks = false;
-            if (States.MainRole is CustomRoles.HASFox or CustomRoles.HASTroll) hasTasks = false;
+            if (States.GetNowMainRole() is CustomRoles.HASFox or CustomRoles.HASTroll) hasTasks = false;
         }
         else if (Options.IsCCMode)
         {
-            if (States.MainRole.IsCCLeaderRoles()) hasTasks = false;
+            if (States.GetNowMainRole().IsCCLeaderRoles()) hasTasks = false;
         }
         else
         {
@@ -546,7 +350,7 @@ public static class Utils
             {
                 return false;
             }
-            var role = States.MainRole;
+            var role = States.GetNowMainRole();
             var roleClass = CustomRoleManager.GetByPlayerId(p.PlayerId);
             if (roleClass != null)
             {
@@ -609,7 +413,7 @@ public static class Utils
     {
         var ProgressText = new StringBuilder();
         var State = PlayerState.GetByPlayerId(playerId);
-        var role = State.MainRole;
+        var role = State.GetNowMainRole();
         var roleClass = CustomRoleManager.GetByPlayerId(playerId);
         ProgressText.Append(GetTaskProgressText(playerId, comms));
         ProgressText.Append(VentEnterTask.GetProgressText(playerId, comms));
@@ -638,7 +442,7 @@ public static class Utils
 
         Color TextColor = Color.yellow;
         var info = GetPlayerInfoById(playerId);
-        var TaskCompleteColor = HasTasks(info) ? Color.green : GetRoleColor(state.MainRole).ShadeColor(0.5f); //タスク完了後の色
+        var TaskCompleteColor = HasTasks(info) ? Color.green : GetRoleColor(state.GetNowMainRole()).ShadeColor(0.5f); //タスク完了後の色
         var NonCompleteColor = HasTasks(info) ? Color.yellow : Color.white; //カウントされない人外は白色
 
         if (Workhorse.IsThisRole(playerId))
@@ -1123,23 +927,6 @@ public static class Utils
         }
         SendMessage(EndGamePatch.KillLog, PlayerId);
     }
-    public static string GetSubRolesText(byte id, bool disableColor = false)
-    {
-        var SubRoles = PlayerState.GetByPlayerId(id).SubRoles;
-        if (SubRoles.Count == 0) return "";
-        var sb = new StringBuilder();
-        foreach (var role in SubRoles)
-        {
-            if (role is CustomRoles.NotAssigned or
-                        CustomRoles.LastImpostor or
-                        CustomRoles.ChainShifterAddon) continue;
-
-            var RoleText = disableColor ? GetRoleName(role) : ColorString(GetRoleColor(role), GetRoleName(role));
-            sb.Append($"{ColorString(Color.gray, " + ")}{RoleText}");
-        }
-
-        return sb.ToString();
-    }
     public static string GetTeamMark(CustomRoles role, int sizePer)
     {
         string text = "　";
@@ -1355,7 +1142,7 @@ public static class Utils
 
             string t = "";
             //trueRoleNameでColor上書きあればそれにする
-            seer.GetRoleClass()?.OverrideTrueRoleName(ref SelfNameColor,ref t);
+            seer.GetRoleClass()?.OverrideShowMainRoleText(ref SelfNameColor,ref t);//colorのみ
 
             bool selfNameOriginal = true;
             if (seer.Is(CustomRoles.SeeingOff) || seer.Is(CustomRoles.Sending) || seer.Is(CustomRoles.MadDilemma))
@@ -1665,7 +1452,7 @@ public static class Utils
         // "回線切断 " = 4.5em
         pos += DestroyableSingleton<TranslationController>.Instance.currentLanguage.languageID == SupportedLangs.English ? 8f : 4.5f;
         builder.AppendFormat("<pos={0}em>", pos);
-        builder.Append(GetTrueRoleName(id, false, true));
+        builder.Append(RoleText.GetRoleNameText(id, true));
         builder.Append("</pos>");
         return builder.ToString();
     }

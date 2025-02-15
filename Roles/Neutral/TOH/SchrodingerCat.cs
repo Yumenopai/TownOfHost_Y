@@ -219,7 +219,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             NameColorManager.Add(Player.PlayerId, killer.PlayerId);
         }
     }
-    public override void OverrideTrueRoleName(ref Color roleColor, ref string roleText)
+    public override void OverrideShowMainRoleText(ref Color roleColor, ref string roleText)
     {
         switch(Team)
         {

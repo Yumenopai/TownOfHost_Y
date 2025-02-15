@@ -3,6 +3,8 @@ using AmongUs.GameOptions;
 
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.AddOns.Common;
+using static TownOfHostY.Roles.Neutral.SchrodingerCat;
+using UnityEngine;
 
 namespace TownOfHostY.Roles.Neutral;
 
@@ -80,5 +82,10 @@ public sealed class ChainShifter : RoleBase
     public override void Add()
     {
         Player.RpcSetCustomRole(CustomRoles.ChainShifterAddon);
+    }
+
+    public override void OverrideShowMainRoleText(ref Color roleColor, ref string roleText)
+    {
+        roleText = "";
     }
 }

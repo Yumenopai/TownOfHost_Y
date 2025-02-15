@@ -142,7 +142,7 @@ public sealed class FortuneTeller : RoleBase
         if (seen == null || !isForMeeting) return string.Empty;
         return ForecastResult.ContainsKey(seen.PlayerId) ? Utils.ColorString(RoleInfo.RoleColor, "★") : string.Empty;
     }
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
         if (!isMeeting) return;
         if (!ForecastResult.ContainsKey(seen.PlayerId)) return;
@@ -157,18 +157,15 @@ public sealed class FortuneTeller : RoleBase
         //陣営表示
         if (seen.GetCustomRole().IsImpostor() || seen.GetCustomRole().IsMadmate())
         {
-            roleColor = Palette.ImpostorRed;
-            roleText = GetString("TeamImpostor");
+            roleText = GetString("TeamImpostor").Color(Palette.ImpostorRed);
         }
         else if (seen.GetCustomRole().IsNeutral())
         {
-            roleColor = Color.gray;
-            roleText = GetString("Neutral");
+            roleText = GetString("Neutral").Color(Palette.Orange);
         }
         else
         {
-            roleColor = Palette.CrewmateBlue;
-            roleText = GetString("TeamCrewmate");
+            roleText = GetString("TeamCrewmate").Color(Palette.CrewmateBlue);
         }
     }
     public static bool KnowTargetRoleColor(PlayerControl seer, PlayerControl target, bool isMeeting)

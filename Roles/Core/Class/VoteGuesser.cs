@@ -2,10 +2,10 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
+using HarmonyLib;
 using UnityEngine;
 
 using static TownOfHostY.Translator;
-using HarmonyLib;
 using TownOfHostY.Roles.Neutral;
 
 namespace TownOfHostY.Roles.Core.Class;
@@ -52,7 +52,7 @@ public abstract class VoteGuesser : RoleBase
     private PlayerControl targetForRole = null;
 
     public override string GetProgressText(bool comms = false) => Utils.ColorString(NumOfGuess > 0 ? Color.yellow : Color.gray, $"({NumOfGuess})");
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
         if (!isMeeting) return;
         if (Player == null || !Player.IsAlive()) return;
