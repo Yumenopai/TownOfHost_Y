@@ -86,7 +86,7 @@ public sealed class SchrodingerCatKiller : RoleBase, IKiller, IAdditionalWinner,
     }
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(true);
     public void ApplySchrodingerCatOptions(IGameOptions option) => ApplyGameOptions(option);
-    public override void OverrideTrueRoleName(ref Color roleColor, ref string roleText)
+    public override void OverrideShowMainRoleText(ref Color roleColor, ref string roleText)
     {
         switch(Team)
         {

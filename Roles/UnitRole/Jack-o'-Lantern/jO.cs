@@ -155,7 +155,7 @@ public sealed class JO : RoleBase, IKiller
         return false;
     }
 
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
         // 検知無効マーク
         if (DidntDetectPlayer(seen.PlayerId))

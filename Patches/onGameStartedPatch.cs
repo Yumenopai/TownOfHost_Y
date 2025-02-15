@@ -238,7 +238,7 @@ class SelectRolesPatch
 
         foreach (var pair in PlayerState.AllPlayerStates)
         {
-            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.MainRole);
+            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.GetNowMainRole());
 
             foreach (var subRole in pair.Value.SubRoles)
                 ExtendedPlayerControl.RpcSetCustomRole(pair.Key, subRole);
@@ -305,7 +305,7 @@ class SelectRolesPatch
         var list = AmongUsClient.Instance.allClients.ToArray()
         .Where(c => c.Character != null && c.Character.Data != null &&
                     !c.Character.Data.Disconnected && !c.Character.Data.IsDead &&
-                    PlayerState.GetByPlayerId(c.Character.PlayerId).MainRole == CustomRoles.NotAssigned)
+                    PlayerState.GetByPlayerId(c.Character.PlayerId).GetNowMainRole() == CustomRoles.NotAssigned)
         .OrderBy(c => c.Id).Select(c => c.Character.Data).ToList();
         int adjustedNumImpostors = Main.NormalOptions.GetInt(Int32OptionNames.NumImpostors) - assignedNumImpostors;
         Logger.Info($"NomalAssign list: {list.Count}, impostor: {adjustedNumImpostors}(desync: {assignedNumImpostors})", "AssignRoles");
@@ -481,7 +481,7 @@ class SelectRolesPatch
         foreach (var pc in Main.AllPlayerControls)
         {
             var state = PlayerState.GetByPlayerId(pc.PlayerId);
-            if (state.MainRole != CustomRoles.NotAssigned) continue; //既にカスタム役職が割り当てられていればスキップ
+            if (state.GetNowMainRole() != CustomRoles.NotAssigned) continue; //既にカスタム役職が割り当てられていればスキップ
 
             var roleType = pc.Data.Role.Role;
             if (!roleTypePlayers.TryGetValue(roleType, out var list))
@@ -504,7 +504,7 @@ class SelectRolesPatch
                 RoleTypes.Phantom => CustomRoles.Phantom,
                 _ => CustomRoles.NotAssigned,
             };
-            state.SetMainRole(defaultRole);
+            state.SetMainRole(defaultRole, true);
         }
 
         return roleTypePlayers;

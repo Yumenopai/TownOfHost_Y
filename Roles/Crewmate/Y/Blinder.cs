@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-
 using AmongUs.GameOptions;
-using Hazel;
 
 using TownOfHostY.Roles.Core;
 
@@ -28,7 +26,7 @@ public sealed class Blinder : RoleBase
     {
         BlinderVision = OptionBlinderVision.GetFloat();
 
-        BlindPlayer = new();
+        BlindPlayerIdList = new();
     }
 
     private static OptionItem OptionBlinderVision;
@@ -38,7 +36,10 @@ public sealed class Blinder : RoleBase
     }
 
     public static float BlinderVision;
-    public static List<byte> BlindPlayer = new();
+    // ブラインダー全体で管理するリスト
+    public static HashSet<byte> BlindPlayerIdList;
+    // ブラインダー個人で見た斬られた対象
+    PlayerControl blindPlayer;
 
     private static void SetupOptionItem()
     {
@@ -47,18 +48,16 @@ public sealed class Blinder : RoleBase
     }
     public override void Add()
     {
-        BlindPlayer.Clear();
+        blindPlayer = null;
     }
-    public void SendRPC(byte targetId)
+    public override void OnDestroy()
     {
-        using var sender = CreateSender(CustomRPC.SetBlinderVisionPlayer);
-        sender.Writer.Write(targetId);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetBlinderVisionPlayer) return;
+        if (blindPlayer == null) return;
 
-        BlindPlayer.Add(reader.ReadByte());
+        BlindPlayerIdList.Remove(blindPlayer.PlayerId);
+        blindPlayer.MarkDirtySettings();
+
+        blindPlayer = null;
     }
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -67,7 +66,9 @@ public sealed class Blinder : RoleBase
     }
     public static void ApplyGameOptionsByOther(byte id, IGameOptions opt)
     {
-        if (BlindPlayer.Contains(id))
+        if (!CustomRoles.Blinder.IsPresent()) return;
+
+        if (BlindPlayerIdList.Contains(id))
         {
             opt.SetFloat(FloatOptionNames.CrewLightMod, BlinderVision);
             opt.SetFloat(FloatOptionNames.ImpostorLightMod, BlinderVision);
@@ -79,9 +80,8 @@ public sealed class Blinder : RoleBase
     {
         (var killer, var target) = info.AttemptTuple;
 
-        BlindPlayer.Add(killer.PlayerId);
-        SendRPC(killer.PlayerId);
+        blindPlayer = killer;
+        BlindPlayerIdList.Add(killer.PlayerId);
         killer.MarkDirtySettings();
-        return;
     }
 }

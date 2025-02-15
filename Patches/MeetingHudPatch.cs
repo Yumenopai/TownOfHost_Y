@@ -214,7 +214,7 @@ public static class MeetingHudPatch
 
                     (Color c,string t) = (pva.NameText.color, "");
                     //trueRoleNameでColor上書きあればそれになる
-                    target.GetRoleClass()?.OverrideTrueRoleName(ref c, ref t);
+                    target.GetRoleClass()?.OverrideShowMainRoleText(ref c, ref t);//colorのみ
                     pva.NameText.color = c;
                 }
                 else
