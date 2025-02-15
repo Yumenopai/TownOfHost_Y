@@ -269,6 +269,14 @@ public class Main : BasePlugin
         Harmony.PatchAll();
         Application.quitting += new Action(Utils.SaveNowLog);
     }
+    public enum SyncColorMode
+    {
+        None,
+        Clone,
+        fif_fif,
+        ThreeCornered,
+        Twin,
+    }
 }
 public enum CustomDeathReason
 {

@@ -104,7 +104,7 @@ class ChangeRoleSettings
 
             RandomSpawn.CustomNetworkTransformPatch.FirstTP.Add(pc.PlayerId, true);
             var outfit = pc.Data.DefaultOutfit;
-            Camouflage.PlayerSkins[pc.PlayerId] = new NetworkedPlayerInfo.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+            Camouflage.PlayerSkins[pc.PlayerId] = new NetworkedPlayerInfo.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId, outfit.NamePlateId);
             Main.clientIdList.Add(pc.GetClientId());
 
             // 初手会議での役職説明表示
@@ -284,6 +284,7 @@ class SelectRolesPatch
         }
 
         GameEndChecker.SetPredicateToNormal();
+        SkinChangeMode.ChangeSkin();
 
         GameOptionsSender.AllSenders.Clear();
         foreach (var pc in Main.AllPlayerControls)

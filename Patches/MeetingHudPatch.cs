@@ -82,13 +82,21 @@ public static class MeetingHudPatch
                 (roleTextMeeting.enabled, roleTextMeeting.text)
                     = Utils.GetRoleNameAndProgressTextData(true, PlayerControl.LocalPlayer, pc);
 
+                // シンクロカラーモード
+                if (Options.IsSyncColorMode && Options.SCM_NothingMeetingNameColor.GetBool()
+                    && PlayerControl.LocalPlayer.IsAlive())
+                {
+                    roleTextMeeting.enabled = false;
+                    continue;
+                }
+
                 suffixTextMeeting.transform.localPosition = new Vector3(0f, -0.18f, 0f);
                 suffixTextMeeting.fontSize = 1.5f;
                 suffixTextMeeting.gameObject.name = "SuffixTextMeeting";
                 suffixTextMeeting.enableWordWrapping = false;
                 suffixTextMeeting.enabled = false;
                 suffixTextMeeting.text = "";
-                
+
                 var suffixBuilder = new StringBuilder(32);
                 if (myRole != null)
                 {

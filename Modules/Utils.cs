@@ -726,8 +726,8 @@ public static class Utils
 
                 if (opt.Name is "NameChangeMode" && Options.GetNameChangeModes() != NameChange.None)
                     sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u> ：<size=68%>{opt.GetString()}</size>\n</size>");
-                //if (opt.Name is "SyncColorMode" && Options.GetSyncColorMode() != SyncColorMode.None)
-                //    sb.Append($"【{opt.GetName(true)}: {opt.GetString()}】\n");
+                else if (opt.Name is "SyncColorMode" && Options.GetSyncColorMode() != SyncColorMode.None)
+                    sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u> ：<size=68%>{opt.GetString()}</size>\n</size>");
                 else
                     sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u>\n</size>");
 
@@ -1136,7 +1136,12 @@ public static class Utils
             string SelfDeathReason = seer.KnowDeathReason(seer) ? $"({ColorString(GetRoleColor(CustomRoles.Doctor), GetVitalText(seer.PlayerId))})" : "";
 
             StringBuilder SelfName = new();
-            SelfName.Append(SelfRoleName).Append("\r\n");
+            if (!(Options.IsSyncColorMode && isForMeeting && seer.IsAlive())
+                || seer.Is(CustomRoles.Rainbow)
+                || seer.Is(CustomRoles.Workaholic))
+            {
+                SelfName.Append(SelfRoleName).Append("\r\n");
+            }
 
             Color SelfNameColor = seer.GetRoleColor();
 
@@ -1154,11 +1159,18 @@ public static class Utils
                     selfNameOriginal = false;
                 }
             }
-
-            if (selfNameOriginal)
+            if (Options.IsSyncColorMode && isForMeeting && seer.IsAlive() &&
+                !seer.Is(CustomRoleTypes.Impostor) &&
+                !seer.Is(CustomRoles.Rainbow) &&
+                !seer.Is(CustomRoles.Workaholic))
+            {
+                SelfName.Append($"{ColorString(Color.white, SeerRealName)}{SelfDeathReason}{SelfMark}");
+            }
+            else if (selfNameOriginal)
             {
                 SelfName.Append($"{ColorString(SelfNameColor, SeerRealName)}{SelfDeathReason}{SelfMark}");
             }
+
             if (SelfSuffix.Length != 0)
             {
                 SelfName.Append("\r\n").Append($"<size={fontSize}>{SelfSuffix}</size>");
@@ -1261,7 +1273,7 @@ public static class Utils
                     if (seer.KnowDeathReason(target))
                         TargetDeathReason = $"({ColorString(GetRoleColor(CustomRoles.Doctor), GetVitalText(target.PlayerId))})";
 
-                    if (IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool() && !isForMeeting)
+                    if (IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool() && !isForMeeting && !Options.IsSyncColorMode)
                         TargetPlayerName = $"<size=0%>{TargetPlayerName}</size>";
                     if (EvilDyer.IsColorCamouflage && !isForMeeting)
                         TargetPlayerName = $"<size=0%>{TargetPlayerName}</size>";
