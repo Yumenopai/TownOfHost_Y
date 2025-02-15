@@ -159,10 +159,14 @@ public static class Utils
         PlayerControl killer = info.AppearanceKiller, target = info.AttemptTarget;
 
         if (seer.Is(CustomRoles.GM)) return true;
+        // 霊界キルフラッシュ
+        if (CheckKillFlashAfterDead(seer) && seer != target) return true;
+        // ターゲット(属性)
         foreach (var subRole in PlayerState.GetByPlayerId(target.PlayerId).SubRoles)
         {
             if (subRole == CustomRoles.VIP) return true;
         }
+        // ターゲット(役職)
         if (target == BestieWolf.EnableKillFlash) return true;
 
         if (seer.Data.IsDead || killer == seer || target == seer) return false;
@@ -1322,6 +1326,33 @@ public static class Utils
             Logger.Info($"{pc.GetNameWithRole()}に強制守護天使表示", "ForceProtected");
             pc.RpcProtectedMurderPlayer();
         }
+    }
+
+    public static void SetKillFlashAfterDead(PlayerControl pc, bool isHost = false)
+    {
+        string name = pc.Data.PlayerName;
+        if (!Main.KillFlashAfterDead.Contains(name))
+        {
+            // 登録
+            if (isHost) Main.KillFlashAfterDeadByHost.Value = true;
+            Main.KillFlashAfterDead.Add(name);
+            SendMessage(string.Format(GetString("Message.KillFlashAfterDeadOn"), name), pc.PlayerId);
+            Logger.Info($"KillFlashAfterDead ON - {name}", "ChatCommand");
+        }
+        else
+        {
+            // 解除
+            if (isHost) Main.KillFlashAfterDeadByHost.Value = false;
+            Main.KillFlashAfterDead.Remove(name);
+            SendMessage(string.Format(GetString("Message.KillFlashAfterDeadOff"), name), pc.PlayerId);
+            Logger.Info($"KillFlashAfterDead OFF - {name}", "ChatCommand");
+        }
+    }
+    public static bool CheckKillFlashAfterDead(PlayerControl pc)
+    {
+        if (pc.IsAlive()) return false;
+        string name = pc.Data.PlayerName;
+        return Main.KillFlashAfterDead.Contains(name);
     }
 
     public static void ChangeInt(ref int ChangeTo, int input, int max)

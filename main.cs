@@ -174,6 +174,7 @@ public class Main : BasePlugin
         WebhookURL = Config.Bind("Other", "WebhookURL", "none");
         BetaBuildURL = Config.Bind("Other", "BetaBuildURL", "");
         MessageWait = Config.Bind("Other", "MessageWait", 0.5f);
+        KillFlashAfterDeadByHost = Config.Bind("Other", "KillFlashAfterDeadByHost", false);
         LastKillCooldown = Config.Bind("Other", "LastKillCooldown", (float)30);
         LastShapeshifterCooldown = Config.Bind("Other", "LastShapeshifterCooldown", (float)30);
 

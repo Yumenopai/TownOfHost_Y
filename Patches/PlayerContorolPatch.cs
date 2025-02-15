@@ -556,7 +556,7 @@ class ReportDeadBodyPatch
                 Camouflage.RpcSetSkin(Camouflage.IsCamouflage, pc, RevertToDefault: true);
             }
         }
-
+          
         MushroomMixupDeterioratePatch.RestorName();
 
         foreach (var role in CustomRoleManager.AllActiveRoles.Values)
@@ -679,14 +679,6 @@ class FixedUpdatePatch
                     else __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
                 }
                 else __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
-#if false
-                if (false)
-                {
-                    var client = __instance.GetClient();
-                    var consent = false && client != null && Main.ConsentModUse.ContainsKey(client.Id) ? "<color=#ff00ff>ModOK</color>" : "";
-                    __instance.cosmetics.nameText.text += consent;
-                }
-#endif
             }
             if (GameStates.IsInGame)
             {
