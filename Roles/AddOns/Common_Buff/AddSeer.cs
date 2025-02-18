@@ -10,7 +10,7 @@ public static class AddSeer
 {
     private static readonly int Id = (int)offsetId.AddonBuff + 300;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.AddSeer);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Se");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｓ");
     private static List<byte> playerIdList = new();
 
     public static void SetupCustomOption()

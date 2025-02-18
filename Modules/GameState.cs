@@ -71,13 +71,14 @@ public class PlayerState
                 _ => CustomRoles.Crewmate,
             };
     }
-    public void SetMainRole(CustomRoles role, bool dontAddList = false)
+    public void SetMainRole(CustomRoles role, bool resetList = false)
     {
-        // 初手のベースロール以外の役職設定時に登録する
-        if (!dontAddList)
+        // 初手のアサインロール時には初期登録されているバニラロールを上書きする
+        if (resetList)
         {
-            MainRoleList.Add(role);
+            MainRoleList.Clear();
         }
+        MainRoleList.Add(role);
 
         CountType = CustomRoleManager.GetRoleInfo(role) is SimpleRoleInfo roleInfo ?
             roleInfo.CountType :

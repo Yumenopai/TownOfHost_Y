@@ -420,7 +420,7 @@ class SelectRolesPatch
             var player = players[rand.Next(0, players.Count)];
             AssignedPlayers.Add(player);
             players.Remove(player);
-            PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role);
+            PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role, true);
             Logger.Info("役職設定:" + player?.Data?.PlayerName + " = " + role.ToString(), "AssignRoles");
 
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
@@ -504,7 +504,7 @@ class SelectRolesPatch
                 RoleTypes.Phantom => CustomRoles.Phantom,
                 _ => CustomRoles.NotAssigned,
             };
-            state.SetMainRole(defaultRole, true);
+            state.SetMainRole(defaultRole);
         }
 
         return roleTypePlayers;

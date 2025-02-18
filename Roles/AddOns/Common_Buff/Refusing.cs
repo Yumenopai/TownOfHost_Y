@@ -10,7 +10,7 @@ public static class Refusing
 {
     private static readonly int Id = (int)offsetId.AddonBuff + 1200;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Refusing);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｒ");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Rf");
     private static List<byte> playerIdList = new();
     private static List<byte> IgnoreExiled = new();
 

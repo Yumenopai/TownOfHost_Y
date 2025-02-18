@@ -13,7 +13,7 @@ public static class Sending
 {
     private static readonly int Id = (int)offsetId.AddonBuff + 700;
     private static Color RoleColor = GetRoleColor(CustomRoles.Sending);
-    public static string SubRoleMark = ColorString(RoleColor, "Se");
+    public static string SubRoleMark = ColorString(RoleColor, "Sd");
     private static List<byte> playerIdList = new();
 
     private static PlayerControl ExiledPlayer = null;

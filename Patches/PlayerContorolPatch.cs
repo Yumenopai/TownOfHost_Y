@@ -752,6 +752,11 @@ class FixedUpdatePatch
                 Suffix.Append(seerRole?.GetSuffix(seer, target));
                 //seerに関わらず発動するSuffix
                 Suffix.Append(CustomRoleManager.GetSuffixOthers(seer, target));
+                // Management
+                if (seer.Is(CustomRoles.Management))
+                {
+                    Suffix.Append(Management.GetSuffix(seer, target));
+                }
                 //DeadTarget
                 Suffix.Append(TargetDeadArrow.GetDeadBodiesArrow(seer, target));
 

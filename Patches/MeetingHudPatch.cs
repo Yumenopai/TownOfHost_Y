@@ -103,6 +103,12 @@ public static class MeetingHudPatch
                     suffixBuilder.Append(myRole.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true));
                 }
                 suffixBuilder.Append(CustomRoleManager.GetSuffixOthers(PlayerControl.LocalPlayer, pc, isForMeeting: true));
+                // Management
+                if (pc.Is(CustomRoles.Management))
+                {
+                    suffixBuilder.Append(Management.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true));
+                }
+
                 if (suffixBuilder.Length > 0)
                 {
                     suffixTextMeeting.text = suffixBuilder.ToString();

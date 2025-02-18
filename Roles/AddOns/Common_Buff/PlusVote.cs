@@ -10,7 +10,7 @@ public static class PlusVote
 {
     private static readonly int Id = (int)offsetId.AddonBuff + 900;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.PlusVote);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｐ");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Pv");
     private static List<byte> playerIdList = new();
 
     public static void SetupCustomOption()

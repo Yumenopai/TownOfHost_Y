@@ -10,7 +10,7 @@ namespace TownOfHostY.Roles.AddOns.Common;
 public static class Loyalty
 {
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Loyalty);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｌ");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Lo");
     private static List<byte> playerIdList = new();
 
     [GameModuleInitializer]

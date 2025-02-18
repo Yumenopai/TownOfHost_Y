@@ -422,12 +422,6 @@ public static class Utils
             ProgressText.Append(roleClass.GetProgressText(comms));
         }
 
-        //manegement
-        if (State.SubRoles.Contains(CustomRoles.Management))
-        {
-            ProgressText.Append(Management.GetProgressText(State, comms));
-        }
-
         if (GetPlayerById(playerId).CanMakeMadmate()) ProgressText.Append(ColorString(Palette.ImpostorRed.ShadeColor(0.5f), $"[{Options.CanMakeMadmateCount.GetInt() - Main.SKMadmateNowCount}]"));
 
         return ProgressText.ToString();
@@ -1113,8 +1107,14 @@ public static class Utils
             SelfSuffix.Append(seerRole?.GetSuffix(seer, isForMeeting: isForMeeting));
             //seerに関わらず発動するSuffix
             SelfSuffix.Append(CustomRoleManager.GetSuffixOthers(seer, isForMeeting: isForMeeting));
+            // Management
+            if (seer.Is(CustomRoles.Management))
+            {
+                SelfSuffix.Append(Management.GetSuffix(seer, isForMeeting: isForMeeting));
+            }
+
             //TargetDeadArrow
-            if(!isForMeeting) SelfSuffix.Append(TargetDeadArrow.GetDeadBodiesArrow(seer, seer));
+            if (!isForMeeting) SelfSuffix.Append(TargetDeadArrow.GetDeadBodiesArrow(seer, seer));
 
             SelfLower.Clear();
           　// ベントタスクの対象ベント表示

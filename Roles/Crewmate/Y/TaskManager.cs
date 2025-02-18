@@ -40,16 +40,20 @@ public sealed class TaskManager : RoleBase
         OptionSeeNowtask = BooleanOptionItem.Create(RoleInfo, 10, OptionName.TaskmanagerSeeNowtask, true, false);
     }
 
-    public override string GetProgressText(bool comms = false)
+    public override string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
     {
-        var nowtask = "?";
-        int completetask;
-        int alltask;
-        (completetask, alltask) = GetTasksState();
+        //seenが省略の場合seer
+        seen ??= seer;
+        //seeおよびseenが自分である場合以外は関係なし
+        if (!Is(seer) || !Is(seen)) return "";
 
-        if ((GameStates.IsMeeting || !Player.IsAlive() || SeeNowtask)
-            && !comms)
-            nowtask = $"{completetask}";
+        // タスクステート取得
+        (int completetask, int alltask) = GetTasksState();
+
+        // 全体タスク数が見えるか
+        bool canSee = (isForMeeting || !Player.IsAlive() || SeeNowtask) && !IsActive(SystemTypes.Comms);
+        // 表示する現在のタスク数
+        string nowtask = canSee ? completetask.ToString() : "?";
 
         return ColorString(RoleInfo.RoleColor, $"({nowtask}/{alltask})");
     }

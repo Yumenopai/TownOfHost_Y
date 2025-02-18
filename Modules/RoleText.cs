@@ -123,7 +123,11 @@ public static class RoleText
         // 属性表示(リザルト等、全テキスト表示)
         if (allWrite)
         {
-            roleText.Append(GetSubRolesText(playerId));
+            string subRoleMarks = GetSubRoleMarks(subRolesList);
+            if (subRoleMarks != string.Empty)
+            {
+                roleText.Append($" / {GetSubRoleMarks(subRolesList)}");
+            }
         }
         // 属性表示(本家TOH仕様)
         else if (showSubRole && isTOHDisplay)
