@@ -82,19 +82,33 @@ public static class MeetingHudPatch
                 (roleTextMeeting.enabled, roleTextMeeting.text)
                     = Utils.GetRoleNameAndProgressTextData(true, PlayerControl.LocalPlayer, pc);
 
+                // シンクロカラーモード
+                if (Options.IsSyncColorMode && Options.SCM_NothingMeetingNameColor.GetBool()
+                    && PlayerControl.LocalPlayer.IsAlive())
+                {
+                    roleTextMeeting.enabled = false;
+                    continue;
+                }
+
                 suffixTextMeeting.transform.localPosition = new Vector3(0f, -0.18f, 0f);
                 suffixTextMeeting.fontSize = 1.5f;
                 suffixTextMeeting.gameObject.name = "SuffixTextMeeting";
                 suffixTextMeeting.enableWordWrapping = false;
                 suffixTextMeeting.enabled = false;
                 suffixTextMeeting.text = "";
-                
+
                 var suffixBuilder = new StringBuilder(32);
                 if (myRole != null)
                 {
                     suffixBuilder.Append(myRole.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true));
                 }
                 suffixBuilder.Append(CustomRoleManager.GetSuffixOthers(PlayerControl.LocalPlayer, pc, isForMeeting: true));
+                // Management
+                if (pc.Is(CustomRoles.Management))
+                {
+                    suffixBuilder.Append(Management.GetSuffix(PlayerControl.LocalPlayer, pc, isForMeeting: true));
+                }
+
                 if (suffixBuilder.Length > 0)
                 {
                     suffixTextMeeting.text = suffixBuilder.ToString();
@@ -206,7 +220,7 @@ public static class MeetingHudPatch
 
                     (Color c,string t) = (pva.NameText.color, "");
                     //trueRoleNameでColor上書きあればそれになる
-                    target.GetRoleClass()?.OverrideTrueRoleName(ref c, ref t);
+                    target.GetRoleClass()?.OverrideShowMainRoleText(ref c, ref t);//colorのみ
                     pva.NameText.color = c;
                 }
                 else

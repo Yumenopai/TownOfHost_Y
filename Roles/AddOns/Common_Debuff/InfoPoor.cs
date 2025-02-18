@@ -10,7 +10,7 @@ public static class InfoPoor
 {
     private static readonly int Id = (int)offsetId.AddonDebuff + 200;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.InfoPoor);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｉ");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ip");
     private static List<byte> playerIdList = new();
 
     public static void SetupCustomOption()

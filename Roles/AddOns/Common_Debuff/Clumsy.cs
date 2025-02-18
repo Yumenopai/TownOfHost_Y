@@ -10,7 +10,7 @@ public static class Clumsy
 {
     private static readonly int Id = (int)offsetId.AddonDebuff + 100;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Clumsy);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｃ");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Cl");
     private static List<byte> playerIdList = new();
 
     public static void SetupCustomOption()

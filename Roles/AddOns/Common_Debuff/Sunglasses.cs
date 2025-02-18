@@ -11,7 +11,7 @@ public static class Sunglasses
 {
     private static readonly int Id = (int)offsetId.AddonDebuff + 0;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.Sunglasses);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Su");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Sg");
     private static List<byte> playerIdList = new();
 
     private static OptionItem OptionSubCrewmateVision;

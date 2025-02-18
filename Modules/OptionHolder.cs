@@ -360,6 +360,20 @@ public static class Options
         return (SuffixModes)SuffixMode.GetValue();
     }
 
+    // シンクロカラーモード
+    public static OptionItem SyncColorModeSelect;
+    public static readonly string[] SelectSyncColorMode =
+    {
+        "None", "Clone", "fif_fif", "ThreeCornered", "Twin"
+    };
+    public static OptionItem SCM_NothingMeetingNameColor;
+    public static OptionItem SCM_RestoredDeadPlayer;
+
+    // モード読み取り
+    public static bool IsSyncColorMode => GetSyncColorMode() != SyncColorMode.None;
+    public static SyncColorMode GetSyncColorMode() => (SyncColorMode)SyncColorModeSelect.GetValue();
+
+    // ======================
     public static bool IsLoaded = false;
     public static int GetRoleCount(CustomRoles role)
     {
@@ -835,11 +849,17 @@ public static class Options
         VoiceReader.SetupCustomOption((int)Options.offsetId.FeatOther + 500);
 
         TextOptionItem.Create((int)offsetId.GModeAdd, "Head.GameMode", TabGroup.ModMainSettings).SetColor(Color.yellow).SetGameMode(CustomGameMode.Standard);
-        // シンクロカラーモード100
+        // シンクロカラーモード
+        SyncColorModeSelect = StringOptionItem.Create((int)offsetId.GModeAdd + 100, "SyncColorMode", SelectSyncColorMode, 0, TabGroup.ModMainSettings, false)
+            .SetColor(Color.yellow)
+            .SetGameMode(CustomGameMode.Standard);
+        SCM_NothingMeetingNameColor = BooleanOptionItem.Create((int)offsetId.GModeAdd + 110, "SCM_NothingMeetingNameColor", true, TabGroup.ModMainSettings, false).SetParent(SyncColorModeSelect)
+            .SetGameMode(CustomGameMode.Standard);
+        SCM_RestoredDeadPlayer = BooleanOptionItem.Create((int)offsetId.GModeAdd + 111, "SCM_RestoredDeadPlayer", false, TabGroup.ModMainSettings, false).SetParent(SyncColorModeSelect)
+            .SetGameMode(CustomGameMode.Standard);
 
         // 通常モードでかくれんぼ用
         StandardHAS = BooleanOptionItem.Create((int)offsetId.GModeAdd + 200, "StandardHAS", false, TabGroup.ModMainSettings, false)
-            //上記載時にheader消去
             .SetColor(Color.yellow)
             .SetGameMode(CustomGameMode.Standard);
         StandardHASWaitingTime = FloatOptionItem.Create((int)offsetId.GModeAdd + 201, "StandardHASWaitingTime", new(0f, 180f, 2.5f), 10f, TabGroup.ModMainSettings, false).SetParent(StandardHAS)

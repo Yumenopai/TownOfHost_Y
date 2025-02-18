@@ -104,7 +104,7 @@ class ChangeRoleSettings
 
             RandomSpawn.CustomNetworkTransformPatch.FirstTP.Add(pc.PlayerId, true);
             var outfit = pc.Data.DefaultOutfit;
-            Camouflage.PlayerSkins[pc.PlayerId] = new NetworkedPlayerInfo.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId);
+            Camouflage.PlayerSkins[pc.PlayerId] = new NetworkedPlayerInfo.PlayerOutfit().Set(outfit.PlayerName, outfit.ColorId, outfit.HatId, outfit.SkinId, outfit.VisorId, outfit.PetId, outfit.NamePlateId);
             Main.clientIdList.Add(pc.GetClientId());
 
             // 初手会議での役職説明表示
@@ -238,7 +238,7 @@ class SelectRolesPatch
 
         foreach (var pair in PlayerState.AllPlayerStates)
         {
-            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.MainRole);
+            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.GetNowMainRole());
 
             foreach (var subRole in pair.Value.SubRoles)
                 ExtendedPlayerControl.RpcSetCustomRole(pair.Key, subRole);
@@ -284,6 +284,7 @@ class SelectRolesPatch
         }
 
         GameEndChecker.SetPredicateToNormal();
+        SkinChangeMode.ChangeSkin();
 
         GameOptionsSender.AllSenders.Clear();
         foreach (var pc in Main.AllPlayerControls)
@@ -304,7 +305,7 @@ class SelectRolesPatch
         var list = AmongUsClient.Instance.allClients.ToArray()
         .Where(c => c.Character != null && c.Character.Data != null &&
                     !c.Character.Data.Disconnected && !c.Character.Data.IsDead &&
-                    PlayerState.GetByPlayerId(c.Character.PlayerId).MainRole == CustomRoles.NotAssigned)
+                    PlayerState.GetByPlayerId(c.Character.PlayerId).GetNowMainRole() == CustomRoles.NotAssigned)
         .OrderBy(c => c.Id).Select(c => c.Character.Data).ToList();
         int adjustedNumImpostors = Main.NormalOptions.GetInt(Int32OptionNames.NumImpostors) - assignedNumImpostors;
         Logger.Info($"NomalAssign list: {list.Count}, impostor: {adjustedNumImpostors}(desync: {assignedNumImpostors})", "AssignRoles");
@@ -419,7 +420,7 @@ class SelectRolesPatch
             var player = players[rand.Next(0, players.Count)];
             AssignedPlayers.Add(player);
             players.Remove(player);
-            PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role);
+            PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(role, true);
             Logger.Info("役職設定:" + player?.Data?.PlayerName + " = " + role.ToString(), "AssignRoles");
 
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
@@ -480,7 +481,7 @@ class SelectRolesPatch
         foreach (var pc in Main.AllPlayerControls)
         {
             var state = PlayerState.GetByPlayerId(pc.PlayerId);
-            if (state.MainRole != CustomRoles.NotAssigned) continue; //既にカスタム役職が割り当てられていればスキップ
+            if (state.GetNowMainRole() != CustomRoles.NotAssigned) continue; //既にカスタム役職が割り当てられていればスキップ
 
             var roleType = pc.Data.Role.Role;
             if (!roleTypePlayers.TryGetValue(roleType, out var list))

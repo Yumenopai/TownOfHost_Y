@@ -263,7 +263,7 @@ class TaskPanelBehaviourPatch
         // 役職説明表示
         if (!player.GetCustomRole().IsVanilla())
         {
-            var RoleWithInfo = $"{player.GetTrueRoleName()}:\r\n";
+            var RoleWithInfo = $"{RoleText.GetRoleNameText(player.PlayerId, showSubRole: false)}:\r\n";
             RoleWithInfo += player.GetRoleInfo();
             __instance.taskText.text = Utils.ColorString(player.GetRoleColor(true), RoleWithInfo) + "\n" + __instance.taskText.text;
         }

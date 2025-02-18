@@ -79,7 +79,7 @@ public sealed class EvilDiviner : RoleBase, IImpostor
     public float CalculateKillCooldown() => KillCooldown;
     public override string GetProgressText(bool comms = false) => Utils.ColorString(DivinationCount > 0 ? Palette.ImpostorRed : Color.gray, $"[{DivinationCount}]");
 
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
         if (DivinationTarget[Player.PlayerId].Contains(seen.PlayerId) && Player.IsAlive())
             enabled = true;

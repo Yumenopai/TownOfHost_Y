@@ -10,7 +10,7 @@ public static class NonReport
 {
     private static readonly int Id = (int)offsetId.AddonDebuff + 300;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.NonReport);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｎ");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Nr");
     private static List<byte> playerIdList = new();
 
     public static void SetupCustomOption()

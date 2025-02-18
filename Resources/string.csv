@@ -147,8 +147,8 @@
 "BestieWolfInfoLong","(Impostors):\nHe is supportive of his partner because of his love for his companions, but when he becomes a lone Impostor, he becomes lonely and goes berserk.\n\nWhen multiple Impostors are alive, the buff Add-On is given to the partner Impostor depending on the number of kills.\nIf you are the sole Impostor and there is someone else within view of the kill target at the time of the kill, you will kill that person at the same time. Additional kills are limited to one person per kill, and when simultaneous kills occur, a kill flash is visible from all viewpoints.","[インポスター陣営]\n仲間想いなため相方へのサポートをするが、単独な狼になった時には孤独が寂しくなり暴走する。\n\n複数インポスターが生存時、キル回数によって相方インポスターにバフ属性を付与する。\n自身が単独インポスターになった場合、キルする時にそのキル対象の見える範囲内に誰かいた場合、その人まで同時にキルする。追加キルは1キル1人までで、同時キルが起こった時は全視点でキルフラッシュが見える。"
 "EvilGuesserInfoLong","(Impostors):\nImpostor guessing the player's role.\nYou can shoot a player during a meeting by guessing their role.","(インポスター陣営):\n会議中に他のプレイヤーの役職を当てる事でそのプレイヤーを死亡(死因:射殺)させることができる。\nなお役職の推測をミスした場合、自身が死亡(死因:誤爆)する。","","","",""
 "SelfBomberInfoLong","(Impostors):\nCan perform self-destruct range kills.Vanishing kills all crew members around you and you die.","(インポスター陣営):\n自爆による特攻キルを行う事ができるインポスター。\n透明化することで自身の周囲にいるクルーを全員キルして自分も死にます。\nさあ! 私と共に死んでもらうぞ!!\n爆破!!!!","","","",""
-"GrudgeChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills, use shapeshift to select a kill target, and automatically make a kill when approaching the target.\nNormal kills and transformations are not possible. Target cannot be changed until next turn or kill. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible by one when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、シェイプ選択でキルターゲットを選択し、ターゲットに近づくと自動でキルをする。\n通常キル・変身不可。ターゲットは次のターンになるかキルするまで変更ができない。同ターン2人目以降はクールダウン無しでターゲットを選択できる。\nチャージは１ゲージ溜まり切るとキル可能回数が１増加する。"
-"ChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills,Use the Vanish button to kill.\nNormal kills and Vanish are not possible. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible by one when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、消えるボタンで溜まったキル回数を使ってキルをする。\n通常キル・透明化不可。同ターン2人目以降はクールダウン無しでキルできる。\nチャージは１ゲージ溜まり切るとキル可能回数が１増加する。"
+"GrudgeChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills, use shapeshift to select a kill target, and automatically make a kill when approaching the target.\nNormal kills and transformations are not possible. Target cannot be changed until next turn or kill. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、シェイプ選択でキルターゲットを選択し、ターゲットに近づくと自動でキルをする。\n通常キル・変身不可。ターゲットは次のターンになるかキルするまで変更ができない。同ターン2人目以降はクールダウン無しでターゲットを選択できる。\nチャージは１ゲージ溜まり切るとキル可能回数が増加する。"
+"ChargerInfoLong","(Impostors):\nUse the kill button to charge the number of kills,Use the Vanish button to kill.\nNormal kills and Vanish are not possible. The second and subsequent targets on the same turn can be selected with no cooldown.\nThe charge increases the number of kills possible when one gauge is fully accumulated.","[インポスター陣営]\nキルボタンを使ってキル回数をチャージ、消えるボタンで溜まったキル回数を使ってキルをする。\n通常キル・透明化不可。同ターン2人目以降はクールダウン無しでキルできる。\nチャージは１ゲージ溜まり切るとキル可能回数が増加する。"
 "ChaserInfoLong","(Impostors):\nA role that allows you to warp by transforming.\nDetects a nearby vent with a transformed target and warps there.\nYou can also return to the original position in the settings.\nIt would be funny if there were other players in front of you.\n","[インポスター陣営]\n近くに移動したいターゲットをシェイプボタンで選択すると、そのターゲットから一番近いベントにワープすることができる。ワープ時、他視点からチェイサーはそのベントから出てきたように見える(ベント開閉あり)。\n元の位置に戻る設定がONの時、設定時間後に元居た場所の近くのベントに戻る。"
 "CharismaStarInfoLong","(Impostors):\nImpostor that allows any player to assemble to the nearest vent from himself.\nThe kill button uses double clicks. The single-click kill button allows the user to select a member, while the double-click kill button is used for normal kills. Multiple members can be set up, and by pressing the disappear button, the members can be gathered into a vent near you.\nWhen the setting that allows everyone to assemble is turned on, if no one has decided on a member, everyone can assemble.\nWhen a gathering is called, if the target player is using a ladder or lift, the gathering cannot take place. If a player cannot assemble, he or she will self-suiside.","[インポスター陣営]\nプレイヤーを自身から近いベントへ集合させることができるインポスター。\nキルボタンはダブルクリックを使い分ける。シングルクリックでは集合メンバーを決め、ダブルクリックでは通常キルをする。集合メンバーは複数人設定することができ、消えるボタンを押すことでそのメンバーを自身付近のベントに集めることができる。\n全員集合できる設定をONにしている時、誰もメンバーを決めていないと全員を集合させることができる。\n集合をかけた時、対象プレイヤーがはしごを使用していると集まることが出来ない。設定により、集まれないプレイヤーは自爆する。",
 "EvilHackerInfoLong","(Impostors):\nImposter that allows Admin to be seen from anywhere.\nUse the disappear button to move to the Admin location.\nIt can be viewed by pressing the View button at the destination.\nAfter a few seconds it returns to its original position.\nNote that you have to press the View button to see it.\nYou can't move while watching.\n","[インポスター陣営]\n※本家TOHと仕様が異なります。\nアドミンが見れるインポスター。消えるボタンでアドミン前へワープし、手動でアドミンボタンを押すことで見ることが出来る。アドミン前へワープした時、アドミン前に立っている姿は他の人から見えないが、元の位置からも姿は消える。なお、約3秒後に元の位置へ戻る。戻った先でもアドミンを見続けることが出来るが、見ている最中は動けない。",
@@ -223,7 +223,7 @@
 "SeeingOff","Seeing Off","見送り人","送行者",,
 "Hunter","Hunter","ハンター","猎人",,
 "Chairman","Chairman","チェアマン","总裁",,
-"TaskManager","Task Manager","タスマネ","任务管理员",,
+"TaskManager","Task Manager","タスクマネージャー","任务管理员",,
 "Rainbow","<color=#ffff00>★</color><color=#ff0000>R</color><color=#ffa500>a</color><color=#ffff00>i</color><color=#00ff00>n</color><color=#00ffff>b</color><color=#0000ff>o</color><color=#800080>w</color><color=#ffff00>★</color>","<color=#ffff00>★</color><color=#ff0000>に</color><color=#ffa500>じ</color><color=#ffff00>い</color><color=#00ff00>ろ</color><color=#00ffff>ス</color><color=#0000ff>タ</color><color=#800080>ー</color><color=#ffff00>★</color>","<color=#ffff00>★</color><color=#ff0000>彩<color=#0000ff></color><color=#800080>虹</color><color=#ffff00>★</color>",,
 "RainbowResize","<size=8><color=#ffff00>★</color></size><color=#ff0000>R</color><color=#ffa500>a</color><color=#ffff00>i</color><color=#00ff00>n</color><color=#00ffff>b</color><color=#0000ff>o</color><color=#800080>w</color><size=8><color=#ffff00>★</color></size>","<size=8><color=#ffff00>★</color></size><color=#ff0000>に</color><color=#ffa500>じ</color><color=#ffff00>い</color><color=#00ff00>ろ</color><color=#00ffff>ス</color><color=#0000ff>タ</color><color=#800080>ー</color><size=8><color=#ffff00>★</color></size>","<size=8><color=#ffff00>★</color></size><color=#ff0000>彩<color=#0000ff></color><color=#800080>虹</color><size=8><color=#ffff00>★</color></size>",,
 "SillySheriff","Silly Sheriff","バカシェリフ","憨批警长",
@@ -353,7 +353,7 @@ DSchrodingerCat,(Dark)SCat,(Dark)シュレ猫,(潜藏)薛定谔的猫,(Dark)薛�
 "Pirate","Pirate","海賊",
 "Gang","Gang","一味",
 "ChainShifter","ChainShifter","チェインシフター",
-"ChainShifterAddon","ㅤ","ㅤ",
+"ChainShifterAddon","ChainShifter","チェインシフター",
 
 "ArsonistInfo","Burn them to crisps","燃やせ","火焰给我燃烧起来吧！","燒吧，燒吧，燃燒吧","Облейте и подожгите всех игроков","Queime tudo em pedacinhos"
 "JesterInfo","Get voted out","追放されよう","让他们把你这个假货投出去","想個辦法讓你被投出去","Заставь игроков изгнать себя","Seja exilado"
@@ -920,6 +920,7 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "GrudgeChargerSelectTargetCooldown","Select Target Cooldown","一人目の対象選択クールダウン",
 "GrudgeChargerChargeKillCooldown","Charge Kill Cooldown","チャージ(キルボタン)クールダウン",
 "GrudgeChargerOneGaugeChargeCount","One Gauge Accumulate Charge Count","一ゲージが溜まるチャージ数",
+"GrudgeChargerOneGaugeAddKillCount","One Gauge Add Kill Count","一ゲージで増えるキル可能回数",
 "GrudgeChargerKillCountAtStartGame","Possible Kill Count At the Start Of the Game","ゲーム開始時のキル可能回数",
 "ChargerFirstKillCooldown","First Kill Cooldown","一人目キルのクールダウン",
 "ChaserChaseCooldown","Chase Cooldown","チェイスクールダウン","追逐冷却时间","追逐冷卻時間","Перезарядка погони","Tempo de espera da perseguição"
@@ -1276,15 +1277,10 @@ RefusingInfoLong,"(Add-ons):\nOnce he is about to be exiled, refuses to be exile
 "Message.VoiceNow","Changed the reading of the {0} to {1}.","{0} の現在の読上げは {1} です",,,,
 "Message.VoiceChange","Changed the reading of the {0} to {1}.","{0} の読上げを {1} に変更しました",,,,
 "Message.VoiceChangeFailed","Failed to change {0} chat reading.","{0} の読上げを変更できませんでした",,,,
-"Message.ModCheckCommandInvalid","Mod check command invalid in current mode.","公開ルーム不可のため/modcheckコマンド無効です",,,,
-"Message.ModCheckAllOK","All players consented to the mod.","全プレイヤーがMod同意しました",,,,
-"Message.ModCheckNotOKColor","Not consented color: {0}","Mod未同意の色: {0}",,,,
-"Message.ModCheckMessageSend","A confirmation message has been sent to players who have not consented to the mod.","Mod未同意のプレイヤーに確認メッセージを送信しました",,,,
-"Message.ModCheckAgree","I agree to use mods. Player: {0}\n\nPlease exit the room to cancel.","MODの使用に同意しました。\n　Player: {0}\n\n※取り消す場合は部屋を抜けてください",,,,
-"Message.ModCheckKick","{0} has been kicked due to lack of agreement to use mods.","{0} はMOD使用の同意がないためキックされました",,,,
-"Message.isProtectRoleExist","It is a setting that always displays the guardian angel at the beginning of the meeting.","必ず会議初めに守護天使の表示が出る設定です。\nランダムな一人のプレイヤーにはスポーン時にバリア表示が出ます。",
 "Message.NowNimrodMeeting","Don't speak while Nimrod is choosing.","ニムロッド選択中は話してはいけません。"
 "Message.LogsSavedInLogsFolder","Logs saved in the logs folder.","ログフォルダにログを保存しました。Discordの不具合報告フォーラムにこのファイルを添付してください。"
+"Message.KillFlashAfterDeadOn","[Kill Flash After Dead] {0} / Set ON","{0} の霊界キルフラッシュをONにしました",
+"Message.KillFlashAfterDeadOff","[Kill Flash After Dead] {0} / Set OFF","{0} の霊界キルフラッシュをOFFにしました",
 
 "MDisplay.NimrodTitle","The Nimrod's Choice","ニムロッドの処刑選択"
 "IsNimrodMeetingTitle","【The Nimrod's choice】","【ニムロッドの処刑選択】"
@@ -1335,6 +1331,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Message.GuesserAbilityUse","【Guesser Kill】\nGuesser's ability activated","【ゲッサー】\nゲッサーの能力が発動されました","","","",""
 "Message.GuesserDead","died","が死亡しました","","","",""
 "Message.NextPage","Next page","次ページ","","","",""
+"AdministerMessage","【Administer List】","【生存者の最終位置リスト】"
 
 "## 警告"
 "Warning.EgoistCannotWin","Egoist cannot win","エゴイストが勝利できません","野心家无法获胜","利己主義者無法獲勝","Эгоист не может победить!","Egoísta não pode vencer"
@@ -1716,3 +1713,12 @@ CCNoCatInfo,Get Killed by the Leader,斬られよう,你被首领击杀
 CCRedCatInfo,You have become the RedCat,赤陣営に所属した,你成为了红色阵营的猫
 CCBlueCatInfo,You have become the BlueCat,青陣営に所属した,你成为了蓝色阵营的猫
 CCYellowCatInfo,You have become the YellowCat,黄陣営に所属した,你成为了黄色阵营的猫
+
+"SyncColorMode","Sync color mode","シンクロカラーモード",
+"None","None","なし",
+"Clone","Clones","クローン",
+"fif_fif","50-50","50-50",
+"ThreeCornered","Three-Cornered","三つ巴",
+"Twin","Twins","ツイン",
+"SCM_NothingMeetingNameColor","Remove The Color Of The Name To Myself During Meeting(Excluding Impostors)","会議時、自身への名前の色を消す(インポスターを除く)",
+"SCM_RestoredDeadPlayer","Dead Players Restore","死亡したプレイヤーは姿を戻す"

@@ -13,6 +13,7 @@ namespace TownOfHostY
         {
             if (!AmongUsClient.Instance.IsGameStarted) return name;
             if (isMeeting && Snitch.IsCannotConfirmKillRoles(seer,target)) return name;
+            if (Options.IsSyncColorMode && isMeeting) return name;
 
             if (!TryGetData(seer, target, out var colorCode))
             {

@@ -61,7 +61,7 @@ public sealed class God : RoleBase, ISystemTypeUpdateHook
             opt.SetBool(BoolOptionNames.AnonymousVotes, false);
         }
     }
-    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref Color roleColor, ref string roleText)
+    public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
         enabled = true;
     }

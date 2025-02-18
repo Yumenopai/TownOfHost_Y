@@ -33,19 +33,24 @@ public static class Management
         if (!playerIdList.Contains(playerId))
             playerIdList.Add(playerId);
     }
-    public static string GetProgressText(PlayerState State, bool comms)
-    {
-        var nowtask = "?";
-        int completetask;
-        int alltask;
-        (completetask, alltask) = Utils.GetTasksState();
 
-        if ((GameStates.IsMeeting || State.IsDead || SeeNowtask)
-            && !comms)
-            nowtask = $"{completetask}";
+    public static string GetSuffix(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
+    {
+        //seenが省略の場合seer
+        seen ??= seer;
+        if (seer != seen) return "";
+
+        // タスクステート取得
+        (int completetask, int alltask) = Utils.GetTasksState();
+
+        // 全体タスク数が見えるか
+        bool canSee = (isForMeeting || !seer.IsAlive() || SeeNowtask) && !Utils.IsActive(SystemTypes.Comms);
+        // 表示する現在のタスク数
+        string nowtask = canSee ? completetask.ToString() : "?";
 
         return Utils.ColorString(Color.cyan, $"({nowtask}/{alltask})");
     }
+
     public static bool IsEnable => playerIdList.Count > 0;
     public static bool IsThisRole(byte playerId) => playerIdList.Contains(playerId);
 }

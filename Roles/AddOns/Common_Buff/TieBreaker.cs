@@ -11,7 +11,7 @@ public static class TieBreaker
 {
     private static readonly int Id = (int)offsetId.AddonBuff + 800;
     private static Color RoleColor = Utils.GetRoleColor(CustomRoles.TieBreaker);
-    public static string SubRoleMark = Utils.ColorString(RoleColor, "Ｔ");
+    public static string SubRoleMark = Utils.ColorString(RoleColor, "Tb");
     private static List<byte> playerIdList = new();
     private static Dictionary<byte, byte> TieBreakerVote = new();
 

@@ -22,33 +22,6 @@ namespace TownOfHostY
         public static TextMeshPro HideName;
         private static PassiveButton cancelButton;
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.ReallyBegin))]
-        public class GameStartManagerReallyBeginPatch
-        {
-            public static void Postfix(GameStartManager __instance, bool neverShow)
-            {
-                //MOD同意機能 現在使用していないためfalseで閉じる
-#if false
-
-                //if (!Main.CanPublicRoom.Value) return;
-                if (GameStartManager.Instance.startState != GameStartManager.StartingStates.Countdown) return;
-                //Logger.Info($"CanPublicRoom: {Main.CanPublicRoom.Value}", "GameStartManagerStart");
-
-                foreach (var pc in Main.AllPlayerControls.Where(x => x.PlayerId != PlayerControl.LocalPlayer.PlayerId))
-                {
-                    var target = pc.GetClient();
-                    if (target == null) continue;
-                    Logger.Info($"ConsentCheck name: {target.PlayerName}, id; {target.Id}, check: {Main.ConsentModUse.ContainsKey(target.Id)}", "GameStartManagerStart");
-                    if (!Main.ConsentModUse.ContainsKey(target.Id))
-                    {
-                        AmongUsClient.Instance.KickPlayer(target.Id, false);
-                        Utils.SendMessage(string.Format(GetString("Message.ModCheckKick"), target.PlayerName));
-                    }
-                }
-#endif
-            }
-        }
-
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public class GameStartManagerStartPatch
         {
