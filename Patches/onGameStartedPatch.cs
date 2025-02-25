@@ -231,7 +231,7 @@ class SelectRolesPatch
                                                    CustomRoles.Clumsy, CustomRoles.Revenger, CustomRoles.Management,
                                                    CustomRoles.InfoPoor, CustomRoles.Sending, CustomRoles.TieBreaker,
                                                    CustomRoles.NonReport, CustomRoles.PlusVote, CustomRoles.Guarding,
-                                                   CustomRoles.AddBait, CustomRoles.Refusing })
+                                                   CustomRoles.AddBait, CustomRoles.Refusing, CustomRoles.Revealer })
         {
             AssignCustomSubRolesFromList(role, allPlayersbySub);
         }

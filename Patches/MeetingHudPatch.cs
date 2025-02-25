@@ -25,6 +25,18 @@ public static class MeetingHudPatch
             return false;
         }
     }
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.VotingComplete))]
+    class VotingCompletePatch
+    {
+        public static void Postfix([HarmonyArgument(1)] NetworkedPlayerInfo exiled, [HarmonyArgument(2)] bool tie)
+        {
+            if (exiled == null) return;
+
+            var exiledPc = exiled.Object;
+            // リヴェラー属性
+            Revealer.ChangeName(exiledPc);
+        }
+    }
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote))]
     public static class CastVotePatch
     {

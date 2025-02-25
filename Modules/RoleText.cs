@@ -22,10 +22,11 @@ public static class RoleText
             || seen.Is(CustomRoles.GM)
             || (Main.VisibleTasksCount && !seer.IsAlive() && !Options.GhostCantSeeOtherRoles.GetBool());
         //オーバーライドによる表示ではサブロールは見えないようにする/上記場合のみ表示
-        var roleText = GetRoleNameText(seen.PlayerId);
+        var roleText = GetRoleNameText(seen.PlayerId, showSubRole: enabled);
 
         //seen側による変更
         seen.GetRoleClass()?.OverrideDisplayRoleNameAsSeen(seer, isMeeting, ref enabled, ref roleText);
+        Revealer.OverrideDisplayRoleNameAsSeen(seen, isMeeting, ref enabled, ref roleText);
 
         //seer側による変更
         seer.GetRoleClass()?.OverrideDisplayRoleNameAsSeer(seen, isMeeting, ref enabled, ref roleText);
@@ -239,6 +240,7 @@ public static class RoleText
                     case CustomRoles.Guarding: sb.Append(Guarding.SubRoleMark); break;
                     case CustomRoles.AddBait: sb.Append(AddBait.SubRoleMark); break;
                     case CustomRoles.Refusing: sb.Append(Refusing.SubRoleMark); break;
+                    case CustomRoles.Revealer: sb.Append(Revealer.SubRoleMark); break;
 
                     case CustomRoles.Sunglasses: sb.Append(Sunglasses.SubRoleMark); break;
                     case CustomRoles.Clumsy: sb.Append(Clumsy.SubRoleMark); break;

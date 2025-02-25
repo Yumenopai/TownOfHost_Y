@@ -308,6 +308,7 @@ public static class CustomRoleManager
             case CustomRoles.Guarding: Guarding.Add(playerId); break;
             case CustomRoles.AddBait: AddBait.Add(playerId); break;
             case CustomRoles.Refusing: Refusing.Add(playerId); break;
+            case CustomRoles.Revealer: Revealer.Add(playerId); break;
 
             case CustomRoles.Sunglasses: Sunglasses.Add(playerId); break;
             case CustomRoles.Clumsy: Clumsy.Add(playerId); break;
@@ -643,6 +644,7 @@ public enum CustomRoles
     CompleteCrew,
     Lovers,
     Workhorse,
+
     AddWatch,
     AddLight,
     AddSeer,
@@ -657,10 +659,13 @@ public enum CustomRoles
     Guarding,
     AddBait,
     Refusing,
+    Revealer,
+
     Sunglasses,
     Clumsy,
     InfoPoor,
     NonReport,
+
     Archenemy,
     ChainShifterAddon,
 
