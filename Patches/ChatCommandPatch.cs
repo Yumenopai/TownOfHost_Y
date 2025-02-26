@@ -385,6 +385,7 @@ namespace TownOfHostY
                 roleCommands.Add(CustomRoles.Guarding, "ガーディング");
                 roleCommands.Add(CustomRoles.AddBait, "ベイティング");
                 roleCommands.Add(CustomRoles.Refusing, "リフュージング");
+                roleCommands.Add(CustomRoles.Revealer, "リヴェラー");
 
                 // HAS
                 roleCommands.Add((CustomRoles)(-6), $"== {GetString("HideAndSeek")} ==");  // 区切り用

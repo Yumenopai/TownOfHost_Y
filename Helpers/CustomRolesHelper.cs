@@ -162,7 +162,8 @@ static class CustomRolesHelper
             CustomRoles.PlusVote or
             CustomRoles.Guarding or
             CustomRoles.AddBait or
-            CustomRoles.Refusing;
+            CustomRoles.Refusing or
+            CustomRoles.Revealer;
     }
     public static bool IsDebuffAddOn(this CustomRoles role)
     {

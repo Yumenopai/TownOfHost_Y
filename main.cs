@@ -52,15 +52,15 @@ public class Main : BasePlugin
     // ==========
     //Sorry for many Japanese comments.
     public const string PluginGuid = "com.yumenopai.townofhosty";
-    public const string PluginVersion = "519.26";
+    public const string PluginVersion = "519.26.1";
     // サポートされている最低のAmongUsバージョン
     public static readonly string LowestSupportedVersion = "2024.8.13";
     // このバージョンのみで公開ルームを無効にする場合
     public static readonly bool IsPublicAvailableOnThisVersion = false;
     // プレリリースかどうか
-    public static bool IsPrerelease { get; } = false;
+    public static bool IsPrerelease { get; } = true;
     public const string PluginSubVersion = "β";
-    public const string PluginVersionName = "";
+    public const string PluginVersionName = "StreamerDebug";
 
     public Harmony Harmony { get; } = new Harmony(PluginGuid);
     public static Version version = Version.Parse(PluginVersion);
@@ -202,24 +202,28 @@ public class Main : BasePlugin
                 {CustomRoles.Lovers, "#ff6be4"},
                 {CustomRoles.Workhorse, "#00ffff"},
                 {CustomRoles.CompleteCrew, "#ffff00"},
+
                 {CustomRoles.AddWatch, "#800080"},
-                {CustomRoles.Sunglasses, "#883fd1"},
                 {CustomRoles.AddLight, "#eee5be"},
                 {CustomRoles.AddSeer, "#61b26c"},
                 {CustomRoles.Autopsy, "#80ffdd"},
                 {CustomRoles.VIP, "#ffff00"},
-                {CustomRoles.Clumsy, "#696969"},
                 {CustomRoles.Revenger, "#00ffff"},
                 {CustomRoles.Management, "#80ffdd"},
                 {CustomRoles.Sending, "#883fd1"},
-                {CustomRoles.InfoPoor, "#556b2f"},
                 {CustomRoles.TieBreaker, "#204d42"},
-                {CustomRoles.NonReport, "#883fd1"},
                 {CustomRoles.Loyalty, "#b8fb4f"},
                 {CustomRoles.PlusVote, "#204d42"},
                 {CustomRoles.Guarding, "#8cffff"},
                 {CustomRoles.AddBait, "#00f7ff"},
                 {CustomRoles.Refusing, "#61b26c"},
+                {CustomRoles.Revealer, "#e478ff"},
+
+                {CustomRoles.Sunglasses, "#883fd1"},
+                {CustomRoles.Clumsy, "#696969"},
+                {CustomRoles.InfoPoor, "#556b2f"},
+                {CustomRoles.NonReport, "#883fd1"},
+
                 {CustomRoles.Archenemy, "#ff6347"},
                 {CustomRoles.ChainShifterAddon, "#666666"},
 

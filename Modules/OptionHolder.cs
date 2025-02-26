@@ -13,7 +13,6 @@ using TownOfHostY.Roles.Unit;
 using TownOfHostY.Roles.AddOns.Common;
 using TownOfHostY.Roles.AddOns.Impostor;
 using TownOfHostY.Roles.AddOns.Crewmate;
-using AmongUs.GameOptions;
 
 namespace TownOfHostY;
 
@@ -493,6 +492,7 @@ public static class Options
         Guarding.SetupCustomOption();
         AddBait.SetupCustomOption();
         Refusing.SetupCustomOption();
+        Revealer.SetupCustomOption();
 
         TextOptionItem.Create((int)offsetId.Text + 14, "Head.DebuffAddOn", TabGroup.Addons).SetColor(Palette.Purple);
         Sunglasses.SetupCustomOption();
