@@ -7,7 +7,7 @@ using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 
-namespace TownOfHostY.Roles.Neutral;
+namespace TownOfHostY.Roles.Crewmate;
 public sealed class LoyalDoggy : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -82,16 +82,15 @@ public sealed class LoyalDoggy : RoleBase
             if (sourceVotedForId != Player.PlayerId && sourceVotedForId < 253)
             {
                 Master = Utils.GetPlayerById(sourceVotedForId);
-                Logger.Info($"MasterSelect {Player.name} master:{Master.name}", "LoyalDoggy");
+                Logger.Info($"マスターの選択({Player.GetNameWithRole()}) master:{Master.GetNameWithRole()}", "LoyalDoggy");
             }
             else
             {
                 Master = Main.AllAlivePlayerControls.ElementAtOrDefault(IRandom.Instance.Next(0, Main.AllAlivePlayerControls.Count()));
-                Logger.Info($"MasterSelectRandom {Player.name} master:{Master.name}", "LoyalDoggy");
+                Logger.Info($"マスターはランダムで選択({Player.GetNameWithRole()}) master:{Master.GetNameWithRole()}", "LoyalDoggy");
             }
-                numVotes = 0;//投票を見えなくする
+            numVotes = 0;//投票を見えなくする
             masterDecision = true;
-            Logger.Info($"{Player.name} MasterSelect:{Master.name}", "LoyalDoggy");
             TargetArrow.Add(Player.PlayerId, Master.PlayerId);
         }
         return (votedForId, numVotes, doVote);
@@ -99,13 +98,6 @@ public sealed class LoyalDoggy : RoleBase
 
     public override void AfterMeetingTasks()
     {
-        Logger.Info($"MasterSelectAfterMeeting {Player?.name} master: {Master?.name}", "LoyalDoggy");
-        if (Master == null)
-        {
-            Master = Main.AllPlayerControls.ElementAtOrDefault(IRandom.Instance.Next(0, Main.AllPlayerControls.Count()));
-            Logger.Info($"MasterSelectAfterMeeting {Player.name} master: {Master.name}", "LoyalDoggy");
-        }
-
         if (masterDecision && !Master.IsAlive() && !masterIsDead)
         {
             masterIsDead = true;
