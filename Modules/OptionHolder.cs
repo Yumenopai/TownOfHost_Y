@@ -424,7 +424,7 @@ public static class Options
             Potentialist.SetupRoleOptions();
             Potentialist.RoleInfo.OptionCreator?.Invoke();
         }
-        if (Main.IsHalloween)
+        if (Main.IsAprilFool)
         {
             JackOLantern.SetupRoleOptions();
             JackOLantern.RoleInfo.OptionCreator?.Invoke();

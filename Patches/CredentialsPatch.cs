@@ -143,10 +143,8 @@ namespace TownOfHostY
                 }
                 else if (Main.IsAprilFool)
                 {
-                    SpecialEventText.text = "<size=70%>";
-                    SpecialEventText.text += DateTime.Now.Day == 1 ? "【朗報】\n大型アップデート決定！\n役職大量追加や新ゲームモード！\n2024年下半期まで待て、、"
-                                                                   : "なにか嘘つきました？\nエイプリルフールで\n「ポテンシャリスト」を\n楽しんでね。(～4/3)";
-                    SpecialEventText.color = Color.yellow;
+                    SpecialEventText.text = "★happy Halloween★<size=60%>\n本日限定：ジャック・オー・ランタン復刻登場！</size>";
+                    SpecialEventText.color = Utils.GetRoleColor(CustomRoles.JackOLantern);
                 }
                 else if (Main.IsInitialRelease)
                 {
