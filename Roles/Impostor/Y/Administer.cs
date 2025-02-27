@@ -56,11 +56,11 @@ public sealed class Administer : RoleBase, IImpostor
 
         foreach (var r in rooms)
         {
-            var color = Main.PlayerColors[r.pc.PlayerId];
-            var roomName = GetString(r.roomName).ApplyNameColorData(Player, r.pc, true);
+            var playerColor = Main.PlayerColors[r.pc.PlayerId];
+            var playerName = r.pc.GetRealName().ApplyNameColorData(Player, r.pc, true);
 
-            sb.Append("●".Color(color)).Append(r.pc.GetRealName()).Append('：');
-            sb.AppendFormat("<pos={0}em>", pos).Append(roomName).Append("</pos>\n");
+            sb.Append("●".Color(playerColor)).Append(playerName).Append('：');
+            sb.AppendFormat("<pos={0}em>", pos).Append(GetString(r.roomName)).Append("</pos>\n");
         }
 
         var message = sb.ToString();
