@@ -90,7 +90,9 @@ static class CustomRolesHelper
         if (Main.IsInitialRelease && role == CustomRoles.Bakery)
             return true;
 
-        return role is CustomRoles.Administer;
+        return role is CustomRoles.Administer
+            or CustomRoles.Charger
+            or CustomRoles.GrudgeCharger;
     }
 
     public static bool IsPairRole(this CustomRoles role)

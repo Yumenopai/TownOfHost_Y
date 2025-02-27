@@ -52,13 +52,13 @@ public class Main : BasePlugin
     // ==========
     //Sorry for many Japanese comments.
     public const string PluginGuid = "com.yumenopai.townofhosty";
-    public const string PluginVersion = "519.26.1";
+    public const string PluginVersion = "519.27";
     // サポートされている最低のAmongUsバージョン
     public static readonly string LowestSupportedVersion = "2024.8.13";
     // このバージョンのみで公開ルームを無効にする場合
     public static readonly bool IsPublicAvailableOnThisVersion = false;
     // プレリリースかどうか
-    public static bool IsPrerelease { get; } = true;
+    public static bool IsPrerelease { get; } = false;
     public const string PluginSubVersion = "β";
     public const string PluginVersionName = "StreamerDebug";
 
