@@ -468,8 +468,7 @@ public static class Options
             .SetValueFormat(OptionFormat.Seconds);
 
         // Add-Ons
-        TextOptionItem.Create((int)offsetId.Text + 15, "Head.NewAddOn", TabGroup.Addons).SetColor(Color.green);
-        Revealer.SetupCustomOption();
+        //TextOptionItem.Create((int)offsetId.Text + 15, "Head.NewAddOn", TabGroup.Addons).SetColor(Color.green);
 
         TextOptionItem.Create((int)offsetId.Text + 10, "Head.ImpostorAddOn", TabGroup.Addons).SetColor(Palette.ImpostorRed);
         LastImpostor.SetupCustomOption();
@@ -495,6 +494,7 @@ public static class Options
         Guarding.SetupCustomOption();
         AddBait.SetupCustomOption();
         Refusing.SetupCustomOption();
+        Revealer.SetupCustomOption();
 
         TextOptionItem.Create((int)offsetId.Text + 14, "Head.DebuffAddOn", TabGroup.Addons).SetColor(Palette.Purple);
         Sunglasses.SetupCustomOption();
