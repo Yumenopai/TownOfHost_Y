@@ -38,36 +38,6 @@ class MakePublicPatch
         return true;
     }
 }
-[HarmonyPatch(typeof(MMOnlineManager), nameof(MMOnlineManager.Start))]
-class MMOnlineManagerStartPatch
-{
-    public static void Postfix(MMOnlineManager __instance)
-    {
-        if (VersionChecker.IsSupported && Main.AllowPublicRoom && Main.IsPublicAvailableOnThisVersion) return;
-
-        var objF = GameObject.Find("Buttons/FindGameButton");
-        if (objF)
-        {
-            objF?.SetActive(false);
-        }
-        var objJ = GameObject.Find("Buttons/JoinGameButton");
-        if (objJ)
-        {
-            objJ?.SetActive(false);
-        }
-
-        var objmenu = GameObject.Find("NormalMenu");
-        if (objmenu)
-        {
-            var objW = new GameObject("ModWarning");
-            objW.transform.SetParent(objmenu.transform);
-            objW.transform.localPosition = new Vector3(0f, -0.7f, 0f);
-            objW.transform.localScale = new Vector3(2f, 2f, 2f);
-            var renderer = objW.AddComponent<SpriteRenderer>();
-            renderer.sprite = Utils.LoadSprite($"TownOfHost_Y.Resources.warning_online.png", 400f);
-        }
-    }
-}
 [HarmonyPatch(typeof(SplashManager), nameof(SplashManager.Update))]
 class SplashLogoAnimatorPatch
 {

@@ -1,5 +1,6 @@
 using System;
 using HarmonyLib;
+using TownOfHostY.Modules;
 using TownOfHostY.Templates;
 using UnityEngine;
 
@@ -124,6 +125,8 @@ namespace TownOfHostY
 
         // プレイメニュー，アカウントメニュー，クレジット画面が開かれたらロゴとボタンを消す
         [HarmonyPatch(nameof(MainMenuManager.OpenGameModeMenu))]
+        [HarmonyPatch(nameof(MainMenuManager.OpenOnlineMenu))]
+        [HarmonyPatch(nameof(MainMenuManager.ClickBackOnline))]
         [HarmonyPatch(nameof(MainMenuManager.OpenAccountMenu))]
         [HarmonyPatch(nameof(MainMenuManager.OpenCredits))]
         [HarmonyPostfix]
@@ -140,6 +143,44 @@ namespace TownOfHostY
             if (CredentialsPatch.TohLogo != null)
             {
                 CredentialsPatch.TohLogo.gameObject.SetActive(true);
+            }
+        }
+
+        private static GameObject ModWarningText;
+
+        // オンラインメニューの一部ボタンを消す
+        [HarmonyPatch(nameof(MainMenuManager.OpenOnlineMenu)), HarmonyPostfix]
+        public static void OpenOnlineMenuPrefix(MainMenuManager __instance)
+        {
+            if (VersionChecker.IsSupported && Main.AllowPublicRoom && Main.IsPublicAvailableOnThisVersion) return;
+
+            // 部屋作成ボタン
+            __instance.createGameButton.gameObject.transform.localPosition = new Vector3(-2.1f, 0.35f, 0f);
+            // 部屋探しボタン
+            __instance.findGameButton.gameObject.SetActive(false);
+            // 部屋コードボタン
+            var objECB = GameObject.Find("Enter Code Button");
+            if (objECB)
+            {
+                objECB?.SetActive(false);
+            }
+            // 仕切りライン
+            var line = GameObject.Find("OnlineButtons/AspectSize/Scaler/Line");
+            if (line)
+            {
+                line?.SetActive(false);
+            }
+
+            // 公開制限説明
+            var objmenu = GameObject.Find("OnlineButtons/AspectSize/Scaler");
+            if (objmenu && ModWarningText == null)
+            {
+                ModWarningText = new GameObject("ModWarning");
+                ModWarningText.transform.SetParent(objmenu.transform);
+                ModWarningText.transform.localPosition = new Vector3(1.4f, 0.25f, 0f);
+                ModWarningText.transform.localScale = new Vector3(1.9f, 1.9f, 2f);
+                var renderer = ModWarningText.AddComponent<SpriteRenderer>();
+                renderer.sprite = Utils.LoadSprite($"TownOfHost_Y.Resources.warning_online.png", 400f);
             }
         }
     }
