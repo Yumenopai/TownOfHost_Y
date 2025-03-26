@@ -144,7 +144,7 @@ static class VentEnterTask
             case MapNames.Skeld:
                 vent = new SkeldSpecialVentTask().SetVentTask(pc);
                 break;
-            case MapNames.Mira:
+            case MapNames.MiraHQ:
                 vent = new MiraHQSpecialVentTask().SetVentTask(pc);
                 break;
             case MapNames.Polus:
@@ -223,7 +223,7 @@ static class VentEnterTask
         {
             Vent v;
             var rand = IRandom.Instance;
-            var randNum = rand.Next((int)VentPoint.MaxCount - 1); // Miraは0がない為1減らして番号確定
+            var randNum = rand.Next((int)VentPoint.MaxCount - 1); // MiraHQは0がない為1減らして番号確定
             v.id = randNum + 1; // +1でベント番号設定
             v.name = Translator.GetString(((VentPoint)v.id).ToString());
             return v;

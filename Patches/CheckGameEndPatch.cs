@@ -29,7 +29,7 @@ namespace TownOfHostY
             if (Options.NoGameEnd.GetBool() && CustomWinnerHolder.WinnerTeam != CustomWinner.Draw) return false;
 
             //廃村用に初期値を設定
-            var reason = GameOverReason.ImpostorByKill;
+            var reason = GameOverReason.ImpostorsByKill;
 
             //ゲーム終了判定
             predicate.CheckForEndGame(out reason);
@@ -67,7 +67,7 @@ namespace TownOfHostY
                 }
                 if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Draw and not CustomWinner.None)
                 {
-                    if (FoxSpirit.CheckWin() && !reason.Equals(GameOverReason.ImpostorBySabotage))
+                    if (FoxSpirit.CheckWin() && !reason.Equals(GameOverReason.ImpostorsBySabotage))
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.FoxSpirit);
                         Main.AllPlayerControls
@@ -82,7 +82,7 @@ namespace TownOfHostY
                             .Do(p => CustomWinnerHolder.WinnerIds.Add(p.PlayerId));
                     }
                     if (Lovers.playersList.Count > 0 && Lovers.playersList.ToArray().All(p => p.IsAlive())
-                        && !reason.Equals(GameOverReason.HumansByTask) && !(Lovers.LoversAddWin.GetBool() || PlatonicLover.AddWin))
+                        && !reason.Equals(GameOverReason.CrewmatesByTask) && !(Lovers.LoversAddWin.GetBool() || PlatonicLover.AddWin))
                     {
                         CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Lovers);
                         Main.AllPlayerControls
@@ -92,15 +92,15 @@ namespace TownOfHostY
                     foreach (var pc in PlayerControl.AllPlayerControls)
                     {
                         if (pc.Is(CustomRoles.DarkHide) && !pc.Data.IsDead
-                            && ((CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor && !reason.Equals(GameOverReason.ImpostorBySabotage)) || CustomWinnerHolder.WinnerTeam == CustomWinner.DarkHide
-                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate && !reason.Equals(GameOverReason.HumansByTask) && ((DarkHide)pc.GetRoleClass()).IsWinKill == true)))
+                            && ((CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor && !reason.Equals(GameOverReason.ImpostorsBySabotage)) || CustomWinnerHolder.WinnerTeam == CustomWinner.DarkHide
+                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate && !reason.Equals(GameOverReason.CrewmatesByTask) && ((DarkHide)pc.GetRoleClass()).IsWinKill == true)))
                         {
                             CustomWinnerHolder.ResetAndSetWinner(CustomWinner.DarkHide);
                             CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
                         }
                         else if (pc.Is(CustomRoles.Bakery) && Bakery.IsNeutral(pc) && pc.IsAlive()
-                            && ((CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor && !reason.Equals(GameOverReason.ImpostorBySabotage)) || CustomWinnerHolder.WinnerTeam == CustomWinner.NBakery
-                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate && !reason.Equals(GameOverReason.HumansByTask))))
+                            && ((CustomWinnerHolder.WinnerTeam == CustomWinner.Impostor && !reason.Equals(GameOverReason.ImpostorsBySabotage)) || CustomWinnerHolder.WinnerTeam == CustomWinner.NBakery
+                            || (CustomWinnerHolder.WinnerTeam == CustomWinner.Crewmate && !reason.Equals(GameOverReason.CrewmatesByTask))))
                         {
                             CustomWinnerHolder.ResetAndSetWinner(CustomWinner.NBakery);
                             CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
@@ -174,11 +174,11 @@ namespace TownOfHostY
                     continue;
                 }
                 //if (Options.IsONMode && winner == CustomWinner.Crewmate)
-                //    reason = GameOverReason.HumansByVote;
+                //    reason = GameOverReason.CrewmatesByVote;
 
                 bool canWin = CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId) ||
                     CustomWinnerHolder.WinnerRoles.Contains(pc.GetCustomRole());
-                bool isCrewmateWin = reason.Equals(GameOverReason.HumansByVote) || reason.Equals(GameOverReason.HumansByTask);
+                bool isCrewmateWin = reason.Equals(GameOverReason.CrewmatesByVote) || reason.Equals(GameOverReason.CrewmatesByTask);
                 SetGhostRole(ToGhostImpostor: canWin ^ isCrewmateWin);
 
                 void SetGhostRole(bool ToGhostImpostor)
@@ -240,7 +240,7 @@ namespace TownOfHostY
         {
             public override bool CheckForEndGame(out GameOverReason reason)
             {
-                reason = GameOverReason.ImpostorByKill;
+                reason = GameOverReason.ImpostorsByKill;
                 if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return false;
                 if (CheckGameEndByLivingPlayers(out reason)) return true;
                 if (CheckGameEndByTask(out reason)) return true;
@@ -251,7 +251,7 @@ namespace TownOfHostY
 
             public bool CheckGameEndByLivingPlayers(out GameOverReason reason)
             {
-                reason = GameOverReason.ImpostorByKill;
+                reason = GameOverReason.ImpostorsByKill;
 
                 int Imp = Utils.AlivePlayersCount(CountTypes.Impostor);
                 int Jackal = Utils.AlivePlayersCount(CountTypes.Jackal);
@@ -260,22 +260,22 @@ namespace TownOfHostY
 
                 if (Imp == 0 && Crew == 0 && Jackal == 0 && Pirate == 0) //全滅
                 {
-                    reason = GameOverReason.ImpostorByKill;
+                    reason = GameOverReason.ImpostorsByKill;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
                 }
                 else if (Main.AllAlivePlayerControls.All(p => p.Is(CustomRoles.Lovers))) //ラバーズ勝利
                 {
-                    reason = GameOverReason.ImpostorByKill;
+                    reason = GameOverReason.ImpostorsByKill;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Lovers);
                 }
                 else if (Jackal == 0 && Pirate == 0 && Crew <= Imp) //インポスター勝利
                 {
-                    reason = GameOverReason.ImpostorByKill;
+                    reason = GameOverReason.ImpostorsByKill;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Impostor);
                 }
                 else if (Imp == 0 && Pirate == 0 && Crew <= Jackal) //ジャッカル勝利
                 {
-                    reason = GameOverReason.ImpostorByKill;
+                    reason = GameOverReason.ImpostorsByKill;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Jackal);
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Jackal);
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.JClient);
@@ -283,7 +283,7 @@ namespace TownOfHostY
                 }
                 else if (Imp == 0 && Jackal == 0 && Crew <= Pirate) //海賊勝利
                 {
-                    reason = GameOverReason.ImpostorByKill;
+                    reason = GameOverReason.ImpostorsByKill;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Pirate);
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Pirate);
                     CustomWinnerHolder.WinnerRoles.Add(CustomRoles.Gang);
@@ -291,7 +291,7 @@ namespace TownOfHostY
                 }
                 else if (Jackal == 0 && Pirate == 0 && Imp == 0) //クルー勝利
                 {
-                    reason = GameOverReason.HumansByVote;
+                    reason = GameOverReason.CrewmatesByVote;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Crewmate);
                 }
                 else return false; //勝利条件未達成
@@ -305,7 +305,7 @@ namespace TownOfHostY
         {
             public override bool CheckForEndGame(out GameOverReason reason)
             {
-                reason = GameOverReason.ImpostorByKill;
+                reason = GameOverReason.ImpostorsByKill;
                 if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return false;
 
                 if (CheckGameEndByLivingPlayers(out reason)) return true;
@@ -316,24 +316,24 @@ namespace TownOfHostY
 
             public bool CheckGameEndByLivingPlayers(out GameOverReason reason)
             {
-                reason = GameOverReason.ImpostorByKill;
+                reason = GameOverReason.ImpostorsByKill;
 
                 int Imp = Utils.AlivePlayersCount(CountTypes.Impostor);
                 int Crew = Utils.AlivePlayersCount(CountTypes.Crew);
 
                 if (Imp == 0 && Crew == 0) //全滅
                 {
-                    reason = GameOverReason.ImpostorByKill;
+                    reason = GameOverReason.ImpostorsByKill;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
                 }
                 else if (Crew <= 0) //インポスター勝利
                 {
-                    reason = GameOverReason.ImpostorByKill;
+                    reason = GameOverReason.ImpostorsByKill;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Impostor);
                 }
                 else if (Imp == 0) //クルー勝利(インポスター切断など)
                 {
-                    reason = GameOverReason.HumansByVote;
+                    reason = GameOverReason.CrewmatesByVote;
                     CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Crewmate);
                 }
                 else return false; //勝利条件未達成
@@ -347,7 +347,7 @@ namespace TownOfHostY
         //{
         //    public override bool CheckForEndGame(out GameOverReason reason)
         //    {
-        //        reason = GameOverReason.ImpostorByKill;
+        //        reason = GameOverReason.ImpostorsByKill;
         //        if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return false;
         //        if (CheckGameEndByLivingPlayers(out reason)) return true;
         //        if (CheckGameEndBySabotage(out reason)) return true;
@@ -357,7 +357,7 @@ namespace TownOfHostY
 
         //    public bool CheckGameEndByLivingPlayers(out GameOverReason reason)
         //    {
-        //        reason = GameOverReason.ImpostorByKill;
+        //        reason = GameOverReason.ImpostorsByKill;
 
         //        return false; //勝利条件未達成
         //    }
@@ -374,13 +374,13 @@ namespace TownOfHostY
         /// <summary>GameData.TotalTasksとCompletedTasksをもとにタスク勝利が可能かを判定します。</summary>
         public virtual bool CheckGameEndByTask(out GameOverReason reason)
         {
-            reason = GameOverReason.ImpostorByKill;
+            reason = GameOverReason.ImpostorsByKill;
             if (Options.DisableTaskWin.GetBool() || TaskState.InitialTotalTasks == 0) return false;
 
             (int vtComp, int vtTotal) = VentEnterTask.TaskWinCountData();
             if (GameData.Instance.TotalTasks + vtTotal <= GameData.Instance.CompletedTasks + vtComp)
             {
-                reason = GameOverReason.HumansByTask;
+                reason = GameOverReason.CrewmatesByTask;
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Crewmate);
                 Logger.Info($"GemeEndByTask task: {GameData.Instance.CompletedTasks}/{GameData.Instance.TotalTasks}", "CheckGameEndByTask");
                 return true;
@@ -390,7 +390,7 @@ namespace TownOfHostY
         /// <summary>ShipStatus.Systems内の要素をもとにサボタージュ勝利が可能かを判定します。</summary>
         public virtual bool CheckGameEndBySabotage(out GameOverReason reason)
         {
-            reason = GameOverReason.ImpostorByKill;
+            reason = GameOverReason.ImpostorsByKill;
             if (ShipStatus.Instance.Systems == null) return false;
 
             // TryGetValueは使用不可
@@ -402,7 +402,7 @@ namespace TownOfHostY
             {
                 // 酸素サボタージュ
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Impostor);
-                reason = GameOverReason.ImpostorBySabotage;
+                reason = GameOverReason.ImpostorsBySabotage;
                 LifeSupp.Countdown = 10000f;
                 return true;
             }
@@ -419,7 +419,7 @@ namespace TownOfHostY
             {
                 // リアクターサボタージュ
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Impostor);
-                reason = GameOverReason.ImpostorBySabotage;
+                reason = GameOverReason.ImpostorsBySabotage;
                 critical.ClearSabotage();
                 return true;
             }

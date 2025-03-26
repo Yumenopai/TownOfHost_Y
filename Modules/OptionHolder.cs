@@ -126,7 +126,7 @@ public static class Options
 
     // マップ設定
     public static OptionItem MapOption_Skeld;
-    public static OptionItem MapOption_Mira;
+    public static OptionItem MapOption_MiraHQ;
     public static OptionItem MapOption_Polus;
     public static OptionItem MapOption_Airship;
     public static OptionItem MapOption_Fungle;
@@ -135,9 +135,9 @@ public static class Options
     public static OptionItem DisableDevices_Skeld;
     public static OptionItem DisableAdmin_Skeld;
     public static OptionItem DisableCamera_Skeld;
-    public static OptionItem DisableDevices_Mira;
-    public static OptionItem DisableAdmin_Mira;
-    public static OptionItem DisableDoorLog_Mira;
+    public static OptionItem DisableDevices_MiraHQ;
+    public static OptionItem DisableAdmin_MiraHQ;
+    public static OptionItem DisableDoorLog_MiraHQ;
     public static OptionItem DisableDevices_Polus;
     public static OptionItem DisableAdmin_Polus;
     public static OptionItem DisableCamera_Polus;
@@ -166,23 +166,23 @@ public static class Options
 
     // ランダムスポーン
     public static OptionItem RandomSpawn_Skeld;
-    public static OptionItem RandomSpawn_Mira;
+    public static OptionItem RandomSpawn_MiraHQ;
     public static OptionItem RandomSpawn_Polus;
     public static OptionItem RandomSpawn_Airship;
     public static OptionItem RandomSpawn_Fungle;
     public static OptionItem AdditionalSpawn_Skeld;
-    public static OptionItem AdditionalSpawn_Mira;
+    public static OptionItem AdditionalSpawn_MiraHQ;
     public static OptionItem AdditionalSpawn_Polus;
     public static OptionItem AdditionalSpawn_Airship;
     public static OptionItem AdditionalSpawn_AirshipTAKADA;
     public static OptionItem AdditionalSpawn_Fungle;
     public static OptionItem DisableNearButton_Skeld;
-    public static OptionItem DisableNearButton_Mira;
+    public static OptionItem DisableNearButton_MiraHQ;
     public static OptionItem DisableNearButton_Polus;
     public static OptionItem DisableNearButton_Airship;
     public static OptionItem DisableNearButton_Fungle;
     public static OptionItem FirstFixedSpawn_Skeld;
-    public static OptionItem FirstFixedSpawn_Mira;
+    public static OptionItem FirstFixedSpawn_MiraHQ;
     public static OptionItem FirstFixedSpawn_Polus;
     public static OptionItem FirstFixedSpawn_Fungle;
 
@@ -549,23 +549,23 @@ public static class Options
         DisableCamera_Skeld = BooleanOptionItem.Create((int)offsetId.FeatMap + 122, "DisableCamera", false, TabGroup.ModMainSettings, false).SetParent(DisableDevices_Skeld).SetGameMode(CustomGameMode.All);
 
         /**************** MIRA HQ ****************/
-        MapOption_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 20, "MapOption_Mira", false, TabGroup.ModMainSettings, false)
+        MapOption_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 20, "MapOption_MiraHQ", false, TabGroup.ModMainSettings, false)
             .SetColor(Palette.Orange)
             .SetGameMode(CustomGameMode.All);
         // ランダムスポーン
-        RandomSpawn_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 200, "RandomSpawn", false, TabGroup.ModMainSettings, false).SetParent(MapOption_Mira)
+        RandomSpawn_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 200, "RandomSpawn", false, TabGroup.ModMainSettings, false).SetParent(MapOption_MiraHQ)
             .SetColor(Color.yellow).SetGameMode(CustomGameMode.All);
-        AdditionalSpawn_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 201, "AdditionalSpawn", false, TabGroup.ModMainSettings, false).SetParent(RandomSpawn_Mira)
+        AdditionalSpawn_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 201, "AdditionalSpawn", false, TabGroup.ModMainSettings, false).SetParent(RandomSpawn_MiraHQ)
             .SetGameMode(CustomGameMode.All);
-        DisableNearButton_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 202, "DisableNearButton", false, TabGroup.ModMainSettings, false).SetParent(RandomSpawn_Mira)
+        DisableNearButton_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 202, "DisableNearButton", false, TabGroup.ModMainSettings, false).SetParent(RandomSpawn_MiraHQ)
             .SetGameMode(CustomGameMode.All);
-        FirstFixedSpawn_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 203, "FirstFixedSpawn", true, TabGroup.ModMainSettings, false).SetParent(RandomSpawn_Mira)
+        FirstFixedSpawn_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 203, "FirstFixedSpawn", true, TabGroup.ModMainSettings, false).SetParent(RandomSpawn_MiraHQ)
             .SetGameMode(CustomGameMode.All);
         // デバイス無効化
-        DisableDevices_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 210, "DisableDevices", false, TabGroup.ModMainSettings, false).SetParent(MapOption_Mira)
+        DisableDevices_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 210, "DisableDevices", false, TabGroup.ModMainSettings, false).SetParent(MapOption_MiraHQ)
             .SetColor(Color.yellow).SetGameMode(CustomGameMode.All);
-        DisableAdmin_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 211, "DisableAdmin", false, TabGroup.ModMainSettings, false).SetParent(DisableDevices_Mira).SetGameMode(CustomGameMode.All);
-        DisableDoorLog_Mira = BooleanOptionItem.Create((int)offsetId.FeatMap + 212, "DisableMiraHQDoorLog", false, TabGroup.ModMainSettings, false).SetParent(DisableDevices_Mira).SetGameMode(CustomGameMode.All);
+        DisableAdmin_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 211, "DisableAdmin", false, TabGroup.ModMainSettings, false).SetParent(DisableDevices_MiraHQ).SetGameMode(CustomGameMode.All);
+        DisableDoorLog_MiraHQ = BooleanOptionItem.Create((int)offsetId.FeatMap + 212, "DisableMiraHQDoorLog", false, TabGroup.ModMainSettings, false).SetParent(DisableDevices_MiraHQ).SetGameMode(CustomGameMode.All);
 
         /**************** POLUS ****************/
         MapOption_Polus = BooleanOptionItem.Create((int)offsetId.FeatMap + 30, "MapOption_Polus", false, TabGroup.ModMainSettings, false)

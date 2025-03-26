@@ -19,7 +19,7 @@ public static class DoorsReset
             case MapNames.Skeld:
                 isEnabled = false;
                 return;
-            case MapNames.Mira:
+            case MapNames.MiraHQ:
                 isEnabled = false;
                 return;
             case MapNames.Polus:

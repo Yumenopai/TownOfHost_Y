@@ -123,15 +123,15 @@ namespace TownOfHostY
             };
             public override Vector2 GetLocation()
             {
-                if (Options.DisableNearButton_Mira.GetBool())
+                if (Options.DisableNearButton_MiraHQ.GetBool())
                 {
-                    return Options.AdditionalSpawn_Mira.GetBool()
+                    return Options.AdditionalSpawn_MiraHQ.GetBool()
                     ? positions.ToArray()[3..].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[3..7].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }
                 else
                 {
-                    return Options.AdditionalSpawn_Mira.GetBool()
+                    return Options.AdditionalSpawn_MiraHQ.GetBool()
                     ? positions.ToArray().OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value
                     : positions.ToArray()[2..7].OrderBy(_ => Guid.NewGuid()).Take(1).FirstOrDefault().Value;
                 }

@@ -14,6 +14,7 @@ using TownOfHostY.Roles.Crewmate;
 using TownOfHostY.Roles.Neutral;
 using TownOfHostY.Roles.AddOns.Impostor;
 using static TownOfHostY.Translator;
+using AmongUs.Data;
 
 namespace TownOfHostY;
 
@@ -680,13 +681,13 @@ static class ExtendedPlayerControl
         {
             if (player.Data.Role.IsImpostor)
             {
-                StatsManager.Instance.IncrementStat(StringNames.StatsGamesImpostor);
-                StatsManager.Instance.ResetStat(StringNames.StatsCrewmateStreak);
+                DataManager.Player.Stats.IncrementStat(StatID.GamesAsImpostor);
+                DataManager.Player.Stats.ResetStat(StatID.CrewmateStreak);
             }
             else
             {
-                StatsManager.Instance.IncrementStat(StringNames.StatsGamesCrewmate);
-                StatsManager.Instance.IncrementStat(StringNames.StatsCrewmateStreak);
+                DataManager.Player.Stats.IncrementStat(StatID.GamesAsCrewmate);
+                DataManager.Player.Stats.IncrementStat(StatID.CrewmateStreak);
             }
             DestroyableSingleton<HudManager>.Instance.MapButton.gameObject.SetActive(true);
             DestroyableSingleton<HudManager>.Instance.ReportButton.gameObject.SetActive(true);

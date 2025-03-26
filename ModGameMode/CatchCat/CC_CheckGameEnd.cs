@@ -6,7 +6,7 @@ class GameEndPredicate : TownOfHostY.GameEndPredicate
 {
     public override bool CheckForEndGame(out GameOverReason reason)
     {
-        reason = GameOverReason.ImpostorByKill;
+        reason = GameOverReason.ImpostorsByKill;
         if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return false;
 
         if (CheckGameEndByLivingPlayers(out reason)) return true;
@@ -15,7 +15,7 @@ class GameEndPredicate : TownOfHostY.GameEndPredicate
 
     public bool CheckGameEndByLivingPlayers(out GameOverReason reason)
     {
-        reason = GameOverReason.ImpostorByKill;
+        reason = GameOverReason.ImpostorsByKill;
 
         int[] counts = Common.CountLivingPlayersByPredicates(
             pc => pc.Is(CustomRoles.CCRedLeader),//0
@@ -34,12 +34,12 @@ class GameEndPredicate : TownOfHostY.GameEndPredicate
 
         if (Leader == 0 && NoCat == 0) //全滅
         {
-            reason = GameOverReason.ImpostorByKill;
+            reason = GameOverReason.ImpostorsByKill;
             CustomWinnerHolder.ResetAndSetWinner(CustomWinner.None);
         }
         else if (Leader == 1) //リーダーが残り1名になった
         {
-            reason = GameOverReason.ImpostorByKill;
+            reason = GameOverReason.ImpostorsByKill;
             if (counts[0] == 1)
             {
                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.RedL);
@@ -64,7 +64,7 @@ class GameEndPredicate : TownOfHostY.GameEndPredicate
         }
         else if (NoCat <= 0) //無陣営の猫がいなくなった
         {
-            reason = GameOverReason.ImpostorByKill;
+            reason = GameOverReason.ImpostorsByKill;
 
             if (RedTeam > BlueTeam && RedTeam > YellowTeam)
             {

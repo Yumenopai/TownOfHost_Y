@@ -172,7 +172,7 @@ public sealed class GrudgeSheriff : RoleBase
         var target = KillWaitPlayer;
         float targetDistance = Vector2.Distance(GSpos, target.transform.position);
 
-        var KillRange = GameOptionsData.KillDistances[Mathf.Clamp(Main.NormalOptions.KillDistance, 0, 2)];
+        var KillRange = GameManager.Instance.LogicOptions.GetKillDistance();
         if (targetDistance <= KillRange && Player.CanMove && target.CanMove)
         {
             if (!CanBeKilledBy(target))

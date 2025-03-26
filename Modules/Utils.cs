@@ -54,13 +54,13 @@ public static class Utils
                 }
             case SystemTypes.LifeSupp:
                 {
-                    if (map is not MapNames.Skeld and not MapNames.Mira) return false;
+                    if (map is not MapNames.Skeld and not MapNames.MiraHQ) return false;
                     var LifeSuppSystemType = ShipStatus.Instance.Systems[type].Cast<LifeSuppSystemType>();
                     return LifeSuppSystemType != null && LifeSuppSystemType.IsActive;
                 }
             case SystemTypes.Comms:
                 {
-                    if (map is MapNames.Mira or MapNames.Fungle)
+                    if (map is MapNames.MiraHQ or MapNames.Fungle)
                     {
                         var HqHudSystemType = ShipStatus.Instance.Systems[type].Cast<HqHudSystemType>();
                         return HqHudSystemType != null && HqHudSystemType.IsActive;
@@ -713,7 +713,7 @@ public static class Utils
 
                 // アクティブマップ毎に表示しないオプション
                 if (opt.Name == "MapOption_Skeld" && !Options.IsActiveSkeld) continue;
-                if (opt.Name == "MapOption_Mira" && !Options.IsActiveMiraHQ) continue;
+                if (opt.Name == "MapOption_MiraHQ" && !Options.IsActiveMiraHQ) continue;
                 if (opt.Name == "MapOption_Polus" && !Options.IsActivePolus) continue;
                 if (opt.Name == "MapOption_Airship" && !Options.IsActiveAirship) continue;
                 if (opt.Name == "MapOption_Fungle" && !Options.IsActiveFungle) continue;

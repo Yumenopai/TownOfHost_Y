@@ -13,7 +13,7 @@ namespace TownOfHostY
     {
         public static bool DoDisable =>
             ((MapNames)Main.NormalOptions.MapId == MapNames.Skeld && Options.DisableDevices_Skeld.GetBool())
-            || ((MapNames)Main.NormalOptions.MapId == MapNames.Mira && Options.DisableDevices_Mira.GetBool())
+            || ((MapNames)Main.NormalOptions.MapId == MapNames.MiraHQ && Options.DisableDevices_MiraHQ.GetBool())
             || ((MapNames)Main.NormalOptions.MapId == MapNames.Polus && Options.DisableDevices_Polus.GetBool())
             || ((MapNames)Main.NormalOptions.MapId == MapNames.Airship && Options.DisableDevices_Airship.GetBool())
             || ((MapNames)Main.NormalOptions.MapId == MapNames.Fungle && Options.DisableDevices_Fungle.GetBool())
@@ -44,7 +44,7 @@ namespace TownOfHostY
             return Map switch
             {
                 MapNames.Skeld => 1.8f,
-                MapNames.Mira => 2.4f,
+                MapNames.MiraHQ => 2.4f,
                 MapNames.Polus => 1.8f,
                 //MapNames.Dleks => 1.5f,
                 MapNames.Airship => 1.8f,
@@ -100,10 +100,10 @@ namespace TownOfHostY
                                 if (Options.DisableCamera_Skeld.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["SkeldCamera"]) <= UsableDistance();
                                 break;
-                            case MapNames.Mira:
-                                if (Options.DisableAdmin_Mira.GetBool() || PcIsPoor)
+                            case MapNames.MiraHQ:
+                                if (Options.DisableAdmin_MiraHQ.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["MiraHQAdmin"]) <= UsableDistance();
-                                if (Options.DisableDoorLog_Mira.GetBool() || PcIsPoor)
+                                if (Options.DisableDoorLog_MiraHQ.GetBool() || PcIsPoor)
                                     doComms |= Vector2.Distance(PlayerPos, DevicePos["MiraHQDoorLog"]) <= UsableDistance();
                                 break;
                             case MapNames.Polus:
@@ -146,7 +146,7 @@ namespace TownOfHostY
                         DesyncComms.Remove(pc.PlayerId);
                         pc.RpcDesyncUpdateSystem(SystemTypes.Comms, 16);
 
-                        if ((MapNames)Main.NormalOptions.MapId is MapNames.Mira or MapNames.Fungle)
+                        if ((MapNames)Main.NormalOptions.MapId is MapNames.MiraHQ or MapNames.Fungle)
                             pc.RpcDesyncUpdateSystem(SystemTypes.Comms, 17);
                     }
                 }
@@ -189,10 +189,10 @@ namespace TownOfHostY
                     if (Options.DisableCamera_Skeld.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "SurvConsole", x => x.gameObject.GetComponent<PolygonCollider2D>().enabled = ignore);
                     break;
-                case MapNames.Mira:
-                    if (Options.DisableAdmin_Mira.GetBool() || PcIsPoor)
+                case MapNames.MiraHQ:
+                    if (Options.DisableAdmin_MiraHQ.GetBool() || PcIsPoor)
                         admins[0].gameObject.GetComponent<CircleCollider2D>().enabled = ignore;
-                    if (Options.DisableDoorLog_Mira.GetBool() || PcIsPoor)
+                    if (Options.DisableDoorLog_MiraHQ.GetBool() || PcIsPoor)
                         consoles.DoIf(x => x.name == "SurvLogConsole", x => x.gameObject.GetComponent<BoxCollider2D>().enabled = ignore);
                     break;
                 case MapNames.Polus:

@@ -387,8 +387,8 @@ class IntroCutsceneDestroyPatch
                         Main.AllPlayerControls.Do(new RandomSpawn.SkeldSpawnMap().RandomTeleport);
                     }
                     break;
-                case MapNames.Mira:
-                    if (Options.RandomSpawn_Mira.GetBool() && !Options.FirstFixedSpawn_Mira.GetBool())
+                case MapNames.MiraHQ:
+                    if (Options.RandomSpawn_MiraHQ.GetBool() && !Options.FirstFixedSpawn_MiraHQ.GetBool())
                     {
                         Main.AllPlayerControls.Do(new RandomSpawn.MiraHQSpawnMap().RandomTeleport);
                     }

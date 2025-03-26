@@ -623,7 +623,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "DisableAssembleArtifact","Disable AssembleArtifact Tasks","宝石組み立てタスク",
 
 "MapOption_Skeld","The Skeld Map option","The Skeldのマップ設定"
-"MapOption_Mira","MIRA HQ Map option","MIRA HQのマップ設定"
+"MapOption_MiraHQ","MIRA HQ Map option","MIRA HQのマップ設定"
 "MapOption_Polus","Polus Map option","Polusのマップ設定"
 "MapOption_Airship","The Airship Map option","The Airshipのマップ設定"
 "MapOption_Fungle","The Fungle Map option","The Fungleのマップ設定"

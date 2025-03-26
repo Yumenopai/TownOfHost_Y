@@ -73,9 +73,9 @@ public sealed class AntiAdminer : RoleBase, IImpostor
                             Camera |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["SkeldCamera"]) <= DisableDevice.UsableDistance();
                         break;
                     case 1:
-                        if (!DisableAdmin_Mira.GetBool())
+                        if (!DisableAdmin_MiraHQ.GetBool())
                             Admin |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["MiraHQAdmin"]) <= DisableDevice.UsableDistance();
-                        if (!DisableDoorLog_Mira.GetBool())
+                        if (!DisableDoorLog_MiraHQ.GetBool())
                             DoorLog |= Vector2.Distance(PlayerPos, DisableDevice.DevicePos["MiraHQDoorLog"]) <= DisableDevice.UsableDistance();
                         break;
                     case 2:

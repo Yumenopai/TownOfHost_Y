@@ -62,7 +62,7 @@ public sealed class EvilHacker : RoleBase, IImpostor
                 return new Vector2(2.96f, -8.62f);
             case MapNames.Polus:
                 return new Vector2(22.63f, -21.75f);
-            case MapNames.Mira:
+            case MapNames.MiraHQ:
                 return new Vector2(22.22f, 18.77f);
             default:
                 // デフォルトの座標（必要に応じて設定）

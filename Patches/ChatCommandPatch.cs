@@ -126,7 +126,7 @@ namespace TownOfHostY
                                 {
                                     CustomWinnerHolder.WinnerIds.Add(player.PlayerId);
                                 }
-                                GameEndChecker.StartEndGame(GameOverReason.HumansByTask);
+                                GameEndChecker.StartEndGame(GameOverReason.CrewmatesByTask);
                                 break;
                             case "impostor":
                                 GameManager.Instance.enabled = false;
@@ -135,17 +135,17 @@ namespace TownOfHostY
                                 {
                                     CustomWinnerHolder.WinnerIds.Add(player.PlayerId);
                                 }
-                                GameEndChecker.StartEndGame(GameOverReason.ImpostorByKill);
+                                GameEndChecker.StartEndGame(GameOverReason.ImpostorsByKill);
                                 break;
                             case "none":
                                 GameManager.Instance.enabled = false;
                                 CustomWinnerHolder.WinnerTeam = CustomWinner.None;
-                                GameEndChecker.StartEndGame(GameOverReason.ImpostorByKill);
+                                GameEndChecker.StartEndGame(GameOverReason.ImpostorsByKill);
                                 break;
                             case "jackal":
                                 GameManager.Instance.enabled = false;
                                 CustomWinnerHolder.WinnerTeam = CustomWinner.Jackal;
-                                GameEndChecker.StartEndGame(GameOverReason.ImpostorByKill);
+                                GameEndChecker.StartEndGame(GameOverReason.ImpostorsByKill);
                                 break;
 
                             default:
@@ -163,7 +163,7 @@ namespace TownOfHostY
                         {
                             case "crewmate":
                                 GameManager.Instance.enabled = false;
-                                GameManager.Instance.RpcEndGame(GameOverReason.HumansDisconnect, false);
+                                GameManager.Instance.RpcEndGame(GameOverReason.CrewmateDisconnect, false);
                                 break;
 
                             case "impostor":
