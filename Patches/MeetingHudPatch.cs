@@ -67,7 +67,7 @@ public static class MeetingHudPatch
             Main.AllPlayerControls.Do(x => ReportDeadBodyPatch.WaitReport[x.PlayerId].Clear());
             Sending.OnStartMeeting();
             ChainShifterAddon.OnStartMeeting();
-            foreach (var tm in Main.AllAlivePlayerControls.Where(p=>p.Is(CustomRoles.TaskManager) || p.Is(CustomRoles.Management)))
+            foreach (var tm in Main.AllAlivePlayerControls.Where(p => p.Is(CustomRoles.TaskManager) || p.Is(CustomRoles.Management)))
                 Utils.NotifyRoles(true, tm);
             TargetDeadArrow.OnStartMeeting();
         }
@@ -228,9 +228,9 @@ public static class MeetingHudPatch
                     //else if (Options.IsONMode && (Main.DefaultRole[pva.TargetPlayerId] == CustomRoles.ONPhantomThief))
                     //    pva.NameText.color = Utils.GetRoleColor(seer.GetCustomRole());
                     //else
-                        pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
+                    pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
 
-                    (Color c,string t) = (pva.NameText.color, "");
+                    (Color c, string t) = (pva.NameText.color, "");
                     //trueRoleNameでColor上書きあればそれになる
                     target.GetRoleClass()?.OverrideShowMainRoleText(ref c, ref t);//colorのみ
                     pva.NameText.color = c;
@@ -244,7 +244,7 @@ public static class MeetingHudPatch
                     //else if (Options.IsONMode && (Main.DefaultRole[target.PlayerId] == CustomRoles.ONPhantomThief))
                     //{ }
                     //else
-                        pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
+                    pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
                 }
 
                 if (seer.KnowDeathReason(target))
@@ -300,7 +300,8 @@ public static class MeetingHudPatch
             Logger.Info("------------会議終了------------", "Phase");
             if (AmongUsClient.Instance.AmHost)
             {
-                AntiBlackout.SetIsDead();
+                // EndMeetingを経由しなかった場合のフォールバック（二重実行を防ぐ）
+                if (!AntiBlackout.IsCached) AntiBlackout.SetIsDead();
 
                 Main.AllPlayerControls.Where(pc => !pc.Is(CustomRoles.GM)).Do(pc => RandomSpawn.CustomNetworkTransformPatch.FirstTP[pc.PlayerId] = true);
             }

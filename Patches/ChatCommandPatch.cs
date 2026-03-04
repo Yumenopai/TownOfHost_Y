@@ -33,6 +33,17 @@ namespace TownOfHostY
             Main.isChatCommand = true;
             Logger.Info(text, "SendChat");
 
+            if (args[0] == "/cmd" && args.Length >= 2)
+            {
+                canceled = true;
+                string cmdArg = args[1].StartsWith("/") ? args[1] : "/" + args[1];
+                string[] newArgs = new string[args.Length - 1];
+                newArgs[0] = cmdArg;
+                for (int i = 2; i < args.Length; i++) newArgs[i - 1] = args[i];
+                args = newArgs;
+                text = string.Join(" ", args);
+            }
+
             var tag = !PlayerControl.LocalPlayer.Data.IsDead ? "SendChatHost" : "SendChatDeadHost";
             if (text.StartsWith("試合結果:") || text.StartsWith("キル履歴:")) tag = "SendSystemChat";
             VoiceReader.ReadHost(text, tag);
@@ -275,6 +286,13 @@ namespace TownOfHostY
                         Utils.SetKillFlashAfterDead(PlayerControl.LocalPlayer, true);
                         break;
 
+                    case "/killFlashAll":
+                    case "/kfa":
+                        canceled = true;
+                        if (GameStates.InGame)
+                            Main.AllPlayerControls.Do(pc => pc.KillFlash());
+                        break;
+
                     case "/offhat":
                     case "/offskin":
                     case "/offvisor":
@@ -439,6 +457,16 @@ namespace TownOfHostY
 
             string[] args = text.Split(' ');
             string subArgs = "";
+
+            if (text.StartsWith("/") && !text.Contains("cmd"))
+            {
+                Utils.SendMessage(GetString("Error.CommandFailed"), player.PlayerId);
+                return;
+            }
+            if (args[0] != "/cmd" || args.Length <= 1) return;
+            args = args.Skip(1).ToArray();
+            if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
+
             switch (args[0]?.ToLower())
             {
                 case "/l":
@@ -630,21 +658,52 @@ namespace TownOfHostY
     {
         public static bool Prefix(PlayerControl __instance, string chatText, ref bool __result)
         {
+            // Validate input
             if (string.IsNullOrWhiteSpace(chatText))
             {
                 __result = false;
                 return false;
             }
-            int return_count = PlayerControl.LocalPlayer.name.Count(x => x == '\n');
+
+            // Adjust for local name line feeds (guard for nulls)
+            var localName = PlayerControl.LocalPlayer != null ? PlayerControl.LocalPlayer.name : string.Empty;
+            int return_count = 0;
+            if (!string.IsNullOrEmpty(localName))
+            {
+                return_count = localName.Count(x => x == '\n');
+            }
             chatText = new StringBuilder(chatText).Insert(0, "\n", return_count).ToString();
-            if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+
+            // Local echo (safe guards)
+            if (AmongUsClient.Instance != null && AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)
+            {
                 DestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance, chatText);
-            if (chatText.Contains("who", StringComparison.OrdinalIgnoreCase))
-                DestroyableSingleton<UnityTelemetry>.Instance.SendWho();
-            MessageWriter messageWriter = AmongUsClient.Instance.StartRpc(__instance.NetId, (byte)RpcCalls.SendChat, SendOption.None);
-            messageWriter.Write(chatText);
-            messageWriter.EndMessage();
-            __result = true;
+            }
+
+            // Optional telemetry (guard instance)
+            try
+            {
+                if (chatText.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    var ut = DestroyableSingleton<UnityTelemetry>.Instance;
+                    if (ut != null) ut.SendWho();
+                }
+            }
+            catch { /* ignore telemetry issues */ }
+
+            // Send chat RPC using public API
+            try
+            {
+                var writer = AmongUsClient.Instance.StartRpcImmediately(__instance.NetId, (byte)RpcCalls.SendChat, SendOption.None, -1);
+                writer.Write(chatText);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                __result = true;
+            }
+            catch (System.Exception ex)
+            {
+                Logger.Error($"RpcSendChat failed: {ex.Message}", nameof(RpcSendChatPatch));
+                __result = false;
+            }
             return false;
         }
     }

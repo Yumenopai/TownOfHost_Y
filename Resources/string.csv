@@ -14,6 +14,8 @@
 "Impostor","Impostor","インポスター","内鬼","偽裝者","Предатель","Impostor"
 "Shapeshifter","Shapeshifter","シェイプシフター","变形者","變形者","Оборотень","Metamorfo"
 "Phantom","Phantom","ファントム","","",""
+"Viper","Viper","バイパー","","",""
+"Detective","Detective","探偵","侦探","偵探","Детектив","Detetive"
 "NormalImpostor","Normal Impostor","通常インポスター","普通内鬼"
 "NormalShapeshifter","Shapeshifter","シェイプシフター","变形者","變形者","Оборотень","Metamorfo"
 "NormalEngineer","Engineer","エンジニア","工程师","工程師","Инженер","Engenheiro"
@@ -21,6 +23,9 @@
 "NormalPhantom","Phantom","ファントム","","",""
 "NormalTracker","Tracker","トラッカー","","",""
 "NormalNoisemaker","Noisemaker","ノイズメーカー","","",""
+"NormalViper","Viper","バイパー","","",""
+"NormalDetective","Detective","探偵","侦探","偵探","Детектив","Detetive"
+
 
 "# 特殊インポスター役職"
 "CustomImpostor","Custom Impostor","カスタムインポスター",
@@ -111,6 +116,8 @@
 "EvilHackerInfo","Hack Systmes and kill the crewmate","アドミンを駆使しクルーをキルせよ",
 "TelekineticInfo","Kill them with TK","念力で殺せ",
 "AdministerInfo","Get everybody in position","最終位置を監視し優位に付け",
+"NormalViperInfo","Killed corpses dissolve and leave no trace.","キルした死体は溶けて残らない",
+
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
 "EvilWatcherInfoLong","(Impostors):\nYou can see everyone's votes even if anonymous voting is on.","(インポスター陣営):\n全員の投票先を見ることができる。","(内鬼阵营):\n会议时窥视者可以看到所有人的投票。","(狼人陣營):\n會議時觀察者可以看到所有人的投票。","(Предатель):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Impostores):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -278,8 +285,10 @@
 "LoyalDoggyInfo","How are you doing? Master!","調子はどうですか？ご主人様！",
 "RabbitInfo","I have a good ear, so.","耳がいいので探知できるんだ",
 "VentManagerInfo","Vent,Vent,Vent!","ベント、ベント、ベント！",
-"NiceGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","",""
-"ElderInfo","I am still not as young as I used to be.","まだ若者には負けんわい","","","",""
+"NiceGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","","",
+"ElderInfo","I am still not as young as I used to be.","まだ若者には負けんわい","","","","",
+"NormalDetectiveInfo","Gathering information. Solving murders.","情報収集。殺人事件解決。",
+
 
 "CustomCrewmateInfoLong","(Crewmates):\Crewmate with the ability to Add-On to attributes set by the host.","[クルー陣営]\nホストによって設定された属性の能力をもつクルーメイト。",
 "NiceWatcherInfoLong","(Crewmates):\nYou can see everyone's votes even if anonymous voting is on.","(クルー陣営):\n全員の投票先を見ることができる。","(船员阵营:\n会议时窥视者可以看到所有人的投票。","(船員):\n會議時觀察者可以看到所有人的投票。","(Член Экипажа):\nNice Watcher может видеть все цвета голосов несмотря на анонимное голосование.","(Tripulantes):\nVocê consegue ver os votos de todos, mesmo que os votos anônimos estejam ligados."
@@ -810,6 +819,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "TrackerDuration","Tracking Duration","追跡の長さ"
 "NoisemakerImpostorAlert","Impostor get alert","インポスターへの警報"
 "NoisemakerAlertDuration","Alert duration","警報の長さ"
+"DetectiveSuspectLimit","Suspect Limit","事件ごとの容疑者数"
 
 "AssignMode","Assign Algorithm Mode","アサインモード","分配算法","","Алгоритм назначения",""
 "AssignAlgorithm.Fixed","Fixed","固定","固定","","Фиксированный",""
@@ -1249,6 +1259,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "Command.h_modes","<ModeName> - Display Mode Description","<モード名> - モードの説明を表示","<模式名> - 显示模式介绍","<模式名> - 顯示關於該模式的介紹","<ИмяРежима> - Показать описание Режима","<NomedoModo> - Mostrar Nome do Modo"
 "Command.dump","Output Log to Desktop","デスクトップにログを出力","将游戏运行日志输出到桌面","在桌面上建立遊戲輸出日誌","Вывод журнала на Рабочий Стол","Enviar Registro (log) Para Área de Trabalho"
 "Command.h_args","Available Args (Clipped)","使用可能な引数 (略称)","可用参数（简写）","可用的參數(簡稱)","Доступные Аргументы (Ограниченные)","Argumentos Disponíveis (Atalho)"
+"Command.killflashall","Show Kill Flash to All","キルフラッシュを全員に表示","向所有人显示击杀闪光","向所有人顯示擊殺閃光","Показать всем эффект убийства","Mostrar Flash de Morte para Todos"
 
 "CantUse.lastresult","Unable to use /lastresult during a game.","試合中に/lastresultを使用することはできません。","不可以在游戏中使用/lastresult命令","不可以在遊戲中使用/lastresult指令","Нельзя использовать /lastresult во время игры","Impossível usar /lastresult durante um jogo."
 "CantUse.killlog","Unable to use /killlog during a game.","試合中に/killlogを使用することはできません。","不可以在游戏中使用/killlog命令","不可以在遊戲中使用/killlog指令","Нельзя использовать /killlog во время игры","Impossível usar /killlog durante um jogo."
@@ -1356,6 +1367,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Error.InvalidRoleAssignment","Error: Invalid role found for a player during role assignment({0})","エラー: 役職設定中に無効な役職のプレイヤーを発見しました({0})","错误：在分配职业时发现职业无效的玩家 ({0})","錯誤:在設定職業時發現{0}持有無效職業","Ошибка: Во время назначения роли для игрока обнаружена недопустимая роль({0})","Erro: Classe inválida encontrada para um jogador no momento de dar as classes ({0})"
 "Error.SpeedBoosterNullException","Error: The speed boost destination is null.\nPlease save the log and create a bug report ticket.","エラー: スピードブースト先がnullです。\nログを保存し、バグ報告チケットを作成してください。","错误：增速者的增速目标为空。 \n请保存日志并创建错误报告票。","錯誤:加速器加速的對象無效,\n請將遊戲輸出記錄保存並在TOH官方DC群組開啟一張支援票","Ошибка: пункт назначения повышения скорости не указан. \nСохраните логи и создайте заявку на отчет об ошибке.","Erro: O destino do Impulso de Velocidade é nulo.\nPor favor, salve o log e crie um ticket de erro (bug report)."
 "Error.InvalidColor","Error: Only default colors are available.","エラー：デフォルトカラー以外は使えません","错误: 仅默认颜色可用","錯誤: 無法使用遊戲自帶以外的顏色。","Ошибка: Нельзя использовать другие цвета, кроме цветов по умолчанию",""
+"Warning.GameModeChangedNotice","To open the settings for the changed game mode, please reopen the game settings menu.","変更したゲームモードの設定を開くには、ゲーム設定編集画面を開きなおしてください。","更改游戏模式后请重新打开游戏设置菜单以打开更改后的游戏模式的设置。","更改遊戲模式後請重新打開遊戲設定選單以打開更改後的遊戲模式的設定。","Чтобы открыть настройки измененного режима игры, пожалуйста, откройте меню настроек игры заново.","Para abrir as configurações do modo de jogo alterado, por favor, reabra o menu de configurações do jogo."
 
 "### ErrorText関連"
 "ErrorLevel1","Some failure may occur.","何らかの不具合が発生する可能性があります。","","","","",""
@@ -1730,3 +1742,4 @@ CCYellowCatInfo,You have become the YellowCat,黄陣営に所属した,你成为
 "Twin","Twins","ツイン",
 "SCM_NothingMeetingNameColor","Remove The Color Of The Name To Myself During Meeting(Excluding Impostors)","会議時、自身への名前の色を消す(インポスターを除く)",
 "SCM_RestoredDeadPlayer","Dead Players Restore","死亡したプレイヤーは姿を戻す"
+

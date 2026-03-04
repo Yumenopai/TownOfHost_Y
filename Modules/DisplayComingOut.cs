@@ -26,8 +26,7 @@ class DisplayComingOut
 
     public static void SetupCustomOption(int id)
     {
-        Enable = BooleanOptionItem.Create(id + 0, "DisplayComingOutEnable", false, TabGroup.ModMainSettings, true)
-            .SetColor(Palette.CrewmateBlue);
+        Enable = BooleanOptionItem.Create(id + 0, "DisplayComingOutEnable", false, TabGroup.ModMainSettings, true).SetColor(Palette.CrewmateBlue);
 
         SetupTypeComingOut(id);
     }

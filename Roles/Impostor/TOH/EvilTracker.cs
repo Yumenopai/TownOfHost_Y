@@ -22,7 +22,7 @@ public sealed class EvilTracker : RoleBase, IImpostor, IKillFlashSeeable, ISidek
             (int)Options.offsetId.ImpTOH + 1300,
             SetupOptionItem,
             "イビルトラッカー",
-            canMakeMadmate: () => OptionCanCreateMadmate.GetBool()
+            canMakeMadmate: () => OptionCanCreateMadmate.Bool
         );
 
     public EvilTracker(PlayerControl player)
@@ -31,10 +31,10 @@ public sealed class EvilTracker : RoleBase, IImpostor, IKillFlashSeeable, ISidek
         player
     )
     {
-        CanSeeKillFlash = OptionCanSeeKillFlash.GetBool();
+        CanSeeKillFlash = OptionCanSeeKillFlash.Bool;
         CurrentTargetMode = (TargetMode)OptionTargetMode.GetValue();
-        CanSeeLastRoomInMeeting = OptionCanSeeLastRoomInMeeting.GetBool();
-        CanCreateMadmate = OptionCanCreateMadmate.GetBool() && CurrentTargetMode != TargetMode.Never;
+        CanSeeLastRoomInMeeting = OptionCanSeeLastRoomInMeeting.Bool;
+        CanCreateMadmate = OptionCanCreateMadmate.Bool && CurrentTargetMode != TargetMode.Never;
 
         TargetId = byte.MaxValue;
         CanSetTarget = CurrentTargetMode != TargetMode.Never;

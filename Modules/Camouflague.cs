@@ -125,12 +125,6 @@ public static class Camouflage
             .Write(target.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
             .EndRpc();
 
-        target.SetVisor(newOutfit.VisorId, newOutfit.ColorId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetVisorStr)
-            .Write(newOutfit.VisorId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetVisorStr))
-            .EndRpc();
-
         target.SetPet(newOutfit.PetId);
         sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
             .Write(newOutfit.PetId)
@@ -171,11 +165,7 @@ public static class SkinChangeMode
             .EndRpc();
 
         target.SetVisor(newOutfit.VisorId, newOutfit.ColorId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetVisorStr)
-            .Write(newOutfit.VisorId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetVisorStr))
-            .EndRpc();
-
+        
         target.SetPet(newOutfit.PetId);
         sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
             .Write(newOutfit.PetId)
@@ -189,10 +179,7 @@ public static class SkinChangeMode
             .EndRpc();
 
         target.SetName(newOutfit.PlayerName);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetName)
-            .Write(target.Data.NetId)
-            .Write(newOutfit.PlayerName)
-            .EndRpc();
+        
 
         target.SetLevel(49);
         sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetLevel)

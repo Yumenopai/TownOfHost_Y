@@ -125,7 +125,7 @@ public sealed class Charger : RoleBase, IImpostor
         }
         Logger.Info($"最短距離プレイヤー確定 : {minDistance.target.GetNameWithRole()}・{minDistance.dist}m", "Charger");
 
-        var KillRange = GameManager.Instance.LogicOptions.GetKillDistance();
+        var KillRange = Utils.SafeGetKillDistance();
         Logger.Info($"距離 : {minDistance.dist}m <= {KillRange}m", "Charger");
         if (minDistance.dist <= KillRange && Player.CanMove && minDistance.target.CanMove)
         {

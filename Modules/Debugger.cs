@@ -28,6 +28,14 @@ namespace TownOfHostY
     }
     class Logger
     {
+        static Logger()
+        {
+            try
+            {
+                System.Console.OutputEncoding = System.Text.Encoding.UTF8;
+            }
+            catch { }
+        }
         public static bool isEnable;
         public static List<string> disableList = new();
         public static List<string> sendToGameList = new();

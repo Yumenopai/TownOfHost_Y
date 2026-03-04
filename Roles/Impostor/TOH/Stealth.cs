@@ -13,7 +13,7 @@ public sealed class Stealth : RoleBase, IImpostor
 {
     public Stealth(PlayerControl player) : base(RoleInfo, player)
     {
-        excludeImpostors = optionExcludeImpostors.GetBool();
+        excludeImpostors = optionExcludeImpostors.Bool;
         darkenDuration = darkenTimer = optionDarkenDuration.GetFloat();
         darkenedPlayers = null;
     }

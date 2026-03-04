@@ -27,54 +27,65 @@ namespace TownOfHostY
         {
             public static void Postfix(GameStartManager __instance)
             {
-                __instance.MinPlayers = 1;
-
-                __instance.GameRoomNameCode.text = GameCode.IntToGameName(AmongUsClient.Instance.GameId);
-                // Reset lobby countdown timer
-                timer = 600f;
-
-                HideName = Object.Instantiate(__instance.GameRoomNameCode, __instance.GameRoomNameCode.transform);
-                HideName.gameObject.SetActive(true);
-                HideName.name = "HideName";
-                HideName.color =
-                    ColorUtility.TryParseHtmlString(Main.HideColor.Value, out var color) ? color :
-                    ColorUtility.TryParseHtmlString(Main.ModColor, out var modColor) ? modColor : HideName.color;
-                HideName.text = Main.HideName.Value;
-
-                warningText = Object.Instantiate(__instance.GameStartText, __instance.transform);
-                warningText.name = "WarningText";
-                warningText.transform.localPosition = new(0f, 0f - __instance.transform.localPosition.y, -1f);
-                warningText.gameObject.SetActive(false);
-
-                cancelButton = Object.Instantiate(__instance.StartButton, __instance.transform);
-                cancelButton.name = "CancelButton";
-                var cancelLabel = cancelButton.GetComponentInChildren<TextMeshPro>();
-                cancelLabel.DestroyTranslator();
-                cancelLabel.text = GetString("Cancel");
-                cancelButton.transform.localScale = new(0.4f, 0.4f, 1f);
-                cancelButton.activeTextColor = Color.red;
-                cancelButton.inactiveTextColor = Color.red;
-                cancelButton.transform.localPosition = new(0f, -0.2f, 0f);
-                var buttonComponent = cancelButton.GetComponent<PassiveButton>();
-                buttonComponent.OnClick = new();
-                buttonComponent.OnClick.AddListener((Action)(() => __instance.ResetStartState()));
-                cancelButton.gameObject.SetActive(false);
-
-                if (!AmongUsClient.Instance.AmHost) return;
-
-                // Make Public Button
-                if (!Main.AllowPublicRoom || ModUpdater.hasUpdate || !VersionChecker.IsSupported || !Main.IsPublicAvailableOnThisVersion)
+                try
                 {
-                    __instance.HostPrivateButton.inactiveTextColor = Palette.DisabledClear;
-                    __instance.HostPrivateButton.activeTextColor = Palette.DisabledClear;
+                    if (__instance == null) return;
+
+                    __instance.MinPlayers = 1;
+
+                    __instance.GameRoomNameCode.text = GameCode.IntToGameName(AmongUsClient.Instance.GameId);
+                    // Reset lobby countdown timer
+                    timer = 600f;
+
+                    HideName = Object.Instantiate(__instance.GameRoomNameCode, __instance.GameRoomNameCode.transform);
+                    HideName.gameObject.SetActive(true);
+                    HideName.name = "HideName";
+                    HideName.color =
+                        ColorUtility.TryParseHtmlString(Main.HideColor.Value, out var color) ? color :
+                        ColorUtility.TryParseHtmlString(Main.ModColor, out var modColor) ? modColor : HideName.color;
+                    HideName.text = Main.HideName.Value;
+
+                    warningText = Object.Instantiate(__instance.GameStartText, __instance.transform);
+                    warningText.name = "WarningText";
+                    warningText.transform.localPosition = new(0f, 0f - __instance.transform.localPosition.y, -1f);
+                    warningText.gameObject.SetActive(false);
+
+                    cancelButton = Object.Instantiate(__instance.StartButton, __instance.transform);
+                    cancelButton.name = "CancelButton";
+                    var cancelLabel = cancelButton.GetComponentInChildren<TextMeshPro>();
+                    cancelLabel.DestroyTranslator();
+                    cancelLabel.text = GetString("Cancel");
+                    cancelButton.transform.localScale = new(0.4f, 0.4f, 1f);
+                    cancelButton.activeTextColor = Color.red;
+                    cancelButton.inactiveTextColor = Color.red;
+                    cancelButton.transform.localPosition = new(0f, -0.2f, 0f);
+                    var buttonComponent = cancelButton.GetComponent<PassiveButton>();
+                    buttonComponent.OnClick = new();
+                    buttonComponent.OnClick.AddListener((Action)(() => __instance.ResetStartState()));
+                    cancelButton.gameObject.SetActive(false);
+
+                    if (!AmongUsClient.Instance.AmHost) return;
+
+                    // Make Public Button
+                    if (!Main.AllowPublicRoom || ModUpdater.hasUpdate || !VersionChecker.IsSupported || !Main.IsPublicAvailableOnThisVersion)
+                    {
+                        __instance.HostPrivateButton.inactiveTextColor = Palette.DisabledClear;
+                        __instance.HostPrivateButton.activeTextColor = Palette.DisabledClear;
+                    }
+
+                    if (Main.NormalOptions != null && Main.NormalOptions.KillCooldown == 0f)
+                        Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
+
+                    if (Main.NormalOptions != null)
+                        AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
+                    if (AURoleOptions.ShapeshifterCooldown == 0f)
+                        AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
                 }
-
-                if (Main.NormalOptions.KillCooldown == 0f)
-                    Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
-
-                AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
-                if (AURoleOptions.ShapeshifterCooldown == 0f)
-                    AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
+                catch (Exception ex)
+                {
+                    Logger.Error($"GameStartManagerStartPatch.Postfix で例外: {ex.Message}", "GameStartManagerStartPatch");
+                    Logger.Exception(ex, "GameStartManagerStartPatch");
+                }
             }
         }
 
@@ -83,40 +94,54 @@ namespace TownOfHostY
         {
             public static void Prefix(GameStartManager __instance)
             {
-                // Lobby code
-                if (DataManager.Settings.Gameplay.StreamerMode)
+                try
                 {
-                    __instance.GameRoomNameCode.color = new(__instance.GameRoomNameCode.color.r, __instance.GameRoomNameCode.color.g, __instance.GameRoomNameCode.color.b, 0);
-                    HideName.enabled = true;
+                    if (__instance == null) return;
+
+                    // Lobby code
+                    if (DataManager.Settings.Gameplay.StreamerMode)
+                    {
+                        __instance.GameRoomNameCode.color = new(__instance.GameRoomNameCode.color.r, __instance.GameRoomNameCode.color.g, __instance.GameRoomNameCode.color.b, 0);
+                        if (HideName != null) HideName.enabled = true;
+                    }
+                    else
+                    {
+                        __instance.GameRoomNameCode.color = new(__instance.GameRoomNameCode.color.r, __instance.GameRoomNameCode.color.g, __instance.GameRoomNameCode.color.b, 255);
+                        if (HideName != null) HideName.enabled = false;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    __instance.GameRoomNameCode.color = new(__instance.GameRoomNameCode.color.r, __instance.GameRoomNameCode.color.g, __instance.GameRoomNameCode.color.b, 255);
-                    HideName.enabled = false;
+                    Logger.Error($"GameStartManagerUpdatePatch.Prefix で例外: {ex.Message}", "GameStartManagerUpdatePatch");
+                    Logger.Exception(ex, "GameStartManagerUpdatePatch");
                 }
             }
             public static void Postfix(GameStartManager __instance)
             {
-                if (!AmongUsClient.Instance) return;
-
-                string warningMessage = "";
-                if (AmongUsClient.Instance.AmHost)
+                try
                 {
-                    bool canStartGame = true;
-                    List<string> mismatchedPlayerNameList = new();
-                    foreach (var client in AmongUsClient.Instance.allClients.ToArray())
+                    if (__instance == null) return;
+
+                    if (!AmongUsClient.Instance) return;
+
+                    string warningMessage = "";
+                    if (AmongUsClient.Instance.AmHost)
                     {
-                        if (client.Character == null) continue;
-                        var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
-                        if (dummyComponent != null && dummyComponent.enabled)
-                            continue;
-                        if (!MatchVersions(client.Character.PlayerId, true))
+                        bool canStartGame = true;
+                        List<string> mismatchedPlayerNameList = new();
+                        foreach (var client in AmongUsClient.Instance.allClients.ToArray())
                         {
-                            canStartGame = false;
-                            mismatchedPlayerNameList.Add(Utils.ColorString(Palette.PlayerColors[client.ColorId], client.Character.Data.PlayerName));
+                            if (client.Character == null) continue;
+                            var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
+                            if (dummyComponent != null && dummyComponent.enabled)
+                                continue;
+                            if (!MatchVersions(client.Character.PlayerId, true))
+                            {
+                                canStartGame = false;
+                                mismatchedPlayerNameList.Add(Utils.ColorString(Palette.PlayerColors[client.ColorId], client.Character.Data.PlayerName));
+                            }
                         }
-                    }
-                    string[] kickName =
+                        string[] kickName =
                         {
                             "mod",
                             "toh",
@@ -127,81 +152,81 @@ namespace TownOfHostY
                             "招待",
                             "宣伝"
                         };
-                    foreach (var line in kickName)
-                    {
-                        if (line == "") continue;
-                        var hostName = AmongUsClient.Instance.PlayerPrefab.GetRealName();
-                        if (Regex.IsMatch(hostName?.ToLower(), line))
+                        foreach (var line in kickName)
+                        {
+                            if (line == "") continue;
+                            var hostName = AmongUsClient.Instance.PlayerPrefab?.GetRealName();
+                            if (Regex.IsMatch(hostName?.ToLower() ?? "", line))
+                            {
+                                __instance.StartButton.gameObject.SetActive(false);
+                                warningMessage = Utils.ColorString(Color.red, "MOD内でエラーが発生しています。\nY鯖のDiscordまでご連絡ください。");
+                            }
+                        }
+                        if (!canStartGame)
                         {
                             __instance.StartButton.gameObject.SetActive(false);
-                            warningMessage = Utils.ColorString(Color.red, "MOD内でエラーが発生しています。\nY鯖のDiscordまでご連絡ください。");
+                            warningMessage = Utils.ColorString(Color.red, string.Format(GetString("Warning.MismatchedVersion"), String.Join(" ", mismatchedPlayerNameList), $"<color={Main.ModColor}>{Main.ModName}</color>"));
+                        }
+                        if (cancelButton != null) cancelButton.gameObject.SetActive(__instance.startState == GameStartManager.StartingStates.Countdown);
+                    }
+                    else
+                    {
+                        if (!MatchVersions(0))
+                        {
+                            ErrorText.Instance.NotHostFlag = true;
+                            ErrorText.Instance.AddError(ErrorCode.NotHostUnload);
+                            Harmony.UnpatchAll();
+                            Main.Instance?.Unload();
                         }
                     }
-                    if (!canStartGame)
+                    if (warningMessage == "")
                     {
-                        __instance.StartButton.gameObject.SetActive(false);
-                        warningMessage = Utils.ColorString(Color.red, string.Format(GetString("Warning.MismatchedVersion"), String.Join(" ", mismatchedPlayerNameList), $"<color={Main.ModColor}>{Main.ModName}</color>"));
+                        if (warningText != null) warningText.gameObject.SetActive(false);
                     }
-                    cancelButton.gameObject.SetActive(__instance.startState == GameStartManager.StartingStates.Countdown);
-                }
-                else
-                {
-                    if (!MatchVersions(0))
+                    else
                     {
-                        ErrorText.Instance.NotHostFlag = true;
-                        ErrorText.Instance.AddError(ErrorCode.NotHostUnload);
-                        Harmony.UnpatchAll();
-                        Main.Instance.Unload();
+                        if (warningText != null)
+                        {
+                            warningText.text = warningMessage;
+                            warningText.gameObject.SetActive(true);
+                        }
                     }
-                    //if (MatchVersions(0))
-                    //    exitTimer = 0;
-                    //else
-                    //{
-                    //    exitTimer += Time.deltaTime;
-                    //    if (exitTimer > 10)
-                    //    {
-                    //        exitTimer = 0;
-                    //        AmongUsClient.Instance.ExitGame(DisconnectReasons.ExitGame);
-                    //        SceneChanger.ChangeScene("MainMenu");
-                    //    }
 
-                    //    warningMessage = Utils.ColorString(Color.red, string.Format(GetString("Warning.AutoExitAtMismatchedVersion"), $"<color={Main.ModColor}>{Main.ModName}</color>", Math.Round(10 - exitTimer).ToString()));
-                    //}
+                    // Lobby timer
+                    if (!AmongUsClient.Instance.AmHost || !GameData.Instance || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
+                    {
+                        return;
+                    }
+
+                    timer = Mathf.Max(0f, timer -= Time.deltaTime);
+                    int minutes = (int)timer / 60;
+                    int seconds = (int)timer % 60;
+                    string countDown = $"({minutes:00}:{seconds:00})";
+                    if (timer <= 60) countDown = "";
+
+                    // タイマーテキスト
+                    if (__instance.StartButton != null && __instance.StartButton.buttonText != null)
+                        __instance.StartButton.buttonText.text = GetString("Start") + countDown;
                 }
-                if (warningMessage == "")
+                catch (Exception ex)
                 {
-                    warningText.gameObject.SetActive(false);
+                    Logger.Error($"GameStartManagerUpdatePatch.Postfix で例外: {ex.Message}", "GameStartManagerUpdatePatch");
+                    Logger.Exception(ex, "GameStartManagerUpdatePatch");
                 }
-                else
-                {
-                    warningText.text = warningMessage;
-                    warningText.gameObject.SetActive(true);
-                }
-
-                // Lobby timer
-                if (
-                    !AmongUsClient.Instance.AmHost ||
-                    !GameData.Instance ||
-                    AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
-                {
-                    return;
-                }
-
-                timer = Mathf.Max(0f, timer -= Time.deltaTime);
-                int minutes = (int)timer / 60;
-                int seconds = (int)timer % 60;
-                string countDown = $"({minutes:00}:{seconds:00})";
-                if (timer <= 60) countDown = "";
-
-                // タイマーテキスト
-                __instance.StartButton.buttonText.text = GetString("Start") + countDown;
             }
             public static bool MatchVersions(byte playerId, bool acceptVanilla = false)
             {
-                if (!Main.playerVersion.TryGetValue(playerId, out var version)) return acceptVanilla;
-                return Main.ForkId == version.forkId
-                    && Main.version.CompareTo(version.version) == 0
-                    && version.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})";
+                try
+                {
+                    if (!Main.playerVersion.TryGetValue(playerId, out var version)) return acceptVanilla;
+                    return Main.ForkId == version.forkId
+                        && Main.version.CompareTo(version.version) == 0
+                        && version.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})";
+                }
+                catch
+                {
+                    return acceptVanilla;
+                }
             }
         }
 
@@ -210,46 +235,55 @@ namespace TownOfHostY
         {
             public static bool Prefix(GameStartManager __instance)
             {
-                SelectRandomMap();
-
-                var invalidColor = Main.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId);
-                if (invalidColor.Any())
+                try
                 {
-                    var msg = GetString("Error.InvalidColor");
-                    Logger.SendInGame(msg);
-                    msg += "\n" + string.Join(",", invalidColor.Select(p => $"{p.name}({p.Data.DefaultOutfit.ColorId})"));
-                    Utils.SendMessage(msg);
+                    SelectRandomMap();
+
+                    var invalidColor = Main.AllPlayerControls.Where(p => p.Data.DefaultOutfit.ColorId < 0 || Palette.PlayerColors.Length <= p.Data.DefaultOutfit.ColorId);
+                    if (invalidColor.Any())
+                    {
+                        var msg = GetString("Error.InvalidColor");
+                        Logger.SendInGame(msg);
+                        msg += "\n" + string.Join(",", invalidColor.Select(p => $"{p.name}({p.Data.DefaultOutfit.ColorId})"));
+                        Utils.SendMessage(msg);
+                        return false;
+                    }
+
+                    RoleAssignManager.CheckRoleCount();
+
+                    if (Main.NormalOptions != null)
+                    {
+                        Options.DefaultKillCooldown = Main.NormalOptions.KillCooldown;
+                        Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;
+                        Main.NormalOptions.KillCooldown = 0f;
+
+                        var opt = Main.NormalOptions.Cast<IGameOptions>();
+                        AURoleOptions.SetOpt(opt);
+                        Main.LastShapeshifterCooldown.Value = AURoleOptions.ShapeshifterCooldown;
+                        AURoleOptions.ShapeshifterCooldown = 0f;
+
+                        if (PlayerControl.LocalPlayer != null && GameOptionsManager.Instance != null)
+                            PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(opt, AprilFoolsMode.IsAprilFoolsModeToggledOn));
+                    }
+
+                    __instance.ReallyBegin(false);
                     return false;
                 }
-
-                RoleAssignManager.CheckRoleCount();
-
-                Options.DefaultKillCooldown = Main.NormalOptions.KillCooldown;
-                Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;
-                Main.NormalOptions.KillCooldown = 0f;
-
-                var opt = Main.NormalOptions.Cast<IGameOptions>();
-                AURoleOptions.SetOpt(opt);
-                Main.LastShapeshifterCooldown.Value = AURoleOptions.ShapeshifterCooldown;
-                AURoleOptions.ShapeshifterCooldown = 0f;
-
-                PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(opt, AprilFoolsMode.IsAprilFoolsModeToggledOn));
-
-                __instance.ReallyBegin(false);
-                return false;
+                catch (Exception ex)
+                {
+                    Logger.Error($"GameStartManagerBeginGamePatch.Prefix で例外: {ex.Message}", "GameStartManagerBeginGamePatch");
+                    Logger.Exception(ex, "GameStartManagerBeginGamePatch");
+                    return true;
+                }
             }
             private static void SelectRandomMap()
             {
-                if (Options.RandomMapsMode.GetBool())
+                try
                 {
+                    if (!Options.RandomMapsMode.GetBool()) return;
+
                     var rand = IRandom.Instance;
                     List<byte> randomMaps = new();
-                    /*TheSkeld   = 0
-                    MIRAHQ     = 1
-                    Polus      = 2
-                    Dleks      = 3
-                    TheAirShip = 4
-                    TheFungle  = 5*/
                     if (Options.AddedTheSkeld.GetBool()) randomMaps.Add(0);
                     if (Options.AddedMiraHQ.GetBool()) randomMaps.Add(1);
                     if (Options.AddedPolus.GetBool()) randomMaps.Add(2);
@@ -258,7 +292,11 @@ namespace TownOfHostY
 
                     if (randomMaps.Count <= 0) return;
                     var mapsId = randomMaps[rand.Next(randomMaps.Count)];
-                    Main.NormalOptions.MapId = mapsId;
+                    if (Main.NormalOptions != null) Main.NormalOptions.MapId = mapsId;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn($"SelectRandomMap failed: {ex.Message}", "GameStartManagerBeginGamePatch");
                 }
             }
         }
@@ -268,31 +306,53 @@ namespace TownOfHostY
         {
             public static void Prefix()
             {
-                if (GameStates.IsCountDown)
+                try
                 {
-                    Main.NormalOptions.KillCooldown = Options.DefaultKillCooldown;
-                    PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.CurrentGameOptions, AprilFoolsMode.IsAprilFoolsModeToggledOn));
+                    if (GameStates.IsCountDown)
+                    {
+                        if (Main.NormalOptions != null) Main.NormalOptions.KillCooldown = Options.DefaultKillCooldown;
+                        if (PlayerControl.LocalPlayer != null && GameOptionsManager.Instance != null)
+                            PlayerControl.LocalPlayer.RpcSyncSettings(GameOptionsManager.Instance.gameOptionsFactory.ToBytes(GameOptionsManager.Instance.CurrentGameOptions, AprilFoolsMode.IsAprilFoolsModeToggledOn));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn($"ResetStartStatePatch.Prefix failed: {ex.Message}", "ResetStartStatePatch");
                 }
             }
         }
-    }
     
-    [HarmonyPatch(typeof(TextBoxTMP), nameof(TextBoxTMP.SetText))]
-    public static class HiddenTextPatch
-    {
-        private static void Postfix(TextBoxTMP __instance)
+        [HarmonyPatch(typeof(TextBoxTMP), nameof(TextBoxTMP.SetText))]
+        public static class HiddenTextPatch
         {
-            if (__instance.name == "GameIdText") __instance.outputText.text = new string('*', __instance.text.Length);
+            private static void Postfix(TextBoxTMP __instance)
+            {
+                try
+                {
+                    if (__instance.name == "GameIdText") __instance.outputText.text = new string('*', __instance.text.Length);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn($"HiddenTextPatch.Postfix failed: {ex.Message}", "HiddenTextPatch");
+                }
+            }
         }
-    }
 
-    [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.GetAdjustedNumImpostors))]
-    class UnrestrictedNumImpostorsPatch
-    {
-        public static bool Prefix(ref int __result)
+        [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.GetAdjustedNumImpostors))]
+        class UnrestrictedNumImpostorsPatch
         {
-            __result = Main.NormalOptions.NumImpostors;
-            return false;
+            public static bool Prefix(ref int __result)
+            {
+                try
+                {
+                    __result = Main.NormalOptions.NumImpostors;
+                    return false;
+                }
+                catch
+                {
+                    return true;
+                }
+            }
         }
     }
 }

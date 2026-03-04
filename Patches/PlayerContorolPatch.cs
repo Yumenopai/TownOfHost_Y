@@ -431,23 +431,70 @@ public static class PhantomRoleUseAbilityPatch
 {
     public static bool Prefix(PhantomRole __instance)
     {
-        if (__instance.Player.AmOwner && !__instance.Player.Data.IsDead && __instance.Player.moveable && !Minigame.Instance && !__instance.IsCoolingDown && !__instance.fading)
+        // プレイヤーがアクティブで使用可能か確認
+        if (__instance.Player.AmOwner &&
+            !__instance.Player.Data.IsDead &&
+            __instance.Player.moveable &&
+            !Minigame.Instance &&
+            !__instance.IsCoolingDown &&
+            !__instance.fading)
         {
-            System.Func<RoleEffectAnimation, bool> roleEffectAnimation = x => x.effectType == RoleEffectAnimation.EffectType.Vanish_Charge;
-            if (!__instance.Player.currentRoleAnimations.Find(roleEffectAnimation) && !__instance.Player.walkingToVent && !__instance.Player.inMovingPlat)
+            // 現在の役職アニメーションがVanishingチャージでないことを確認
+            bool hasVanishChargeAnimation = false;
+            foreach (var anim in __instance.Player.currentRoleAnimations)
+            {
+                if (anim.effectType == RoleEffectAnimation.EffectType.Vanish_Charge)
+                {
+                    hasVanishChargeAnimation = true;
+                    break;
+                }
+            }
+
+            if (!hasVanishChargeAnimation && !__instance.Player.walkingToVent && !__instance.Player.inMovingPlat)
             {
                 if (__instance.isInvisible)
                 {
                     __instance.MakePlayerVisible(true, true);
                     return false;
                 }
-                DestroyableSingleton<HudManager>.Instance.AbilityButton.SetSecondImage(__instance.Ability);
-                DestroyableSingleton<HudManager>.Instance.AbilityButton.OverrideText(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.PhantomAbilityUndo, new Il2CppReferenceArray<Il2CppSystem.Object>(0)));
-                __instance.Player.CmdCheckVanish(GameManager.Instance.LogicOptions.GetPhantomDuration());
-                return false;
+
+                var hud = DestroyableSingleton<HudManager>.Instance;
+                hud.AbilityButton.SetSecondImage(__instance.Ability);
+                hud.AbilityButton.OverrideText(DestroyableSingleton<TranslationController>
+                    .Instance.GetString(StringNames.PhantomAbilityUndo, new Il2CppReferenceArray<Il2CppSystem.Object>(0)));
+
+                // PhantomDuration を直接取得
+                float phantomDuration = GetPhantomDuration();
+                __instance.Player.CmdCheckVanish(phantomDuration);
+
+                return false; // 元のメソッドは実行しない
             }
         }
-        return false;
+
+        return false; // 条件に関わらず元メソッドは実行しない
+    }
+
+    // LogicOptions から PhantomDuration を取得する自前メソッド
+    private static float GetPhantomDuration()
+    {
+        var options = GameManager.Instance.LogicOptions;
+
+        // LogicOptions に直接フィールドがある場合
+        // 例: options._phantomDuration
+        // もし存在しない場合は固定値を返す
+        float duration = 5f; // デフォルト5秒
+        try
+        {
+            var field = options.GetType().GetField("_phantomDuration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (field != null)
+                duration = (float)field.GetValue(options);
+        }
+        catch
+        {
+            // 例外無視してデフォルト値を使用
+        }
+
+        return duration;
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
@@ -609,190 +656,7 @@ public static class PlayerControlStartMeetingPatch
         //}
     }
 }
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
-class FixedUpdatePatch
-{
-    private static StringBuilder Mark = new(20);
-    private static StringBuilder Suffix = new(120);
-    public static void Postfix(PlayerControl __instance)
-    {
-        var player = __instance;
 
-        if (!GameStates.IsModHost) return;
-
-        TargetArrow.OnFixedUpdate(player);
-        TargetDeadArrow.OnFixedUpdate(player);
-        VentSelect.OnFixedUpdate(player);
-        CustomRoleManager.OnFixedUpdate(player);
-
-        if (AmongUsClient.Instance.AmHost)
-        {//実行クライアントがホストの場合のみ実行
-            if (GameStates.IsLobby && (!Main.AllowPublicRoom || ModUpdater.hasUpdate || !VersionChecker.IsSupported || !Main.IsPublicAvailableOnThisVersion) && AmongUsClient.Instance.IsGamePublic)
-                AmongUsClient.Instance.ChangeGamePublic(false);
-
-            if (GameStates.IsInTask && !ReportDeadBodyPatch.CannotReportList.Contains(__instance.PlayerId) && ReportDeadBodyPatch.WaitReport[__instance.PlayerId].Count > 0)
-            {
-                var info = ReportDeadBodyPatch.WaitReport[__instance.PlayerId][0];
-                ReportDeadBodyPatch.WaitReport[__instance.PlayerId].Clear();
-                Logger.Info($"{__instance.GetNameWithRole()}:通報可能になったため通報処理を行います", "ReportDeadbody");
-                __instance.ReportDeadBody(info);
-            }
-
-            DoubleTrigger.OnFixedUpdate(player);
-
-            //ターゲットのリセット
-            if (GameStates.IsInTask && player.IsAlive() && Options.LadderDeath.GetBool())
-            {
-                FallFromLadder.FixedUpdate(player);
-            }
-
-            if (GameStates.IsInGame && player.AmOwner)
-                DisableDevice.FixedUpdate();
-
-            if (__instance.AmOwner)
-            {
-                Utils.ApplySuffix();
-            }
-        }
-        //LocalPlayer専用
-        if (__instance.AmOwner)
-        {
-            //キルターゲットの上書き処理
-            if (GameStates.IsInTask && !((__instance.Is(CustomRoleTypes.Impostor) && !__instance.Is(CustomRoles.StrayWolf)) || __instance.Is(CustomRoles.Egoist)) && __instance.CanUseKillButton() && !__instance.Data.IsDead)
-            {
-                var players = __instance.GetPlayersInAbilityRangeSorted(false);
-                PlayerControl closest = players.Count <= 0 ? null : players[0];
-                HudManager.Instance.KillButton.SetTarget(closest);
-            }
-        }
-
-        //役職テキストの表示
-        var RoleTextTransform = __instance.cosmetics.nameText.transform.Find("RoleText");
-        var RoleText = RoleTextTransform.GetComponent<TMPro.TextMeshPro>();
-        if (RoleText != null && __instance != null)
-        {
-            if (GameStates.IsLobby)
-            {
-                if (Main.playerVersion.TryGetValue(__instance.PlayerId, out var ver))
-                {
-                    if (Main.ForkId != ver.forkId) // フォークIDが違う場合
-                        __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.2>{ver.forkId}</size>\n{__instance?.name}</color>";
-                    else if (Main.version.CompareTo(ver.version) != 0)
-                        /*__instance.cosmetics.nameText.text = ver.tag == $"{ThisAssembly.Git.Commit}({ThisAssembly.Git.Branch})" ? $"<color=#87cefa>{__instance.name}</color>" : $"<color=#ffff00><size=1.2>{ver.tag}</size>\n{__instance?.name}</color>";
-                    else*/ __instance.cosmetics.nameText.text = $"<color=#ff0000><size=1.2>v{ver.version}</size>\n{__instance?.name}</color>";
-                    else __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
-                }
-                else __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
-            }
-            if (GameStates.IsInGame)
-            {
-                //if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
-                //{
-                //    var hasRole = main.AllPlayerCustomRoles.TryGetValue(__instance.PlayerId, out var role);
-                //    if (hasRole) RoleTextData = Utils.GetRoleTextHideAndSeek(__instance.Data.Role.Role, role);
-                //}
-                (RoleText.enabled, RoleText.text) = Utils.GetRoleNameAndProgressTextData(false, PlayerControl.LocalPlayer, __instance);
-                if (!AmongUsClient.Instance.IsGameStarted && AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
-                {
-                    RoleText.enabled = false; //ゲームが始まっておらずフリープレイでなければロールを非表示
-                    if (!__instance.AmOwner) __instance.cosmetics.nameText.text = __instance?.Data?.PlayerName;
-                }
-
-                //変数定義
-                var seer = PlayerControl.LocalPlayer;
-                var seerRole = seer.GetRoleClass();
-                var target = __instance;
-                string RealName;
-                Mark.Clear();
-                Suffix.Clear();
-
-                //名前変更
-                RealName = target.GetRealName();
-
-                //名前色変更処理
-                //自分自身の名前の色を変更
-                if (target.AmOwner && AmongUsClient.Instance.IsGameStarted)
-                { //targetが自分自身
-                    if (target.Is(CustomRoles.SeeingOff) || target.Is(CustomRoles.Sending) || target.Is(CustomRoles.MadDilemma))
-                    {
-                        string str = Sending.RealNameChange();
-                        if (str != string.Empty)
-                        {
-                            RealName = str;
-                        }
-                    }
-                    else if (Options.IsCCMode)
-                    {
-                        RealName = Utils.ColorString(seer.GetRoleColor(), seer.GetRoleInfo());
-                    }
-                }
-
-                //NameColorManager準拠の処理
-                RealName = RealName.ApplyNameColorData(seer, target, false);
-
-                (Color c, string t) = (Color.clear, "");
-                //trueRoleNameでColor上書きあればそれになる
-                target.GetRoleClass()?.OverrideShowMainRoleText(ref c, ref t);//colorのみ
-                if (c != Color.clear) RealName.Color(c);
-
-                //seer役職が対象のMark
-                Mark.Append(seerRole?.GetMark(seer, target, false));
-                //seerに関わらず発動するMark
-                Mark.Append(CustomRoleManager.GetMarkOthers(seer, target, false));
-                //Lovers
-                Mark.Append(Lovers.GetMark(seer, target));
-
-                //report
-                if (seer == target && ReportDeadBodyPatch.DontReportMarkList.Contains(seer.PlayerId))
-                    Mark.Append(Utils.ColorString(Palette.Orange, "◀×"));
-
-                //seerに関わらず発動するLowerText
-                Suffix.Append(CustomRoleManager.GetLowerTextOthers(seer, target));
-                //seer役職が対象のSuffix
-                Suffix.Append(seerRole?.GetSuffix(seer, target));
-                //seerに関わらず発動するSuffix
-                Suffix.Append(CustomRoleManager.GetSuffixOthers(seer, target));
-                // Management
-                if (seer.Is(CustomRoles.Management))
-                {
-                    Suffix.Append(Management.GetSuffix(seer, target));
-                }
-                //DeadTarget
-                Suffix.Append(TargetDeadArrow.GetDeadBodiesArrow(seer, target));
-
-                /*if(main.AmDebugger.Value && main.BlockKilling.TryGetValue(target.PlayerId, out var isBlocked)) {
-                    Mark = isBlocked ? "(true)" : "(false)";
-                }*/
-                if (Utils.IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool() && !Options.IsSyncColorMode)
-                    RealName = $"<size=0>{RealName}</size> ";
-                if (EvilDyer.IsColorCamouflage)
-                    RealName = $"<size=0>{RealName}</size> ";
-
-                string DeathReason = seer.Data.IsDead && seer.KnowDeathReason(target) ? $"({Utils.ColorString(Utils.GetRoleColor(CustomRoles.Doctor), Utils.GetVitalText(target.PlayerId))})" : "";
-                //Mark・Suffixの適用
-                target.cosmetics.nameText.text = $"{RealName}{DeathReason}{Mark}";
-
-                if (Suffix.ToString() != "")
-                {
-                    //名前が2行になると役職テキストを上にずらす必要がある
-                    RoleText.transform.SetLocalY(0.45f);
-                    target.cosmetics.nameText.text += "\r\n" + Suffix.ToString();
-
-                }
-                else
-                {
-                    //役職テキストの座標を初期値に戻す
-                    RoleText.transform.SetLocalY(0.3f);
-                }
-            }
-            else
-            {
-                //役職テキストの座標を初期値に戻す
-                RoleText.transform.SetLocalY(0.3f);
-            }
-        }
-    }
-}
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Start))]
 class PlayerStartPatch
 {

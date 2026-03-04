@@ -76,6 +76,7 @@ public static class OptionSaver
             if (OptionItem.FastOptions.TryGetValue(id, out var optionItem))
             {
                 optionItem.SetAllValues(values);
+                optionItem.Refresh();
             }
         }
     }

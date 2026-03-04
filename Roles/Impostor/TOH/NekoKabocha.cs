@@ -27,7 +27,7 @@ public sealed class NekoKabocha : RoleBase, IImpostor//, INekomata
     {
         impostorsGetRevenged = Options.RevengeImpostorByImpostor.GetBool();
         madmatesGetRevenged = Options.RevengeMadByImpostor.GetBool();
-        revengeOnExile = optionRevengeOnExile.GetBool();
+        revengeOnExile = optionRevengeOnExile.Bool;
     }
 
     private static BooleanOptionItem optionRevengeOnExile;

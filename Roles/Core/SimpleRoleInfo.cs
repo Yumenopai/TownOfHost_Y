@@ -159,6 +159,10 @@ public class SimpleRoleInfo
                 roleName = CustomRoles.Noisemaker;
                 customRoleType = CustomRoleTypes.Crewmate;
                 break;
+            case RoleTypes.Detective:
+                roleName = CustomRoles.Detective;
+                customRoleType = CustomRoleTypes.Crewmate;
+                break;
             case RoleTypes.GuardianAngel:
                 roleName = CustomRoles.GuardianAngel;
                 customRoleType = CustomRoleTypes.Crewmate;
@@ -175,6 +179,11 @@ public class SimpleRoleInfo
                 break;
             case RoleTypes.Phantom:
                 roleName = CustomRoles.Phantom;
+                customRoleType = CustomRoleTypes.Impostor;
+                countType = CountTypes.Impostor;
+                break;
+            case RoleTypes.Viper:
+                roleName = CustomRoles.Viper;
                 customRoleType = CustomRoleTypes.Impostor;
                 countType = CountTypes.Impostor;
                 break;

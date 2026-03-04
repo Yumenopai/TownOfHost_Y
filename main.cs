@@ -68,9 +68,10 @@ public class Main : BasePlugin
     public static bool hasArgumentException = false;
     public static string ExceptionMessage;
     public static bool ExceptionMessageIsShown = false;
-    public static string credentialsText;
-    public static NormalGameOptionsV09 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
-    public static HideNSeekGameOptionsV09 HideNSeekSOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
+    public static string credentialsText;    
+    public static NormalGameOptionsV10 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
+    public static HideNSeekGameOptionsV10 HideNSeekOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
+
     //Client Options
     public static ConfigEntry<string> HideName { get; private set; }
     public static ConfigEntry<string> HideColor { get; private set; }
@@ -115,12 +116,16 @@ public class Main : BasePlugin
     public static Dictionary<byte, byte> ShapeshiftTarget = new();
     public static bool VisibleTasksCount;
     public static string nickName = "";
-    public static bool introDestroyed = false;
+    public static bool introDestroyed = false;  
+    public static bool SetRoleOverride = true;   
+    public static bool IsroleAssigned
+        => !SetRoleOverride || SelectRolesPatch.roleAssigned;
     public static float DefaultCrewmateVision;
     public static float DefaultImpostorVision;
     public const float RoleTextSize = 2f;
     public static HashSet<byte> ShowRoleInfoAtMeeting = new();
     public static HashSet<byte> ShowChangeMainRole = new();
+    public static bool isFirstTurn = false;
 
     // 期間限定
     public static bool IsValentine = DateTime.Now.Month == 2 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
@@ -139,6 +144,7 @@ public class Main : BasePlugin
     public override void Load()
     {
         Instance = this;
+        TownOfHostY.Modules.OptionSaver.Initialize(); // オプション保存用ディレクトリ・ファイルを起動時に作成
 
         //Client Options
         HideName = Config.Bind("Client Options", "Hide Game Code Name", "TOH_Y");
@@ -269,6 +275,9 @@ public class Main : BasePlugin
         handler.Info($"{nameof(ThisAssembly.Git.Tag)}: {ThisAssembly.Git.Tag}");
 
         ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
+        ClassInjector.RegisterTypeInIl2Cpp<BooleanOptionItem.BooleanGameSetting>();
+
+
 
         Harmony.PatchAll();
         Application.quitting += new Action(Utils.SaveNowLog);

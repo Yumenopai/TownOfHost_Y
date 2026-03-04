@@ -53,10 +53,12 @@ static class CustomRolesHelper
             CustomRoles.Scientist or
             CustomRoles.Tracker or
             CustomRoles.Noisemaker or
+            CustomRoles.Detective or
             CustomRoles.GuardianAngel or
             CustomRoles.Impostor or
             CustomRoles.Shapeshifter or
-            CustomRoles.Phantom;
+            CustomRoles.Phantom or
+            CustomRoles.Viper;
     }
     public static CustomRoles VanillaRoleConversion(this CustomRoles role)
     {
@@ -69,6 +71,8 @@ static class CustomRolesHelper
             CustomRoles.NormalScientist => CustomRoles.Scientist,
             CustomRoles.NormalTracker => CustomRoles.Tracker,
             CustomRoles.NormalNoisemaker => CustomRoles.Noisemaker,
+            CustomRoles.NormalViper => CustomRoles.Viper,
+            CustomRoles.NormalDetective => CustomRoles.Detective,
             _ => role
         };
     }

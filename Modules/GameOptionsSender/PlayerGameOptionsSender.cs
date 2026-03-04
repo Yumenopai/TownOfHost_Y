@@ -25,7 +25,11 @@ namespace TownOfHostY.Modules
             .ToList().ForEach(sender => sender.SetDirty());
 
         public override IGameOptions BasedGameOptions =>
-            Main.RealOptionsData.Restore(new NormalGameOptionsV09(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>());
+            Main.RealOptionsData.Restore(
+                GameOptionsManager.Instance != null
+                    ? (IGameOptions)(GameOptionsManager.Instance.CurrentGameOptions ?? (object)GameOptionsManager.Instance.currentNormalGameOptions)
+                    : null
+            );
         public override bool IsDirty { get; protected set; }
 
         public PlayerControl player;

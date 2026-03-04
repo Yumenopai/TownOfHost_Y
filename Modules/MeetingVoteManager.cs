@@ -149,11 +149,18 @@ public class MeetingVoteManager
         Logger.Info($"ExiledPlayerIdSet exiled: {exiled?.name}", "AntiBlackout");
         if (AntiBlackout.OverrideExiledPlayer)
         {
+          
+            AntiBlackout.SetIsDead();
             meetingHud.RpcVotingComplete(states.ToArray(), null, true);
             ExileControllerWrapUpPatch.AntiBlackout_LastExiled = exiled;
         }
         else
         {
+            // OverrideしないケースはアニメーションのLateTaskで SetIsDead
+            _ = new LateTask(() =>
+            {
+                AntiBlackout.SetIsDead();
+            }, 4f, "LateAntiBlackoutSetIsDead");
             meetingHud.RpcVotingComplete(states.ToArray(), exiled, result.IsTie);
         }
         if (exiled != null)

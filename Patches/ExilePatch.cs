@@ -4,7 +4,7 @@ using TownOfHostY.Roles.AddOns.Common;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Crewmate;
 using TownOfHostY.Roles.Neutral;
-
+using AmongUs.GameOptions;
 namespace TownOfHostY
 {
     class ExileControllerWrapUpPatch
@@ -49,7 +49,7 @@ namespace TownOfHostY
             }
 
             bool DecidedWinner = false;
-            if (!AmongUsClient.Instance.AmHost) return; //ホスト以外はこれ以降の処理を実行しません
+            if (!AmongUsClient.Instance.AmHost) return;
             AntiBlackout.RestoreIsDead(doSend: false);
             if (exiled != null)
             {
@@ -113,20 +113,20 @@ namespace TownOfHostY
 
         static void WrapUpFinalizer(NetworkedPlayerInfo exiled)
         {
-            //WrapUpPostfixで例外が発生しても、この部分だけは確実に実行されます。
             if (AmongUsClient.Instance.AmHost)
             {
                 _ = new LateTask(() =>
                 {
                     exiled = AntiBlackout_LastExiled;
                     AntiBlackout.SendGameData();
-                    if (AntiBlackout.OverrideExiledPlayer && // 追放対象が上書きされる状態 (上書きされない状態なら実行不要)
-                        exiled != null && //exiledがnullでない
-                        exiled.Object != null) //exiled.Objectがnullでない
+                    if (AntiBlackout.OverrideExiledPlayer &&
+                        exiled != null &&
+                        exiled.Object != null)
                     {
                         exiled.Object.RpcExileV2();
                     }
                 }, 0.5f, "Restore IsDead Task");
+
                 _ = new LateTask(() =>
                 {
                     Main.AfterMeetingDeathPlayers.Do(x =>
@@ -153,11 +153,18 @@ namespace TownOfHostY
                     });
                     Main.AfterMeetingDeathPlayers.Clear();
                 }, 0.5f, "AfterMeetingDeathPlayers Task");
+
+                
+                _ = new LateTask(() =>
+                {
+                    Main.AllPlayerControls.Do(pc => AntiBlackout.ResetSetRole(pc));                  
+                }, 0.52f, "AfterMeeting_ResetSetRole");
             }
 
             GameStates.AlreadyDied |= !Utils.IsAllAlive;
             RemoveDisableDevicesPatch.UpdateDisableDevices();
             SoundManager.Instance.ChangeAmbienceVolume(DataManager.Settings.Audio.AmbienceVolume);
+
             Logger.Info("タスクフェイズ開始", "Phase");
         }
     }

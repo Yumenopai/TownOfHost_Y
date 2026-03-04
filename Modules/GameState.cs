@@ -68,6 +68,8 @@ public class PlayerState
                 RoleTypes.Impostor => CustomRoles.Impostor,
                 RoleTypes.Shapeshifter => CustomRoles.Shapeshifter,
                 RoleTypes.Phantom => CustomRoles.Phantom,
+                RoleTypes.Detective => CustomRoles.Detective,
+                RoleTypes.Viper => CustomRoles.Viper,
                 _ => CustomRoles.Crewmate,
             };
     }

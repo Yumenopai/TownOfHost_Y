@@ -12,6 +12,7 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Unit;
 
 namespace TownOfHostY;
+
 public static class AntiBlackout
 {
     ///<summary>
@@ -88,19 +89,6 @@ public static class AntiBlackout
             if (list.Count > 0) break;
         }
 
-        if (remaining <= recognizeType)
-        {
-            foreach (var dead in Main.AllDeadPlayerControls.Where(x => !x.Data.Disconnected))
-            {
-                if (dead.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
-                if (dead.CanUseSabotageButton())
-                {
-                    dead.RpcSetRoleDesync(RoleTypes.CrewmateGhost, dead.GetClientId());
-                    Logger.Info($"SetDummyCrewmateGhost player: {dead?.name}", "AntiBlackout");
-                }
-            }
-            return;
-        }
         recognizeType = remaining;
 
         Logger.Info($"SetDummyImpostor type: {recognizeType}, count:{list.Count}", "AntiBlackout");
@@ -135,16 +123,6 @@ public static class AntiBlackout
         isDeadCache.Clear();
         IsCached = false;
         if (doSend) SendGameData();
-
-        foreach (var dead in Main.AllDeadPlayerControls.Where(x => !x.Data.Disconnected))
-        {
-            if (dead.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
-            if (dead.CanUseSabotageButton())
-            {
-                dead.RpcSetRoleDesync(RoleTypes.ImpostorGhost, dead.GetClientId());
-                Logger.Info($"SetDummyImpostorGhost player: {dead?.name}", "AntiBlackout");
-            }
-        }
     }
 
     public static void SendGameData([CallerMemberName] string callerMethodName = "")
@@ -162,6 +140,55 @@ public static class AntiBlackout
         isDeadCache[player.PlayerId] = (true, true);
         player.IsDead = player.Disconnected = false;
         SendGameData();
+    }
+
+    /// <summary>
+    /// 会議終了後、各プレイヤーの視点に正しいRoleTypesをDesync送信して暗転を防ぐ
+    /// </summary>
+    public static void ResetSetRole(PlayerControl player)
+    {
+        if (player == null) return;
+        if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return;
+        if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) return;
+
+        var targetClientId = player.GetClientId();
+        if (targetClientId == -1) return;
+
+        var sender = CustomRpcSender.Create("ResetSetRole", Hazel.SendOption.Reliable);
+        sender.StartMessage(targetClientId);
+
+        foreach (var pc in Main.AllPlayerControls)
+        {
+            if (pc == null) continue;
+
+            var customRole = pc.GetCustomRole();
+            var roleInfo = customRole.GetRoleInfo();
+            bool isAlive = pc.IsAlive();
+
+            RoleTypes sendRole;
+
+            if (!isAlive)
+            {
+               
+                sendRole = (customRole.IsImpostor() || customRole.IsMadmate()
+                    || roleInfo?.BaseRoleType?.Invoke() == RoleTypes.Impostor)
+                    ? RoleTypes.ImpostorGhost
+                    : RoleTypes.CrewmateGhost;
+            }
+            else
+            {
+               
+                sendRole = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate;
+
+               
+                if (player.PlayerId != pc.PlayerId && (roleInfo?.IsDesyncImpostor == true))
+                    sendRole = RoleTypes.Crewmate;
+            }
+
+            pc.RpcSetRoleDesync(sendRole, targetClientId);
+        }
+
+        
     }
 
     ///<summary>

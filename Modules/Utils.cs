@@ -2,26 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using Il2CppInterop.Runtime.InteropTypes;
-using UnityEngine;
-
+using Microsoft.VisualBasic;
 using TownOfHostY.Modules;
 using TownOfHostY.Roles;
+using TownOfHostY.Roles.AddOns.Common;
+using TownOfHostY.Roles.AddOns.Crewmate;
+using TownOfHostY.Roles.AddOns.Impostor;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
-using TownOfHostY.Roles.Impostor;
 using TownOfHostY.Roles.Crewmate;
+using TownOfHostY.Roles.Impostor;
 using TownOfHostY.Roles.Neutral;
-using TownOfHostY.Roles.AddOns.Common;
-using TownOfHostY.Roles.AddOns.Impostor;
-using TownOfHostY.Roles.AddOns.Crewmate;
+using UnityEngine;
+using static System.Net.Mime.MediaTypeNames;
 using static TownOfHostY.Translator;
 
 namespace TownOfHostY;
@@ -30,57 +33,94 @@ public static class Utils
 {
     public static bool IsActive(SystemTypes type)
     {
-        //Logger.Info($"SystemTypes:{type}", "IsActive");
-        var map = (MapNames)Main.NormalOptions.MapId;
+        if (ShipStatus.Instance == null) return false;
+        if (ShipStatus.Instance.Systems == null) return false;
+
+        MapNames map = MapNames.Skeld;
+        try
+        {
+            if (Main.NormalOptions != null)
+            {
+                map = (MapNames)Main.NormalOptions.MapId;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Warn($"Main.NormalOptions.MapId の取得で例外: {ex.Message}", "Utils");
+            map = MapNames.Skeld;
+        }
+
         switch (type)
         {
             case SystemTypes.Electrical:
                 {
                     if (map is MapNames.Fungle) return false;
-                    var SwitchSystem = ShipStatus.Instance.Systems[type].Cast<SwitchSystem>();
+                    if (!ShipStatus.Instance.Systems.ContainsKey(type)) return false;
+                    var system = ShipStatus.Instance.Systems[type];
+                    if (system == null) return false;
+                    var SwitchSystem = system.Cast<SwitchSystem>();
                     return SwitchSystem != null && SwitchSystem.IsActive;
                 }
             case SystemTypes.Reactor:
                 {
                     if (map is MapNames.Polus or MapNames.Airship) return false;
-                    var ReactorSystemType = ShipStatus.Instance.Systems[type].Cast<ReactorSystemType>();
+                    if (!ShipStatus.Instance.Systems.ContainsKey(type)) return false;
+                    var system = ShipStatus.Instance.Systems[type];
+                    if (system == null) return false;
+                    var ReactorSystemType = system.Cast<ReactorSystemType>();
                     return ReactorSystemType != null && ReactorSystemType.IsActive;
                 }
             case SystemTypes.Laboratory:
                 {
                     if (map is not MapNames.Polus) return false;
-                    var ReactorSystemType = ShipStatus.Instance.Systems[type].Cast<ReactorSystemType>();
+                    if (!ShipStatus.Instance.Systems.ContainsKey(type)) return false;
+                    var system = ShipStatus.Instance.Systems[type];
+                    if (system == null) return false;
+                    var ReactorSystemType = system.Cast<ReactorSystemType>();
                     return ReactorSystemType != null && ReactorSystemType.IsActive;
                 }
             case SystemTypes.LifeSupp:
                 {
                     if (map is not MapNames.Skeld and not MapNames.MiraHQ) return false;
-                    var LifeSuppSystemType = ShipStatus.Instance.Systems[type].Cast<LifeSuppSystemType>();
+                    if (!ShipStatus.Instance.Systems.ContainsKey(type)) return false;
+                    var system = ShipStatus.Instance.Systems[type];
+                    if (system == null) return false;
+                    var LifeSuppSystemType = system.Cast<LifeSuppSystemType>();
                     return LifeSuppSystemType != null && LifeSuppSystemType.IsActive;
                 }
             case SystemTypes.Comms:
                 {
+                    if (!ShipStatus.Instance.Systems.ContainsKey(type)) return false;
+                    var system = ShipStatus.Instance.Systems[type];
+                    if (system == null) return false;
+
                     if (map is MapNames.MiraHQ or MapNames.Fungle)
                     {
-                        var HqHudSystemType = ShipStatus.Instance.Systems[type].Cast<HqHudSystemType>();
+                        var HqHudSystemType = system.Cast<HqHudSystemType>();
                         return HqHudSystemType != null && HqHudSystemType.IsActive;
                     }
                     else
                     {
-                        var HudOverrideSystemType = ShipStatus.Instance.Systems[type].Cast<HudOverrideSystemType>();
+                        var HudOverrideSystemType = system.Cast<HudOverrideSystemType>();
                         return HudOverrideSystemType != null && HudOverrideSystemType.IsActive;
                     }
                 }
             case SystemTypes.HeliSabotage:
                 {
                     if (map is not MapNames.Airship) return false;
-                    var HeliSabotageSystem = ShipStatus.Instance.Systems[type].Cast<HeliSabotageSystem>();
+                    if (!ShipStatus.Instance.Systems.ContainsKey(type)) return false;
+                    var system = ShipStatus.Instance.Systems[type];
+                    if (system == null) return false;
+                    var HeliSabotageSystem = system.Cast<HeliSabotageSystem>();
                     return HeliSabotageSystem != null && HeliSabotageSystem.IsActive;
                 }
             case SystemTypes.MushroomMixupSabotage:
                 {
                     if (map is not MapNames.Fungle) return false;
-                    var mushroomMixupSabotageSystem = ShipStatus.Instance.Systems[type].TryCast<MushroomMixupSabotageSystem>();
+                    if (!ShipStatus.Instance.Systems.ContainsKey(type)) return false;
+                    var system = ShipStatus.Instance.Systems[type];
+                    if (system == null) return false;
+                    var mushroomMixupSabotageSystem = system.TryCast<MushroomMixupSabotageSystem>();
                     return mushroomMixupSabotageSystem != null && mushroomMixupSabotageSystem.IsActive;
                 }
             default:
@@ -105,7 +145,7 @@ public static class Utils
 
         return false;
     }
-    public static SystemTypes GetCriticalSabotageSystemType() => (MapNames)Main.NormalOptions.MapId switch
+    public static SystemTypes GetCriticalSabotageSystemType() => (Main.NormalOptions == null) ? SystemTypes.Reactor : (MapNames)Main.NormalOptions.MapId switch
     {
         MapNames.Polus => SystemTypes.Laboratory,
         MapNames.Airship => SystemTypes.HeliSabotage,
@@ -157,9 +197,8 @@ public static class Utils
     public static bool KillFlashCheck(MurderInfo info, PlayerControl seer)
     {
         PlayerControl killer = info.AppearanceKiller, target = info.AttemptTarget;
-
-        if (seer.Is(CustomRoles.GM)) return true;
         // 霊界キルフラッシュ
+        if (seer.Is(CustomRoles.GM)) return true;
         if (CheckKillFlashAfterDead(seer) && seer != target) return true;
         // ターゲット(属性)
         foreach (var subRole in PlayerState.GetByPlayerId(target.PlayerId).SubRoles)
@@ -188,25 +227,23 @@ public static class Utils
     }
     public static void KillFlash(this PlayerControl player)
     {
-        //キルフラッシュ(ブラックアウト+リアクターフラッシュ)の処理
         bool ReactorCheck = IsActive(GetCriticalSabotageSystemType());
 
         var Duration = Options.KillFlashDuration.GetFloat();
-        if (ReactorCheck) Duration += 0.2f; //リアクター中はブラックアウトを長くする
-
-        //実行
+        if (ReactorCheck) Duration += 0.2f;
+        //キルフラッシュ(ブラックアウト+リアクターフラッシュ)の処理
         var state = PlayerState.GetByPlayerId(player.PlayerId);
-        state.IsBlackOut = true; //ブラックアウト
+        state.IsBlackOut = true;//ブラックアウト
         if (player.PlayerId == 0)
         {
             FlashColor(new(1f, 0f, 0f, 0.5f));
             if (Constants.ShouldPlaySfx()) RPC.PlaySound(player.PlayerId, Sounds.KillSound);
         }
-        else if (!ReactorCheck) player.ReactorFlash(0f); //リアクターフラッシュ
+        else if (!ReactorCheck) player.ReactorFlash(0f);//リアクターフラッシュ
         player.MarkDirtySettings();
         _ = new LateTask(() =>
         {
-            state.IsBlackOut = false; //ブラックアウト解除
+            state.IsBlackOut = false;//ブラックアウト解除
             player.MarkDirtySettings();
         }, Options.KillFlashDuration.GetFloat(), "RemoveKillFlash");
     }
@@ -229,8 +266,7 @@ public static class Utils
     /// <returns>RoleName + ProgressTextを表示するか、構築する色とテキスト(bool, Color, string)</returns>
     public static (bool enabled, string text) GetRoleNameAndProgressTextData(bool isMeeting, PlayerControl seer, PlayerControl seen = null)
     {
-        seen ??= seer;
-        // CO可否表示
+        seen ??= seer;// CO可否表示
         var coDisplay = (seer == seen && isMeeting) ? DisplayComingOut.GetString(seer.GetCustomRole()) : "";
         var teamMark = RoleText.GetDisplayTeamMark(seer, seen);
         var roleName = RoleText.GetDisplayRoleName(isMeeting, seer, seen);
@@ -324,7 +360,8 @@ public static class Utils
         var hasTasks = true;
         var States = PlayerState.GetByPlayerId(p.PlayerId);
         if (p.Role.IsImpostor)
-            hasTasks = false; //タスクはCustomRoleを元に判定する
+            hasTasks = false;
+        //タスクはCustomRoleを元に判定する
         if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
         {
             if (p.IsDead) hasTasks = false;
@@ -377,14 +414,13 @@ public static class Utils
                     if (role.IsImpostor()) hasTasks = false;
                     break;
             }
-
+            //タスクを勝利用にカウントしない
             foreach (var subRole in States.SubRoles)
                 switch (subRole)
                 {
                     case CustomRoles.Lovers:
                     case CustomRoles.Archenemy:
                     case CustomRoles.ChainShifterAddon:
-                        //タスクを勝利用にカウントしない
                         hasTasks &= !ForRecompute;
                         break;
                 }
@@ -395,14 +431,14 @@ public static class Utils
     {
         seen ??= seer;
         var comms = IsActive(SystemTypes.Comms);
+        //seer側による変更
         bool enabled = seer == seen
                     || (Main.VisibleTasksCount && !seer.IsAlive() && !Options.GhostCantSeeOtherTasks.GetBool())
                     || (seen.Is(CustomRoles.Workaholic) && Workaholic.Seen && Workaholic.TaskSeen);
         string text = GetProgressText(seen.PlayerId, comms);
 
-        //seer側による変更
         seer.GetRoleClass()?.OverrideProgressTextAsSeer(seen, ref enabled, ref text);
-        if(Options.IsCCMode && seer == seen)
+        if (Options.IsCCMode && seer == seen)
         {
             text += CatchCat.Common.GetMark(seer);
         }
@@ -436,9 +472,10 @@ public static class Utils
 
         Color TextColor = Color.yellow;
         var info = GetPlayerInfoById(playerId);
-        var TaskCompleteColor = HasTasks(info) ? Color.green : GetRoleColor(state.GetNowMainRole()).ShadeColor(0.5f); //タスク完了後の色
-        var NonCompleteColor = HasTasks(info) ? Color.yellow : Color.white; //カウントされない人外は白色
-
+        var TaskCompleteColor = HasTasks(info) ? Color.green : GetRoleColor(state.GetNowMainRole()).ShadeColor(0.5f);
+        //タスク完了後の色
+        var NonCompleteColor = HasTasks(info) ? Color.yellow : Color.white;
+        //カウントされない人外は白色
         if (Workhorse.IsThisRole(playerId))
             NonCompleteColor = Workhorse.RoleColor;
 
@@ -449,7 +486,7 @@ public static class Utils
         return ColorString(TextColor, $"({Completed}/{state.taskState.AllTasksCount})");
 
     }
-    public static (int, int) GetTasksState() //Y-TM
+    public static (int, int) GetTasksState()
     {
         var completed = 0;
         var all = 0;
@@ -488,7 +525,6 @@ public static class Utils
 
         if (!myRole.IsDontShowOptionRole() && myRole != CustomRoles.GM)
         {
-            //setting
             sb.Append("\n<size=65%><line-height=1.5pic>");
             ShowChildrenSettings(Options.CustomRoleSpawnChances[myRole], ref sb);
             sb.Append("</size></line-height>");
@@ -514,7 +550,7 @@ public static class Utils
     public static string GetRoleInfoLong(CustomRoles role)
     {
         var sb = new StringBuilder();
-        var r = role.VanillaRoleConversion(); //変換
+        var r = role.VanillaRoleConversion();
         string roleInfoLong = "";
         if (r.IsVanilla())
         {
@@ -535,7 +571,6 @@ public static class Utils
 
         if (!role.IsDontShowOptionRole() && role != CustomRoles.GM)
         {
-            //setting
             sb.Append("\n<size=65%><line-height=1.5pic>");
             ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
             sb.Append("</size></line-height>");
@@ -574,7 +609,7 @@ public static class Utils
             if (Options.RandomMapsMode.GetBool()) { SendMessage(GetString("RandomMapsModeInfo"), PlayerId); }
             if (Options.IsStandardHAS) { SendMessage(GetString("StandardHASInfo"), PlayerId); }
             if (Options.EnableGM.GetBool()) { SendMessage(GetRoleName(CustomRoles.GM) + GetString("GMInfoLong"), PlayerId); }
-            foreach (var role in CustomRolesHelper.AllStandardRoles) // OneNight追加時にワンナイト役職も含める
+            foreach (var role in CustomRolesHelper.AllStandardRoles)// OneNight追加時にワンナイト役職も含める
             {
                 //if (Options.IsONMode && !role.IsONRole()) continue;
                 if (!role.IsEnable() || role.IsVanilla()) continue;
@@ -626,7 +661,7 @@ public static class Utils
 
                 multipleRole = true;
             }
-            if(addonLongTextBuilder.Length != 0)
+            if (addonLongTextBuilder.Length != 0)
                 SendMessage(addonLongTextBuilder.ToString(), PlayerId);
         }
         if (Options.NoGameEnd.GetBool()) { SendMessage(GetString("NoGameEndInfo"), PlayerId); }
@@ -651,7 +686,7 @@ public static class Utils
             sb.Clear().Append(GetString("Settings")).Append(':');
             sb.Append(GetString("HideAndSeek"));
         }
-        else if(Options.IsCCMode)
+        else if (Options.IsCCMode)
         {
             CatchCat.Infomation.ShowSetting(sb);
         }
@@ -688,14 +723,12 @@ public static class Utils
                     if (!role.IsEnable() || role is CustomRoles.HASFox or CustomRoles.HASTroll
                         || role.IsCCRole() /*|| role.Key.IsONRole()*/) continue;
 
-                    // 陣営ごとのマーク
                     if (role.IsAddOn() || role.IsOtherAddOn())
-                        sb.Append("<size=75%><color=#c71585>○</color>"); //改行を消す
+                        sb.Append("<size=75%><color=#c71585>○</color>");
                     else if (role.GetCustomRoleTypes() == CustomRoleTypes.Unit) sb.Append("<color=#7fff00>Ⓤ</color>");
                     else sb.Append(GetTeamMark(role, 75));
 
                     sb.Append($"<u><b>{GetRoleName(role)}</b></u>".Color(GetRoleColor(role).ToReadableColor()));
-                    // 確率＆人数
                     sb.AppendFormat(" ：<size=70%>{0}×</size><size=80%>{1}{2}</size>\n", $"{role.GetChance()}%", role.GetCount(), role.IsPairRole() ? GetString("Pair") : "");
 
                     sb.Append("<size=65%><line-height=1.5pic>");
@@ -734,7 +767,6 @@ public static class Utils
         }
         SendMessage(sb.ToString(), PlayerId, title);
     }
-    // 改ページチェック from:TOH
     private static void CheckPageChange(byte PlayerId, StringBuilder sb, string title = "", string size = ActiveSettingsSize)
     {
         if (sb.Length > 4000)
@@ -793,7 +825,6 @@ public static class Utils
         {
             sb.AppendFormat("\n<size=80%>{0} ：{1}</size>", $"<color={GetRoleColorCode(CustomRoles.GM)}>{GetRoleName(CustomRoles.GM)}</color>", Options.EnableGM.GetString());
         }
-
         // TOHY独自のMODゲームモードがあるため各モードに分けてに書き換え
         if (Options.CurrentGameMode != CustomGameMode.Standard)
         {
@@ -848,7 +879,7 @@ public static class Utils
     {
         foreach (var opt in option.Children.Select((v, i) => new { Value = v, Index = i + 1 }))
         {
-            if (opt.Value.Name == "Maximum") continue; //Maximumの項目は飛ばす
+            if (opt.Value.Name == "Maximum") continue;//Maximumの項目は飛ばす
             if (opt.Value.Parent.Name == "displayComingOut%type%" && !opt.Value.GetBool()) continue;
 
             if (opt.Value.Parent.Name == "AddOnBuffAssign" && !opt.Value.GetBool()) continue;
@@ -868,7 +899,6 @@ public static class Utils
             if (opt.Value.GetBool()) ShowChildrenSettings(opt.Value, ref sb, deep + 1);
         }
     }
-    // Now Vanilla
     public static void ShowVanillaSetting(byte PlayerId = byte.MaxValue)
     {
         StringBuilder message = new();
@@ -945,9 +975,11 @@ public static class Utils
             + $"\n/h addons {GetString("Command.h_addons")}"
             + $"\n/h modes {GetString("Command.h_modes")}"
             + $"\n/dump - {GetString("Command.dump")}"
+            + $"\n/kfa - {GetString("Command.killflashall")}"
+            + $"\n\n視界が暗転した参加者が発生した場合は、\nチャットコマンドを使用するか、左Control,K,Lを同時に押下してください、"
             );
     }
-    public static void SendMessage(string text, byte sendTo = byte.MaxValue, string title = "")
+    /*public static void SendMessage(string text, byte sendTo = byte.MaxValue, string title = "")
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (title == "") title = "<color=#aaaaff>" + GetString("DefaultSystemMessageTitle") + "</color>";
@@ -955,6 +987,15 @@ public static class Utils
 
         Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessage");
         Main.MessagesToSend.Add(($"<align={"left"}><size=90%>{text}</size></align>", sendTo, $"<align={"left"}>{title}</align>", false));
+    }*/
+    public static void SendMessage(string text, byte sendTo = byte.MaxValue, string title = "")
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (title == "") title = "<color=#aaaaff>" + GetString("DefaultSystemMessageTitle") + "</color>";
+        else title = title.Color(Color.white);
+        Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessage");
+        string fullText = $"{title}\n<align={"left"}><size=90%>{text}</size></align>";
+        Main.MessagesToSend.Add(($"<align={"left"}>{fullText}</align>", sendTo, "", true));
     }
     public static void SendMessageCustom(string text, byte sendTo = byte.MaxValue)
     {
@@ -987,7 +1028,7 @@ public static class Utils
                 name = $"<color={Main.ModColor}>{GetString("CatchCat")}</color>\r\n" + name;
             //else if (Options.IsONMode)
             //    name = $"<color={GetRoleColorCode(CustomRoles.ONVillager)}>TOH_Y {GetString("OneNight")}</color>\r\n" + name;
-            else if(AmongUsClient.Instance.IsGamePublic)
+            else if (AmongUsClient.Instance.IsGamePublic)
                 name = $"<color={Main.ModColor}>TownOfHost_Y v{Main.PluginVersion}</color>\r\n" + name;
             switch (Options.GetSuffixMode())
             {
@@ -1036,7 +1077,7 @@ public static class Utils
         if (colorId >= 0 && colorId < Palette.ColorNames.Length)
         {
             var name = Palette.ColorNames[colorId].ToString();
-            return name[5..];  //colorxxx のxxxの部分のみ（色名）
+            return name[5..];
         }
         return "???";
     }
@@ -1098,7 +1139,7 @@ public static class Utils
             SelfMark.Append(Lovers.GetMark(seer));
             //report
             if (ReportDeadBodyPatch.DontReportMarkList.Contains(seer.PlayerId))
-                SelfMark.Append(ColorString(Palette.Orange,"◀×"));
+                SelfMark.Append(ColorString(Palette.Orange, "◀×"));
 
             //Markとは違い、改行してから追記されます。
             SelfSuffix.Clear();
@@ -1117,7 +1158,7 @@ public static class Utils
             if (!isForMeeting) SelfSuffix.Append(TargetDeadArrow.GetDeadBodiesArrow(seer, seer));
 
             SelfLower.Clear();
-          　// ベントタスクの対象ベント表示
+            // ベントタスクの対象ベント表示
             SelfLower.Append(VentEnterTask.GetLowerText(seer, isForMeeting: isForMeeting));
             //seer役職が対象のLowerText
             SelfLower.Append(seerRole?.GetLowerText(seer, isForMeeting: isForMeeting));
@@ -1147,7 +1188,7 @@ public static class Utils
 
             string t = "";
             //trueRoleNameでColor上書きあればそれにする
-            seer.GetRoleClass()?.OverrideShowMainRoleText(ref SelfNameColor,ref t);//colorのみ
+            seer.GetRoleClass()?.OverrideShowMainRoleText(ref SelfNameColor, ref t);//colorのみ
 
             bool selfNameOriginal = true;
             if (seer.Is(CustomRoles.SeeingOff) || seer.Is(CustomRoles.Sending) || seer.Is(CustomRoles.MadDilemma))
@@ -1314,7 +1355,7 @@ public static class Utils
 
         Counselor.AfterMeetingTask();
         ChainShifterAddon.AfterMeetingTasks();
-      　VentEnterTask.AfterMeetingTasks();
+        VentEnterTask.AfterMeetingTasks();
 
         if (Options.AirShipVariableElectrical.GetBool())
             AirShipElectricalDoors.Initialize();
@@ -1433,6 +1474,23 @@ public static class Utils
         string fileName = $"{path}/TownOfHost-v{Main.PluginVersion}-{t}.log";
         FileInfo file = new(@$"{System.Environment.CurrentDirectory}/BepInEx/LogOutput.log");
         var logFile = file.CopyTo(fileName);
+
+        /*try
+        {
+            var workspaceDest = @"D:\\Among Us\\Project Files\\TownOfHost_Y";
+            if (!Directory.Exists(workspaceDest)) Directory.CreateDirectory(workspaceDest);
+
+            var destTimestamp = Path.Combine(workspaceDest, $"LogOutput-{t}.log");
+            file.CopyTo(destTimestamp, true);
+
+            var destLatest = Path.Combine(workspaceDest, "LogOutput.log");
+            file.CopyTo(destLatest, true);
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Warn($"LogOutput の追加コピーに失敗しました: {ex.Message}", "CopyLog");
+        }*/
+
         return logFile.FullName;
     }
     public static void OpenLogFolder()
@@ -1505,6 +1563,8 @@ public static class Utils
         }
         return sprite;
     }
+
+
     public static string ColorString(Color32 color, string str) => $"<color=#{color.r:x2}{color.g:x2}{color.b:x2}{color.a:x2}>{str}</color>";
     /// <summary>
     /// Darkness:１の比率で黒色と元の色を混ぜる。マイナスだと白色と混ぜる。
@@ -1555,6 +1615,19 @@ public static class Utils
         return sb.ToString();
     }
 
+    public static void Safe(Action action, string tag)
+    {
+        try
+        {
+            action?.Invoke();
+        }
+        catch (Exception ex)
+        {
+            Logger.Error($"Safe wrapper caught exception: {ex.Message}", tag);
+            Logger.Exception(ex, tag);
+        }
+    }
+
     public static bool TryCast<T>(this Il2CppObjectBase obj, out T casted)
     where T : Il2CppObjectBase
     {
@@ -1567,4 +1640,49 @@ public static class Utils
     public static int PlayersCount(CountTypes countTypes) => PlayerState.AllPlayerStates.Values.Count(state => state.CountType == countTypes);
     public static int AlivePlayersCount(CountTypes countTypes) => Main.AllAlivePlayerControls.Count(pc => pc.Is(countTypes));
     private const string ActiveSettingsSize = "90%";
+    /// <summary>
+    /// 安全にキル可能距離を取得します。LogicOptions が null の場合はデフォルト値を返します。
+    /// </summary>
+    public static float SafeGetKillDistance()
+    {
+        try
+        {
+            var gm = GameManager.Instance;
+            if (gm == null)
+            {
+                Logger.Warn("GameManager.Instance が null のため SafeGetKillDistance はデフォルトを返します", "Utils");
+                return 0.5f;
+            }
+
+            try
+            {
+                var logic = gm.LogicOptions;
+                if (logic == null)
+                {
+                    Logger.Warn("GameManager.Instance.LogicOptions が null のため SafeGetKillDistance はデフォルトを返します", "Utils");
+                    return 0.5f;
+                }
+
+                return logic.GetKillDistance();
+            }
+            catch (System.NullReferenceException ex)
+            {
+                Logger.Error($"LogicOptions.GetKillDistance で例外: {ex.Message}", "Utils");
+                Logger.Exception(ex, "Utils");
+                return 0.5f;
+            }
+            catch (System.Exception ex)
+            {
+                Logger.Error($"LogicOptions.GetKillDistance で予期しない例外: {ex.Message}", "Utils");
+                Logger.Exception(ex, "Utils");
+                return 0.5f;
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Logger.Error($"SafeGetKillDistance の取得で例外: {ex.Message}", "Utils");
+            Logger.Exception(ex, "Utils");
+            return 0.5f;
+        }
+    }
 }
