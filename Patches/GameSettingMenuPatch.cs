@@ -1,10 +1,10 @@
 using System;
-using HarmonyLib;
 using System.Collections.Generic;
+using HarmonyLib;
 using TMPro;
 using UnityEngine;
-using Object = UnityEngine.Object;
 using static UnityEngine.RemoteConfigSettingsHelper;
+using Object = UnityEngine.Object;
 
 namespace TownOfHostY;
 
@@ -89,7 +89,7 @@ public class GameSettingMenuPatch
             button.selectedSprites.GetComponent<SpriteRenderer>().sprite = activeButton;
 
             // Y座標オフセット
-            Vector3 offset = new (0.0f, 0.5f * (((int)tab + 1) / 2), 0.0f);
+            Vector3 offset = new(0.0f, 0.5f * (((int)tab + 1) / 2), 0.0f);
             // ボタンの座標設定
             button.transform.localPosition = ((((int)tab + 1) % 2 == 0) ? buttonPosition_Left : buttonPosition_Right) - offset;
             // ボタンのサイズ設定
@@ -356,89 +356,89 @@ public class RpcSyncSettingsPatch
     }
 }
 
-    //[HarmonyPatch(typeof(NormalGameOptionsV08), nameof(NormalGameOptionsV08.SetRecommendations))]
-    //public static class SetRecommendationsPatch
-    //{
-    //    public static bool Prefix(NormalGameOptionsV08 __instance, int numPlayers, bool isOnline)
-    //    {
-    //        numPlayers = Mathf.Clamp(numPlayers, 4, 15);
-    //        __instance.PlayerSpeedMod = __instance.MapId == 4 ? 1.25f : 1f; //AirShipなら1.25、それ以外は1
-    //        __instance.CrewLightMod = 0.5f;
-    //        __instance.ImpostorLightMod = 1.75f;
-    //        __instance.KillCooldown = 25f;
-    //        __instance.NumCommonTasks = 2;
-    //        __instance.NumLongTasks = 4;
-    //        __instance.NumShortTasks = 6;
-    //        __instance.NumEmergencyMeetings = 1;
-    //        if (!isOnline)
-    //            __instance.NumImpostors = NormalGameOptionsV08.RecommendedImpostors[numPlayers];
-    //        __instance.KillDistance = 0;
-    //        __instance.DiscussionTime = 0;
-    //        __instance.VotingTime = 150;
-    //        __instance.IsDefaults = true;
-    //        __instance.ConfirmImpostor = false;
-    //        __instance.VisualTasks = false;
+//[HarmonyPatch(typeof(NormalGameOptionsV08), nameof(NormalGameOptionsV08.SetRecommendations))]
+//public static class SetRecommendationsPatch
+//{
+//    public static bool Prefix(NormalGameOptionsV08 __instance, int numPlayers, bool isOnline)
+//    {
+//        numPlayers = Mathf.Clamp(numPlayers, 4, 15);
+//        __instance.PlayerSpeedMod = __instance.MapId == 4 ? 1.25f : 1f; //AirShipなら1.25、それ以外は1
+//        __instance.CrewLightMod = 0.5f;
+//        __instance.ImpostorLightMod = 1.75f;
+//        __instance.KillCooldown = 25f;
+//        __instance.NumCommonTasks = 2;
+//        __instance.NumLongTasks = 4;
+//        __instance.NumShortTasks = 6;
+//        __instance.NumEmergencyMeetings = 1;
+//        if (!isOnline)
+//            __instance.NumImpostors = NormalGameOptionsV08.RecommendedImpostors[numPlayers];
+//        __instance.KillDistance = 0;
+//        __instance.DiscussionTime = 0;
+//        __instance.VotingTime = 150;
+//        __instance.IsDefaults = true;
+//        __instance.ConfirmImpostor = false;
+//        __instance.VisualTasks = false;
 
-    //        __instance.roleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
-    //        __instance.roleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
-    //        __instance.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
-    //        __instance.roleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);
-    //        __instance.roleOptions.SetRoleRecommended(RoleTypes.Shapeshifter);
-    //        __instance.roleOptions.SetRoleRecommended(RoleTypes.Scientist);
-    //        __instance.roleOptions.SetRoleRecommended(RoleTypes.GuardianAngel);
-    //        __instance.roleOptions.SetRoleRecommended(RoleTypes.Engineer);
+//        __instance.roleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
+//        __instance.roleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
+//        __instance.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
+//        __instance.roleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);
+//        __instance.roleOptions.SetRoleRecommended(RoleTypes.Shapeshifter);
+//        __instance.roleOptions.SetRoleRecommended(RoleTypes.Scientist);
+//        __instance.roleOptions.SetRoleRecommended(RoleTypes.GuardianAngel);
+//        __instance.roleOptions.SetRoleRecommended(RoleTypes.Engineer);
 
-    //        if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) //HideAndSeek
-    //        {
-    //            __instance.PlayerSpeedMod = 1.75f;
-    //            __instance.CrewLightMod = 5f;
-    //            __instance.ImpostorLightMod = 0.25f;
-    //            __instance.NumImpostors = 1;
-    //            __instance.NumCommonTasks = 0;
-    //            __instance.NumLongTasks = 0;
-    //            __instance.NumShortTasks = 10;
-    //            __instance.KillCooldown = 10f;
-    //        }
-    //        if (Options.IsStandardHAS) //StandardHAS
-    //        {
-    //            __instance.PlayerSpeedMod = 1.75f;
-    //            __instance.CrewLightMod = 5f;
-    //            __instance.ImpostorLightMod = 0.25f;
-    //            __instance.NumImpostors = 1;
-    //            __instance.NumCommonTasks = 0;
-    //            __instance.NumLongTasks = 0;
-    //            __instance.NumShortTasks = 10;
-    //            __instance.KillCooldown = 10f;
-    //        }
-    //        if (Options.IsCCMode)
-    //        {
-    //            __instance.PlayerSpeedMod = 1.5f;
-    //            __instance.CrewLightMod = 0.5f;
-    //            __instance.ImpostorLightMod = 0.75f;
-    //            __instance.NumImpostors = 1;
-    //            __instance.NumCommonTasks = 0;
-    //            __instance.NumLongTasks = 0;
-    //            __instance.NumShortTasks = 1;
-    //            __instance.KillCooldown = 20f;
-    //            __instance.NumEmergencyMeetings = 1;
-    //            __instance.EmergencyCooldown = 30;
-    //            __instance.KillDistance = 0;
-    //            __instance.DiscussionTime = 0;
-    //            __instance.VotingTime = 60;
-    //        }
-    //        //if (Options.IsONMode)
-    //        //{
-    //        //    __instance.NumCommonTasks = 1;
-    //        //    __instance.NumLongTasks = 0;
-    //        //    __instance.NumShortTasks = 1;
-    //        //    __instance.KillCooldown = 20f;
-    //        //    __instance.NumEmergencyMeetings = 0;
-    //        //    __instance.KillDistance = 0;
-    //        //    __instance.DiscussionTime = 0;
-    //        //    __instance.VotingTime = 300;
-    //        //}
+//        if (Options.CurrentGameMode == CustomGameMode.HideAndSeek) //HideAndSeek
+//        {
+//            __instance.PlayerSpeedMod = 1.75f;
+//            __instance.CrewLightMod = 5f;
+//            __instance.ImpostorLightMod = 0.25f;
+//            __instance.NumImpostors = 1;
+//            __instance.NumCommonTasks = 0;
+//            __instance.NumLongTasks = 0;
+//            __instance.NumShortTasks = 10;
+//            __instance.KillCooldown = 10f;
+//        }
+//        if (Options.IsStandardHAS) //StandardHAS
+//        {
+//            __instance.PlayerSpeedMod = 1.75f;
+//            __instance.CrewLightMod = 5f;
+//            __instance.ImpostorLightMod = 0.25f;
+//            __instance.NumImpostors = 1;
+//            __instance.NumCommonTasks = 0;
+//            __instance.NumLongTasks = 0;
+//            __instance.NumShortTasks = 10;
+//            __instance.KillCooldown = 10f;
+//        }
+//        if (Options.IsCCMode)
+//        {
+//            __instance.PlayerSpeedMod = 1.5f;
+//            __instance.CrewLightMod = 0.5f;
+//            __instance.ImpostorLightMod = 0.75f;
+//            __instance.NumImpostors = 1;
+//            __instance.NumCommonTasks = 0;
+//            __instance.NumLongTasks = 0;
+//            __instance.NumShortTasks = 1;
+//            __instance.KillCooldown = 20f;
+//            __instance.NumEmergencyMeetings = 1;
+//            __instance.EmergencyCooldown = 30;
+//            __instance.KillDistance = 0;
+//            __instance.DiscussionTime = 0;
+//            __instance.VotingTime = 60;
+//        }
+//        //if (Options.IsONMode)
+//        //{
+//        //    __instance.NumCommonTasks = 1;
+//        //    __instance.NumLongTasks = 0;
+//        //    __instance.NumShortTasks = 1;
+//        //    __instance.KillCooldown = 20f;
+//        //    __instance.NumEmergencyMeetings = 0;
+//        //    __instance.KillDistance = 0;
+//        //    __instance.DiscussionTime = 0;
+//        //    __instance.VotingTime = 300;
+//        //}
 
-    //        return false;
-    //    }
-    //}
+//        return false;
+//    }
+//}
 //}

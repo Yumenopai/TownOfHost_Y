@@ -502,6 +502,7 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.Exiled, SendOption.None, -1);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
+
     public static void MurderPlayer(this PlayerControl killer, PlayerControl target)
     {
         killer.MurderPlayer(target, SucceededFlags);
@@ -797,5 +798,67 @@ static class ExtendedPlayerControl
             return true;
         }
         return !state.IsDead;
+    }
+    public static void RpcExileV3(this PlayerControl player)
+    {
+        if (player == null) return;
+        player.Exiled();
+        PlayerState.GetByPlayerId(player.PlayerId).SetDead();
+        player.Data.IsDead = true;
+        GameDataSerializePatch.SerializeMessageCount++;
+        RpcSyncAllNetworkedPlayer();
+        GameDataSerializePatch.SerializeMessageCount--;
+    }
+    // 参考元: SuperNewRoles / TOH-K
+    public static void RpcSyncAllNetworkedPlayer(int targetClientId = -1, SendOption sendOption = SendOption.None)
+    {
+        if (AntiBlackout.IsCached) return;
+
+        MessageWriter writer = MessageWriter.Get(sendOption);
+        if (targetClientId < 0)
+        {
+            writer.StartMessage(5);
+            writer.Write(AmongUsClient.Instance.GameId);
+        }
+        else
+        {
+            if (targetClientId == PlayerControl.LocalPlayer.GetClientId()) return;
+            writer.StartMessage(6);
+            writer.Write(AmongUsClient.Instance.GameId);
+            writer.WritePacked(targetClientId);
+        }
+
+        foreach (var player in GameData.Instance.AllPlayers)
+        {
+            
+            if (writer.Length > 400)
+            {
+                writer.EndMessage();
+                AmongUsClient.Instance.SendOrDisconnect(writer);
+                writer.Recycle();
+
+                writer = MessageWriter.Get(sendOption);
+                if (targetClientId < 0)
+                {
+                    writer.StartMessage(5);
+                    writer.Write(AmongUsClient.Instance.GameId);
+                }
+                else
+                {
+                    writer.StartMessage(6);
+                    writer.Write(AmongUsClient.Instance.GameId);
+                    writer.WritePacked(targetClientId);
+                }
+            }
+
+            writer.StartMessage(1); 
+            writer.WritePacked(player.NetId);
+            player.Serialize(writer, false);
+            writer.EndMessage();
+        }
+
+        writer.EndMessage();
+        AmongUsClient.Instance.SendOrDisconnect(writer);
+        writer.Recycle();
     }
 }

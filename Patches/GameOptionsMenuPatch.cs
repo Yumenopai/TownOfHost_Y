@@ -1,7 +1,9 @@
 using System;
-using Il2CppSystem.Collections.Generic;
+using System.Collections.Generic;
+using System.Xml.Linq;
 using HarmonyLib;
 using UnityEngine;
+
 
 namespace TownOfHostY;
 
@@ -19,7 +21,7 @@ public static class GameOptionsMenuPatch
     private static Sprite _cachedLabelBgSprite;
     private static Sprite CachedLabelBgSprite
         => _cachedLabelBgSprite ??= Utils.LoadSprite(
-            "TownOfHost_Y-ForkedbyTabasco.Resources.SettingMenu_LabelBackground.png", 100f);
+            "TownOfHost_Y.Resources.SettingMenu_LabelBackground.png", 100f);
 
     [HarmonyPatch(nameof(GameOptionsMenu.Initialize)), HarmonyPrefix]
     private static bool InitializePrefix(GameOptionsMenu __instance)

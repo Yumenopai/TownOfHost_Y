@@ -204,5 +204,6 @@ namespace TownOfHostY
         TestError3 = 0009303, // 000-930-3 Test Error 3
         HnsUnload = 000_804_1, // 000-804-1 Unloaded By HnS
         NotHostUnload = 000_111_1, // 000-804-1 Unloaded By NOT_host
+        ZeroVision = 003_000_1, // 003-000-1 Vision is set to 0
     }
 }

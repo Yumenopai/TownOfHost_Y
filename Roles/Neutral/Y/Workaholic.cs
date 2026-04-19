@@ -93,7 +93,9 @@ public sealed class Workaholic : RoleBase
 
     public override void OverrideDisplayRoleNameAsSeen(PlayerControl seer, bool isMeeting, ref bool enabled, ref string roleText)
     {
-        if (Seen) enabled = true;
+        if (!Seen) return;        
+        enabled = true;
+        roleText = Utils.ColorString(Utils.GetRoleColor(CustomRoles.Workaholic), Utils.GetRoleName(CustomRoles.Workaholic));
     }
 
 }

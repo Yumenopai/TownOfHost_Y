@@ -28,9 +28,9 @@ class CheckProtectPatch
         if (!AmongUsClient.Instance.AmHost) return false;
         Logger.Info("CheckProtect発生: " + __instance.GetNameWithRole() + "=>" + target.GetNameWithRole(), "CheckProtect");
         if (__instance.Is(CustomRoles.Sheriff)
-            ||__instance.Is(CustomRoles.SillySheriff)
-            ||__instance.Is(CustomRoles.Hunter)
-            ||__instance.Is(CustomRoles.MadSheriff))
+            || __instance.Is(CustomRoles.SillySheriff)
+            || __instance.Is(CustomRoles.Hunter)
+            || __instance.Is(CustomRoles.MadSheriff))
         {
             if (__instance.Data.IsDead)
             {
@@ -186,9 +186,9 @@ class MurderPlayerPatch
             }
             Camouflage.RpcSetSkin(Camouflage.IsCamouflage, target, ForceRevert: true, RevertToDefault: true);
             if (Options.IsSyncColorMode && Options.SCM_RestoredDeadPlayer.GetBool())
-                {
-                    SkinChangeMode.RpcSetSkin(target, target);
-                }
+            {
+                SkinChangeMode.RpcSetSkin(target, target);
+            }
         }
     }
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, bool __state)
@@ -349,9 +349,14 @@ public static class PlayerControlCheckVanishPatch
 
     public static bool Prefix(PlayerControl __instance)
     {
-        if (AmongUsClient.Instance.IsGameOver || !AmongUsClient.Instance.AmHost)
+        if (AmongUsClient.Instance.IsGameOver)
         {
             return false;
+        }
+
+        if (!AmongUsClient.Instance.AmHost)
+        {
+            return true;
         }
 
         var phantom = __instance;
@@ -431,58 +436,30 @@ public static class PhantomRoleUseAbilityPatch
 {
     public static bool Prefix(PhantomRole __instance)
     {
-        // プレイヤーがアクティブで使用可能か確認
-        if (__instance.Player.AmOwner &&
-            !__instance.Player.Data.IsDead &&
-            __instance.Player.moveable &&
-            !Minigame.Instance &&
-            !__instance.IsCoolingDown &&
-            !__instance.fading)
+        if (__instance.Player.AmOwner && !__instance.Player.Data.IsDead && __instance.Player.moveable && !Minigame.Instance && !__instance.IsCoolingDown && !__instance.fading)
         {
-            // 現在の役職アニメーションがVanishingチャージでないことを確認
-            bool hasVanishChargeAnimation = false;
-            foreach (var anim in __instance.Player.currentRoleAnimations)
-            {
-                if (anim.effectType == RoleEffectAnimation.EffectType.Vanish_Charge)
-                {
-                    hasVanishChargeAnimation = true;
-                    break;
-                }
-            }
-
-            if (!hasVanishChargeAnimation && !__instance.Player.walkingToVent && !__instance.Player.inMovingPlat)
+            System.Func<RoleEffectAnimation, bool> roleEffectAnimation = x => x.effectType == RoleEffectAnimation.EffectType.Vanish_Charge;
+            if (!__instance.Player.currentRoleAnimations.Find(roleEffectAnimation) && !__instance.Player.walkingToVent && !__instance.Player.inMovingPlat)
             {
                 if (__instance.isInvisible)
                 {
                     __instance.MakePlayerVisible(true, true);
                     return false;
                 }
-
-                var hud = DestroyableSingleton<HudManager>.Instance;
-                hud.AbilityButton.SetSecondImage(__instance.Ability);
-                hud.AbilityButton.OverrideText(DestroyableSingleton<TranslationController>
-                    .Instance.GetString(StringNames.PhantomAbilityUndo, new Il2CppReferenceArray<Il2CppSystem.Object>(0)));
-
-                // PhantomDuration を直接取得
-                float phantomDuration = GetPhantomDuration();
-                __instance.Player.CmdCheckVanish(phantomDuration);
-
-                return false; // 元のメソッドは実行しない
+                DestroyableSingleton<HudManager>.Instance.AbilityButton.SetSecondImage(__instance.Ability);
+                DestroyableSingleton<HudManager>.Instance.AbilityButton.OverrideText(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.PhantomAbilityUndo, new Il2CppReferenceArray<Il2CppSystem.Object>(0)));
+                __instance.Player.CmdCheckVanish(10f);
+                return false;
             }
         }
-
-        return false; // 条件に関わらず元メソッドは実行しない
+        // いずれの条件も満たさない場合はバニラ処理に委ねる
+        return true;
     }
 
-    // LogicOptions から PhantomDuration を取得する自前メソッド
     private static float GetPhantomDuration()
     {
         var options = GameManager.Instance.LogicOptions;
-
-        // LogicOptions に直接フィールドがある場合
-        // 例: options._phantomDuration
-        // もし存在しない場合は固定値を返す
-        float duration = 5f; // デフォルト5秒
+        float duration = 5f;
         try
         {
             var field = options.GetType().GetField("_phantomDuration", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -491,16 +468,14 @@ public static class PhantomRoleUseAbilityPatch
         }
         catch
         {
-            // 例外無視してデフォルト値を使用
         }
-
         return duration;
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
 class ReportDeadBodyPatch
 {
-    public static NetworkedPlayerInfo  reporter;
+    public static NetworkedPlayerInfo reporter;
     public static NetworkedPlayerInfo ReportTarget;
     public static bool SpecialMeeting = reporter?.PlayerId == ReportTarget?.PlayerId;
 
@@ -607,7 +582,7 @@ class ReportDeadBodyPatch
                 Camouflage.RpcSetSkin(Camouflage.IsCamouflage, pc, RevertToDefault: true);
             }
         }
-          
+
         MushroomMixupDeterioratePatch.RestorName();
 
         foreach (var role in CustomRoleManager.AllActiveRoles.Values)
@@ -700,20 +675,51 @@ class CoEnterVentPatch
             if (Options.CurrentGameMode == CustomGameMode.HideAndSeek && Options.IgnoreVent.GetBool())
                 __instance.RpcBootFromVent(id);
 
-            if ((!user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false) ||
-                !VentEnterTask.OnEnterVent(__instance, id) ||
-                (user.GetCustomRole().IsCCCatRoles() && !CatchCat.CatPlayer.CanUseVent(user)) ||
-                (user.Data.Role.Role != RoleTypes.Engineer && //エンジニアでなく
-                !user.CanUseImpostorVentButton()) //インポスターベントも使えない
-            )
+
+            bool roleAllowsVent = user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false;
+            bool ventTaskAllows = VentEnterTask.OnEnterVent(__instance, id);
+
+            if (!roleAllowsVent &&
+                !ventTaskAllows &&
+                !(user.GetCustomRole().IsCCCatRoles() && CatchCat.CatPlayer.CanUseVent(user)) &&
+                user.Data.Role.Role != RoleTypes.Engineer &&
+                !user.CanUseImpostorVentButton())
             {
-                _ = new LateTask(() =>
-                {
-                    __instance.RpcBootFromVent(id);
-                }, 0.5f, "Cancel Vent");
+                _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
+            }
+            else if (user.GetCustomRole().IsCCCatRoles() && !CatchCat.CatPlayer.CanUseVent(user))
+            {
+                _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
             }
         }
         return true;
+    }
+}
+[HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.RpcEnterVent))]
+class RpcEnterVentPatch
+{
+    public static void Postfix(PlayerPhysics __instance, [HarmonyArgument(0)] int id)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+
+        var user = __instance.myPlayer;
+        if (user == null) return;
+
+        bool roleAllowsVent = user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false;
+        bool ventTaskAllows = VentEnterTask.OnEnterVent(__instance, id);
+
+        if (!roleAllowsVent &&
+            !ventTaskAllows &&
+            !(user.GetCustomRole().IsCCCatRoles() && CatchCat.CatPlayer.CanUseVent(user)) &&
+            user.Data.Role.Role != RoleTypes.Engineer &&
+            !user.CanUseImpostorVentButton())
+        {
+            _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
+        }
+        else if (user.GetCustomRole().IsCCCatRoles() && !CatchCat.CatPlayer.CanUseVent(user))
+        {
+            _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
+        }
     }
 }
 

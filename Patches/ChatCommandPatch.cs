@@ -33,6 +33,7 @@ namespace TownOfHostY
             Main.isChatCommand = true;
             Logger.Info(text, "SendChat");
 
+            /* 
             if (args[0] == "/cmd" && args.Length >= 2)
             {
                 canceled = true;
@@ -43,6 +44,7 @@ namespace TownOfHostY
                 args = newArgs;
                 text = string.Join(" ", args);
             }
+            */
 
             var tag = !PlayerControl.LocalPlayer.Data.IsDead ? "SendChatHost" : "SendChatDeadHost";
             if (text.StartsWith("試合結果:") || text.StartsWith("キル履歴:")) tag = "SendSystemChat";
@@ -250,7 +252,7 @@ namespace TownOfHostY
                     case "/exile":
                         canceled = true;
                         if (args.Length < 2 || !int.TryParse(args[1], out int id)) break;
-                        Utils.GetPlayerById(id)?.RpcExileV2();
+                        Utils.GetPlayerById(id)?.RpcExileV3();
                         break;
 
                     case "/kill":
@@ -446,9 +448,9 @@ namespace TownOfHostY
             if (!AmongUsClient.Instance.AmHost) return;
 
             // ニムロッド会議中
-            if(Nimrod.IsExecutionMeeting() || MadNimrod.IsExecutionMeeting())
+            if (Nimrod.IsExecutionMeeting() || MadNimrod.IsExecutionMeeting())
             {
-                if(text.Length > 0)
+                if (text.Length > 0)
                 {
                     Utils.SendMessage(GetString("Message.NowNimrodMeeting"),
                         title: $"<color={Utils.GetRoleColorCode(CustomRoles.Nimrod)}>{GetString("IsNimrodMeetingTitle")}</color>");
@@ -458,6 +460,7 @@ namespace TownOfHostY
             string[] args = text.Split(' ');
             string subArgs = "";
 
+            /* 
             if (text.StartsWith("/") && !text.Contains("cmd"))
             {
                 Utils.SendMessage(GetString("Error.CommandFailed"), player.PlayerId);
@@ -465,6 +468,10 @@ namespace TownOfHostY
             }
             if (args[0] != "/cmd" || args.Length <= 1) return;
             args = args.Skip(1).ToArray();
+            if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
+            */
+
+            if (text.StartsWith("/") is false) return;
             if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
 
             switch (args[0]?.ToLower())
@@ -559,8 +566,8 @@ namespace TownOfHostY
 
                 default:
                     break;
+            }
         }
-    }
     }
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Update))]
     class ChatUpdatePatch
@@ -570,7 +577,7 @@ namespace TownOfHostY
         {
             if (!AmongUsClient.Instance.AmHost || Main.MessagesToSend.Count < 1 || (Main.MessagesToSend[0].Item2 == byte.MaxValue && Main.MessageWait.Value > __instance.timeSinceLastMessage)) return;
             if (DoBlockChat) return;
-            var player = Main.AllAlivePlayerControls.OrderBy(x => x.PlayerId).FirstOrDefault();
+            var player = PlayerControl.LocalPlayer;
             if (player == null) return;
             (string msg, byte sendTo, string title, bool custom) = Main.MessagesToSend[0];
             Main.MessagesToSend.RemoveAt(0);
@@ -608,12 +615,9 @@ namespace TownOfHostY
         }
         public static void SendCustomChat(string SendName, PlayerControl sender = null, byte sendTo = byte.MaxValue)
         {
-            //Logger.Info($"SendName: {SendName}, sender: {sender?.name}, sendTo: {sendTo}", "SendCustomChat");
             Logger.Info($"sender: {sender?.name}, sendTo: {sendTo}", "SendCustomChat");
             string command = "\n\n";
-            if (sender == null) sender = PlayerControl.LocalPlayer;
-            if (sender.Data.IsDead)
-                sender = PlayerControl.AllPlayerControls.ToArray().OrderBy(x => x.PlayerId).Where(x => !x.Data.IsDead).FirstOrDefault();
+            sender = PlayerControl.LocalPlayer;
             string name = sender.Data?.PlayerName;
             int clientId = sendTo == byte.MaxValue ? -1 : Utils.GetPlayerById(sendTo).GetClientId();
             if (clientId == -1)

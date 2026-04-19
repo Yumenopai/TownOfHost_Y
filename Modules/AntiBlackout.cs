@@ -154,6 +154,10 @@ public static class AntiBlackout
         var targetClientId = player.GetClientId();
         if (targetClientId == -1) return;
 
+        
+        var playerRoleInfo = player.GetCustomRole().GetRoleInfo();
+        bool viewerIsDesync = playerRoleInfo?.IsDesyncImpostor ?? false;
+
         var sender = CustomRpcSender.Create("ResetSetRole", Hazel.SendOption.Reliable);
         sender.StartMessage(targetClientId);
 
@@ -165,30 +169,37 @@ public static class AntiBlackout
             var roleInfo = customRole.GetRoleInfo();
             bool isAlive = pc.IsAlive();
 
-            RoleTypes sendRole;
+            
+            var role = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Scientist;
 
+            
             if (!isAlive)
             {
-               
-                sendRole = (customRole.IsImpostor() || customRole.IsMadmate()
+                role = (customRole.IsImpostor() || customRole.IsMadmate()
                     || roleInfo?.BaseRoleType?.Invoke() == RoleTypes.Impostor)
                     ? RoleTypes.ImpostorGhost
                     : RoleTypes.CrewmateGhost;
             }
-            else
-            {
-               
-                sendRole = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate;
 
-               
-                if (player.PlayerId != pc.PlayerId && (roleInfo?.IsDesyncImpostor == true))
-                    sendRole = RoleTypes.Crewmate;
-            }
+            
+            if (player.PlayerId != pc.PlayerId && (roleInfo?.IsDesyncImpostor ?? false))
+                role = isAlive ? RoleTypes.Crewmate : RoleTypes.CrewmateGhost;
 
-            pc.RpcSetRoleDesync(sendRole, targetClientId);
+            
+            RoleTypes setrole = (viewerIsDesync && player.PlayerId != pc.PlayerId)
+                ? (isAlive ? RoleTypes.Crewmate : RoleTypes.CrewmateGhost)
+                : role;
+
+            sender.StartRpc(pc.NetId, RpcCalls.SetRole)
+                .Write((ushort)setrole)
+                .Write(true)
+                .EndRpc();
+
+            Logger.Info($"ResetSetRole -> clientId:{targetClientId}({player?.name}) pc:{pc?.name}({customRole}) => {setrole}", "AntiBlackout");
         }
 
-        
+        sender.EndMessage();
+        sender.SendMessage();
     }
 
     ///<summary>

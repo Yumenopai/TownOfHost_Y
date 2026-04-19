@@ -9,6 +9,7 @@ using TownOfHostY.Roles.Core;
 using static TownOfHostY.Translator;
 
 namespace TownOfHostY;
+
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin))]
 
 class SetUpRoleTextPatch
@@ -45,76 +46,51 @@ class CoBeginPatch
 {
     public static void Prefix()
     {
-        try
+        var logger = Logger.Handler("Info");
+        logger.Info("------------名前表示------------");
+        foreach (var pc in Main.AllPlayerControls)
         {
-            var logger = Logger.Handler("Info");
-            logger.Info("------------名前表示------------");
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc.name.PadRightV2(20)}:{pc.cosmetics.nameText.text}({Palette.ColorNames[pc.Data.DefaultOutfit.ColorId].ToString().Replace("Color", "")})");
-                pc.cosmetics.nameText.text = pc.name;
-            }
-            logger.Info("----------役職割り当て----------");
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc?.Data?.PlayerName?.PadRightV2(20)}:{pc.GetAllRoleName().RemoveHtmlTags()}");
-            }
-            logger.Info("--------------環境--------------");
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                try
-                {
-                    var text = pc.AmOwner ? "[*]" : "   ";
-                    text += $"{pc.PlayerId,-2}:{pc.Data?.PlayerName?.PadRightV2(20)}:{pc.GetClient()?.PlatformData?.Platform.ToString()?.Replace("Standalone", ""),-11}";
-                    if (Main.playerVersion.TryGetValue(pc.PlayerId, out PlayerVersion pv))
-                        text += $":Mod({pv.forkId}/{pv.version}:{pv.tag})";
-                    else text += ":Vanilla";
-                    logger.Info(text);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Exception(ex, "Platform");
-                }
-            }
-            logger.Info("------------基本設定------------");
-            var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1);
-            foreach (var t in tmp) logger.Info(t);
-            logger.Info("------------詳細設定------------");
-            foreach (var o in OptionItem.AllOptions)
-                if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.GetBool()))
-                    logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}");
-            logger.Info("-------------その他-------------");
-            logger.Info($"プレイヤー数: {Main.AllPlayerControls.Count()}人");
-
-            // タスク初期化
-            Main.AllPlayerControls.Do(x => PlayerState.GetByPlayerId(x.PlayerId).InitTask(x));
-
-            if (GameData.Instance != null)
-            {
-                GameData.Instance.RecomputeTaskCounts();
-                TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
-            }
-
-            // NotifyRoles 呼び出し（try-catch で保護）
+            logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc.name.PadRightV2(20)}:{pc.cosmetics.nameText.text}({Palette.ColorNames[pc.Data.DefaultOutfit.ColorId].ToString().Replace("Color", "")})");
+            pc.cosmetics.nameText.text = pc.name;
+        }
+        logger.Info("----------役職割り当て----------");
+        foreach (var pc in Main.AllPlayerControls)
+        {
+            logger.Info($"{(pc.AmOwner ? "[*]" : ""),-3}{pc.PlayerId,-2}:{pc?.Data?.PlayerName?.PadRightV2(20)}:{pc.GetAllRoleName().RemoveHtmlTags()}");
+        }
+        logger.Info("--------------環境--------------");
+        foreach (var pc in Main.AllPlayerControls)
+        {
             try
             {
-                Utils.NotifyRoles();
+                var text = pc.AmOwner ? "[*]" : "   ";
+                text += $"{pc.PlayerId,-2}:{pc.Data?.PlayerName?.PadRightV2(20)}:{pc.GetClient()?.PlatformData?.Platform.ToString()?.Replace("Standalone", ""),-11}";
+                if (Main.playerVersion.TryGetValue(pc.PlayerId, out PlayerVersion pv))
+                    text += $":Mod({pv.forkId}/{pv.version}:{pv.tag})";
+                else text += ":Vanilla";
+                logger.Info(text);
             }
             catch (Exception ex)
             {
-                Logger.Error($"NotifyRoles で例外が発生しました: {ex.Message}", "CoBeginPatch");
-                Logger.Exception(ex, "CoBeginPatch");
+                Logger.Exception(ex, "Platform");
             }
+        }
+        logger.Info("------------基本設定------------");
+        var tmp = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10).Split("\r\n").Skip(1);
+        foreach (var t in tmp) logger.Info(t);
+        logger.Info("------------詳細設定------------");
+        foreach (var o in OptionItem.AllOptions)
+            if (!o.IsHiddenOn(Options.CurrentGameMode) && (o.Parent == null ? !o.GetString().Equals("0%") : o.Parent.GetBool()))
+                logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}");
+        logger.Info("-------------その他-------------");
+        logger.Info($"プレイヤー数: {Main.AllPlayerControls.Count()}人");
+        Main.AllPlayerControls.Do(x => PlayerState.GetByPlayerId(x.PlayerId).InitTask(x));
+        GameData.Instance.RecomputeTaskCounts();
+        TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
 
-            GameStates.InGame = true;
-            Logger.Info("CoBegin completed: GameStates.InGame set to true", "CoBeginPatch");
-        }
-        catch (Exception ex)
-        {
-            Logger.Error($"CoBeginPatch.Prefix で予期しない例外が発生しました: {ex.Message}", "CoBeginPatch");
-            Logger.Exception(ex, "CoBeginPatch");
-            GameStates.InGame = true; // 最低限ゲーム開始状態にする
-        }
+        Utils.NotifyRoles();
+
+        GameStates.InGame = true;
     }
 }
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
@@ -389,9 +365,9 @@ class BeginImpostorPatch
     public static bool Prefix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
         if (PlayerControl.LocalPlayer.Is(CustomRoles.Sheriff)
-            ||PlayerControl.LocalPlayer.Is(CustomRoles.Hunter)
-            ||PlayerControl.LocalPlayer.Is(CustomRoles.SillySheriff)
-            ||PlayerControl.LocalPlayer.Is(CustomRoles.jO))
+            || PlayerControl.LocalPlayer.Is(CustomRoles.Hunter)
+            || PlayerControl.LocalPlayer.Is(CustomRoles.SillySheriff)
+            || PlayerControl.LocalPlayer.Is(CustomRoles.jO))
         {
             //シェリフ等の場合はキャンセルしてBeginCrewmateに繋ぐ
             yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
@@ -404,12 +380,21 @@ class BeginImpostorPatch
             __instance.overlayHandle.color = Palette.CrewmateBlue;
             return false;
         }
+        var localRole = PlayerControl.LocalPlayer.GetCustomRole();
+        if (localRole.GetCustomRoleTypes() == CustomRoleTypes.Impostor || localRole == CustomRoles.StrayWolf)
+        {
+            return true;
+        }
         BeginCrewmatePatch.Prefix(__instance, ref yourTeam);
         return true;
     }
     public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
-        BeginCrewmatePatch.Postfix(__instance, ref yourTeam);
+        var role = PlayerControl.LocalPlayer.GetCustomRole();
+        if (role.GetCustomRoleTypes() != CustomRoleTypes.Impostor && role != CustomRoles.StrayWolf)
+        {
+            BeginCrewmatePatch.Postfix(__instance, ref yourTeam);
+        }
     }
 }
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
@@ -419,180 +404,52 @@ class IntroCutsceneDestroyPatch
     {
         if (!GameStates.IsInGame) return;
         Main.introDestroyed = true;
-        Logger.Info("IntroCutscene.OnDestroy: introDestroyed set to true", "IntroCutscene");
-
-        // Wrap entire host-specific block to prevent exceptions from bubbling into native trampolines
-        try
+        if (AmongUsClient.Instance.AmHost)
         {
-            if (!AmongUsClient.Instance.AmHost)
+            if (Main.NormalOptions.MapId != 4)
             {
-                Logger.Info("Not host - skipping host-specific OnDestroy actions", "IntroCutscene");
-                return;
-            }
-
-            Logger.Info("Host-specific OnDestroy actions starting", "IntroCutscene");
-
-            // Reset ability cooldowns for all players (safe iteration)
-            if (Main.NormalOptions == null)
-            {
-                Logger.Warn("Main.NormalOptions is null during IntroCutscene.OnDestroy", "IntroCutscene");
-            }
-
-            if (Main.NormalOptions == null || Main.NormalOptions.MapId != 4)
-            {
-                Logger.Info("Resetting ability cooldowns for all players (if available)", "IntroCutscene");
-                try
-                {
-                    foreach (var pc in Main.AllPlayerControls)
-                    {
-                        if (pc == null) continue;
-                        try { pc.RpcResetAbilityCooldown(); } catch (Exception ex) { Logger.Warn($"RpcResetAbilityCooldown failed for {pc.PlayerId}: {ex.Message}", "IntroCutscene"); }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn($"Failed iterating AllPlayerControls: {ex.Message}", "IntroCutscene");
-                }
-
+                Main.AllPlayerControls.Do(pc => pc.RpcResetAbilityCooldown());
                 if (Options.FixFirstKillCooldown.GetBool())
                 {
                     _ = new LateTask(() =>
                     {
-                        try
-                        {
-                            Logger.Info("Applying first kill cooldown fix (delayed)", "IntroCutscene");
-                            if (Main.AllPlayerKillCooldown != null)
-                            {
-                                foreach (var pc in Main.AllPlayerControls)
-                                {
-                                    if (pc == null) continue;
-                                    try
-                                    {
-                                        if (Main.AllPlayerKillCooldown.TryGetValue(pc.PlayerId, out var val))
-                                            pc.SetKillCooldown(val - 2f);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Logger.Warn($"SetKillCooldown failed for {pc.PlayerId}: {ex.Message}", "IntroCutscene");
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                Logger.Warn("Main.AllPlayerKillCooldown is null; skipping FixFirstKillCooldown", "IntroCutscene");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Exception(ex, "IntroCutscene");
-                        }
+                        Main.AllPlayerControls.Do(pc => pc.SetKillCooldown(Main.AllPlayerKillCooldown[pc.PlayerId] - 2f));
                     }, 2f, "FixKillCooldownTask");
                 }
             }
-
-            // GM exile: guard LocalPlayer
-            var local = PlayerControl.LocalPlayer;
-            if (local != null)
+            if (PlayerControl.LocalPlayer.Is(CustomRoles.GM))
             {
-                try
-                {
-                    if (local.Is(CustomRoles.GM))
-                    {
-                        Logger.Info("Local player is GM: Exiling host", "IntroCutscene");
-                        try { local.RpcExile(); } catch (Exception ex) { Logger.Warn($"RpcExile failed: {ex.Message}", "IntroCutscene"); }
-                        try { PlayerState.GetByPlayerId(local.PlayerId)?.SetDead(); } catch (Exception ex) { Logger.Warn($"SetDead failed for GM: {ex.Message}", "IntroCutscene"); }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn($"Checking GM failed: {ex.Message}", "IntroCutscene");
-                }
+                PlayerControl.LocalPlayer.RpcExile();
+                PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SetDead();
             }
-            else
+            // 初手のランダムスポーン
+            switch ((MapNames)Main.NormalOptions.MapId)
             {
-                Logger.Warn("PlayerControl.LocalPlayer is null in IntroCutscene.OnDestroy", "IntroCutscene");
+                case MapNames.Skeld:
+                    if (Options.RandomSpawn_Skeld.GetBool() && !Options.FirstFixedSpawn_Skeld.GetBool())
+                        Main.AllPlayerControls.Do(new RandomSpawn.SkeldSpawnMap().RandomTeleport);
+                    break;
+                case MapNames.MiraHQ:
+                    if (Options.RandomSpawn_MiraHQ.GetBool() && !Options.FirstFixedSpawn_MiraHQ.GetBool())
+                        Main.AllPlayerControls.Do(new RandomSpawn.MiraHQSpawnMap().RandomTeleport);
+                    break;
+                case MapNames.Polus:
+                    if (Options.RandomSpawn_Polus.GetBool() && !Options.FirstFixedSpawn_Polus.GetBool())
+                        Main.AllPlayerControls.Do(new RandomSpawn.PolusSpawnMap().RandomTeleport);
+                    break;
+                case MapNames.Fungle:
+                    if (Options.RandomSpawn_Fungle.GetBool() && !Options.FirstFixedSpawn_Fungle.GetBool())
+                        Main.AllPlayerControls.Do(new RandomSpawn.FungleSpawnMap().RandomTeleport);
+                    break;
             }
-
-            // 初手のランダムスポーン (safe checks)
-            try
+            // そのままだとホストのみDesyncImpostorの暗室内での視界がクルー仕様になってしまう
+            var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
+            var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
+            if (amDesyncImpostor)
             {
-                if (Main.NormalOptions != null)
-                {
-                    switch ((MapNames)Main.NormalOptions.MapId)
-                    {
-                        case MapNames.Skeld:
-                            if (Options.RandomSpawn_Skeld.GetBool() && !Options.FirstFixedSpawn_Skeld.GetBool())
-                            {
-                                Logger.Info("Applying random spawn for Skeld", "IntroCutscene");
-                                Main.AllPlayerControls.Do(new RandomSpawn.SkeldSpawnMap().RandomTeleport);
-                            }
-                            break;
-                        case MapNames.MiraHQ:
-                            if (Options.RandomSpawn_MiraHQ.GetBool() && !Options.FirstFixedSpawn_MiraHQ.GetBool())
-                            {
-                                Logger.Info("Applying random spawn for MiraHQ", "IntroCutscene");
-                                Main.AllPlayerControls.Do(new RandomSpawn.MiraHQSpawnMap().RandomTeleport);
-                            }
-                            break;
-                        case MapNames.Polus:
-                            if (Options.RandomSpawn_Polus.GetBool() && !Options.FirstFixedSpawn_Polus.GetBool())
-                            {
-                                Logger.Info("Applying random spawn for Polus", "IntroCutscene");
-                                Main.AllPlayerControls.Do(new RandomSpawn.PolusSpawnMap().RandomTeleport);
-                            }
-                            break;
-                        case MapNames.Fungle:
-                            if (Options.RandomSpawn_Fungle.GetBool() && !Options.FirstFixedSpawn_Fungle.GetBool())
-                            {
-                                Logger.Info("Applying random spawn for Fungle", "IntroCutscene");
-                                Main.AllPlayerControls.Do(new RandomSpawn.FungleSpawnMap().RandomTeleport);
-                            }
-                            break;
-                    }
-                }
-                else
-                {
-                    Logger.Warn("Main.NormalOptions is null; skipping random spawn", "IntroCutscene");
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn($"Random spawn handling failed: {ex.Message}", "IntroCutscene");
-            }
-
-            // Desync impostor handling (guard local)
-            try
-            {
-                if (local != null)
-                {
-                    var roleInfo = local.GetCustomRole().GetRoleInfo();
-                    var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
-                    if (amDesyncImpostor)
-                    {
-                        try
-                        {
-                            local.Data.Role.AffectedByLightAffectors = false;
-                            Logger.Info("Host is desync impostor: AffectedByLightAffectors set to false", "IntroCutscene");
-                        }
-                        catch (Exception ex)
-                        {
-                            Logger.Warn($"Failed to set AffectedByLightAffectors: {ex.Message}", "IntroCutscene");
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn($"Desync impostor handling failed: {ex.Message}", "IntroCutscene");
+                PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
             }
         }
-        catch (Exception ex)
-        {
-            // Log but do not rethrow to avoid breaking native trampoline
-            Logger.Error($"IntroCutscene.OnDestroy encountered exception: {ex.Message}", "IntroCutscene");
-            Logger.Exception(ex, "IntroCutscene");
-        }
-
-        Logger.Info("IntroCutscene.OnDestroy completed", "IntroCutscene");
+        Logger.Info("OnDestroy", "IntroCutscene");
     }
 }

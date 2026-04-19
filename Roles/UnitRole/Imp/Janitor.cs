@@ -84,7 +84,7 @@ public sealed class Janitor : RoleBase, IImpostor
 
         /* ターゲットを死体なしで霊界転送する */
         targetPlayerState.SetDead();
-        target.RpcExileV2();
+        target.RpcExileV3();
         targetPlayerState.DeathReason = CustomDeathReason.Clean;
         Logger.Info($"{Player.GetNameWithRole()} : ターゲット({target.GetNameWithRole()})を掃除", "G&J");
 

@@ -132,18 +132,15 @@ namespace TownOfHostY.Roles
         private static void SetFixedAssignRole()
         {
             int numImpostorsLeft = Math.Min(GameData.Instance.PlayerCount, Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors));
-            //インポスター以外の人数
-            //マッド、クルー、ニュートラル合計の限界値
             int numOthersLeft = GameData.Instance.PlayerCount - numImpostorsLeft;
 
-            foreach (var role in GetCandidateRoleList(10).OrderBy(x => Guid.NewGuid()))
+            foreach (var role in GetCandidateRoleList(0).OrderBy(x => Guid.NewGuid()))
             {
                 if (numImpostorsLeft <= 0 && numOthersLeft <= 0) break;
 
                 var targetRoles = role.GetAssignUnitRolesArray();
                 var numImpostorAssign = targetRoles.Count(role => role.GetAssignRoleType() == CustomRoleTypes.Impostor);
                 var numOthersAssign = targetRoles.Length - numImpostorAssign;
-                //アサイン枠が足りてない場合
                 if (numImpostorAssign > numImpostorsLeft
                 || numOthersAssign > numOthersLeft) continue;
 
@@ -340,6 +337,7 @@ namespace TownOfHostY.Roles
             };
         public static bool IsPresent(this CustomRoles role) => AssignRoleList.Any(x => x == role);
         public static int GetRealCount(this CustomRoles role) => AssignRoleList.Count(x => x == role);
+        public static List<CustomRoles> GetAssignRoleList() => new(AssignRoleList);
     }
     public class RoleAssignInfo
     {

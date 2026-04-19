@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
@@ -24,7 +23,6 @@ using TownOfHostY.Roles.Crewmate;
 using TownOfHostY.Roles.Impostor;
 using TownOfHostY.Roles.Neutral;
 using UnityEngine;
-using static System.Net.Mime.MediaTypeNames;
 using static TownOfHostY.Translator;
 
 namespace TownOfHostY;
@@ -520,8 +518,9 @@ public static class Utils
             roleName = "NBakery";
         var roleString = GetString(roleName);
         roleString = $"<size=95%>{roleString}</size>".Color(GetRoleColor(myRole).ToReadableColor());
+        var roleInfoWithWhiteColor = $"<size=80%><line-height=1.8pic>{roleInfoLong}</line-height></size>".Color(Color.white);
 
-        sb.Append(roleString).Append("<size=80%><line-height=1.8pic>").Append(roleInfoLong).Append("</line-height></size>");
+        sb.Append(roleString).Append(roleInfoWithWhiteColor);
 
         if (!myRole.IsDontShowOptionRole() && myRole != CustomRoles.GM)
         {
@@ -540,9 +539,10 @@ public static class Utils
                     subroleName = CustomRoles.ChainShifter.ToString();
                 var subroleString = GetString(subroleName);
                 subroleString = $"<size=95%>{subroleString}</size>".Color(GetRoleColor(subRole).ToReadableColor());
+                var subroleInfoWithWhiteColor = $"<size=80%><line-height=1.8pic>{GetString($"{subroleName}InfoLong")}</line-height></size>".Color(Color.white);
 
                 sb.Append("\n--------------------------------------------------------\n")
-                    .Append(subroleString).Append("<size=80%><line-height=1.8pic>").Append(GetString($"{subroleName}InfoLong")).Append("</line-height></size>");
+                    .Append(subroleString).Append(subroleInfoWithWhiteColor);
             }
         }
         return sb.ToString();

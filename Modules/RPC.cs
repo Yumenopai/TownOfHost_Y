@@ -45,6 +45,7 @@ namespace TownOfHostY
         SetLawyerTarget,
         SetRemoveLawyerTarget,
         EvilHackerWarpSync,
+        SyncPsychicResult,  
     }
     public enum Sounds
     {
@@ -168,8 +169,8 @@ namespace TownOfHostY
                     break;
                 case CustomRPC.SetCustomRole:
                     byte CustomRoleTargetId = reader.ReadByte();
-                    CustomRoles role = (CustomRoles)reader.ReadPackedInt32();
-                    RPC.SetCustomRole(CustomRoleTargetId, role);
+                    CustomRoles role2 = (CustomRoles)reader.ReadPackedInt32();
+                    RPC.SetCustomRole(CustomRoleTargetId, role2);
                     break;
                 case CustomRPC.SetNameColorData:
                     NameColorManager.ReceiveRPC(reader);
@@ -178,6 +179,9 @@ namespace TownOfHostY
                     byte targetId = reader.ReadByte();
                     byte killerId = reader.ReadByte();
                     RPC.SetRealKiller(targetId, killerId);
+                    break;
+                case CustomRPC.SyncPsychicResult:                    
+                    CustomRoleManager.DispatchRpc(reader, rpcType);
                     break;
                 default:
                     CustomRoleManager.DispatchRpc(reader, rpcType);
@@ -217,7 +221,6 @@ namespace TownOfHostY
         public static async void RpcVersionCheck()
         {
             while (PlayerControl.LocalPlayer == null) await Task.Delay(500);
-            // StartRpc を使わず StartRpcImmediately に置き換え
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(
                 PlayerControl.LocalPlayer.NetId,
                 (byte)CustomRPC.VersionCheck,
@@ -337,13 +340,8 @@ namespace TownOfHostY
         }
         public static void ReportDeadBodyForced(this PlayerControl player, NetworkedPlayerInfo target)
         {
-            //PlayerControl.ReportDeadBodyと同様の処理
             if (!AmongUsClient.Instance.AmHost) return;
-            //if (AmongUsClient.Instance.IsGameOver || (bool)MeetingHud.Instance || (target == null && LocalPlayer.myTasks.Any(PlayerTask.TaskIsEmergency)) || Data.IsDead)
-            //    return;
-
             MeetingRoomManager.Instance.AssignSelf(player, target);
-            //if (AmongUsClient.Instance.AmHost && !ShipStatus.Instance.   .CheckTaskCompletion())
             if (AmongUsClient.Instance.AmHost)
             {
                 DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(player);
@@ -351,16 +349,15 @@ namespace TownOfHostY
             }
         }
     }
-    
+
     [HarmonyPatch(typeof(InnerNet.InnerNetClient), nameof(InnerNet.InnerNetClient.StartRpcImmediately))]
-    class StartRpcImmediatelyLoggerPatch // 名前を変える
+    class StartRpcImmediatelyLoggerPatch
     {
         public static void Prefix(InnerNet.InnerNetClient __instance, uint targetNetId, byte callId, int targetClientId = -1)
         {
             RPC.SendRpcLogger(targetNetId, callId, targetClientId);
         }
     }
-
 
     [HarmonyPatch(typeof(InnerNet.InnerNetClient), nameof(InnerNet.InnerNetClient.StartRpcImmediately))]
     class StartRpcImmediatelyPatch
@@ -371,9 +368,6 @@ namespace TownOfHostY
             [HarmonyArgument(1)] uint targetNetId,
             [HarmonyArgument(3)] int targetClientId = -1)
         {
-            //Logger.Info("StartRpcImmediatelyPatch Prefix called", "Debug");
-
-            // 危険RPCを安全なRPCに置き換え
             switch ((RpcCalls)callId)
             {
                 case RpcCalls.CheckMurder:
@@ -384,7 +378,6 @@ namespace TownOfHostY
                     break;
             }
 
-            // ログ出力
             string rpcName = RPC.GetRpcName(callId);
             string target = targetClientId < 0 ? "All" : AmongUsClient.Instance.GetClient(targetClientId)?.PlayerName ?? targetClientId.ToString();
             string from = Main.AllPlayerControls.FirstOrDefault(c => c.NetId == targetNetId)?.Data?.PlayerName ?? targetNetId.ToString();
@@ -392,6 +385,4 @@ namespace TownOfHostY
             Logger.Info($"送信RPC From:{from} Target:{target} CallID:{callId}({rpcName})", "SendRPC");
         }
     }
-
-
 }

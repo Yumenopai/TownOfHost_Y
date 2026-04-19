@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
-using UnityEngine;
-using AmongUs.GameOptions;
-
 using TownOfHostY.Attributes;
 using TownOfHostY.Roles.Core;
+using UnityEngine;
 
 [assembly: AssemblyFileVersionAttribute(TownOfHostY.Main.PluginVersion)]
 [assembly: AssemblyInformationalVersionAttribute(TownOfHostY.Main.PluginVersion)]
@@ -126,6 +126,7 @@ public class Main : BasePlugin
     public static HashSet<byte> ShowRoleInfoAtMeeting = new();
     public static HashSet<byte> ShowChangeMainRole = new();
     public static bool isFirstTurn = false;
+    public static bool IsSetRoleFinished = false;//廃村条件用
 
     // 期間限定
     public static bool IsValentine = DateTime.Now.Month == 2 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;

@@ -76,7 +76,7 @@ public sealed class SelfBomber : RoleBase, IImpostor
         var pos = Player.transform.position;
         foreach (var fireTarget in Main.AllAlivePlayerControls)
         {
-            if (fireTarget.inVent) { allKill = false; continue;}
+            if (fireTarget.inVent) { allKill = false; continue; }
 
             var dis = Vector2.Distance(pos, fireTarget.transform.position);
             if (dis > BombRadius) { allKill = false; continue; }
