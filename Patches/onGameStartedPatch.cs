@@ -537,9 +537,13 @@ class SelectRolesPatch
         GameOptionsSender.AllSenders.Clear();
         foreach (var pc in Main.AllPlayerControls)
         {
-            GameOptionsSender.AllSenders.Add(
-                new PlayerGameOptionsSender(pc)
-            );
+            if (!pc.AmOwner)
+                GameOptionsSender.AllSenders.Add(new PlayerGameOptionsSender(pc));
+        }
+        foreach (var pc in Main.AllPlayerControls)
+        {
+            if (pc.AmOwner)
+                GameOptionsSender.AllSenders.Add(new PlayerGameOptionsSender(pc));
         }
 
         Utils.CountAlivePlayers(true);

@@ -48,7 +48,9 @@ namespace TownOfHostY.Modules
                 foreach (var com in GameManager.Instance.LogicComponents)
                 {
                     if (com.TryCast<LogicOptions>(out var lo))
+                    {
                         lo.SetGameOptions(opt);
+                        lo.ClearDirtyFlag(); 
                 }
                 GameOptionsManager.Instance.CurrentGameOptions = opt;
             }
@@ -83,7 +85,14 @@ namespace TownOfHostY.Modules
             var opt = BasedGameOptions;
             AURoleOptions.SetOpt(opt);
             var state = PlayerState.GetByPlayerId(player.PlayerId);
-            opt.BlackOut(state.IsBlackOut);
+            // Restore() は既にロビーの正しい視界値を opt に書き込んでいる。
+            // IsBlackOut=false の時は DefaultCrewmateVision による上書きを行わず Restore の値をそのまま使う。
+            // IsBlackOut=true の時のみ視界を 0 にする。
+            if (state.IsBlackOut)
+            {
+                opt.SetFloat(FloatOptionNames.CrewLightMod, 0f);
+                opt.SetFloat(FloatOptionNames.ImpostorLightMod, 0f);
+            }
 
             CustomRoles role = player.GetCustomRole();
             switch (role.GetCustomRoleTypes())
@@ -107,13 +116,17 @@ namespace TownOfHostY.Modules
 
             var roleClass = player.GetRoleClass();
             roleClass?.ApplyGameOptions(opt);
-            foreach (var subRole in player.GetCustomSubRoles())
+            // 暗転中は視界変更系の属性を適用しない（BlackOut を上書きしてしまうため）
+            if (!state.IsBlackOut)
             {
-                switch (subRole)
+                foreach (var subRole in player.GetCustomSubRoles())
                 {
-                    case CustomRoles.AddWatch: AddWatch.ApplyGameOptions(opt); break;
-                    case CustomRoles.AddLight: AddLight.ApplyGameOptions(opt); break;
-                    case CustomRoles.Sunglasses: Sunglasses.ApplyGameOptions(opt); break;
+                    switch (subRole)
+                    {
+                        case CustomRoles.AddWatch: AddWatch.ApplyGameOptions(opt); break;
+                        case CustomRoles.AddLight: AddLight.ApplyGameOptions(opt); break;
+                        case CustomRoles.Sunglasses: Sunglasses.ApplyGameOptions(opt); break;
+                    }
                 }
             }
             Blinder.ApplyGameOptionsByOther(player.PlayerId, opt);
