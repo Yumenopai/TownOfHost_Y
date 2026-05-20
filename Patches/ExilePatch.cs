@@ -103,6 +103,7 @@ namespace TownOfHostY
             Utils.CountAlivePlayers(true);
             Utils.AfterMeetingTasks();
             Utils.NotifyRoles();
+            Utils.SyncAllSettings();
         }
 
         static void WrapUpFinalizer(NetworkedPlayerInfo exiled)

@@ -30,7 +30,11 @@ namespace TownOfHostY
                     if (player.Is(CustomRoles.GM)) return; //GMは対象外に
                     if (FirstTP[player.PlayerId])
                     {
-                        FirstTP[player.PlayerId] = false;
+                        FirstTP[player.PlayerId] = false;                                                
+                        var state = PlayerState.GetByPlayerId(player.PlayerId);
+                        state.IsBlackOut = false;
+                        player.SyncSettings();
+
                         if (Main.NormalOptions.MapId != 4) return; //マップがエアシップじゃなかったらreturn
                         player.RpcResetAbilityCooldown();
                         if (Options.FixFirstKillCooldown.GetBool() && MeetingStates.FirstMeeting)
