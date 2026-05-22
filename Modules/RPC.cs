@@ -45,7 +45,7 @@ namespace TownOfHostY
         SetLawyerTarget,
         SetRemoveLawyerTarget,
         EvilHackerWarpSync,
-        SyncPsychicResult,  
+        SyncPsychicResult,
     }
     public enum Sounds
     {
@@ -180,7 +180,7 @@ namespace TownOfHostY
                     byte killerId = reader.ReadByte();
                     RPC.SetRealKiller(targetId, killerId);
                     break;
-                case CustomRPC.SyncPsychicResult:                    
+                case CustomRPC.SyncPsychicResult:
                     CustomRoleManager.DispatchRpc(reader, rpcType);
                     break;
                 default:
@@ -283,21 +283,19 @@ namespace TownOfHostY
         }
         public static void SetCustomRole(byte targetId, CustomRoles role)
         {
-            var roleClass = CustomRoleManager.GetByPlayerId(targetId);
-            if (roleClass != null)
-            {
-                var player = roleClass.Player;
-                roleClass.Dispose();
-                CustomRoleManager.CreateInstance(role, player);
-            }
-
             if (role < CustomRoles.StartAddon)
             {
+                
+                var roleClass = CustomRoleManager.GetByPlayerId(targetId);
+                if (roleClass != null)
+                {
+                    roleClass.Dispose();
+                }
                 PlayerState.GetByPlayerId(targetId).SetMainRole(role);
                 CustomRoleManager.CreateInstance(role, Utils.GetPlayerById(targetId));
             }
             else if (role > CustomRoles.StartAddon)
-            {
+            {               
                 PlayerState.GetByPlayerId(targetId).SetSubRole(role);
             }
 

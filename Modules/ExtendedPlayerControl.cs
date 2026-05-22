@@ -37,8 +37,9 @@ static class ExtendedPlayerControl
         else if (role > CustomRoles.StartAddon)
         {
             PlayerState.GetByPlayerId(player.PlayerId).SetSubRole(role);
-            return;
+            
         }
+
         if (AmongUsClient.Instance.AmHost)
         {
             if (role < CustomRoles.StartAddon)
@@ -830,7 +831,7 @@ static class ExtendedPlayerControl
 
         foreach (var player in GameData.Instance.AllPlayers)
         {
-            
+
             if (writer.Length > 400)
             {
                 writer.EndMessage();
@@ -851,7 +852,7 @@ static class ExtendedPlayerControl
                 }
             }
 
-            writer.StartMessage(1); 
+            writer.StartMessage(1);
             writer.WritePacked(player.NetId);
             player.Serialize(writer, false);
             writer.EndMessage();

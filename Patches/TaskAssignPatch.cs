@@ -14,279 +14,159 @@ namespace TownOfHostY
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.AddTasksFromList))]
     class AddTasksFromListPatch
     {
-
         public static void Prefix(ShipStatus __instance,
-            [HarmonyArgument(4)] ref Il2CppSystem.Collections.Generic.List<NormalPlayerTask> unusedTasks)
+            [HarmonyArgument(4)] Il2CppSystem.Collections.Generic.List<NormalPlayerTask> unusedTasks)
         {
             if (!AmongUsClient.Instance.AmHost) return;
+
             if (!Options.DisableTasks.GetBool()) return;
-
-            if (unusedTasks == null)
-            {
-                Logger.Warn("unusedTasks が null です - タスク無効化をスキップします", "AddTasksFromListPatch");
-                return;
-            }
-
-            Logger.Info($"AddTasksFromList called. incoming unusedTasks.Count={unusedTasks.Count}", "AddTasksFromListPatch");
-
-
-            var filtered = new Il2CppSystem.Collections.Generic.List<NormalPlayerTask>();
-            var removedTypes = new List<TaskTypes>();
+            List<NormalPlayerTask> disabledTasks = new();
             for (var i = 0; i < unusedTasks.Count; i++)
             {
                 var task = unusedTasks[i];
-                if (task == null) continue;
-
-                bool isDisabled = false;
-                if (task.TaskType == TaskTypes.SwipeCard && Options.DisableSwipeCard.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.SubmitScan && Options.DisableSubmitScan.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.UnlockSafe && Options.DisableUnlockSafe.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.UploadData && Options.DisableUploadData.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.StartReactor && Options.DisableStartReactor.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.ResetBreakers && Options.DisableResetBreaker.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.RewindTapes && Options.DisableRewindTapes.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.VentCleaning && Options.DisableVentCleaning.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.BuildSandcastle && Options.DisableBuildSandcastle.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.TestFrisbee && Options.DisableTestFrisbee.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.WaterPlants && Options.DisableWaterPlants.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.CatchFish && Options.DisableCatchFish.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.HelpCritter && Options.DisableHelpCritter.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.TuneRadio && Options.DisableTuneRadio.GetBool()) isDisabled = true;
-                if (task.TaskType == TaskTypes.AssembleArtifact && Options.DisableAssembleArtifact.GetBool()) isDisabled = true;
-
-                if (isDisabled)
-                {
-                    removedTypes.Add(task.TaskType);
-                }
-
-                if (!isDisabled)
-                {
-                    filtered.Add(task);
-                }
+                if (task.TaskType == TaskTypes.SwipeCard && Options.DisableSwipeCard.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.SubmitScan && Options.DisableSubmitScan.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.UnlockSafe && Options.DisableUnlockSafe.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.UploadData && Options.DisableUploadData.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.StartReactor && Options.DisableStartReactor.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.ResetBreakers && Options.DisableResetBreaker.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.RewindTapes && Options.DisableRewindTapes.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.VentCleaning && Options.DisableVentCleaning.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.BuildSandcastle && Options.DisableBuildSandcastle.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.TestFrisbee && Options.DisableTestFrisbee.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.WaterPlants && Options.DisableWaterPlants.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.CatchFish && Options.DisableCatchFish.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.HelpCritter && Options.DisableHelpCritter.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.TuneRadio && Options.DisableTuneRadio.GetBool()) disabledTasks.Add(task);
+                if (task.TaskType == TaskTypes.AssembleArtifact && Options.DisableAssembleArtifact.GetBool()) disabledTasks.Add(task);
             }
-
-            Logger.Info($"AddTasksFromList: kept={filtered.Count}, removed={removedTypes.Count}", "AddTasksFromListPatch");
-            if (removedTypes.Count > 0)
-            {
-                Logger.Info($"Removed task types: {string.Join(",", removedTypes)}", "AddTasksFromListPatch");
+            foreach (var task in disabledTasks)
+            {               
+                unusedTasks.Remove(task);
             }
-
-            // Replace the original list reference with the filtered one so the original method
-            // iterates over a safe list that doesn't contain disabled tasks.
-            unusedTasks = filtered;
         }
     }
 
     [HarmonyPatch(typeof(NetworkedPlayerInfo), nameof(NetworkedPlayerInfo.RpcSetTasks))]
     class RpcSetTasksPatch
     {
-
+       
+        public static bool SkipPatch = false;
         public static Il2CppSystem.Collections.Generic.Dictionary<byte, Il2CppStructArray<byte>> taskIds = new();
 
         public static void Prefix(NetworkedPlayerInfo __instance,
-            [HarmonyArgument(0)] ref Il2CppStructArray<byte> taskTypeIds)
+        [HarmonyArgument(0)] ref Il2CppStructArray<byte> taskTypeIds)
         {
-            try
-            {
-                // ゲーム状態チェック
-                if (Main.RealOptionsData == null)
-                {
-                    Logger.Error("CRITICAL: RealOptionsData が null です - ゲーム状態が破損しています", "RpcSetTasksPatch");
-                    AmongUsClient.Instance.ExitGame(DisconnectReasons.ExitGame);
-                    return;
-                }
-
-                if (__instance == null)
-                {
-                    Logger.Error("NetworkedPlayerInfo が null です", "RpcSetTasksPatch");
-                    return;
-                }
-
-                var pc = Utils.GetPlayerById(__instance.PlayerId);
-                if (pc == null)
-                {
-                    Logger.Warn($"PlayerId {__instance.PlayerId} のプレイヤーが見つかりません", "RpcSetTasksPatch");
-                    return;
-                }
+           
+            if (SkipPatch) return;
 
 
-                if (Options.CurrentGameMode == CustomGameMode.Standard && !Main.IsroleAssigned)
-                {
-                    Logger.Info($"RpcSetTasks (pre-role): {pc.name} をキャッシュしてスキップ", "RpcSetTasksPatch");
-                    if (taskTypeIds != null)
-                        taskIds[__instance.PlayerId] = taskTypeIds;
-                    taskTypeIds = new Il2CppStructArray<byte>(0);
-                    return;
-                }
-
-                Logger.Info($"RpcSetTasks called for player {pc.GetNameWithRole()} (id={pc.PlayerId}) incoming taskTypeIds.Count={(taskTypeIds == null ? 0 : taskTypeIds.Count)}", "RpcSetTasksPatch");
-
-                CustomRoles? RoleNullable = pc.GetCustomRole();
-                if (RoleNullable == null)
-                {
-                    Logger.Warn($"{pc.name} のカスタム役職が null です", "RpcSetTasksPatch");
-                    return;
-                }
-
-                CustomRoles role = RoleNullable.Value;
-
-                // デフォルトのタスク数
-                bool hasCommonTasks = true;
-                int NumLongTasks = Main.NormalOptions != null ? Main.NormalOptions.NumLongTasks : 0;
-                int NumShortTasks = Main.NormalOptions != null ? Main.NormalOptions.NumShortTasks : 0;
-
-                // タスク数オーバーライド
-                if (Options.OverrideTasksData.AllData.TryGetValue(role, out var data) && data.doOverride.GetBool())
-                {
-                    hasCommonTasks = data.assignCommonTasks.GetBool();
-                    NumLongTasks = data.numLongTasks.GetInt();
-                    NumShortTasks = data.numShortTasks.GetInt();
-                    Logger.Info($"OverrideTasks for {pc.name}: hasCommon={hasCommonTasks} long={NumLongTasks} short={NumShortTasks}", "RpcSetTasksPatch");
-                }
-
-                // 固有タスク処理
-                if (pc.Is(CustomRoles.VentManager))
-                    (hasCommonTasks, NumLongTasks, NumShortTasks) = VentManager.TaskData;
-                if (pc.Is(CustomRoles.FoxSpirit))
-                    (hasCommonTasks, NumLongTasks, NumShortTasks) = FoxSpirit.TaskData;
-                if (pc.Is(CustomRoles.Workhorse))
-                    (hasCommonTasks, NumLongTasks, NumShortTasks) = Workhorse.TaskData;
-                if (pc.Is(CustomRoles.Rabbit) && Rabbit.IsFinish(pc))
-                    (hasCommonTasks, NumLongTasks, NumShortTasks) = Rabbit.TaskData;
-
-                if (taskTypeIds == null)
-                {
-                    Logger.Warn($"{pc.name} の taskTypeIds が null です", "RpcSetTasksPatch");
-                    return;
-                }
-
-                int defaultCommonTasksNum = Main.RealOptionsData.GetInt(Int32OptionNames.NumCommonTasks);
-
-                if (taskTypeIds.Count == 0) hasCommonTasks = false;
-                if (!hasCommonTasks && NumLongTasks == 0 && NumShortTasks == 0 && defaultCommonTasksNum == 0) NumShortTasks = 1;
-
-                Il2CppSystem.Collections.Generic.List<byte> TasksList = new();
-                foreach (var num in taskTypeIds) TasksList.Add(num);
-
-                Logger.Info($"Initial TasksList count={TasksList.Count} hasCommonTasks={hasCommonTasks}", "RpcSetTasksPatch");
-
-                if (hasCommonTasks)
-                {
-                    int removeStart = defaultCommonTasksNum;
-                    int removeCount = TasksList.Count - defaultCommonTasksNum;
-                    if (removeStart >= 0 && removeStart < TasksList.Count && removeCount > 0)
-                        TasksList.RemoveRange(removeStart, removeCount);
-                    Logger.Info($"After trimming common tasks TasksList count={TasksList.Count}", "RpcSetTasksPatch");
-                }
-                else
-                {
-                    TasksList.Clear();
-                    Logger.Info($"Cleared common tasks for {pc.name}", "RpcSetTasksPatch");
-                }
-
-                if (ShipStatus.Instance == null)
-                {
-                    Logger.Error("ShipStatus が null です - タスク割り当てをスキップします", "RpcSetTasksPatch");
-                    return;
-                }
-
-                var LongTasks = new Il2CppSystem.Collections.Generic.List<NormalPlayerTask>();
-                if (ShipStatus.Instance.LongTasks != null)
-                {
-                    foreach (var task in ShipStatus.Instance.LongTasks)
-                    {
-                        if (task != null) LongTasks.Add(task);
-                    }
-                    Shuffle(LongTasks);
-                }
-
-                var ShortTasks = new Il2CppSystem.Collections.Generic.List<NormalPlayerTask>();
-                if (ShipStatus.Instance.ShortTasks != null)
-                {
-                    foreach (var task in ShipStatus.Instance.ShortTasks)
-                    {
-                        if (task != null) ShortTasks.Add(task);
-                    }
-                    Shuffle(ShortTasks);
-                }
-
-                Logger.Info($"LongTasks={LongTasks.Count}, ShortTasks={ShortTasks.Count}", "RpcSetTasksPatch");
-
-                int longAdded = 0;
-                foreach (var t in LongTasks)
-                {
-                    if (longAdded >= NumLongTasks) break;
-                    if (t != null)
-                    {
-                        TasksList.Add((byte)t.TaskType);
-                        longAdded++;
-                    }
-                }
-
-                int shortAdded = 0;
-                foreach (var t in ShortTasks)
-                {
-                    if (shortAdded >= NumShortTasks) break;
-                    if (t != null)
-                    {
-                        TasksList.Add((byte)t.TaskType);
-                        shortAdded++;
-                    }
-                }
-
-                Logger.Info($"Added tasks: long={longAdded}, short={shortAdded}", "RpcSetTasksPatch");
-
-
-                if (pc.Is(CustomRoles.VentManager) || pc.Is(CustomRoles.FoxSpirit))
-                {
-                    TasksList.Clear();
-                    ShortTasks.Clear();
-
-                    if (ShipStatus.Instance.ShortTasks != null)
-                    {
-                        var ventTask = ShipStatus.Instance.ShortTasks.FirstOrDefault(t => t != null && t.TaskType == TaskTypes.VentCleaning);
-                        if (ventTask != null) ShortTasks.Add(ventTask);
-                    }
-
-                    if (ShortTasks.Count > 0)
-                    {
-                        bool hasVent = false;
-                        for (int _i = 0; _i < TasksList.Count; _i++)
-                        {
-                            if (TasksList[_i] == (byte)TaskTypes.VentCleaning)
-                            {
-                                hasVent = true;
-                                break;
-                            }
-                        }
-                        if (!hasVent) TasksList.Add((byte)TaskTypes.VentCleaning);
-                    }
-                    Logger.Info($"VentManager/FoxSpirit special handling TasksList count={TasksList.Count}", "RpcSetTasksPatch");
-                }
-
-                // 配列に変換
-                taskTypeIds = new Il2CppStructArray<byte>(TasksList.Count);
-                for (int i = 0; i < TasksList.Count; i++)
-                    taskTypeIds[i] = TasksList[i];
-
-                Logger.Info($"{pc.name} にタスク {TasksList.Count} 個を割り当てました (長: {NumLongTasks}, 短: {NumShortTasks})", "RpcSetTasksPatch");
-            }
-            catch (System.Exception ex)
-            {
-                Logger.Error($"RpcSetTasksPatch で例外が発生しました: {ex.Message}", "RpcSetTasksPatch");
-                Logger.Exception(ex, "RpcSetTasksPatch");
+            if (Main.RealOptionsData == null)
+            {               
                 return;
             }
+
+            var pc = Utils.GetPlayerById(__instance.PlayerId);
+            CustomRoles? RoleNullable = pc?.GetCustomRole();
+            if (RoleNullable == null) return;
+            CustomRoles role = RoleNullable.Value;
+
+            // デフォルトのタスク数
+            bool hasCommonTasks = true;
+            int NumLongTasks = Main.NormalOptions.NumLongTasks;
+            int NumShortTasks = Main.NormalOptions.NumShortTasks;
+
+            if (Options.OverrideTasksData.AllData.TryGetValue(role, out var data) && data.doOverride.GetBool())
+            {
+                hasCommonTasks = data.assignCommonTasks.GetBool();
+                NumLongTasks = data.numLongTasks.GetInt();
+                NumShortTasks = data.numShortTasks.GetInt();
+            }
+
+            if (pc.Is(CustomRoles.VentManager))
+                (hasCommonTasks, NumLongTasks, NumShortTasks) = VentManager.TaskData;
+            if (pc.Is(CustomRoles.FoxSpirit))
+                (hasCommonTasks, NumLongTasks, NumShortTasks) = FoxSpirit.TaskData;
+            if (pc.Is(CustomRoles.Workhorse))
+                (hasCommonTasks, NumLongTasks, NumShortTasks) = Workhorse.TaskData;
+            if (pc.Is(CustomRoles.Rabbit) && Rabbit.IsFinish(pc))
+                (hasCommonTasks, NumLongTasks, NumShortTasks) = Rabbit.TaskData;
+
+            if (taskTypeIds.Count == 0) hasCommonTasks = false;
+            if (!hasCommonTasks && NumLongTasks == 0 && NumShortTasks == 0) NumShortTasks = 1;
+                       
+            if (!pc.Is(CustomRoles.VentManager) && !pc.Is(CustomRoles.FoxSpirit)
+                && hasCommonTasks
+                && NumLongTasks == Main.NormalOptions.NumLongTasks
+                && NumShortTasks == Main.NormalOptions.NumShortTasks)
+            {
+                taskIds[__instance.PlayerId] = taskTypeIds;
+                return;
+            }
+
+            Il2CppSystem.Collections.Generic.List<byte> TasksList = new();
+            foreach (var num in taskTypeIds)
+                TasksList.Add(num);
+
+            int defaultCommonTasksNum = Main.RealOptionsData.GetInt(Int32OptionNames.NumCommonTasks);
+            if (hasCommonTasks) TasksList.RemoveRange(defaultCommonTasksNum, TasksList.Count - defaultCommonTasksNum);
+            else TasksList.Clear();
+
+            Il2CppSystem.Collections.Generic.HashSet<TaskTypes> usedTaskTypes = new();
+            int start2 = 0;
+            int start3 = 0;
+
+            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> LongTasks = new();
+            foreach (var task in ShipStatus.Instance.LongTasks)
+                LongTasks.Add(task);
+            Shuffle<NormalPlayerTask>(LongTasks);
+
+            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> ShortTasks = new();
+            foreach (var task in ShipStatus.Instance.ShortTasks)
+                ShortTasks.Add(task);
+            Shuffle<NormalPlayerTask>(ShortTasks);
+
+           
+            if (pc.Is(CustomRoles.VentManager) || pc.Is(CustomRoles.FoxSpirit))
+            {
+                TasksList.Clear();
+                ShortTasks.Clear();
+
+                var ventTask = ShipStatus.Instance.ShortTasks.FirstOrDefault(task => task.TaskType == TaskTypes.VentCleaning);
+                if (ventTask != null)
+                    ShortTasks.Add(ventTask);              
+            }
+
+            ShipStatus.Instance.AddTasksFromList(
+                ref start2,
+                NumLongTasks,
+                TasksList,
+                usedTaskTypes,
+                LongTasks
+            );
+            ShipStatus.Instance.AddTasksFromList(
+                ref start3,
+                NumShortTasks,
+                TasksList,
+                usedTaskTypes,
+                ShortTasks
+            );
+
+            taskTypeIds = new Il2CppStructArray<byte>(TasksList.Count);
+            for (int i = 0; i < TasksList.Count; i++)
+            {
+                taskTypeIds[i] = TasksList[i];
+            }
+
+            taskIds[__instance.PlayerId] = taskTypeIds;
         }
 
         public static void Shuffle<T>(Il2CppSystem.Collections.Generic.List<T> list)
         {
-            if (list == null || list.Count == 0) return;
-
             for (int i = 0; i < list.Count - 1; i++)
             {
                 T obj = list[i];
-                int rand = UnityEngine.Random.Range(i, list.Count);
+                int rand = IRandom.Instance.Next(i, list.Count);
                 list[i] = list[rand];
                 list[rand] = obj;
             }

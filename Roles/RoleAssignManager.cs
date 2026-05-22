@@ -280,6 +280,8 @@ namespace TownOfHostY.Roles
         {
             foreach (var subRole in CustomRolesHelper.AllAddOnRoles)
             {
+                if (subRole.IsFirstWriteAddOn()) continue;
+
                 var chance = subRole.GetChance();
                 var count = subRole.GetAssignCount();
                 if (chance == 0 || count == 0) continue;

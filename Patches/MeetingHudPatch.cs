@@ -327,6 +327,7 @@ public static class MeetingHudPatch
             if (AmongUsClient.Instance.AmHost)
             {
                 if (!AntiBlackout.IsCached) AntiBlackout.SetIsDead();
+                Utils.AfterMeetingTasks();
 
                 Main.AllPlayerControls.Where(pc => !pc.Is(CustomRoles.GM)).Do(pc => RandomSpawn.CustomNetworkTransformPatch.FirstTP[pc.PlayerId] = true);
 

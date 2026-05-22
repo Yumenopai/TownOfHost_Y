@@ -618,6 +618,12 @@ namespace TownOfHostY
             Logger.Info($"sender: {sender?.name}, sendTo: {sendTo}", "SendCustomChat");
             string command = "\n\n";
             sender = PlayerControl.LocalPlayer;
+            // ホストが死亡している場合は生存しているプレイヤーに送らせる
+            if (sender.Data.IsDead && GameStates.IsInGame)
+            {
+                var aliveSender = Main.AllAlivePlayerControls.FirstOrDefault();
+                if (aliveSender != null) sender = aliveSender;
+            }
             string name = sender.Data?.PlayerName;
             int clientId = sendTo == byte.MaxValue ? -1 : Utils.GetPlayerById(sendTo).GetClientId();
             if (clientId == -1)

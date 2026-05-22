@@ -266,6 +266,7 @@ class SelectRolesPatch
         {
             if (UnassignedPlayers.Count == 0) break;
 
+            if (customRole > CustomRoles.StartAddon) continue;
 
             var roleInfo = CustomRoleManager.GetRoleInfo(customRole);
             if (roleInfo != null && roleInfo.IsDesyncImpostor) continue;
@@ -483,7 +484,7 @@ class SelectRolesPatch
             CustomRoles.NonReport, CustomRoles.PlusVote, CustomRoles.Guarding,
             CustomRoles.AddBait, CustomRoles.Refusing, CustomRoles.Revealer })
         {
-            AssignCustomSubRolesFromList(role, allPlayersbySub);
+            AssignCustomSubRolesDuplicatable(role, allPlayersbySub);
         }
 
         foreach (var pair in PlayerState.AllPlayerStates)
@@ -536,9 +537,13 @@ class SelectRolesPatch
         GameOptionsSender.AllSenders.Clear();
         foreach (var pc in Main.AllPlayerControls)
         {
-            GameOptionsSender.AllSenders.Add(
-                new PlayerGameOptionsSender(pc)
-            );
+            if (!pc.AmOwner)
+                GameOptionsSender.AllSenders.Add(new PlayerGameOptionsSender(pc));
+        }
+        foreach (var pc in Main.AllPlayerControls)
+        {
+            if (pc.AmOwner)
+                GameOptionsSender.AllSenders.Add(new PlayerGameOptionsSender(pc));
         }
 
         Utils.CountAlivePlayers(true);
@@ -722,6 +727,38 @@ class SelectRolesPatch
         return AssignedPlayers;
     }
 
+
+    private static void AssignCustomSubRolesDuplicatable(CustomRoles role, List<PlayerControl> allPlayersbySub)
+    {
+        if (allPlayersbySub == null || allPlayersbySub.Count <= 0) return;
+        var count = role.GetCount();
+        if (count <= 0) return;
+        var chance = role.GetChance();
+        if (chance <= 0) return;
+
+        var rand = IRandom.Instance;
+        int assigned = 0;
+        int attempts = 0;
+        int maxAttempts = count * 10;
+        var unassigned = allPlayersbySub.Where(pc => !pc.GetCustomSubRoles().Contains(role)).ToList();
+
+        while (assigned < count && attempts < maxAttempts)
+        {
+            attempts++;
+            if (chance < 100 && rand.Next(100) >= chance) continue;
+
+
+            if (unassigned.Count == 0) unassigned = new List<PlayerControl>(allPlayersbySub);
+            if (unassigned.Count == 0) break;
+
+            var player = unassigned[rand.Next(0, unassigned.Count)];
+            unassigned.Remove(player);
+            PlayerState.GetByPlayerId(player.PlayerId).SetSubRole(role);
+            Logger.Info("属性設定:" + player?.Data?.PlayerName + " = " + player.GetCustomRole().ToString() + " + " + role.ToString(), "AssignSubRoles");
+            assigned++;
+        }
+    }
+
     private static List<PlayerControl> AssignCustomSubRolesFromList(CustomRoles role, List<PlayerControl> allPlayersbySub, int RawCount = -1)
     {
         if (allPlayersbySub == null || allPlayersbySub.Count <= 0) return null;
@@ -858,8 +895,7 @@ public static class StandardIntroHelper
     {
         if (!AmongUsClient.Instance.AmHost) return;
 
-
-
+        HudManagerCoShowIntroPatch.Cancel = false;
 
         GameDataSerializePatch.DontTouch = false;
         GameDataSerializePatch.SerializeMessageCount++;
@@ -888,7 +924,7 @@ public static class StandardIntroHelper
         {
             i++;
             data.Disconnected = false;
-            if (i > 4) continue;            
+            if (i > 4) continue;
             var pc = Utils.GetPlayerById(data.PlayerId);
             var isDesync = pc?.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true;
             var originalRole = data.Role?.Role ?? RoleTypes.Crewmate;
@@ -959,6 +995,7 @@ public static class StandardIntroHelper
 
                 _ = new LateTask(() =>
                 {
+                    RpcSetTasksPatch.SkipPatch = true;
                     foreach (var pc in Main.AllPlayerControls)
                     {
                         if (RpcSetTasksPatch.taskIds.TryGetValue(pc.PlayerId, out var taskids))
@@ -969,6 +1006,7 @@ public static class StandardIntroHelper
                             pc.Data.RpcSetTasks(new Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppStructArray<byte>(0));
                         }
                     }
+                    RpcSetTasksPatch.SkipPatch = false;
                     foreach (var pc in Main.AllPlayerControls)
                         PlayerState.GetByPlayerId(pc.PlayerId).InitTask(pc);
                     GameData.Instance.RecomputeTaskCounts();
@@ -1094,7 +1132,7 @@ public static class StandardIntroHelper
 
         _ = new LateTask(() =>
         {
-
+            HudManagerCoShowIntroPatch.Cancel = false;
 
             foreach (var pc in Main.AllPlayerControls)
             {

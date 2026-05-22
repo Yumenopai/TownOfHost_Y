@@ -40,7 +40,7 @@ namespace TownOfHostY.Modules
         }
         public void SetDirty() => IsDirty = true;
 
-        public override void SendGameOptions()  
+        public override void SendGameOptions()
         {
             if (player.AmOwner)
             {
@@ -48,7 +48,10 @@ namespace TownOfHostY.Modules
                 foreach (var com in GameManager.Instance.LogicComponents)
                 {
                     if (com.TryCast<LogicOptions>(out var lo))
+                    {
                         lo.SetGameOptions(opt);
+                        lo.ClearDirtyFlag();
+                    }
                 }
                 GameOptionsManager.Instance.CurrentGameOptions = opt;
             }
@@ -83,7 +86,17 @@ namespace TownOfHostY.Modules
             var opt = BasedGameOptions;
             AURoleOptions.SetOpt(opt);
             var state = PlayerState.GetByPlayerId(player.PlayerId);
-            opt.BlackOut(state.IsBlackOut);
+            Logger.Info($"[VisionDebug] {player?.Data?.PlayerName}: IsBlackOut={state.IsBlackOut}, DefaultCrewVision={Main.DefaultCrewmateVision}, RestoreCrewVision={opt.GetFloat(FloatOptionNames.CrewLightMod)}", "BuildGameOptions");
+            if (state.IsBlackOut)
+            {
+                opt.SetFloat(FloatOptionNames.CrewLightMod, 0f);
+                opt.SetFloat(FloatOptionNames.ImpostorLightMod, 0f);
+            }
+            else
+            {
+                opt.SetFloat(FloatOptionNames.CrewLightMod, Main.DefaultCrewmateVision);
+                opt.SetFloat(FloatOptionNames.ImpostorLightMod, Main.DefaultImpostorVision);
+            }
 
             CustomRoles role = player.GetCustomRole();
             switch (role.GetCustomRoleTypes())

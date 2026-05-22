@@ -154,7 +154,7 @@ public static class AntiBlackout
         var targetClientId = player.GetClientId();
         if (targetClientId == -1) return;
 
-        
+
         var playerRoleInfo = player.GetCustomRole().GetRoleInfo();
         bool viewerIsDesync = playerRoleInfo?.IsDesyncImpostor ?? false;
 
@@ -169,10 +169,10 @@ public static class AntiBlackout
             var roleInfo = customRole.GetRoleInfo();
             bool isAlive = pc.IsAlive();
 
-            
+
             var role = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Scientist;
 
-            
+
             if (!isAlive)
             {
                 role = (customRole.IsImpostor() || customRole.IsMadmate()
@@ -181,11 +181,11 @@ public static class AntiBlackout
                     : RoleTypes.CrewmateGhost;
             }
 
-            
+
             if (player.PlayerId != pc.PlayerId && (roleInfo?.IsDesyncImpostor ?? false))
                 role = isAlive ? RoleTypes.Crewmate : RoleTypes.CrewmateGhost;
 
-            
+
             RoleTypes setrole = (viewerIsDesync && player.PlayerId != pc.PlayerId)
                 ? (isAlive ? RoleTypes.Crewmate : RoleTypes.CrewmateGhost)
                 : role;
