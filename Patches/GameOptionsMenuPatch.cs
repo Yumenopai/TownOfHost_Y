@@ -429,8 +429,10 @@ public static class GameOptionsMenuPatch
                     }
                 }
 
-                __instance.UpdateValue();
-                __instance.OnValueChanged?.Invoke(__instance);
+                // 初期化時はUIテキスト更新のみ。UpdateValue()を呼ぶとSetValue→SyncAllOptionsが
+                // 全オプション分連鎖してRPCが大量発生しhacking判定されるため直接表示を設定する
+                __instance.oldValue = __instance.Value;
+                __instance.ValueText.text = item.GetString();
                 return false;
             }
 
