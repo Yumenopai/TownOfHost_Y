@@ -334,22 +334,78 @@ namespace TownOfHostY
         public static void SendCustomChat(string SendName, string command, string name, PlayerControl sender = null)
         {
             Logger.Info($"SendCustomChat SendName: {SendName}, command: {command}, name: {name} sender: {sender?.name}", "SendCustomChat");
-            if (sender == null) sender = PlayerControl.LocalPlayer;
+
+            if (sender == null)
+                sender = PlayerControl.LocalPlayer;
+
+            const int MaxLength = 320;
+            const int MaxLines = 13;
+
+           
+            if (command.Length <= MaxLength &&
+                (command.Split("\n")?.Count() ?? 0) <= MaxLines)
+            {
+                SendChunk(SendName, command, name, sender);
+                return;
+            }
+           
+            var lines = command.Split("\n").ToList();
+            var chunk = new List<string>();
+
+            for (int i = 0; i < lines.Count; i++)
+            {
+                chunk.Add(lines[i]);
+
+                string chunkText = string.Join("\n", chunk);
+
+                bool willExceed =
+                    chunkText.Length > MaxLength ||
+                    chunk.Count > MaxLines;
+
+                if (willExceed)
+                {                    
+                    string sendText = string.Join("\n", chunk.Take(chunk.Count - 1));
+
+                    if (!string.IsNullOrWhiteSpace(sendText))
+                    {
+                        SendChunk(SendName, sendText, name, sender);
+                    }
+                    
+                    chunk.Clear();
+                    chunk.Add(lines[i]);
+                }
+            }
+            
+            if (chunk.Count > 0)
+            {
+                string sendText = string.Join("\n", chunk);
+
+                if (!string.IsNullOrWhiteSpace(sendText))
+                {
+                    SendChunk(SendName, sendText, name, sender);
+                }
+            }
+        }
+
+        private static void SendChunk(string SendName, string text, string name, PlayerControl sender)
+        {
             var crs = CustomRpcSender.Create("AllSend");
+
             crs.AutoStartRpc(sender.NetId, (byte)RpcCalls.SetName)
                 .Write(sender.Data.NetId)
                 .Write(SendName)
                 .EndRpc()
                 .AutoStartRpc(sender.NetId, (byte)RpcCalls.SendChat)
-                .Write(command)
+                .Write(text)
                 .EndRpc()
                 .AutoStartRpc(sender.NetId, (byte)RpcCalls.SetName)
                 .Write(sender.Data.NetId)
                 .Write(name)
                 .EndRpc()
                 .SendMessage();
+
             sender.SetName(SendName);
-            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, command);
+            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, text);
             sender.SetName(name);
         }
 
@@ -596,21 +652,29 @@ namespace TownOfHostY
                 DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg);
                 player.SetName(name);
             }
-            var writer = CustomRpcSender.Create("MessagesToSend", SendOption.None);
-            writer.StartMessage(clientId);
-            writer.StartRpc(player.NetId, (byte)RpcCalls.SetName)
-                .Write(player.Data.NetId)
-                .Write(title)
-                .EndRpc();
-            writer.StartRpc(player.NetId, (byte)RpcCalls.SendChat)
-                .Write(msg)
-                .EndRpc();
-            writer.StartRpc(player.NetId, (byte)RpcCalls.SetName)
-                .Write(player.Data.NetId)
-                .Write(player.Data.PlayerName)
-                .EndRpc();
-            writer.EndMessage();
-            writer.SendMessage();
+
+            if (player.Data.IsDead && GameStates.IsInGame)
+            {
+                SendMessageAsDeadHost(player, msg, title, sendTo);
+            }
+            else
+            {
+                var writer = CustomRpcSender.Create("MessagesToSend", SendOption.None);
+                writer.StartMessage(clientId);
+                writer.StartRpc(player.NetId, (byte)RpcCalls.SetName)
+                    .Write(player.Data.NetId)
+                    .Write(title)
+                    .EndRpc();
+                writer.StartRpc(player.NetId, (byte)RpcCalls.SendChat)
+                    .Write(msg)
+                    .EndRpc();
+                writer.StartRpc(player.NetId, (byte)RpcCalls.SetName)
+                    .Write(player.Data.NetId)
+                    .Write(player.Data.PlayerName)
+                    .EndRpc();
+                writer.EndMessage();
+                writer.SendMessage();
+            }
             __instance.timeSinceLastMessage = 0f;
         }
         public static void SendCustomChat(string SendName, PlayerControl sender = null, byte sendTo = byte.MaxValue)
@@ -618,12 +682,6 @@ namespace TownOfHostY
             Logger.Info($"sender: {sender?.name}, sendTo: {sendTo}", "SendCustomChat");
             string command = "\n\n";
             sender = PlayerControl.LocalPlayer;
-            // ホストが死亡している場合は生存しているプレイヤーに送らせる
-            if (sender.Data.IsDead && GameStates.IsInGame)
-            {
-                var aliveSender = Main.AllAlivePlayerControls.FirstOrDefault();
-                if (aliveSender != null) sender = aliveSender;
-            }
             string name = sender.Data?.PlayerName;
             int clientId = sendTo == byte.MaxValue ? -1 : Utils.GetPlayerById(sendTo).GetClientId();
             if (clientId == -1)
@@ -632,21 +690,78 @@ namespace TownOfHostY
                 DestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, command);
                 sender.SetName(name);
             }
-            var writer = CustomRpcSender.Create("CustomSend");
-            writer.StartMessage(clientId);
-            writer.StartRpc(sender.NetId, (byte)RpcCalls.SetName)
-                .Write(sender.Data.NetId)
-                .Write(SendName)
-                .EndRpc()
-                .StartRpc(sender.NetId, (byte)RpcCalls.SendChat)
-                .Write(command)
-                .EndRpc()
-                .StartRpc(sender.NetId, (byte)RpcCalls.SetName)
-                .Write(sender.Data.NetId)
-                .Write(name)
-                .EndRpc()
-                .EndMessage()
-                .SendMessage();
+
+            if (sender.Data.IsDead && GameStates.IsInGame)
+            {
+                SendMessageAsDeadHost(sender, command, SendName, sendTo);
+            }
+            else
+            {
+                var writer = CustomRpcSender.Create("CustomSend");
+                writer.StartMessage(clientId);
+                writer.StartRpc(sender.NetId, (byte)RpcCalls.SetName)
+                    .Write(sender.Data.NetId)
+                    .Write(SendName)
+                    .EndRpc()
+                    .StartRpc(sender.NetId, (byte)RpcCalls.SendChat)
+                    .Write(command)
+                    .EndRpc()
+                    .StartRpc(sender.NetId, (byte)RpcCalls.SetName)
+                    .Write(sender.Data.NetId)
+                    .Write(name)
+                    .EndRpc()
+                    .EndMessage()
+                    .SendMessage();
+            }
+        }
+        private static void SendMessageAsDeadHost(PlayerControl host, string msg, string title, byte sendTo)
+        {
+            var targets = sendTo == byte.MaxValue
+                ? Main.AllPlayerControls.Where(pc => pc.PlayerId != host.PlayerId)
+                : new[] { Utils.GetPlayerById(sendTo) };
+
+            foreach (var target in targets)
+            {
+                if (target == null) continue;
+                int targetClientId = target.GetClientId();
+                if (targetClientId == -1) continue;
+
+                var writer = CustomRpcSender.Create("DeadHostChat", SendOption.None);
+                writer.StartMessage(targetClientId);
+
+                if (target.IsAlive())
+                {
+                    host.Data.IsDead = false;
+                    writer.stream.StartMessage(1);
+                    writer.stream.WritePacked(host.Data.NetId);
+                    host.Data.Serialize(writer.stream, false);
+                    writer.stream.EndMessage();
+                }
+
+                writer.StartRpc(host.NetId, (byte)RpcCalls.SetName)
+                    .Write(host.Data.NetId)
+                    .Write(title)
+                    .EndRpc();
+                writer.StartRpc(host.NetId, (byte)RpcCalls.SendChat)
+                    .Write(msg)
+                    .EndRpc();
+                writer.StartRpc(host.NetId, (byte)RpcCalls.SetName)
+                    .Write(host.Data.NetId)
+                    .Write(host.Data.PlayerName)
+                    .EndRpc();
+
+                if (target.IsAlive())
+                {
+                    host.Data.IsDead = true;
+                    writer.stream.StartMessage(1);
+                    writer.stream.WritePacked(host.Data.NetId);
+                    host.Data.Serialize(writer.stream, false);
+                    writer.stream.EndMessage();
+                }
+
+                writer.EndMessage();
+                writer.SendMessage();
+            }
         }
     }
 

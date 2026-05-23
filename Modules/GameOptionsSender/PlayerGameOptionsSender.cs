@@ -85,8 +85,7 @@ namespace TownOfHostY.Modules
 
             var opt = BasedGameOptions;
             AURoleOptions.SetOpt(opt);
-            var state = PlayerState.GetByPlayerId(player.PlayerId);
-            Logger.Info($"[VisionDebug] {player?.Data?.PlayerName}: IsBlackOut={state.IsBlackOut}, DefaultCrewVision={Main.DefaultCrewmateVision}, RestoreCrewVision={opt.GetFloat(FloatOptionNames.CrewLightMod)}", "BuildGameOptions");
+            var state = PlayerState.GetByPlayerId(player.PlayerId);            
             if (state.IsBlackOut)
             {
                 opt.SetFloat(FloatOptionNames.CrewLightMod, 0f);
@@ -138,7 +137,7 @@ namespace TownOfHostY.Modules
 
             if (Main.AllPlayerSpeed.TryGetValue(player.PlayerId, out var speed))
             {
-                AURoleOptions.PlayerSpeedMod = Mathf.Clamp(speed, Main.MinSpeed, 10f);
+                AURoleOptions.PlayerSpeedMod = Mathf.Clamp(speed, Main.MinSpeed, 3f);
             }
 
             state.taskState.hasTasks = Utils.HasTasks(player.Data, false);

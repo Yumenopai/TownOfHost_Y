@@ -222,8 +222,7 @@ static class ExtendedPlayerControl
         {
             Main.AllPlayerKillCooldown[player.PlayerId] *= 2;
         }
-        player.SyncSettings();
-        player.RpcProtectedMurderPlayer();
+        player.SyncSettings();        
         player.ResetKillCooldown();
     }
     public static void RpcSpecificMurderPlayer(this PlayerControl killer, PlayerControl target = null)
