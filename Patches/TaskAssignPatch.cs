@@ -73,12 +73,14 @@ namespace TownOfHostY
 
             // デフォルトのタスク数
             bool hasCommonTasks = true;
+            int numCommonTasks = -1; 
             int NumLongTasks = Main.NormalOptions.NumLongTasks;
             int NumShortTasks = Main.NormalOptions.NumShortTasks;
 
             if (Options.OverrideTasksData.AllData.TryGetValue(role, out var data) && data.doOverride.GetBool())
             {
-                hasCommonTasks = data.assignCommonTasks.GetBool();
+                numCommonTasks = data.assignCommonTasks.GetInt();
+                hasCommonTasks = numCommonTasks > 0;
                 NumLongTasks = data.numLongTasks.GetInt();
                 NumShortTasks = data.numShortTasks.GetInt();
             }
@@ -96,7 +98,7 @@ namespace TownOfHostY
             if (!hasCommonTasks && NumLongTasks == 0 && NumShortTasks == 0) NumShortTasks = 1;
                        
             if (!pc.Is(CustomRoles.VentManager) && !pc.Is(CustomRoles.FoxSpirit)
-                && hasCommonTasks
+                && hasCommonTasks && numCommonTasks < 0
                 && NumLongTasks == Main.NormalOptions.NumLongTasks
                 && NumShortTasks == Main.NormalOptions.NumShortTasks)
             {
@@ -109,7 +111,10 @@ namespace TownOfHostY
                 TasksList.Add(num);
 
             int defaultCommonTasksNum = Main.RealOptionsData.GetInt(Int32OptionNames.NumCommonTasks);
-            if (hasCommonTasks) TasksList.RemoveRange(defaultCommonTasksNum, TasksList.Count - defaultCommonTasksNum);
+            int commonToKeep = numCommonTasks >= 0
+                ? (numCommonTasks < defaultCommonTasksNum ? numCommonTasks : defaultCommonTasksNum)
+                : defaultCommonTasksNum;
+            if (hasCommonTasks) TasksList.RemoveRange(commonToKeep, TasksList.Count - commonToKeep);
             else TasksList.Clear();
 
             Il2CppSystem.Collections.Generic.HashSet<TaskTypes> usedTaskTypes = new();

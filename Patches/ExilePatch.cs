@@ -1,5 +1,7 @@
 using AmongUs.Data;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using HarmonyLib;
+using System.Collections;
 using TownOfHostY.Roles.AddOns.Common;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Crewmate;
@@ -26,18 +28,26 @@ namespace TownOfHostY
             }
         }
 
-        [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn))]
+        [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.Animate))]
         class AirshipExileControllerPatch
         {
-            public static void Postfix(AirshipExileController __instance)
+            public static void Postfix(AirshipExileController __instance, ref Il2CppSystem.Collections.IEnumerator __result)
             {
+                __result = WrapAnimateCoroutine(__instance, __result).WrapToIl2Cpp();
+            }
+            static System.Collections.IEnumerator WrapAnimateCoroutine(AirshipExileController instance, Il2CppSystem.Collections.IEnumerator original)
+            {
+                while (original.MoveNext())
+                {
+                    yield return original.Current;
+                }
                 try
                 {
-                    WrapUpPostfix(__instance.initData.networkedPlayer);
+                    WrapUpPostfix(instance.initData.networkedPlayer);
                 }
                 finally
                 {
-                    WrapUpFinalizer(__instance.initData.networkedPlayer);
+                    WrapUpFinalizer(instance.initData.networkedPlayer);
                 }
             }
         }
@@ -49,55 +59,65 @@ namespace TownOfHostY
             }
 
             bool DecidedWinner = false;
-            if (!AmongUsClient.Instance.AmHost) return;
-            AntiBlackout.RestoreIsDead(doSend: false);
-            if (exiled != null)
+            if (AmongUsClient.Instance.AmHost)
             {
-                var role = exiled.GetCustomRole();
-                var info = role.GetRoleInfo();
-                //霊界用暗転バグ対処
-                if (!AntiBlackout.OverrideExiledPlayer && info?.IsDesyncImpostor == true)
-                    exiled.Object?.ResetPlayerCam(1f);
-
-                exiled.IsDead = true;
-                if (role != CustomRoles.AntiComplete || PlayerState.GetByPlayerId(exiled.PlayerId).DeathReason == CustomDeathReason.etc)
-                    PlayerState.GetByPlayerId(exiled.PlayerId).DeathReason = CustomDeathReason.Vote;
-
-                foreach (var roleClass in CustomRoleManager.AllActiveRoles.Values)
+                AntiBlackout.RestoreIsDead(doSend: false);
+                if (exiled != null)
                 {
-                    roleClass.OnExileWrapUp(exiled, ref DecidedWinner);
-                }
-                Sending.OnExileWrapUp(exiled.Object);
+                    var role = exiled.GetCustomRole();
+                    var info = role.GetRoleInfo();
+                    //霊界用暗転バグ対処
+                    if (!AntiBlackout.OverrideExiledPlayer && info?.IsDesyncImpostor == true)
+                        exiled.Object?.ResetPlayerCam(1f);
 
-                if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.GetByPlayerId(exiled.PlayerId).SetDead();
+                    exiled.IsDead = true;
+                    if (role != CustomRoles.AntiComplete || PlayerState.GetByPlayerId(exiled.PlayerId).DeathReason == CustomDeathReason.etc)
+                        PlayerState.GetByPlayerId(exiled.PlayerId).DeathReason = CustomDeathReason.Vote;
+
+                    foreach (var roleClass in CustomRoleManager.AllActiveRoles.Values)
+                    {
+                        roleClass.OnExileWrapUp(exiled, ref DecidedWinner);
+                    }
+                    Sending.OnExileWrapUp(exiled.Object);
+
+                    if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.GetByPlayerId(exiled.PlayerId).SetDead();
+                }
             }
-            // ランダムスポーン
-            switch ((MapNames)Main.NormalOptions.MapId)
+            AfterMeetingTasks();
+        }
+        static void AfterMeetingTasks()
+        {
+            if (AmongUsClient.Instance.AmHost)
             {
-                case MapNames.Skeld:
-                    if (Options.RandomSpawn_Skeld.GetBool())
-                    {
-                        Main.AllPlayerControls.Do(new RandomSpawn.SkeldSpawnMap().RandomTeleport);
-                    }
-                    break;
-                case MapNames.MiraHQ:
-                    if (Options.RandomSpawn_MiraHQ.GetBool())
-                    {
-                        Main.AllPlayerControls.Do(new RandomSpawn.MiraHQSpawnMap().RandomTeleport);
-                    }
-                    break;
-                case MapNames.Polus:
-                    if (Options.RandomSpawn_Polus.GetBool())
-                    {
-                        Main.AllPlayerControls.Do(new RandomSpawn.PolusSpawnMap().RandomTeleport);
-                    }
-                    break;
-                case MapNames.Fungle:
-                    if (Options.RandomSpawn_Fungle.GetBool())
-                    {
-                        Main.AllPlayerControls.Do(new RandomSpawn.FungleSpawnMap().RandomTeleport);
-                    }
-                    break;
+                if (CustomWinnerHolder.WinnerTeam is not CustomWinner.Default) return;
+                // ランダムスポーン
+                switch ((MapNames)Main.NormalOptions.MapId)
+                {
+                    case MapNames.Skeld:
+                        if (Options.RandomSpawn_Skeld.GetBool())
+                        {
+                            Main.AllPlayerControls.Do(new RandomSpawn.SkeldSpawnMap().RandomTeleport);
+                        }
+                        break;
+                    case MapNames.MiraHQ:
+                        if (Options.RandomSpawn_MiraHQ.GetBool())
+                        {
+                            Main.AllPlayerControls.Do(new RandomSpawn.MiraHQSpawnMap().RandomTeleport);
+                        }
+                        break;
+                    case MapNames.Polus:
+                        if (Options.RandomSpawn_Polus.GetBool())
+                        {
+                            Main.AllPlayerControls.Do(new RandomSpawn.PolusSpawnMap().RandomTeleport);
+                        }
+                        break;
+                    case MapNames.Fungle:
+                        if (Options.RandomSpawn_Fungle.GetBool())
+                        {
+                            Main.AllPlayerControls.Do(new RandomSpawn.FungleSpawnMap().RandomTeleport);
+                        }
+                        break;
+                }
             }
             FallFromLadder.Reset();
             Utils.CountAlivePlayers(true);
@@ -113,7 +133,6 @@ namespace TownOfHostY
                 _ = new LateTask(() =>
                 {
                     exiled = AntiBlackout_LastExiled;
-                    AntiBlackout.SendGameData();
                     if (AntiBlackout.OverrideExiledPlayer &&
                         exiled != null &&
                         exiled.Object != null)
@@ -134,8 +153,8 @@ namespace TownOfHostY
                         var state = PlayerState.GetByPlayerId(playerId);
                         Logger.Info($"{player.GetNameWithRole()}を{reason}で死亡させました", "AfterMeetingDeath");
                         state.DeathReason = reason;
-                        state.SetDead();
                         player?.RpcExileV3();
+                        state.SetDead();
                         if (reason == CustomDeathReason.Suicide)
                             player?.SetRealKiller(player, true);
                         if (requireResetCam)
@@ -147,13 +166,13 @@ namespace TownOfHostY
                         Elder.DeadByRevenge(playerId);
                     });
                     Main.AfterMeetingDeathPlayers.Clear();
-                }, 0.5f, "AfterMeetingDeathPlayers Task");
+                }, 0.6f, "AfterMeetingDeathPlayers Task");
 
 
                 _ = new LateTask(() =>
                 {
                     Main.AllPlayerControls.Do(pc => AntiBlackout.ResetSetRole(pc));
-                }, 0.6f, "AfterMeeting_ResetSetRole");
+                }, 0.65f, "AfterMeeting_ResetSetRole");
 
                 _ = new LateTask(() =>
                 {

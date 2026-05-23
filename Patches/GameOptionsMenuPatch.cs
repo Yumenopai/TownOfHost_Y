@@ -356,21 +356,19 @@ public static class GameOptionsMenuPatch
         }
         else if (item is StringOptionItem stringItem)
         {
-            baseGameSetting = new StringGameSetting
-            {
-                Type = OptionTypes.String,
-                Values = new StringNames[stringItem.Selections.Length],
-                Index = stringItem.GetInt(),
-            };
+            var stringSetting = ScriptableObject.CreateInstance<StringGameSetting>();
+            stringSetting.Type = OptionTypes.String;
+            stringSetting.Values = new StringNames[stringItem.Selections.Length];
+            stringSetting.Index = stringItem.GetInt();
+            baseGameSetting = stringSetting;
         }
         else if (item is PresetOptionItem presetItem)
         {
-            baseGameSetting = new StringGameSetting
-            {
-                Type = OptionTypes.String,
-                Values = new StringNames[OptionItem.NumPresets],
-                Index = presetItem.GetInt(),
-            };
+            var presetSetting = ScriptableObject.CreateInstance<StringGameSetting>();
+            presetSetting.Type = OptionTypes.String;
+            presetSetting.Values = new StringNames[OptionItem.NumPresets];
+            presetSetting.Index = presetItem.GetInt();
+            baseGameSetting = presetSetting;
 
         }
 

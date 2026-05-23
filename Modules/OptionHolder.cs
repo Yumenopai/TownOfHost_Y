@@ -1086,8 +1086,8 @@ public static class Options
                 doOverride.ReplacementDictionary = replacementDic;
             }
 
-            assignCommonTasks = StringOptionItem.Create(idStart++, "assignCommonTasks", new string[] { "ColoredOff", "ColoredOn" }, 0, tab, false).SetParent(doOverride)
-                .SetValueFormat(OptionFormat.None);
+            assignCommonTasks = IntegerOptionItem.Create(idStart++, "assignCommonTasks", new(0, 99, 1), 0, tab, false).SetParent(doOverride)
+                .SetValueFormat(OptionFormat.Pieces);
             numLongTasks = IntegerOptionItem.Create(idStart++, "roleLongTasksNum", new(0, 99, 1), 3, tab, false).SetParent(doOverride)
                 .SetValueFormat(OptionFormat.Pieces);
             numShortTasks = IntegerOptionItem.Create(idStart++, "roleShortTasksNum", new(0, 99, 1), 3, tab, false).SetParent(doOverride)

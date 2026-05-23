@@ -11,8 +11,12 @@ namespace TownOfHostY.Patches.ISystemType;
 [HarmonyPatch(typeof(SwitchSystem), nameof(SwitchSystem.UpdateSystem))]
 public static class SwitchSystemUpdateSystemPatch
 {
+    private static bool wasActive;
+
     public static bool Prefix(SwitchSystem __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] MessageReader msgReader)
     {
+        wasActive = __instance.IsActive;
+
         byte amount;
         {
             var newReader = MessageReader.Get(msgReader);
@@ -79,5 +83,14 @@ public static class SwitchSystemUpdateSystemPatch
             return false;
         }
         return true;
+    }
+
+    public static void Postfix(SwitchSystem __instance)
+    {
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (wasActive != __instance.IsActive)
+        {
+            Utils.SyncAllSettings();
+        }
     }
 }
