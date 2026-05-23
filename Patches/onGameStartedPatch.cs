@@ -435,7 +435,14 @@ class SelectRolesPatch
 
 
         RpcSetRoleReplacer.Release();
-        senders?.Do(kvp => kvp.Value.SendMessage());
+        senders?.Do(kvp =>
+        {
+            var s = kvp.Value;
+            if (s.CurrentState == CustomRpcSender.State.Ready)
+                s.SendMessage();
+            else
+                s.stream.Recycle();
+        });
 
         RpcSetRoleReplacer.senders = null;
         RpcSetRoleReplacer.OverriddenSenderList = null;
@@ -952,6 +959,7 @@ public static class StandardIntroHelper
                 sender.Write(AmongUsClient.Instance.GameId);
                 int idx = 0;
                 bool issend = false;
+                bool hasData = false;
                 foreach (var data in GameData.Instance.AllPlayers)
                 {
                     idx++;
@@ -964,6 +972,7 @@ public static class StandardIntroHelper
                             sender.Write(AmongUsClient.Instance.GameId);
                             issend = false;
                         }
+                        hasData = true;
                         data.Disconnected = false;
                         var pc2 = Utils.GetPlayerById(data.PlayerId);
                         var isDesync2 = pc2?.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true;
@@ -985,10 +994,15 @@ public static class StandardIntroHelper
                         }
                     }
                 }
-                if (!issend)
+                // プレイヤー数が4以下の場合このバッチにデータがないため、空パケットを送らない
+                if (!issend && hasData)
                 {
                     sender.EndMessage();
                     AmongUsClient.Instance.SendOrDisconnect(sender);
+                    sender.Recycle();
+                }
+                else if (!issend)
+                {
                     sender.Recycle();
                 }
 

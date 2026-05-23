@@ -40,17 +40,17 @@ namespace TownOfHostY
                 Logger.Info($"GameEnd winner: {CustomWinnerHolder.WinnerTeam}, reason: {reason}", "GameEndChecker");
                 //カモフラージュ強制解除
                 Main.AllPlayerControls.Do(pc =>
-                    {
-                        Camouflage.RpcSetSkin(false, pc, ForceRevert: true, RevertToDefault: true);
-                        SkinChangeMode.RpcSetSkin(pc, pc);
-                    });
+                {
+                    Camouflage.RpcSetSkin(false, pc, ForceRevert: true, RevertToDefault: true);
+                    SkinChangeMode.RpcSetSkin(pc, pc);
+                });
 
                 switch (CustomWinnerHolder.WinnerTeam)
                 {
                     case CustomWinner.Crewmate:
                         foreach (var pc in PlayerControl.AllPlayerControls)
                         {
-                            if(pc.Is(CustomRoleTypes.Crewmate) && !pc.Is(CustomRoles.Lovers)
+                            if (pc.Is(CustomRoleTypes.Crewmate) && !pc.Is(CustomRoles.Lovers)
                                 && !(pc.Is(CustomRoles.Bakery) && Bakery.IsNeutral(pc)) && !pc.Is(CustomRoles.Archenemy))
                             {
                                 CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
@@ -61,7 +61,7 @@ namespace TownOfHostY
                         if (Egoist.CheckWin()) break;
 
                         Main.AllPlayerControls
-                            .Where(pc => (pc.Is(CustomRoleTypes.Impostor) || pc.Is(CustomRoleTypes.Madmate)) && !pc.Is(CustomRoles.Lovers) && !pc.Is(CustomRoles.Archenemy))
+                            .Where(pc => (pc.Is(CustomRoleTypes.Impostor) || pc.Is(CustomRoleTypes.Madmate)) && !pc.Is(CustomRoles.Lovers) && !pc.Is(CustomRoles.Archenemy) && !pc.Is(CustomRoles.MadJester))
                             .Do(pc => CustomWinnerHolder.WinnerIds.Add(pc.PlayerId));
                         break;
                 }
@@ -129,7 +129,7 @@ namespace TownOfHostY
                         }
                         if (Duelist.ArchenemyCheckWin(pc))
                         {
-                            if(!CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId))
+                            if (!CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId))
                                 CustomWinnerHolder.WinnerIds.Add(pc.PlayerId);
                             CustomWinnerHolder.AdditionalWinnerRoles.Add(CustomRoles.Archenemy);
                         }

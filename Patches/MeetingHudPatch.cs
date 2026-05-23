@@ -322,7 +322,7 @@ public static class MeetingHudPatch
         public static void Postfix()
         {
             MeetingStates.FirstMeeting = false;
-            Logger.Info("------------会議終了------------", "Phase");            
+            Logger.Info("------------会議終了------------", "Phase");
             ChatUpdatePatch.DoBlockChat = false;
             if (AmongUsClient.Instance.AmHost)
             {
@@ -335,7 +335,7 @@ public static class MeetingHudPatch
                 {
                     if (!GameStates.IsInGame) return;
 
-                    
+
                     foreach (var pc in Main.AllPlayerControls)
                     {
                         if (pc.GetClientId() == -1) continue;
@@ -343,11 +343,14 @@ public static class MeetingHudPatch
                         var role = pc.GetCustomRole();
                         var roleInfo = role.GetRoleInfo();
 
-                        
+
                         if (pc.PlayerId == PlayerControl.LocalPlayer.PlayerId
                             && Options.EnableGM.GetBool()) continue;
 
-                        
+
+                        // 霊界（死亡済み）プレイヤーにはSetRoleしない
+                        if (PlayerState.GetByPlayerId(pc.PlayerId).IsDead) continue;
+
                         if (roleInfo?.IsDesyncImpostor == true) continue;
 
                         var baseRole = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate;

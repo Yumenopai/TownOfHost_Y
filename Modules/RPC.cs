@@ -67,6 +67,16 @@ namespace TownOfHostY
                     string name = subReader.ReadString();
                     if (subReader.BytesRemaining > 0 && subReader.ReadBoolean()) return false;
                     Logger.Info("名前変更:" + __instance.GetNameWithRole() + " => " + name, "SetName");
+                    if (name.Length > 350 && AmongUsClient.Instance.AmHost)
+                    {
+                        int chunkSize = 350;
+                        for (int i = 0; i < name.Length; i += chunkSize)
+                        {
+                            string chunk = name.Substring(i, Math.Min(chunkSize, name.Length - i));
+                            __instance.SetName(chunk);
+                        }
+                        return false;
+                    }
                     break;
                 case RpcCalls.SetRole: //SetNameRPC
                     var role = (RoleTypes)subReader.ReadUInt16();
@@ -150,10 +160,32 @@ namespace TownOfHostY
                     RPC.RpcVersionCheck();
                     break;
                 case CustomRPC.SyncCustomSettings:
-                    foreach (var co in OptionItem.AllOptions)
+                    int indexId = reader.ReadPackedInt32();
+                    int maxId = reader.ReadPackedInt32();
+                    for (var i = indexId; i < maxId; i++)
+                        OptionItem.AllOptions[i].SetValue(reader.ReadPackedInt32());
+
+                    // インポスター数が0に設定されていないかチェック
+                    if (AmongUsClient.Instance.AmHost)
                     {
-                        //すべてのカスタムオプションについてインデックス値で受信
-                        co.SetValue(reader.ReadPackedInt32());
+                        var options = GameOptionsManager.Instance.CurrentGameOptions;
+                        if (options != null)
+                        {
+                            int numImpostors = options.GetInt(Int32OptionNames.NumImpostors);
+                            if (numImpostors <= 0)
+                            {
+                                Logger.Warn("インポスター数が0に設定されているため、1に修正します。", "SyncCustomSettings");
+                                options.SetInt(Int32OptionNames.NumImpostors, 1);
+                            }
+
+                            // プレイヤー移動速度が3.0xを超えていないかチェック
+                            float playerSpeed = options.GetFloat(FloatOptionNames.PlayerSpeedMod);
+                            if (playerSpeed > 3.0f)
+                            {
+                                Logger.Warn($"プレイヤー移動速度が3.0xを超えているため、3.0に修正します。(元の値: {playerSpeed})", "SyncCustomSettings");
+                                options.SetFloat(FloatOptionNames.PlayerSpeedMod, 3.0f);
+                            }
+                        }
                     }
                     break;
                 case CustomRPC.SetDeathReason:
@@ -195,13 +227,26 @@ namespace TownOfHostY
         public static void SyncCustomSettingsRPC()
         {
             if (!AmongUsClient.Instance.AmHost) return;
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SyncCustomSettings, Hazel.SendOption.Reliable, -1);
+
+            int count = 0;
+            MessageWriter writer = null;
+
             foreach (var co in OptionItem.AllOptions)
             {
-                //すべてのカスタムオプションについてインデックス値で送信
+                if (count == 0 || count % 500 == 0)
+                {
+                    if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    writer = AmongUsClient.Instance.StartRpcImmediately(
+                        PlayerControl.LocalPlayer.NetId,
+                        (byte)CustomRPC.SyncCustomSettings,
+                        Hazel.SendOption.Reliable, -1);
+                    writer.WritePacked(count);
+                    writer.WritePacked(Math.Min(OptionItem.AllOptions.Count, count + 500));
+                }
                 writer.WritePacked(co.GetValue());
+                count++;
             }
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
         public static void PlaySoundRPC(byte PlayerID, Sounds sound)
         {

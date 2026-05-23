@@ -993,16 +993,98 @@ public static class Utils
         if (!AmongUsClient.Instance.AmHost) return;
         if (title == "") title = "<color=#aaaaff>" + GetString("DefaultSystemMessageTitle") + "</color>";
         else title = title.Color(Color.white);
-        Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessage");
-        string fullText = $"{title}\n<align={"left"}><size=90%>{text}</size></align>";
-        Main.MessagesToSend.Add(($"<align={"left"}>{fullText}</align>", sendTo, "", true));
+
+
+        string fullText = $"{title}\n{text}";
+
+        if (fullText.Length <= 320 && (fullText.Split("\n")?.Count() ?? 0) <= 13)
+        {           
+            Main.MessagesToSend.Add((fullText, sendTo, "", true));
+            return;
+        }
+
+        var lines = text.Split("\n").ToList();
+        var chunk = new List<string>();
+
+        for (int i = 0; i < lines.Count; i++)
+        {
+            chunk.Add(lines[i]);
+
+            string chunkText = $"{title}\n{string.Join("\n", chunk)}";
+            bool willExceed = chunkText.Length > 320 || chunk.Count >= 13;
+
+            if (willExceed)
+            {               
+                Main.MessagesToSend.Add(($"{title}\n{string.Join("\n", chunk.Take(chunk.Count - 1))}", sendTo, "", true));
+                chunk.Clear();
+                chunk.Add(lines[i]);
+            }
+        }
+
+        if (chunk.Count > 0)
+        {            
+            Main.MessagesToSend.Add(($"{title}\n{string.Join("\n", chunk)}", sendTo, "", true));
+        }
     }
     public static void SendMessageCustom(string text, byte sendTo = byte.MaxValue)
     {
         if (!AmongUsClient.Instance.AmHost) return;
 
-        Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessageCustom");
-        Main.MessagesToSend.Add(($"<align={"left"}><size=90%>{text}</size></align>", sendTo, "", true));
+        const int MaxLength = 320;
+        const int MaxLines = 13;
+
+        string formattedText = $"<align=left><size=90%>{text}</size></align>";
+
+        if (formattedText.Length <= MaxLength &&
+            (formattedText.Split("\n")?.Count() ?? 0) <= MaxLines)
+        {            
+            Main.MessagesToSend.Add((formattedText, sendTo, "", true));
+            return;
+        }
+
+        var lines = text.Split("\n").ToList();
+        var chunk = new List<string>();
+
+        for (int i = 0; i < lines.Count; i++)
+        {
+            chunk.Add(lines[i]);
+
+            string chunkRaw = string.Join("\n", chunk);
+            string chunkFormatted = $"<align=left><size=90%>{chunkRaw}</size></align>";
+
+            bool willExceed =
+                chunkFormatted.Length > MaxLength ||
+                chunk.Count > MaxLines;
+
+            if (willExceed)
+            {
+                string sendRaw = string.Join("\n", chunk.Take(chunk.Count - 1));
+                string sendFormatted = $"<align=left><size=90%>{sendRaw}</size></align>";
+
+                if (!string.IsNullOrWhiteSpace(sendRaw))
+                {
+                    Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessageCustom");
+
+                    Main.MessagesToSend.Add((sendFormatted, sendTo, "", true));
+                }
+
+                chunk.Clear();
+                chunk.Add(lines[i]);
+            }
+        }
+
+        if (chunk.Count > 0)
+        {
+            string sendRaw = string.Join("\n", chunk);
+            string sendFormatted = $"<align=left><size=90%>{sendRaw}</size></align>";
+
+            if (!string.IsNullOrWhiteSpace(sendRaw))
+            {
+                Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessageCustom");
+
+                Main.MessagesToSend.Add((sendFormatted, sendTo, "", true));
+            }
+        }
     }
     public static void ApplySuffix()
     {

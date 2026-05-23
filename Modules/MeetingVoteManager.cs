@@ -135,6 +135,7 @@ public class MeetingVoteManager
                 logger.Warn($"{Utils.GetPlayerById(voteArea.TargetPlayerId).GetNameWithRole()} の投票データがありません");
                 continue;
             }
+            if (voteData.VotedFor == NoVote) continue;
             for (var i = 0; i < voteData.NumVotes; i++)
             {
                 states.Add(new()
@@ -147,20 +148,21 @@ public class MeetingVoteManager
 
         if (exiled != null) AntiBlackout.ExiledPlayerId = exiled.PlayerId;
         Logger.Info($"ExiledPlayerIdSet exiled: {exiled?.name}", "AntiBlackout");
-        if (AntiBlackout.OverrideExiledPlayer)
+        if (!AntiBlackout.OverrideExiledPlayer)
         {
-          
-            AntiBlackout.SetIsDead();
-            meetingHud.RpcVotingComplete(states.ToArray(), null, true);
-            ExileControllerWrapUpPatch.AntiBlackout_LastExiled = exiled;
-        }
-        else
-        {
-            // OverrideしないケースはアニメーションのLateTaskで SetIsDead
             _ = new LateTask(() =>
             {
                 AntiBlackout.SetIsDead();
             }, 4f, "LateAntiBlackoutSetIsDead");
+        }
+        if (AntiBlackout.OverrideExiledPlayer)
+        {
+            ExileControllerWrapUpPatch.AntiBlackout_LastExiled = exiled;
+            AntiBlackout.SetIsDead();
+            meetingHud.RpcVotingComplete(states.ToArray(), null, true);
+        }
+        else
+        {
             meetingHud.RpcVotingComplete(states.ToArray(), exiled, result.IsTie);
         }
         if (exiled != null)
@@ -202,6 +204,10 @@ public class MeetingVoteManager
             {
                 continue;
             }
+            var voter = Utils.GetPlayerById(vote.Voter);
+            if (voter == null) continue;
+            if (PlayerState.GetByPlayerId(vote.Voter).IsDead) continue;
+
             votes[vote.VotedFor] += vote.NumVotes;
         }
 

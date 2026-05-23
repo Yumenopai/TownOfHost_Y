@@ -48,6 +48,11 @@ namespace TownOfHostY.Modules
         private LogicOptions _logicOptions;
 
         public override IGameOptions BuildGameOptions()
-            => BasedGameOptions;
+        {
+            var opt = BasedGameOptions;
+            if (opt != null && Main.RealOptionsData != null)
+                Main.RealOptionsData.Restore(opt);
+            return opt;
+        }
     }
 }

@@ -33,6 +33,7 @@ namespace TownOfHostY.Roles.AddOns.Crewmate
 
         public static void OnCompleteTask(PlayerControl pc)
         {
+            if (!AmongUsClient.Instance.AmHost) return;
             if (!CustomRoles.CompleteCrew.IsEnable() || playerIdList.Count >= CustomRoles.CompleteCrew.GetCount()) return;
             if (!CanBeCompreteCrew(pc)) return;
 
