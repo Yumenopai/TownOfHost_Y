@@ -319,8 +319,7 @@ public static class GameOptionsMenuPatch
             intSetting.Increment = 1;
             intSetting.ValidRange = new IntRange(0, 1);
             intSetting.FormatString = "";
-
-            boolItem.SetValue(intSetting.Value);
+            // SetValue は不要（UI用のオブジェクト生成のみ。SetValue を呼ぶと SyncAllOptions/Save が連鎖する）
 
             baseGameSetting = intSetting;
         }
@@ -328,14 +327,14 @@ public static class GameOptionsMenuPatch
         {
             var intSetting = ScriptableObject.CreateInstance<IntGameSetting>();
             intSetting.Type = OptionTypes.Int;
-            intSetting.Value = intItem.GetInt();
+            intSetting.Value = intItem.GetInt();           // 実際の値を UI に渡す
             intSetting.Increment = intItem.Rule.Step;
             intSetting.ValidRange = new IntRange(intItem.Rule.MinValue, intItem.Rule.MaxValue);
             intSetting.ZeroIsInfinity = false;
             intSetting.SuffixType = NumberSuffixes.Multiplier;
             intSetting.FormatString = string.Empty;
-
-            intItem.SetValue(intSetting.Value);
+            // SetValue(GetInt()) は「実際値をインデックスとして扱う」バグのため削除。
+            // minValue != 0 の IntegerOption は毎回値がずれてしまうため設定画面を開くたびに値が変わる不具合の原因だった。
 
             baseGameSetting = intSetting;
         }
@@ -349,8 +348,7 @@ public static class GameOptionsMenuPatch
             floatSetting.ZeroIsInfinity = false;
             floatSetting.SuffixType = NumberSuffixes.Multiplier;
             floatSetting.FormatString = string.Empty;
-
-            floatItem.SetValue(floatItem.Rule.GetNearestIndex(floatSetting.Value));
+            // SetValue も不要（FloatOptionItem は GetNearestIndex で正しくなるが、余計な Save/Sync を避ける）
 
             baseGameSetting = floatSetting;
         }
@@ -411,22 +409,23 @@ public static class GameOptionsMenuPatch
                 var item = OptionItem.AllOptions[index];
                 __instance.TitleText.text = item.GetName();
 
-                // UIのValueがまだ初期状態ならOptionItemの値でセットする
-                if (__instance.Value == default)
+                // OptionItemの現在値をUIに設定する
+                // NumberOption.Value は ValidRange と同じ「実際の値」の空間を使う。
+                // GetNearestIndex はインデックスを返すため、ここで使うと値がずれる。
+                if (item is BooleanOptionItem boolItem)
                 {
-                    if (item is BooleanOptionItem boolItem)
-                    {
-                        __instance.ValidRange = new FloatRange(0, 1);
-                        __instance.Value = boolItem.GetValue() != 0 ? 1 : 0;
-                    }
-                    else if (item is IntegerOptionItem intItem)
-                    {
-                        __instance.Value = intItem.Rule.GetNearestIndex(intItem.GetValue());
-                    }
-                    else if (item is FloatOptionItem floatItem)
-                    {
-                        __instance.Value = floatItem.Rule.GetNearestIndex(floatItem.GetFloat());
-                    }
+                    __instance.ValidRange = new FloatRange(0, 1);
+                    __instance.Value = boolItem.GetValue() != 0 ? 1 : 0;
+                }
+                else if (item is IntegerOptionItem intItem)
+                {
+                    // GetInt() = 実際の整数値（GetValue() はインデックスのため不可）
+                    __instance.Value = intItem.GetInt();
+                }
+                else if (item is FloatOptionItem floatItem)
+                {
+                    // GetFloat() = 実際のfloat値（GetNearestIndex で変換済みにしてはいけない）
+                    __instance.Value = floatItem.GetFloat();
                 }
 
                 // 初期化時はUIテキスト更新のみ。UpdateValue()を呼ぶとSetValue→SyncAllOptionsが
