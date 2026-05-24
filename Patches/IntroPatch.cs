@@ -11,23 +11,38 @@ using static TownOfHostY.Translator;
 namespace TownOfHostY;
 
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin))]
+class SetUpRoleTextCoBeginPatch
+{
+    public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.IEnumerator __result)
+    {
+        var patcher = new CoroutinPatcher(__result);
+        patcher.AddPrefix(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole), () => SetUpRoleTextPatch.Apply(__instance));
+        __result = patcher.EnumerateWithPatch();
+    }
+}
 
 class SetUpRoleTextPatch
 {
-    public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.IEnumerator __result)
+    public static void Apply(IntroCutscene __instance)
     {
         if (!GameStates.IsModHost) return;
         _ = new LateTask(() =>
         {
             CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
+
             if (!role.IsVanilla() && role != CustomRoles.Potentialist)
             {
                 __instance.YouAreText.color = Utils.GetRoleColor(role);
                 __instance.RoleText.text = Utils.GetRoleName(role);
                 __instance.RoleText.color = Utils.GetRoleColor(role);
                 __instance.RoleBlurbText.color = Utils.GetRoleColor(role);
-
                 __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.GetRoleInfo();
+            }
+            else if (role.IsVanilla())
+            {
+                __instance.YouAreText.color = Utils.GetRoleColor(role);
+                __instance.RoleText.color = Utils.GetRoleColor(role);
+                __instance.RoleBlurbText.color = Utils.GetRoleColor(role);
             }
 
             foreach (var subRole in PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SubRoles)
@@ -38,14 +53,25 @@ class SetUpRoleTextPatch
             __instance.RoleText.text = RoleText.GetRoleNameText(PlayerControl.LocalPlayer.PlayerId, showSubRole: false);
 
         }, 0.01f, "Override Role Text");
-
     }
 }
+
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.CoBegin))]
 class CoBeginPatch
 {
     public static void Prefix()
     {
+        if (AmongUsClient.Instance.AmHost is false)
+        {
+            foreach (var pc in Main.AllPlayerControls)
+            {
+                var colorId = pc.Data.DefaultOutfit.ColorId;
+                Main.AllPlayerNames[pc.PlayerId] = pc?.Data?.PlayerName;
+                Main.PlayerColors[pc.PlayerId] = Palette.PlayerColors[colorId];
+                pc.cosmetics.nameText.text = pc.name;
+            }
+        }
+
         var logger = Logger.Handler("Info");
         logger.Info("------------名前表示------------");
         foreach (var pc in Main.AllPlayerControls)
@@ -84,15 +110,20 @@ class CoBeginPatch
                 logger.Info($"{(o.Parent == null ? o.Name.PadRightV2(40) : $"┗ {o.Name}".PadRightV2(41))}:{o.GetString().RemoveHtmlTags()}");
         logger.Info("-------------その他-------------");
         logger.Info($"プレイヤー数: {Main.AllPlayerControls.Count()}人");
+
         Main.AllPlayerControls.Do(x => PlayerState.GetByPlayerId(x.PlayerId).InitTask(x));
         GameData.Instance.RecomputeTaskCounts();
         TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
 
-        Utils.NotifyRoles();
+        if (AmongUsClient.Instance.AmHost is false)
+        {
+            Utils.NotifyRoles();
+        }
 
         GameStates.InGame = true;
     }
 }
+
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]
 class BeginCrewmatePatch
 {
@@ -101,21 +132,24 @@ class BeginCrewmatePatch
         if (PlayerControl.LocalPlayer.Is(CustomRoleTypes.Neutral) || PlayerControl.LocalPlayer.Is(CustomRoles.StrayWolf)
             || PlayerControl.LocalPlayer.GetCustomRole().IsCCLeaderRoles())
         {
-            //ぼっち役職
             var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
             soloTeam.Add(PlayerControl.LocalPlayer);
             teamToDisplay = soloTeam;
         }
     }
+
     public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> teamToDisplay)
     {
-        //チーム表示変更
         CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
 
         if (role.GetRoleInfo()?.IntroSound is AudioClip introSound)
         {
             PlayerControl.LocalPlayer.Data.Role.IntroSound = introSound;
         }
+
+        var pc = PlayerControl.LocalPlayer;
+        if (teamToDisplay.Contains(pc) is false) teamToDisplay.Add(pc);
+
         int numImpostors = Main.NormalOptions.NumImpostors;
 
         if (!Options.ChangeIntro.GetBool())
@@ -133,19 +167,17 @@ class BeginCrewmatePatch
 
                 case CustomRoleTypes.Madmate:
                     StartFadeIntro(__instance, Palette.CrewmateBlue, Palette.ImpostorRed);
-
-                    // Impostor の RoleBehaviour を探す
-                    RoleBehaviour impostorRole = null;
+                    RoleBehaviour impostorRoleMad = null;
                     foreach (var r in RoleManager.Instance.AllRoles)
                     {
                         if (r.Role == RoleTypes.Impostor)
                         {
-                            impostorRole = r;
+                            impostorRoleMad = r;
                             break;
                         }
                     }
-                    if (impostorRole != null)
-                        PlayerControl.LocalPlayer.Data.Role.IntroSound = impostorRole.IntroSound;
+                    if (impostorRoleMad != null)
+                        PlayerControl.LocalPlayer.Data.Role.IntroSound = impostorRoleMad.IntroSound;
                     break;
             }
 
@@ -282,46 +314,6 @@ class BeginCrewmatePatch
             }
         }
 
-
-        //else if (Options.IsONMode)
-        //{
-        //    if (role.IsONImpostor())
-        //    {
-        //        __instance.TeamTitle.text = GetString("Wteam");
-        //        __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
-        //        __instance.ImpostorText.gameObject.SetActive(true);
-        //        __instance.ImpostorText.text = GetString("WteamInfo");
-        //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
-
-        //        __instance.RoleBlurbText.text = GetString("CatLeaderIntro2");
-        //        PlayerControl.LocalPlayer.Data.Role.IntroSound = GetIntroSound(RoleTypes.Impostor);
-        //    }
-        //    else if (role.IsONMadmate())
-        //    {
-        //        __instance.TeamTitle.text = GetString("Wteam");
-        //        __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
-        //        __instance.ImpostorText.gameObject.SetActive(true);
-        //        __instance.ImpostorText.text = GetString("ONMadmanInfo");
-        //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.ONWerewolf);
-        //    }
-        //    else if (role.IsONCrewmate())
-        //    {
-        //        __instance.TeamTitle.text = GetString("Vteam");
-        //        __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.ONVillager);
-        //        __instance.ImpostorText.gameObject.SetActive(true);
-        //        __instance.ImpostorText.text = GetString("VteamInfo");
-        //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.ONVillager);
-        //    }
-        //    else if (role.IsONNeutral())
-        //    {
-        //        __instance.TeamTitle.text = Utils.GetRoleName(role);
-        //        __instance.TeamTitle.color = Utils.GetRoleColor(role);
-        //        __instance.ImpostorText.gameObject.SetActive(true);
-        //        __instance.ImpostorText.text = PlayerControl.LocalPlayer.GetRoleInfo();
-        //        __instance.BackgroundBar.material.color = Utils.GetRoleColor(role);
-        //    }
-        //}
-
         if (Input.GetKey(KeyCode.RightShift))
         {
             __instance.TeamTitle.text = Main.ModName;
@@ -340,6 +332,7 @@ class BeginCrewmatePatch
             StartFadeIntro(__instance, Color.magenta, Color.magenta);
         }
     }
+
     private static async void StartFadeIntro(IntroCutscene __instance, Color start, Color end)
     {
         await Task.Delay(2000);
@@ -359,6 +352,7 @@ class BeginCrewmatePatch
         }
     }
 }
+
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginImpostor))]
 class BeginImpostorPatch
 {
@@ -369,7 +363,6 @@ class BeginImpostorPatch
             || PlayerControl.LocalPlayer.Is(CustomRoles.SillySheriff)
             || PlayerControl.LocalPlayer.Is(CustomRoles.jO))
         {
-            //シェリフ等の場合はキャンセルしてBeginCrewmateに繋ぐ
             yourTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
             yourTeam.Add(PlayerControl.LocalPlayer);
             foreach (var pc in Main.AllPlayerControls)
@@ -380,14 +373,18 @@ class BeginImpostorPatch
             __instance.overlayHandle.color = Palette.CrewmateBlue;
             return false;
         }
+
         var localRole = PlayerControl.LocalPlayer.GetCustomRole();
         if (localRole.GetCustomRoleTypes() == CustomRoleTypes.Impostor || localRole == CustomRoles.StrayWolf)
         {
+            BeginCrewmatePatch.Prefix(__instance, ref yourTeam);
             return true;
         }
+
         BeginCrewmatePatch.Prefix(__instance, ref yourTeam);
         return true;
     }
+
     public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam)
     {
         var role = PlayerControl.LocalPlayer.GetCustomRole();
@@ -397,16 +394,20 @@ class BeginImpostorPatch
         }
     }
 }
+
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
 class IntroCutsceneDestroyPatch
 {
     public static void Postfix(IntroCutscene __instance)
     {
         if (!GameStates.IsInGame) return;
+
         Main.introDestroyed = true;
+        var mapId = Main.NormalOptions.MapId;
+
         if (AmongUsClient.Instance.AmHost)
         {
-            if (Main.NormalOptions.MapId != 4)
+            if (mapId != 4)
             {
                 Main.AllPlayerControls.Do(pc => pc.RpcResetAbilityCooldown());
                 if (Options.FixFirstKillCooldown.GetBool())
@@ -417,13 +418,14 @@ class IntroCutsceneDestroyPatch
                     }, 2f, "FixKillCooldownTask");
                 }
             }
+
             if (PlayerControl.LocalPlayer.Is(CustomRoles.GM))
             {
                 PlayerControl.LocalPlayer.RpcExile();
                 PlayerState.GetByPlayerId(PlayerControl.LocalPlayer.PlayerId).SetDead();
             }
-            // 初手のランダムスポーン
-            switch ((MapNames)Main.NormalOptions.MapId)
+
+            switch ((MapNames)mapId)
             {
                 case MapNames.Skeld:
                     if (Options.RandomSpawn_Skeld.GetBool() && !Options.FirstFixedSpawn_Skeld.GetBool())
@@ -442,7 +444,26 @@ class IntroCutsceneDestroyPatch
                         Main.AllPlayerControls.Do(new RandomSpawn.FungleSpawnMap().RandomTeleport);
                     break;
             }
-            // そのままだとホストのみDesyncImpostorの暗室内での視界がクルー仕様になってしまう
+
+            var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
+            var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
+            if (amDesyncImpostor)
+            {
+                PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
+            }
+
+            foreach (var kvp in PlayerState.AllPlayerStates)
+            {
+                kvp.Value.IsBlackOut = false;
+            }
+
+            _ = new LateTask(() =>
+            {
+                Utils.NotifyRoles(ForceLoop: true);
+            }, 1.25f, "NotifyRoles");
+        }
+        else
+        {
             var roleInfo = PlayerControl.LocalPlayer.GetCustomRole().GetRoleInfo();
             var amDesyncImpostor = roleInfo?.IsDesyncImpostor == true;
             if (amDesyncImpostor)
@@ -450,6 +471,7 @@ class IntroCutsceneDestroyPatch
                 PlayerControl.LocalPlayer.Data.Role.AffectedByLightAffectors = false;
             }
         }
+
         Logger.Info("OnDestroy", "IntroCutscene");
     }
 }
