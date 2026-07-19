@@ -23,7 +23,7 @@ public sealed class Sheriff : RoleBase, IKiller, ISchrodingerCatOwner
             SetupOptionItem,
             "シェリフ",
             "#f8cd46",
-            true,
+            isDesyncImpostor: true,
             introSound: () => GetIntroSound(RoleTypes.Crewmate)
         );
     public Sheriff(PlayerControl player)
