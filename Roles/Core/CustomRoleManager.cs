@@ -207,9 +207,12 @@ public static class CustomRoleManager
         Utils.CountAlivePlayers(true);
 
         Utils.TargetDies(info);
-
-        Utils.SyncAllSettings();
-        Utils.NotifyRoles();
+                
+        if (!AmongUsClient.Instance.IsGameOver)
+        {
+            Utils.SyncAllSettings();
+            Utils.NotifyRoles();
+        }
     }
     /// <summary>
     /// その他視点からのMurderPlayer処理

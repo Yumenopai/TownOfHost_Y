@@ -203,28 +203,43 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
     /// </summary>
     private void RevealNameColors(PlayerControl killer)
     {
+        // 陣営カラーコードを使うことで、OverrideShowMainRoleText 側で「陣営を知っているか」を判定できる
+        var teamColorCode = "#" + UnityEngine.ColorUtility.ToHtmlStringRGB(GetCatColor(Team));
         if (CanSeeKillableTeammate)
         {
             var killerRoleId = killer.GetCustomRole();
             var killerTeam = Main.AllPlayerControls.Where(player => (AmMadmate && player.Is(CustomRoleTypes.Impostor)) || player.Is(killerRoleId));
             foreach (var member in killerTeam)
             {
-                NameColorManager.Add(member.PlayerId, Player.PlayerId, RoleInfo.RoleColorCode);
+                NameColorManager.Add(member.PlayerId, Player.PlayerId, teamColorCode);
                 NameColorManager.Add(Player.PlayerId, member.PlayerId);
             }
         }
         else
         {
-            NameColorManager.Add(killer.PlayerId, Player.PlayerId, RoleInfo.RoleColorCode);
+            NameColorManager.Add(killer.PlayerId, Player.PlayerId, teamColorCode);
             NameColorManager.Add(Player.PlayerId, killer.PlayerId);
         }
     }
     public override void OverrideShowMainRoleText(ref Color roleColor, ref string roleText)
     {
-        switch(Team)
+        // 陣営変化前なら上書き不要
+        if (Team == TeamType.None) return;
+
+        // 自分自身でない場合は、陣営カラーで NameColorManager に登録されているかで判定する
+        // インポスターには gray(RoleInfo.RoleColorCode) が登録されるため、陣営カラーと一致しない → 表示しない
+        var seer = PlayerControl.LocalPlayer;
+        if (seer.PlayerId != Player.PlayerId)
         {
-            case TeamType.None:// 陣営変化前なら上書き不要
-                return;
+            if (!NameColorManager.TryGetData(seer, Player, out var cc)) return;
+            // デフォルト色（gray = #696969）は「陣営を知らない」印のため除外
+            var defaultCode = RoleInfo.RoleColorCode.TrimStart('#').ToUpperInvariant();
+            var entryCode = cc.TrimStart('#').ToUpperInvariant();
+            if (entryCode == defaultCode) return;
+        }
+
+        switch (Team)
+        {
             case TeamType.Crew: roleText = "(Crew)" + roleText; break;
             case TeamType.Mad: roleText = "(Impo)" + roleText; break;
             case TeamType.Jackal: roleText = "(Jack)" + roleText; break;

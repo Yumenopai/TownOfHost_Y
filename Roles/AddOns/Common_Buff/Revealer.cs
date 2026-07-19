@@ -13,6 +13,10 @@ public static class Revealer
     public static string SubRoleMark = Utils.ColorString(RoleColor, "Rv");
     private static List<byte> playerIdList = new();
     private static HashSet<byte> SeenIdList = new();
+    /// <summary>
+    /// 次の会議から表示するための一時リスト（今の会議ではまだ表示しない）
+    /// </summary>
+    private static HashSet<byte> pendingRevealList = new();
 
     public static void SetupCustomOption()
     {
@@ -23,6 +27,16 @@ public static class Revealer
     {
         playerIdList = new();
         SeenIdList = new();
+        pendingRevealList = new();
+    }
+    /// <summary>
+    /// 会議開始時に呼ぶ。前の会議で追放されたリヴェラーを SeenIdList に移す
+    /// </summary>
+    public static void OnStartMeeting()
+    {
+        foreach (var id in pendingRevealList)
+            SeenIdList.Add(id);
+        pendingRevealList.Clear();
     }
     public static void Add(byte playerId)
     {
@@ -34,7 +48,8 @@ public static class Revealer
     {
         if (!pc.Is(CustomRoles.Revealer)) return;
 
-        SeenIdList.Add(pc.PlayerId);
+        // SeenIdList への追加は次の会議から（今の会議ではまだ役職を見せない）
+        pendingRevealList.Add(pc.PlayerId);
 
         string exiledRole = Utils.GetRoleName(pc.GetCustomRole());
         string exiledName = pc.GetRealName(true);

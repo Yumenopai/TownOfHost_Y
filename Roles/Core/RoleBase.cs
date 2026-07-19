@@ -248,6 +248,13 @@ public abstract class RoleBase : IDisposable
     { }
 
     /// <summary>
+    /// 勝利処理がほぼ終わった後に処理される [ホストのみ]<br/>
+    /// 追加勝利・強制敗北などの最終調整に使用する
+    /// </summary>
+    public virtual void CheckWinner(GameOverReason reason)
+    { }
+
+    /// <summary>
     /// タスクが一個完了するごとに呼ばれる関数
     /// </summary>
     /// <returns>falseを返すとバニラ処理をキャンセルする</returns>

@@ -53,6 +53,7 @@ public sealed class CandleLighter : RoleBase
 
     private static float UpdateTime;
     float ElapsedTime;
+    float lastSyncedVision = -1f;
 
     private static void SetupOptionItem()
     {
@@ -70,6 +71,7 @@ public sealed class CandleLighter : RoleBase
     {
         UpdateTime = 1.0f;
         ElapsedTime = EndVisionTime + CountStartTime;
+        lastSyncedVision = -1f;
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -107,9 +109,31 @@ public sealed class CandleLighter : RoleBase
 
         if (ElapsedTime > 0f)
         {
-            ElapsedTime -= Time.fixedDeltaTime; //時間をカウント
+            ElapsedTime -= Time.fixedDeltaTime;
 
-            if (UpdateTime == 1.0f) player.SyncSettings();
+            if (UpdateTime == 1.0f)
+            {
+                // 前回同期値と比較し、意味のある変化がある場合のみ送信してちらつきを抑制
+                float nowVision = CalcVision();
+                if (UnityEngine.Mathf.Abs(nowVision - lastSyncedVision) > 0.01f)
+                {
+                    lastSyncedVision = nowVision;
+                    // SyncSettings() は SendAllGameOptions() を即時呼ぶため、
+                    // NormalGameOptionsSender が同時に汚れていると全体配信(バニラ視界)が
+                    // 先に届いてキャンドルライターの視界が一瞬明るくなる。
+                    // MarkDirtySettings() はフラグを立てるだけなので、
+                    // 次に自然発生する SendAllGameOptions() で一緒に処理され
+                    // 視界フラッシュを大幅に抑制できる。
+                    player.MarkDirtySettings();
+                }
+            }
         }
+    }
+
+    private float CalcVision()
+    {
+        if (ElapsedTime > EndVisionTime) return StartVision;
+        float v = StartVision * (ElapsedTime / EndVisionTime);
+        return v <= EndVision ? EndVision : v;
     }
 }
