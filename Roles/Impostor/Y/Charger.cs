@@ -1,15 +1,12 @@
-using System.Linq;
 using System.Text;
 using UnityEngine;
 using AmongUs.GameOptions;
 
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
-using TownOfHostY.Modules;
 using static TownOfHostY.Translator;
 
 namespace TownOfHostY.Roles.Impostor;
-
 public sealed class Charger : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -58,10 +55,6 @@ public sealed class Charger : RoleBase, IImpostor
     bool killThisTurn;
     /// <summary> チャージ回数 </summary>
     int chargeCount;
-    /// <summary> ApplyGameOptions で PhantomCooldown を一時的に上書きする値。負数 = 上書きしない </summary>
-    float phantomCooldownOverride = -1f;
-    /// <summary> OnCheckVanish からの実キル中に自分のOnCheckMurderAsKillerで再横取りしないためのフラグ </summary>
-    bool isChargeShot;
 
     private static void SetUpOptionItem()
     {
@@ -79,9 +72,7 @@ public sealed class Charger : RoleBase, IImpostor
     public float CalculateKillCooldown() => chargeKillCooldown;
     public override void ApplyGameOptions(IGameOptions opt)
     {
-        AURoleOptions.PhantomCooldown = phantomCooldownOverride >= 0f
-            ? phantomCooldownOverride
-            : (killThisTurn ? chargeKillCooldown : killCooldown);
+        AURoleOptions.PhantomCooldown = killThisTurn ? 0f : killCooldown;
         AURoleOptions.PhantomDuration = 1f;
     }
 
@@ -93,9 +84,6 @@ public sealed class Charger : RoleBase, IImpostor
     }
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
-        // OnCheckVanish からのチャージショット実行時はここで横取りしない（実キルをそのまま通す）
-        if (isChargeShot) return;
-
         var killer = info.AttemptKiller;
         chargeCount++;
         if (chargeCount >= oneGaugeChargeCount)
@@ -106,50 +94,24 @@ public sealed class Charger : RoleBase, IImpostor
         Logger.Info($"{Player.GetNameWithRole()} : チャージ({chargeCount}/{oneGaugeChargeCount})", "Charger");
         Utils.NotifyRoles(SpecifySeer: Player);
 
-        // RoleTypes.Phantom では RpcMurderPlayer(false) 後にキルクールが0にリセットされてしまうため、
-        // SetKillCooldown の time*2→/2 方式は機能しない。
-        // これまでは SetRole(Impostor→Phantom) 往復でクールボタンを強制初期化していたが、
-        // Vanish(Ability)ボタンのクールまで巻き添えでリセットされる副作用があったため、
-        // vanillaが killTimer を0にリセットした「後」にこちらの望む値を直接上書きする方式に変更。
-        _ = new LateTask(() =>
-        {
-            if (!Player.IsAlive() || !AmongUsClient.Instance.AmHost) return;
-
-            Main.AllPlayerKillCooldown[killer.PlayerId] = chargeKillCooldown * 2f;
-
-            if (killer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-            {
-                killer.killTimer = chargeKillCooldown;
-                return;
-            }
-            // TODO: リモートクライアントが対象の場合、killTimer はホストから直接書き換えられない
-            // （各クライアントのローカル値のため）。既存のキルクール同期RPCがあれば、
-            // それを使って同様に上書きする。該当ファイルを共有してもらえれば実装する。
-        }, 0f, "Charger_ApplyChargeCooldown");
-
+        killer.SetKillCooldown();
         info.DoKill = false;
     }
 
     public override void AfterMeetingTasks()
     {
-        // ゲーム終了後に呼ばれる場合は何もしない（Hacking判定防止）
-        if (AmongUsClient.Instance.IsGameOver) return;
-        // 会議後はゲーム開始時と同様に ChargerFirstKillCooldown で再クールダウンさせる
-        killThisTurn = false;
-        // Ph=30 を即時送信（Reliable）→ ProtectPlayer（Unreliable）より先に届く
-        Player.SyncSettings();
+        Player.MarkDirtySettings();
         Player.RpcResetAbilityCooldown();
     }
 
     public override bool OnCheckVanish(ref float killCooldown, ref bool canResetAbilityCooldown)
     {
-        killCooldown = -1f;
+        // キルクール設定
+        killCooldown = chargeKillCooldown;
 
-        if (killLimit <= 0)
-        {
-            return false;
-        }
+        if (killLimit <= 0) return false;
 
+        // 全体内での最短距離のターゲット
         (PlayerControl target, float dist) minDistance = (null, float.MaxValue);
         Vector2 playerPos = Player.transform.position;
         foreach (var target in Main.AllAlivePlayerControls)
@@ -161,31 +123,26 @@ public sealed class Charger : RoleBase, IImpostor
                 minDistance = (target, targetDistance);
             }
         }
+        Logger.Info($"最短距離プレイヤー確定 : {minDistance.target.GetNameWithRole()}・{minDistance.dist}m", "Charger");
 
-        if (minDistance.target != null)
+        var KillRange = Utils.SafeGetKillDistance();
+        Logger.Info($"距離 : {minDistance.dist}m <= {KillRange}m", "Charger");
+        if (minDistance.dist <= KillRange && Player.CanMove && minDistance.target.CanMove)
         {
-            Logger.Info($"最短距離プレイヤー確定 : {minDistance.target.GetNameWithRole()}・{minDistance.dist}m", "Charger");
-
-            var KillRange = Utils.SafeGetKillDistance();
-            Logger.Info($"距離 : {minDistance.dist}m <= {KillRange}m", "Charger");
-            if (minDistance.dist <= KillRange && Player.CanMove && minDistance.target.CanMove)
+            if (CustomRoleManager.OnCheckMurder(Player, minDistance.target, true))
             {
-                isChargeShot = true;
-                bool success = CustomRoleManager.OnCheckMurder(Player, minDistance.target, true);
-                isChargeShot = false;
-
-                if (success)
-                {
-                    killLimit--;
-                    minDistance.target.SetRealKiller(Player);
-                    killCooldown = chargeKillCooldown;
-                    Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "Charger");
-                    Utils.NotifyRoles(SpecifySeer: Player);
-                }
+                killLimit--;
+                minDistance.target.SetRealKiller(Player);
+                Logger.Info($"{Player.GetNameWithRole()} : 残り{killLimit}発", "Charger");
+                Utils.NotifyRoles(SpecifySeer: Player);
             }
-        }
 
-        return true;
+            killThisTurn = true;
+            Player.MarkDirtySettings();
+            Player.RpcResetAbilityCooldown();
+            killThisTurn = false;
+        }
+        return false;
     }
 
     public bool OverrideKillButtonText(out string text)
