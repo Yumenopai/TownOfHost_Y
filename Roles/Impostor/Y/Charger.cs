@@ -58,9 +58,7 @@ public sealed class Charger : RoleBase, IImpostor
     bool killThisTurn;
     /// <summary> チャージ回数 </summary>
     int chargeCount;
-    /// <summary> ApplyGameOptions で PhantomCooldown を一時的に上書きする値。負数 = 上書きしない </summary>
     float phantomCooldownOverride = -1f;
-    /// <summary> OnCheckVanish からの実キル中に自分のOnCheckMurderAsKillerで再横取りしないためのフラグ </summary>
     bool isChargeShot;
 
     private static void SetUpOptionItem()

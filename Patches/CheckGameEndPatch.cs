@@ -146,8 +146,6 @@ namespace TownOfHostY
                             CustomWinnerHolder.CantWinPlayerIds.Add(pc.PlayerId);
                         }
                     }
-
-                    // 各役職クラスの勝利後処理（追加勝利・強制敗北など）
                     foreach (var pc in Main.AllPlayerControls)
                     {
                         pc.GetRoleClass()?.CheckWinner(reason);

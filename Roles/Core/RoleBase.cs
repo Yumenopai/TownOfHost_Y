@@ -248,8 +248,7 @@ public abstract class RoleBase : IDisposable
     { }
 
     /// <summary>
-    /// 勝利処理がほぼ終わった後に処理される [ホストのみ]<br/>
-    /// 追加勝利・強制敗北などの最終調整に使用する
+    /// 勝利処理がほぼ終わった後に処理される
     /// </summary>
     public virtual void CheckWinner(GameOverReason reason)
     { }

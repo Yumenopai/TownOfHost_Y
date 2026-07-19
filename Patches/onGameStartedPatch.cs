@@ -458,9 +458,6 @@ class SelectRolesPatch
             if (role is not CustomRoles.Opportunist &&
                 CustomRoleManager.GetRoleInfo(role)?.IsDesyncImpostor == true) continue;
 
-            // バニラ特殊ロールのレートは0に設定されているため対応リストが空になる。
-            // 空の場合はチーム種別に応じてインポスター/クルーリストからフォールバックして割り当てる。
-            // 実際の RoleTypes は Intoro() 内の RpcSetRoleDesync で正しく設定される。
             var specificList = role.GetRoleTypes() switch
             {
                 RoleTypes.Impostor => Impostors,
@@ -1191,9 +1188,6 @@ public static class StandardIntroHelper
                 var roleInfo = role.GetRoleInfo();
 
 
-                // IsDesyncImpostorは全員スキップ:
-                // ・非ローカルは PostIntroRoleSync(2.2s) で設定済み
-                // ・ローカル(ホスト)も Crewmate のままにする（Impostorを送ると赤名表示バグ）
                 if (roleInfo?.IsDesyncImpostor ?? false) continue;
 
                 var baseRole = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate;

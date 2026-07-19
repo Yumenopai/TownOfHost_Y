@@ -113,17 +113,10 @@ public sealed class CandleLighter : RoleBase
 
             if (UpdateTime == 1.0f)
             {
-                // 前回同期値と比較し、意味のある変化がある場合のみ送信してちらつきを抑制
                 float nowVision = CalcVision();
                 if (UnityEngine.Mathf.Abs(nowVision - lastSyncedVision) > 0.01f)
                 {
-                    lastSyncedVision = nowVision;
-                    // SyncSettings() は SendAllGameOptions() を即時呼ぶため、
-                    // NormalGameOptionsSender が同時に汚れていると全体配信(バニラ視界)が
-                    // 先に届いてキャンドルライターの視界が一瞬明るくなる。
-                    // MarkDirtySettings() はフラグを立てるだけなので、
-                    // 次に自然発生する SendAllGameOptions() で一緒に処理され
-                    // 視界フラッシュを大幅に抑制できる。
+                    lastSyncedVision = nowVision;                   
                     player.MarkDirtySettings();
                 }
             }

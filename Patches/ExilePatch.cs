@@ -182,7 +182,7 @@ namespace TownOfHostY
                     {
                         var state = PlayerState.GetByPlayerId(pc.PlayerId);
                         state.IsBlackOut = false;
-                        pc.ResetKillCooldown(); // AllPlayerKillCooldown に正しい値をセットしてから同期
+                        pc.ResetKillCooldown(); 
                         pc.MarkDirtySettings();
                     }
                     Utils.SyncAllSettings();

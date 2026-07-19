@@ -59,9 +59,7 @@ public sealed class Nimrod : RoleBase
                 Utils.NotifyRoles(true, ForceLoop: true);
 
                 if (Exiled.Object.AmOwner)
-                {
-                    // ホストがニムロッドの場合：CmdReportDeadBody で緊急会議を呼ぶ（ReportDeadBodyForced だと HOST の場合に機能しない）
-                    Logger.Info($"ホストがニムロッドのため CmdReportDeadBody で会議を開始", "Nimrod");
+                {                  
                     Exiled.Object.CmdReportDeadBody(null);
                 }
                 else

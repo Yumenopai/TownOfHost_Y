@@ -139,12 +139,11 @@ namespace TownOfHostY.Roles
             {
                 if (numImpostorsLeft <= 0 && numOthersLeft <= 0) break;
 
-                // 100% 未満の役職は設定確率で抽選（10% なら 10% の確率で追加）
+               
                 var chance = role.GetChance();
                 if (chance < 100)
                 {
                     var r = rand.Next(100);
-                    Logger.Info($"Fixed抽選: {role} chance={chance}% rand={r} → {(r >= chance ? "スキップ" : "追加")}", "SetFixedAssignRole");
                     if (r >= chance) continue;
                 }
 
@@ -286,7 +285,7 @@ namespace TownOfHostY.Roles
         }
         ///<summary>
         ///属性のアサイン抽選
-        ///枠制限が無いので個別に抽選（固定モード・ランダムモード共通で確率チェックあり）
+        ///枠制限が無いので個別に抽選
         ///</summary>
         private static void SetAddOnsList(bool isFixedAssign = false)
         {
@@ -298,7 +297,7 @@ namespace TownOfHostY.Roles
                 var count = subRole.GetAssignCount();
                 if (chance == 0 || count == 0) continue;
                 var rnd = IRandom.Instance;
-                for (var i = 0; i < count; i++) //役職の単位数ごとに抽選（固定モードでも確率チェックを行う）
+                for (var i = 0; i < count; i++) 
                     if (rnd.Next(100) < chance)
                         AssignRoleList.AddRange(subRole.GetAssignUnitRolesArray());
             }

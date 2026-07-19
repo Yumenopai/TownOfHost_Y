@@ -242,7 +242,7 @@ namespace TownOfHostY
                         return false;
                     }
 
-                    // キルクールタイムのチェック（バニラの値が10秒以下ならエラー）
+                   
                     if (Main.NormalOptions != null && Main.NormalOptions.KillCooldown <= 10f)
                     {
                         var killCooldownMsg = Utils.ColorString(Color.red, $"キルクールタイムは10秒より大きく設定してください。(現在: {Main.NormalOptions.KillCooldown:0.0}秒)");

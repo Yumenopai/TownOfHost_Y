@@ -14,21 +14,13 @@ namespace TownOfHostY
     class FixedUpdatePatch
     {
         private static StringBuilder Mark = new(20);
-        private static StringBuilder Suffix = new(120);
-
-        // PlayerGameOptionsSender.SetDirty()/MarkDirtySettings() は「送信予約」をするだけで、
-        // 実際の送信(GameOptionsSender.SendAllGameOptions())はどこかで誰かが
-        // SyncSettings()等を呼ぶまで行われない。
-        // そのため、CandleLighter の視界変化のような「自発的に毎秒dirtyにするだけ」の処理は、
-        // Charger のチャージなど別の役職が SyncSettings() を呼んだタイミングに便乗してしか
-        // 反映されず、「特定の役職が何かするまで視界が更新されない」という不具合になっていた。
-        // ここで定期的に SendAllGameOptions() を呼び、dirtyな分を確実にflushする。
+        private static StringBuilder Suffix = new(120);       
         private static float OptionsSendTimer = 1f;
         private static void PeriodicSendDirtyGameOptions()
         {
             OptionsSendTimer -= Time.fixedDeltaTime;
             if (OptionsSendTimer > 0f) return;
-            OptionsSendTimer = 0.2f; // 5回/秒程度の頻度でdirty分のみ送信(IsDirtyがfalseなら実送信はされない)
+            OptionsSendTimer = 0.2f; 
             try
             {
                 GameOptionsSender.SendAllGameOptions();
