@@ -58,12 +58,12 @@ class CheckMurderPatch
     }
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        if (!AmongUsClient.Instance.AmHost) return false;
+        if (!AmongUsClient.Instance.AmHost || AmongUsClient.Instance.IsGameOver) return false;
 
         // 処理は全てCustomRoleManager側で行う
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
         {
-            // キル失敗
+            // キル失敗 — クライアント側のキルボタンをリセット
             __instance.RpcMurderPlayer(target, false);
         }
 
@@ -100,10 +100,10 @@ class CheckMurderPatch
             Logger.Info("targetは既に死んでいたため、キルをキャンセルしました。", "CheckMurder");
             return false;
         }
-        // 会議中のキルでないか
-        if (MeetingHud.Instance != null)
+        // 会議中・または会議コール直後のキルでないか（MeetingHud が出るまでの空白期間もブロック）
+        if (MeetingHud.Instance != null || MeetingStates.MeetingCalled)
         {
-            Logger.Info("会議が始まっていたため、キルをキャンセルしました。", "CheckMurder");
+            Logger.Info("会議中（またはコール直後）のためキルをキャンセルしました。", "CheckMurder");
             return false;
         }
 
@@ -377,15 +377,25 @@ public static class PlayerControlCheckVanishPatch
         {
             Logger.Info($"{phantom.GetNameWithRole()} : OnCheckVanish() == false", "CheckVanish");
 
-            if (phantom.PlayerId != PlayerControl.LocalPlayer.PlayerId &&
-                phantom.IsAlive())
+            if (phantom.IsAlive())
             {
-                SendDummyClearCharge(phantom);
+                if (phantom.PlayerId != PlayerControl.LocalPlayer.PlayerId)
+                {
+                    // 非ホスト：バニッシュボタン状態を強制リセット
+                    SendDummyClearCharge(phantom);
+                }
+                else
+                {
+                    // ホスト：アビリティクールダウンを直接リセット
+                    phantom.RpcResetAbilityCooldown();
+                }
             }
 
             // キルクールリセット
-            phantom.SetKillCooldown(killCooldown);
-            // アビリティクールリセット
+            // killCooldown < 0 は役職側が「キルクール変更不要」を要求するセンチネル
+            if (killCooldown >= 0f)
+                phantom.SetKillCooldown(killCooldown);
+            // アビリティクールリセット（OnCheckVanish 内でリセット済みでなければ）
             if (canResetAbilityCooldown)
             {
                 phantom.RpcResetAbilityCooldown();
@@ -427,6 +437,13 @@ public static class PlayerControlCmdCheckVanishPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
+        if (!AmongUsClient.Instance.AmHost)
+        {
+            // 非ホストはバニラのRPCをそのまま送ってホスト側のCheckVanishに届ける
+            // ここでreturn falseするとRPCがホストに届かず、ボタンが反応しない
+            return true;
+        }
+        // ホストは自分でCheckVanishを呼ぶ（RPCは不要）
         __instance?.CheckVanish();
         return false;
     }
@@ -561,6 +578,9 @@ class ReportDeadBodyPatch
         //=============================================
         //以下、ボタンが押されることが確定したものとする。
         //=============================================
+
+        // 会議コール中フラグ（MeetingHud.Instance が出るまでの間もキル等をブロックするため）
+        MeetingStates.MeetingCalled = true;
 
         foreach (var pc in Main.AllPlayerControls)
         {

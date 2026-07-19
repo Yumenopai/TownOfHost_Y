@@ -37,7 +37,7 @@ static class ExtendedPlayerControl
         else if (role > CustomRoles.StartAddon)
         {
             PlayerState.GetByPlayerId(player.PlayerId).SetSubRole(role);
-            
+
         }
 
         if (AmongUsClient.Instance.AmHost)
@@ -170,7 +170,8 @@ static class ExtendedPlayerControl
         if (player == null) return;
         if (AmongUsClient.Instance.ClientId == clientId)
         {
-            player.StartCoroutine(player.CoSetRole(role, false));
+            // ホスト自身への役職設定: 非ホスト向け RPC と同様に canOverrideRole = true を使う
+            player.StartCoroutine(player.CoSetRole(role, true));
             return;
         }
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetRole, Hazel.SendOption.Reliable, clientId);
@@ -216,14 +217,15 @@ static class ExtendedPlayerControl
         if (!ForceProtect && !player.CanUseKillButton()) return;
         if (time >= 0f)
         {
-            Main.AllPlayerKillCooldown[player.PlayerId] = time * 2;
+            Main.AllPlayerKillCooldown[player.PlayerId] = time;
         }
         else
         {
-            Main.AllPlayerKillCooldown[player.PlayerId] *= 2;
+            Main.AllPlayerKillCooldown[player.PlayerId] =
+                (player.GetRoleClass() as IKiller)?.CalculateKillCooldown()
+                ?? Options.DefaultKillCooldown;
         }
-        player.SyncSettings();        
-        player.ResetKillCooldown();
+        player.SyncSettings();
     }
     public static void RpcSpecificMurderPlayer(this PlayerControl killer, PlayerControl target = null)
     {

@@ -73,13 +73,6 @@ namespace TownOfHostY
                         __instance.HostPrivateButton.activeTextColor = Palette.DisabledClear;
                     }
 
-                    if (Main.NormalOptions != null && Main.NormalOptions.KillCooldown == 0f)
-                        Main.NormalOptions.KillCooldown = Main.LastKillCooldown.Value;
-
-                    if (Main.NormalOptions != null)
-                        AURoleOptions.SetOpt(Main.NormalOptions.Cast<IGameOptions>());
-                    if (AURoleOptions.ShapeshifterCooldown == 0f)
-                        AURoleOptions.ShapeshifterCooldown = Main.LastShapeshifterCooldown.Value;
                 }
                 catch (Exception ex)
                 {
@@ -249,6 +242,15 @@ namespace TownOfHostY
                         return false;
                     }
 
+                    // キルクールタイムのチェック（バニラの値が10秒以下ならエラー）
+                    if (Main.NormalOptions != null && Main.NormalOptions.KillCooldown <= 10f)
+                    {
+                        var killCooldownMsg = Utils.ColorString(Color.red, $"キルクールタイムは10秒より大きく設定してください。(現在: {Main.NormalOptions.KillCooldown:0.0}秒)");
+                        Logger.SendInGame(killCooldownMsg);
+                        Utils.SendMessage(killCooldownMsg);
+                        return false;
+                    }
+
                     RoleAssignManager.CheckRoleCount();
 
                     if (Main.NormalOptions != null)
@@ -321,7 +323,7 @@ namespace TownOfHostY
                 }
             }
         }
-    
+
         [HarmonyPatch(typeof(TextBoxTMP), nameof(TextBoxTMP.SetText))]
         public static class HiddenTextPatch
         {

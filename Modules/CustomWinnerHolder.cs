@@ -21,9 +21,14 @@ namespace TownOfHostY
         // 勝者のPlayerIDが格納され、このIDを持つプレイヤーは全員勝利します。
         // 単独勝利するニュートラルの処理に最適です。
         public static HashSet<byte> WinnerIds;
-        // 敗者のPlayerIDが格納され、このIDを持つプレイヤーは全員敗北します。
-        // 敗者リストは勝者リスト、勝者チームのリストより優先されます。
-        public static HashSet<byte> LoserIds;
+        // 役職での単独勝利者PlayerIdが格納されます。
+        // ここに登録されてもWinnerIdsに登録されないと勝利しません。
+        public static HashSet<byte> NeutralWinnerIds;
+        // 問答無用で敗北するPlayerIDが格納されます。
+        // 敗者リストは勝者リスト・勝者チームのリストより優先されます。
+        public static HashSet<byte> CantWinPlayerIds;
+        // 勝利優先順位の影響で勝利した陣営を含む、全勝利陣営が格納されます（ログ用）。
+        public static HashSet<CustomWinner> winners;
 
         [GameModuleInitializer, PluginModuleInitializer]
         public static void Reset()
@@ -32,18 +37,26 @@ namespace TownOfHostY
             AdditionalWinnerRoles = new();
             WinnerRoles = new();
             WinnerIds = new();
-            LoserIds = new();
+            NeutralWinnerIds = new();
+            CantWinPlayerIds = new();
+            winners = new();
         }
         public static void ClearWinners()
         {
             WinnerRoles.Clear();
             WinnerIds.Clear();
-            LoserIds.Clear();
+            NeutralWinnerIds.Clear();
+            CantWinPlayerIds.Clear();
+            winners.Clear();
         }
         /// <summary><para>WinnerTeamに値を代入します。</para><para>すでに代入されている場合、AdditionalWinnerRolesに追加します。</para></summary>
         public static void SetWinnerOrAdditonalWinner(CustomWinner winner)
         {
-            if (WinnerTeam == CustomWinner.Default) WinnerTeam = winner;
+            if (WinnerTeam == CustomWinner.Default)
+            {
+                WinnerTeam = winner;
+                winners.Add(winner);
+            }
             else AdditionalWinnerRoles.Add((CustomRoles)winner);
         }
         /// <summary><para>WinnerTeamに値を代入します。</para><para>すでに代入されている場合、既存の値をAdditionalWinnerRolesに追加してから代入します。</para></summary>
@@ -52,12 +65,14 @@ namespace TownOfHostY
             if (WinnerTeam != CustomWinner.Default)
                 AdditionalWinnerRoles.Add((CustomRoles)WinnerTeam);
             WinnerTeam = winner;
+            winners.Add(winner);
         }
         /// <summary><para>既存の値をすべて削除してから、WinnerTeamに値を代入します。</para></summary>
         public static void ResetAndSetWinner(CustomWinner winner)
         {
             Reset();
             WinnerTeam = winner;
+            winners.Add(winner);
         }
 
         public static MessageWriter WriteTo(MessageWriter writer)
@@ -76,8 +91,8 @@ namespace TownOfHostY
             foreach (var id in WinnerIds)
                 writer.Write(id);
 
-            writer.WritePacked(LoserIds.Count);
-            foreach (var id in LoserIds)
+            writer.WritePacked(CantWinPlayerIds.Count);
+            foreach (var id in CantWinPlayerIds)
                 writer.Write(id);
 
             return writer;
@@ -101,10 +116,10 @@ namespace TownOfHostY
             for (int i = 0; i < WinnerIdsCount; i++)
                 WinnerIds.Add(reader.ReadByte());
 
-            LoserIds = new();
-            int LoserIdsCount = reader.ReadPackedInt32();
-            for (int i = 0; i < LoserIdsCount; i++)
-                LoserIds.Add(reader.ReadByte());
-       }
+            CantWinPlayerIds = new();
+            int CantWinPlayerIdsCount = reader.ReadPackedInt32();
+            for (int i = 0; i < CantWinPlayerIdsCount; i++)
+                CantWinPlayerIds.Add(reader.ReadByte());
+        }
     }
 }

@@ -24,15 +24,15 @@ namespace TownOfHostY.Modules
             AllSenders.OfType<PlayerGameOptionsSender>()
             .ToList().ForEach(sender => sender.SetDirty());
 
+        private IGameOptions cachedGameOptions = null;
         public override IGameOptions BasedGameOptions =>
             Main.RealOptionsData.Restore(
-                GameOptionsManager.Instance != null
-                    ? (IGameOptions)(GameOptionsManager.Instance.CurrentGameOptions ?? (object)GameOptionsManager.Instance.currentNormalGameOptions)
-                    : null
+                cachedGameOptions ??= new NormalGameOptionsV10(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>()
             );
         public override bool IsDirty { get; protected set; }
 
         public PlayerControl player;
+        public string OldOptionstext = "";
 
         public PlayerGameOptionsSender(PlayerControl player)
         {
@@ -42,9 +42,9 @@ namespace TownOfHostY.Modules
 
         public override void SendGameOptions()
         {
+            var opt = BuildGameOptions();
             if (player.AmOwner)
             {
-                var opt = BuildGameOptions();
                 foreach (var com in GameManager.Instance.LogicComponents)
                 {
                     if (com.TryCast<LogicOptions>(out var lo))
@@ -55,7 +55,23 @@ namespace TownOfHostY.Modules
                 }
                 GameOptionsManager.Instance.CurrentGameOptions = opt;
             }
-            else base.SendGameOptions();
+            else
+            {
+                var isAlive = player.IsAlive();
+                var crewLight = isAlive ? opt.GetFloat(FloatOptionNames.CrewLightMod) : 0f;
+                var impLight  = isAlive ? opt.GetFloat(FloatOptionNames.ImpostorLightMod) : 0f;
+                var killCool  = isAlive ? opt.GetFloat(FloatOptionNames.KillCooldown) : 0f;
+                var speed     = opt.GetFloat(FloatOptionNames.PlayerSpeedMod);
+                var shapeCool = isAlive ? opt.GetFloat(FloatOptionNames.ShapeshifterCooldown) : 0f;
+                var engCool   = isAlive ? opt.GetFloat(FloatOptionNames.EngineerCooldown) : 0f;
+                var phantom   = isAlive ? opt.GetFloat(FloatOptionNames.PhantomCooldown) : 0f;
+                var anonVotes = opt.GetBool(BoolOptionNames.AnonymousVotes);
+                var emerCool  = isAlive ? opt.GetInt(Int32OptionNames.EmergencyCooldown) : 0;
+                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool}";
+                if (OldOptionstext == nowOpts) return;
+                OldOptionstext = GameStates.IsMeeting ? "" : nowOpts;
+                base.SendGameOptions();
+            }
         }
 
         public override void SendOptionsArray(Il2CppStructArray<byte> optionArray)

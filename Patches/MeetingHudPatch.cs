@@ -71,6 +71,9 @@ public static class MeetingHudPatch
             TargetDeadArrow.OnStartMeeting();
 
             Sending.OnStartMeeting();
+
+            // 前の会議で追放されたリヴェラーの役職を次の会議(今)から公開
+            Revealer.OnStartMeeting();
         }
         public static void Postfix(MeetingHud __instance)
         {
@@ -322,6 +325,7 @@ public static class MeetingHudPatch
         public static void Postfix()
         {
             MeetingStates.FirstMeeting = false;
+            MeetingStates.MeetingCalled = false;
             Logger.Info("------------会議終了------------", "Phase");
             ChatUpdatePatch.DoBlockChat = false;
             if (AmongUsClient.Instance.AmHost)
@@ -351,9 +355,22 @@ public static class MeetingHudPatch
                         // 霊界（死亡済み）プレイヤーにはSetRoleしない
                         if (PlayerState.GetByPlayerId(pc.PlayerId).IsDead) continue;
 
-                        if (roleInfo?.IsDesyncImpostor == true) continue;
-
                         var baseRole = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate;
+                        if (roleInfo?.IsDesyncImpostor == true)
+                        {
+                            // Desync role: send Impostor to self, Crewmate to all other clients
+                            pc.RpcSetRoleDesync(baseRole, pc.GetClientId());
+                            foreach (var viewer in Main.AllPlayerControls)
+                            {
+                                if (viewer.PlayerId == pc.PlayerId) continue;
+                                int viewerClientId = viewer.GetClientId();
+                                if (viewerClientId == -1) continue;
+                                if (viewer.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                                pc.RpcSetRoleDesync(RoleTypes.Crewmate, viewerClientId);
+                            }
+                            continue;
+                        }
+
                         pc.RpcSetRoleDesync(baseRole, pc.GetClientId());
                         Logger.Info($"AfterMeeting baseRole: {pc.GetNameWithRole()} -> {baseRole}", "AfterMeeting_RoleSync");
                     }

@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace TownOfHostY.Modules;
@@ -73,11 +75,17 @@ public static class OptionSaver
         {
             var id = presetOption.Key;
             var values = presetOption.Value;
-            if (OptionItem.FastOptions.TryGetValue(id, out var optionItem))
+            if (!OptionItem.FastOptions.TryGetValue(id, out var optionItem)) continue;
+            if (values == null) continue;
+            // Ensure array length matches NumPresets to avoid out-of-range on preset switch
+            if (values.Length != OptionItem.NumPresets)
             {
-                optionItem.SetAllValues(values);
-                optionItem.Refresh();
+                var padded = new int[OptionItem.NumPresets];
+                Array.Copy(values, padded, Math.Min(values.Length, OptionItem.NumPresets));
+                values = padded;
             }
+            optionItem.SetAllValues(values);
+            optionItem.Refresh();
         }
     }
     /// <summary>現在のオプションをjsonファイルに保存</summary>
@@ -88,8 +96,15 @@ public static class OptionSaver
         {
             return;
         }
-        var jsonString = JsonSerializer.Serialize(GenerateOptionsData(), new JsonSerializerOptions { WriteIndented = true, });
-        File.WriteAllText(OptionSaverFileInfo.FullName, jsonString);
+        try
+        {
+            var jsonString = JsonSerializer.Serialize(GenerateOptionsData(), new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(OptionSaverFileInfo.FullName, jsonString);
+        }
+        catch (Exception ex)
+        {
+            logger.Warn($"オプションの保存に失敗しました: {ex.Message}");
+        }
     }
     /// <summary>jsonファイルからオプションを読み込み</summary>
     public static void Load()
@@ -102,7 +117,15 @@ public static class OptionSaver
             Save();
             return;
         }
-        LoadOptionsData(JsonSerializer.Deserialize<SerializableOptionsData>(jsonString));
+        try
+        {
+            LoadOptionsData(JsonSerializer.Deserialize<SerializableOptionsData>(jsonString));
+        }
+        catch (Exception ex)
+        {
+            logger.Warn($"オプションの読み込みに失敗しました。デフォルト値で上書きします: {ex.Message}");
+            Save();
+        }
     }
 
     /// <summary>json保存に適したオプションデータ</summary>

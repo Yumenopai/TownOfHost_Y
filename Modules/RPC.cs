@@ -46,6 +46,7 @@ namespace TownOfHostY
         SetRemoveLawyerTarget,
         EvilHackerWarpSync,
         SyncPsychicResult,
+        SetLoyalDoggyMaster,
     }
     public enum Sounds
     {
@@ -330,7 +331,7 @@ namespace TownOfHostY
         {
             if (role < CustomRoles.StartAddon)
             {
-                
+
                 var roleClass = CustomRoleManager.GetByPlayerId(targetId);
                 if (roleClass != null)
                 {
@@ -340,7 +341,7 @@ namespace TownOfHostY
                 CustomRoleManager.CreateInstance(role, Utils.GetPlayerById(targetId));
             }
             else if (role > CustomRoles.StartAddon)
-            {               
+            {
                 PlayerState.GetByPlayerId(targetId).SetSubRole(role);
             }
 
@@ -407,8 +408,8 @@ namespace TownOfHostY
     {
         public static void Prefix(
             InnerNet.InnerNetClient __instance,
+            [HarmonyArgument(0)] uint targetNetId,
             ref byte callId,
-            [HarmonyArgument(1)] uint targetNetId,
             [HarmonyArgument(3)] int targetClientId = -1)
         {
             switch ((RpcCalls)callId)
