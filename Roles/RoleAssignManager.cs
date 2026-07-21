@@ -127,16 +127,25 @@ namespace TownOfHostY.Roles
         }
         ///<summary>
         ///役職の固定アサイン抽選
-        ///chanceが10%以上の役職を全て追加
+        ///chance が 100% の役職は必ず追加、1〜99% の役職は設定確率で抽選
         ///</summary>
         private static void SetFixedAssignRole()
         {
             int numImpostorsLeft = Math.Min(GameData.Instance.PlayerCount, Main.RealOptionsData.GetInt(Int32OptionNames.NumImpostors));
             int numOthersLeft = GameData.Instance.PlayerCount - numImpostorsLeft;
+            var rand = IRandom.Instance;
 
             foreach (var role in GetCandidateRoleList(0).OrderBy(x => Guid.NewGuid()))
             {
                 if (numImpostorsLeft <= 0 && numOthersLeft <= 0) break;
+
+               
+                var chance = role.GetChance();
+                if (chance < 100)
+                {
+                    var r = rand.Next(100);
+                    if (r >= chance) continue;
+                }
 
                 var targetRoles = role.GetAssignUnitRolesArray();
                 var numImpostorAssign = targetRoles.Count(role => role.GetAssignRoleType() == CustomRoleTypes.Impostor);
@@ -244,12 +253,14 @@ namespace TownOfHostY.Roles
                 if (!role.IsAssignable()) continue;
 
                 var chance = role.GetChance();
-                var count = role.GetCount();
+                var count = role.GetAssignCount();
                 if (chance is 0 or 100) continue;
                 if (count == 0) continue;
-                //確率がそのまま追加枚数に
                 for (var i = 0; i < count; i++)
-                    randomRoleTicketPool.AddRange(Enumerable.Repeat((role, i), chance / 10).ToList());
+                {
+                    if (chance < 100 && rand.Next(100) >= chance) continue;
+                    randomRoleTicketPool.Add((role, i));
+                }
             }
 
             //確定分では足りない場合に抽選を行う
@@ -276,7 +287,7 @@ namespace TownOfHostY.Roles
         ///属性のアサイン抽選
         ///枠制限が無いので個別に抽選
         ///</summary>
-        private static void SetAddOnsList(bool isFixedAssign)
+        private static void SetAddOnsList(bool isFixedAssign = false)
         {
             foreach (var subRole in CustomRolesHelper.AllAddOnRoles)
             {
@@ -286,8 +297,8 @@ namespace TownOfHostY.Roles
                 var count = subRole.GetAssignCount();
                 if (chance == 0 || count == 0) continue;
                 var rnd = IRandom.Instance;
-                for (var i = 0; i < count; i++) //役職の単位数ごとに抽選
-                    if (isFixedAssign || rnd.Next(100) < chance)
+                for (var i = 0; i < count; i++) 
+                    if (rnd.Next(100) < chance)
                         AssignRoleList.AddRange(subRole.GetAssignUnitRolesArray());
             }
         }

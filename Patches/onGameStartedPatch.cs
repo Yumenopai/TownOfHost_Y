@@ -458,7 +458,7 @@ class SelectRolesPatch
             if (role is not CustomRoles.Opportunist &&
                 CustomRoleManager.GetRoleInfo(role)?.IsDesyncImpostor == true) continue;
 
-            var baseRoleList = role.GetRoleTypes() switch
+            var specificList = role.GetRoleTypes() switch
             {
                 RoleTypes.Impostor => Impostors,
                 RoleTypes.Shapeshifter => Shapeshifters,
@@ -472,6 +472,8 @@ class SelectRolesPatch
                 RoleTypes.GuardianAngel => GuardianAngels,
                 _ => Crewmates,
             };
+            var baseRoleList = specificList.Count > 0 ? specificList
+                : (role.GetCustomRoleTypes() == CustomRoleTypes.Impostor ? Impostors : Crewmates);
             AssignCustomRolesFromList(role, baseRoleList);
         }
 
@@ -710,7 +712,11 @@ class SelectRolesPatch
         if (players == null || players.Count <= 0) return null;
         var rand = IRandom.Instance;
         var count = Math.Clamp(RawCount, 0, players.Count);
-        if (RawCount == -1) count = Math.Clamp(role.GetRealCount(), 0, players.Count);
+        if (RawCount == -1)
+        {
+            var alreadyAssigned = Main.AllPlayerControls.Count(pc => pc.Is(role));
+            count = Math.Clamp(role.GetRealCount() - alreadyAssigned, 0, players.Count);
+        }
         if (count <= 0) return null;
         List<PlayerControl> AssignedPlayers = new();
         SetColorPatch.IsAntiGlitchDisabled = true;
@@ -1046,9 +1052,22 @@ public static class StandardIntroHelper
             if (pc.GetClientId() == -1) continue;
 
             var role = pc.GetCustomRole();
+            var roleInfo = role.GetRoleInfo();
             var roleType = role.GetRoleTypes();
 
-            if (role.GetRoleInfo()?.IsDesyncImpostor == true || role.IsMadmate()
+            if (roleInfo?.IsDesyncImpostor == true && role.IsCrewmate())
+            {
+                pc.RpcSetRoleDesync(roleInfo.BaseRoleType.Invoke(), pc.GetClientId());
+                foreach (var viewer in Main.AllPlayerControls)
+                {
+                    if (viewer.PlayerId == pc.PlayerId) continue;
+                    if (viewer.GetClientId() == -1) continue;
+                    pc.RpcSetRoleDesync(RoleTypes.Crewmate, viewer.GetClientId());
+                }
+                continue;
+            }
+
+            if (roleInfo?.IsDesyncImpostor == true || role.IsMadmate()
                 || (role.IsNeutral() && !role.IsImpostor()))
             {
                 if (role.IsCrewmate()) roleType = RoleTypes.Crewmate;
@@ -1130,6 +1149,19 @@ public static class StandardIntroHelper
                 }
 
 
+                if (roleInfo?.IsDesyncImpostor == true)
+                {
+                    pc.RpcSetRoleDesync(roleInfo.BaseRoleType.Invoke(), pc.GetClientId());
+                    foreach (var viewer in Main.AllPlayerControls)
+                    {
+                        if (viewer.PlayerId == pc.PlayerId) continue;
+                        if (viewer.GetClientId() == -1) continue;
+                        if (viewer.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                        pc.RpcSetRoleDesync(RoleTypes.Crewmate, viewer.GetClientId());
+                    }
+                    continue;
+                }
+
                 var baseRole = roleInfo?.BaseRoleType?.Invoke() ?? roleType;
                 pc.RpcSetRoleDesync(baseRole, pc.GetClientId());
             }
@@ -1156,8 +1188,7 @@ public static class StandardIntroHelper
                 var roleInfo = role.GetRoleInfo();
 
 
-                if (pc.PlayerId != PlayerControl.LocalPlayer.PlayerId
-                    && (roleInfo?.IsDesyncImpostor ?? false)) continue;
+                if (roleInfo?.IsDesyncImpostor ?? false) continue;
 
                 var baseRole = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Crewmate;
                 pc.RpcSetRoleDesync(baseRole, pc.GetClientId());

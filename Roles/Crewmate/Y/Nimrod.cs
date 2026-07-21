@@ -57,7 +57,15 @@ public sealed class Nimrod : RoleBase
                 Logger.Info($"{Utils.GetPlayerById(ExecutionMeetingPlayerId).GetNameWithRole()} : ニムロッド会議", "Nimrod");
                 // バニラ側の表示更新
                 Utils.NotifyRoles(true, ForceLoop: true);
-                Utils.GetPlayerById(Exiled.PlayerId).ReportDeadBody(Exiled);
+
+                if (Exiled.Object.AmOwner)
+                {                  
+                    Exiled.Object.CmdReportDeadBody(null);
+                }
+                else
+                {
+                    Exiled.Object.ReportDeadBodyForced(null);
+                }
             }
         }, 14.5f, "NimrodExiled");
 
@@ -97,8 +105,8 @@ public sealed class Nimrod : RoleBase
         // 自身は死亡する
         MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Vote, ExecutionMeetingPlayerId);
         // ニムロッド会議を解除する
-        ExecutionMeetingPlayerId = byte.MaxValue;
         Logger.Info($"{Utils.GetPlayerById(ExecutionMeetingPlayerId).GetNameWithRole()} : ニムロッド会議の解除", "Nimrod");
+        ExecutionMeetingPlayerId = byte.MaxValue;
     }
 
     public override void OnStartMeeting()

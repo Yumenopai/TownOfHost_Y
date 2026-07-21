@@ -107,29 +107,30 @@ public static class Camouflage
 
         var sender = CustomRpcSender.Create(name: $"Camouflage.RpcSetSkin({target.Data.PlayerName})");
 
+        // SetColor のみ送信する（SetHat/SetSkin/SetPet/SetVisor は送信すると落ちるため無効化）
         target.SetColor(newOutfit.ColorId);
         sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetColor)
             .Write(target.Data.NetId)
             .Write(newOutfit.ColorId)
             .EndRpc();
 
-        target.SetHat(newOutfit.HatId, newOutfit.ColorId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
-            .Write(newOutfit.HatId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetHatStr))
-            .EndRpc();
+        //target.SetHat(newOutfit.HatId, newOutfit.ColorId);
+        //sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
+        //    .Write(newOutfit.HatId)
+        //    .Write(target.GetNextRpcSequenceId(RpcCalls.SetHatStr))
+        //    .EndRpc();
 
-        target.SetSkin(newOutfit.SkinId, newOutfit.ColorId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetSkinStr)
-            .Write(newOutfit.SkinId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
-            .EndRpc();
+        //target.SetSkin(newOutfit.SkinId, newOutfit.ColorId);
+        //sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetSkinStr)
+        //    .Write(newOutfit.SkinId)
+        //    .Write(target.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
+        //    .EndRpc();
 
-        target.SetPet(newOutfit.PetId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
-            .Write(newOutfit.PetId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetPetStr))
-            .EndRpc();
+        //target.SetPet(newOutfit.PetId);
+        //sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
+        //    .Write(newOutfit.PetId)
+        //    .Write(target.GetNextRpcSequenceId(RpcCalls.SetPetStr))
+        //    .EndRpc();
 
         sender.SendMessage();
     }
@@ -146,40 +147,40 @@ public static class SkinChangeMode
 
         var sender = CustomRpcSender.Create(name: $"SkinChangeMode.RpcSetSkin({target.Data.PlayerName})");
 
+        // SetColor のみ送信する（SetHat/SetSkin/SetPet/SetVisor/SetNamePlate は送信すると落ちるため無効化）
         target.SetColor(newOutfit.ColorId);
         sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetColor)
             .Write(target.Data.NetId)
             .Write(newOutfit.ColorId)
             .EndRpc();
 
-        target.SetHat(newOutfit.HatId, newOutfit.ColorId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
-            .Write(newOutfit.HatId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetHatStr))
-            .EndRpc();
+        //target.SetHat(newOutfit.HatId, newOutfit.ColorId);
+        //sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetHatStr)
+        //    .Write(newOutfit.HatId)
+        //    .Write(target.GetNextRpcSequenceId(RpcCalls.SetHatStr))
+        //    .EndRpc();
 
-        target.SetSkin(newOutfit.SkinId, newOutfit.ColorId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetSkinStr)
-            .Write(newOutfit.SkinId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
-            .EndRpc();
+        //target.SetSkin(newOutfit.SkinId, newOutfit.ColorId);
+        //sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetSkinStr)
+        //    .Write(newOutfit.SkinId)
+        //    .Write(target.GetNextRpcSequenceId(RpcCalls.SetSkinStr))
+        //    .EndRpc();
 
-        target.SetVisor(newOutfit.VisorId, newOutfit.ColorId);
-        
-        target.SetPet(newOutfit.PetId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
-            .Write(newOutfit.PetId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetPetStr))
-            .EndRpc();
+        //target.SetVisor(newOutfit.VisorId, newOutfit.ColorId);
 
-        target.SetNamePlate(newOutfit.NamePlateId);
-        sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetNamePlateStr)
-            .Write(newOutfit.NamePlateId)
-            .Write(target.GetNextRpcSequenceId(RpcCalls.SetNamePlateStr))
-            .EndRpc();
+        //target.SetPet(newOutfit.PetId);
+        //sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetPetStr)
+        //    .Write(newOutfit.PetId)
+        //    .Write(target.GetNextRpcSequenceId(RpcCalls.SetPetStr))
+        //    .EndRpc();
+
+        //target.SetNamePlate(newOutfit.NamePlateId);
+        //sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetNamePlateStr)
+        //    .Write(newOutfit.NamePlateId)
+        //    .Write(target.GetNextRpcSequenceId(RpcCalls.SetNamePlateStr))
+        //    .EndRpc();
 
         target.SetName(newOutfit.PlayerName);
-        
 
         target.SetLevel(49);
         sender.AutoStartRpc(target.NetId, (byte)RpcCalls.SetLevel)

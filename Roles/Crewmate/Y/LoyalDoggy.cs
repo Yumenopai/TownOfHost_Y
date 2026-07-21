@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Channels;
 using AmongUs.GameOptions;
+using Hazel;
 
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
@@ -92,8 +93,22 @@ public sealed class LoyalDoggy : RoleBase
             numVotes = 0;//投票を見えなくする
             masterDecision = true;
             TargetArrow.Add(Player.PlayerId, Master.PlayerId);
+            SendRPC(Master.PlayerId);
         }
         return (votedForId, numVotes, doVote);
+    }
+    private void SendRPC(byte masterId)
+    {
+        using var sender = CreateSender(CustomRPC.SetLoyalDoggyMaster);
+        sender.Writer.Write(masterId);
+    }
+    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
+    {
+        if (rpcType != CustomRPC.SetLoyalDoggyMaster) return;
+        byte masterId = reader.ReadByte();
+        Master = Utils.GetPlayerById(masterId);
+        masterDecision = true;
+        TargetArrow.Add(Player.PlayerId, Master.PlayerId);
     }
 
     public override void AfterMeetingTasks()

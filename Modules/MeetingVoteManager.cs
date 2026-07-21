@@ -108,7 +108,9 @@ public class MeetingVoteManager
     /// </summary>
     public void CheckAndEndMeeting()
     {
-        if (meetingHud.discussionTimer - (float)Main.NormalOptions.DiscussionTime >= Main.NormalOptions.VotingTime || AllVotes.Values.All(vote => vote.HasVoted))
+        bool timeExpired = meetingHud.discussionTimer - (float)Main.NormalOptions.DiscussionTime >= Main.NormalOptions.VotingTime;
+        bool allVoted = AllVotes.Values.All(vote => vote.HasVoted);
+        if (timeExpired || allVoted)
         {
             EndMeeting();
         }
@@ -148,13 +150,8 @@ public class MeetingVoteManager
 
         if (exiled != null) AntiBlackout.ExiledPlayerId = exiled.PlayerId;
         Logger.Info($"ExiledPlayerIdSet exiled: {exiled?.name}", "AntiBlackout");
-        if (!AntiBlackout.OverrideExiledPlayer)
-        {
-            _ = new LateTask(() =>
-            {
-                AntiBlackout.SetIsDead();
-            }, 4f, "LateAntiBlackoutSetIsDead");
-        }
+        // SetIsDead は MeetingHud.OnDestroy (会議終了ログの直後) で呼ばれるため、
+        // ここでは OverrideExiledPlayer の場合のみ即時呼び出しを維持する。
         if (AntiBlackout.OverrideExiledPlayer)
         {
             ExileControllerWrapUpPatch.AntiBlackout_LastExiled = exiled;

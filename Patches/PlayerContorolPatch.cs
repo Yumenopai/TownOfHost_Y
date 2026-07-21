@@ -58,12 +58,11 @@ class CheckMurderPatch
     }
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        if (!AmongUsClient.Instance.AmHost) return false;
+        if (!AmongUsClient.Instance.AmHost || AmongUsClient.Instance.IsGameOver) return false;
 
         // 処理は全てCustomRoleManager側で行う
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
-        {
-            // キル失敗
+        {         
             __instance.RpcMurderPlayer(target, false);
         }
 
@@ -100,10 +99,10 @@ class CheckMurderPatch
             Logger.Info("targetは既に死んでいたため、キルをキャンセルしました。", "CheckMurder");
             return false;
         }
-        // 会議中のキルでないか
-        if (MeetingHud.Instance != null)
+        // 会議中・または会議コール直後のキルでないか
+        if (MeetingHud.Instance != null || MeetingStates.MeetingCalled)
         {
-            Logger.Info("会議が始まっていたため、キルをキャンセルしました。", "CheckMurder");
+            Logger.Info("会議中（またはコール直後）のためキルをキャンセルしました。", "CheckMurder");
             return false;
         }
 
@@ -377,14 +376,21 @@ public static class PlayerControlCheckVanishPatch
         {
             Logger.Info($"{phantom.GetNameWithRole()} : OnCheckVanish() == false", "CheckVanish");
 
-            if (phantom.PlayerId != PlayerControl.LocalPlayer.PlayerId &&
-                phantom.IsAlive())
+            if (phantom.IsAlive())
             {
-                SendDummyClearCharge(phantom);
+                if (phantom.PlayerId != PlayerControl.LocalPlayer.PlayerId)
+                {                   
+                    SendDummyClearCharge(phantom);
+                }
+                else
+                {
+                    phantom.RpcResetAbilityCooldown();
+                }
             }
 
-            // キルクールリセット
-            phantom.SetKillCooldown(killCooldown);
+            // キルクールリセット           
+            if (killCooldown >= 0f)
+                phantom.SetKillCooldown(killCooldown);
             // アビリティクールリセット
             if (canResetAbilityCooldown)
             {
@@ -427,6 +433,11 @@ public static class PlayerControlCmdCheckVanishPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
+        if (!AmongUsClient.Instance.AmHost)
+        {
+            return true;
+        }
+
         __instance?.CheckVanish();
         return false;
     }
@@ -561,6 +572,8 @@ class ReportDeadBodyPatch
         //=============================================
         //以下、ボタンが押されることが確定したものとする。
         //=============================================
+               
+        MeetingStates.MeetingCalled = true;
 
         foreach (var pc in Main.AllPlayerControls)
         {

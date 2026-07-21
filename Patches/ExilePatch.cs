@@ -81,7 +81,8 @@ namespace TownOfHostY
                     Sending.OnExileWrapUp(exiled.Object);
 
                     if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.GetByPlayerId(exiled.PlayerId).SetDead();
-                }
+                }                
+                AntiBlackout.SendGameData();
             }
             AfterMeetingTasks();
         }
@@ -181,8 +182,7 @@ namespace TownOfHostY
                     {
                         var state = PlayerState.GetByPlayerId(pc.PlayerId);
                         state.IsBlackOut = false;
-                        pc.ResetKillCooldown();
-                        pc.SetKillCooldown(ForceProtect: true);
+                        pc.ResetKillCooldown(); 
                         pc.MarkDirtySettings();
                     }
                     Utils.SyncAllSettings();

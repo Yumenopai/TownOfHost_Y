@@ -14,7 +14,22 @@ namespace TownOfHostY
     class FixedUpdatePatch
     {
         private static StringBuilder Mark = new(20);
-        private static StringBuilder Suffix = new(120);
+        private static StringBuilder Suffix = new(120);       
+        private static float OptionsSendTimer = 1f;
+        private static void PeriodicSendDirtyGameOptions()
+        {
+            OptionsSendTimer -= Time.fixedDeltaTime;
+            if (OptionsSendTimer > 0f) return;
+            OptionsSendTimer = 0.2f; 
+            try
+            {
+                GameOptionsSender.SendAllGameOptions();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error($"PeriodicSendDirtyGameOptions で例外: {ex.Message}", "FixedUpdatePatch");
+            }
+        }
         public static void Postfix(PlayerControl __instance)
         {
             try
@@ -58,6 +73,7 @@ namespace TownOfHostY
                     if (__instance.AmOwner)
                     {
                         Utils.ApplySuffix();
+                        PeriodicSendDirtyGameOptions();
                     }
                 }
 

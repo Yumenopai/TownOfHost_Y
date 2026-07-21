@@ -59,6 +59,7 @@ public sealed class Warlock : RoleBase, IImpostor
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.ShapeshifterCooldown = IsCursed ? 1f : Options.DefaultKillCooldown;
+        AURoleOptions.ShapeshifterDuration = 1f;
     }
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
@@ -108,7 +109,7 @@ public sealed class Warlock : RoleBase, IImpostor
                 killTarget.SetRealKiller(Player);
                 Logger.Info($"{killTarget.GetNameWithRole()}was killed", "Warlock");
                 CursedPlayer.RpcMurderPlayer(killTarget);
-                Player.SetKillCooldown();
+                Player.ResetKillCooldown();
                 CursedPlayer = null;
             }
         }

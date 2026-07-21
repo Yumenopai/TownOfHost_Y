@@ -60,7 +60,7 @@ namespace TownOfHostY.Roles.Impostor
             //誰かに噛まれていなければ登録
             if (!BittenPlayers.ContainsKey(target.PlayerId))
             {
-                killer.SetKillCooldown();
+                killer.SetKillCooldown(Main.LastKillCooldown.Value);
                 BittenPlayers.Add(target.PlayerId, 0f);
                 // プレイヤーがプラットフォームに乗ることを防ぐ
                 PlayerState.GetByPlayerId(target.PlayerId).CanUseMovingPlatform = false;

@@ -142,11 +142,13 @@ namespace TownOfHostY
                     {
                         if (pc.Is(CustomRoles.ChainShifterAddon))
                         {
-                            if (CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId))
-                                CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
-                            if (!CustomWinnerHolder.LoserIds.Contains(pc.PlayerId))
-                                CustomWinnerHolder.LoserIds.Add(pc.PlayerId);
+                            CustomWinnerHolder.WinnerIds.Remove(pc.PlayerId);
+                            CustomWinnerHolder.CantWinPlayerIds.Add(pc.PlayerId);
                         }
+                    }
+                    foreach (var pc in Main.AllPlayerControls)
+                    {
+                        pc.GetRoleClass()?.CheckWinner(reason);
                     }
                 }
                 ShipStatus.Instance.enabled = false;
@@ -178,6 +180,7 @@ namespace TownOfHostY
 
                 bool canWin = CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId) ||
                     CustomWinnerHolder.WinnerRoles.Contains(pc.GetCustomRole());
+                canWin &= !CustomWinnerHolder.CantWinPlayerIds.Contains(pc.PlayerId);
                 bool isCrewmateWin = reason.Equals(GameOverReason.CrewmatesByVote) || reason.Equals(GameOverReason.CrewmatesByTask);
                 SetGhostRole(ToGhostImpostor: canWin ^ isCrewmateWin);
 

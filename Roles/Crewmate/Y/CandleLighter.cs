@@ -53,6 +53,7 @@ public sealed class CandleLighter : RoleBase
 
     private static float UpdateTime;
     float ElapsedTime;
+    float lastSyncedVision = -1f;
 
     private static void SetupOptionItem()
     {
@@ -70,6 +71,7 @@ public sealed class CandleLighter : RoleBase
     {
         UpdateTime = 1.0f;
         ElapsedTime = EndVisionTime + CountStartTime;
+        lastSyncedVision = -1f;
     }
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -107,9 +109,24 @@ public sealed class CandleLighter : RoleBase
 
         if (ElapsedTime > 0f)
         {
-            ElapsedTime -= Time.fixedDeltaTime; //時間をカウント
+            ElapsedTime -= Time.fixedDeltaTime;
 
-            if (UpdateTime == 1.0f) player.SyncSettings();
+            if (UpdateTime == 1.0f)
+            {
+                float nowVision = CalcVision();
+                if (UnityEngine.Mathf.Abs(nowVision - lastSyncedVision) > 0.01f)
+                {
+                    lastSyncedVision = nowVision;                   
+                    player.MarkDirtySettings();
+                }
+            }
         }
+    }
+
+    private float CalcVision()
+    {
+        if (ElapsedTime > EndVisionTime) return StartVision;
+        float v = StartVision * (ElapsedTime / EndVisionTime);
+        return v <= EndVision ? EndVision : v;
     }
 }

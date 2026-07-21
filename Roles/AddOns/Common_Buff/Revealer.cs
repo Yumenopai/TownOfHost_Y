@@ -13,6 +13,7 @@ public static class Revealer
     public static string SubRoleMark = Utils.ColorString(RoleColor, "Rv");
     private static List<byte> playerIdList = new();
     private static HashSet<byte> SeenIdList = new();
+    private static HashSet<byte> pendingRevealList = new();
 
     public static void SetupCustomOption()
     {
@@ -23,6 +24,13 @@ public static class Revealer
     {
         playerIdList = new();
         SeenIdList = new();
+        pendingRevealList = new();
+    }
+    public static void OnStartMeeting()
+    {
+        foreach (var id in pendingRevealList)
+            SeenIdList.Add(id);
+        pendingRevealList.Clear();
     }
     public static void Add(byte playerId)
     {
@@ -33,8 +41,7 @@ public static class Revealer
     public static void ChangeName(PlayerControl pc)
     {
         if (!pc.Is(CustomRoles.Revealer)) return;
-
-        SeenIdList.Add(pc.PlayerId);
+        pendingRevealList.Add(pc.PlayerId);
 
         string exiledRole = Utils.GetRoleName(pc.GetCustomRole());
         string exiledName = pc.GetRealName(true);
