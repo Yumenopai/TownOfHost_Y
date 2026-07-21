@@ -341,14 +341,14 @@ namespace TownOfHostY
             const int MaxLength = 320;
             const int MaxLines = 13;
 
-           
+
             if (command.Length <= MaxLength &&
                 (command.Split("\n")?.Count() ?? 0) <= MaxLines)
             {
                 SendChunk(SendName, command, name, sender);
                 return;
             }
-           
+
             var lines = command.Split("\n").ToList();
             var chunk = new List<string>();
 
@@ -363,19 +363,19 @@ namespace TownOfHostY
                     chunk.Count > MaxLines;
 
                 if (willExceed)
-                {                    
+                {
                     string sendText = string.Join("\n", chunk.Take(chunk.Count - 1));
 
                     if (!string.IsNullOrWhiteSpace(sendText))
                     {
                         SendChunk(SendName, sendText, name, sender);
                     }
-                    
+
                     chunk.Clear();
                     chunk.Add(lines[i]);
                 }
             }
-            
+
             if (chunk.Count > 0)
             {
                 string sendText = string.Join("\n", chunk);
@@ -649,7 +649,7 @@ namespace TownOfHostY
             if (clientId == -1)
             {
                 player.SetName(title);
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg);
+                AddChatAsAlive(player, msg);
                 player.SetName(name);
             }
 
@@ -687,7 +687,7 @@ namespace TownOfHostY
             if (clientId == -1)
             {
                 sender.SetName(SendName);
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, command);
+                AddChatAsAlive(sender, command);
                 sender.SetName(name);
             }
 
@@ -713,6 +713,13 @@ namespace TownOfHostY
                     .EndMessage()
                     .SendMessage();
             }
+        }
+        private static void AddChatAsAlive(PlayerControl player, string msg)
+        {
+            var wasDead = player.Data.IsDead;
+            if (wasDead) player.Data.IsDead = false;
+            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg);
+            if (wasDead) player.Data.IsDead = true;
         }
         private static void SendMessageAsDeadHost(PlayerControl host, string msg, string title, byte sendTo)
         {
