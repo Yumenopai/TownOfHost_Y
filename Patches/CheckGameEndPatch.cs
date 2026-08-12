@@ -191,12 +191,12 @@ namespace TownOfHostY
                     if (ToGhostImpostor)
                     {
                         Logger.Info($"{pc.GetNameWithRole()}: ImpostorGhostに変更", "ResetRoleAndEndGame");
-                        pc.RpcSetRole(RoleTypes.ImpostorGhost);
+                        pc.RpcSetRoleNormal(RoleTypes.ImpostorGhost);
                     }
                     else
                     {
                         Logger.Info($"{pc.GetNameWithRole()}: CrewmateGhostに変更", "ResetRoleAndEndGame");
-                        pc.RpcSetRole(RoleTypes.CrewmateGhost);
+                        pc.RpcSetRoleNormal(RoleTypes.CrewmateGhost);
                     }
                     // 蘇生までの遅延の間にオートミュートをかけられないように元に戻しておく
                     pc.Data.IsDead = isDead;

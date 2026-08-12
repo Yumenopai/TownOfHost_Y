@@ -81,7 +81,7 @@ namespace TownOfHostY
                     Sending.OnExileWrapUp(exiled.Object);
 
                     if (CustomWinnerHolder.WinnerTeam != CustomWinner.Terrorist) PlayerState.GetByPlayerId(exiled.PlayerId).SetDead();
-                }                
+                }
                 AntiBlackout.SendGameData();
             }
             AfterMeetingTasks();
@@ -168,12 +168,7 @@ namespace TownOfHostY
                     });
                     Main.AfterMeetingDeathPlayers.Clear();
                 }, 0.6f, "AfterMeetingDeathPlayers Task");
-
-
-                _ = new LateTask(() =>
-                {
-                    Main.AllPlayerControls.Do(pc => AntiBlackout.ResetSetRole(pc));
-                }, 0.65f, "AfterMeeting_ResetSetRole");
+                               
 
                 _ = new LateTask(() =>
                 {
@@ -181,9 +176,7 @@ namespace TownOfHostY
                     foreach (var pc in Main.AllPlayerControls)
                     {
                         var state = PlayerState.GetByPlayerId(pc.PlayerId);
-                        state.IsBlackOut = false;
-                        pc.ResetKillCooldown(); 
-                        pc.MarkDirtySettings();
+                        state.IsBlackOut = false;              
                     }
                     Utils.SyncAllSettings();
                 }, 1.0f, "AfterMeeting_SetKillCooldown");

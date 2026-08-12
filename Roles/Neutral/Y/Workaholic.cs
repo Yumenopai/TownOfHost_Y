@@ -86,7 +86,7 @@ public sealed class Workaholic : RoleBase
             CustomWinnerHolder.ResetAndSetWinner(CustomWinner.Workaholic);
             CustomWinnerHolder.WinnerIds.Add(Player.PlayerId);
             if (!AmongUsClient.Instance.AmHost) return true;
-            GameEndChecker.StartEndGame(GameOverReason.ImpostorsByKill);
+            GameEndChecker.StartEndGame(GameOverReason.CrewmatesByTask);
         }
         return true;
     }
