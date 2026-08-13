@@ -1330,7 +1330,7 @@ public static class Utils
                 || seer.IsNeutralKiller() //seerがキル出来るニュートラル
                 || (IsActive(SystemTypes.Electrical) && CustomRoles.Mare.IsEnable())    //メアーが入っていない時は通さない
                 || (IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool())   //カモフラオプションがない時は通さない
-                //|| EvilDyer.IsColorCamouflage    //カモフラがない時は通さない
+                || EvilDyer.IsColorCamouflage    //カモフラがない時は通さない
                 || NoCache
                 || ForceLoop
                 || Options.IsCCMode
@@ -1398,8 +1398,8 @@ public static class Utils
 
                     if (IsActive(SystemTypes.Comms) && Options.CommsCamouflage.GetBool() && !isForMeeting && !Options.IsSyncColorMode)
                         TargetPlayerName = $"<size=0%>{TargetPlayerName}</size>";
-                    //if (EvilDyer.IsColorCamouflage && !isForMeeting)
-                    //    TargetPlayerName = $"<size=0%>{TargetPlayerName}</size>";
+                    if (EvilDyer.IsColorCamouflage && !isForMeeting)
+                        TargetPlayerName = $"<size=0%>{TargetPlayerName}</size>";
 
                     //全てのテキストを合成します。
                     string TargetName = $"{TargetRoleText}{TargetPlayerName}{TargetDeathReason}{TargetMark}{TargetSuffix}";
