@@ -62,7 +62,7 @@ class CheckMurderPatch
 
         // 処理は全てCustomRoleManager側で行う
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
-        {         
+        {
             __instance.RpcMurderPlayer(target, false);
         }
 
@@ -379,7 +379,7 @@ public static class PlayerControlCheckVanishPatch
             if (phantom.IsAlive())
             {
                 if (phantom.PlayerId != PlayerControl.LocalPlayer.PlayerId)
-                {                   
+                {
                     SendDummyClearCharge(phantom);
                 }
                 else
@@ -572,7 +572,7 @@ class ReportDeadBodyPatch
         //=============================================
         //以下、ボタンが押されることが確定したものとする。
         //=============================================
-               
+
         MeetingStates.MeetingCalled = true;
 
         foreach (var pc in Main.AllPlayerControls)
@@ -794,7 +794,9 @@ class PlayerControlRemoveProtectionPatch
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetRole))]
 class PlayerControlSetRolePatch
-{
+{    
+    private const float GhostRoleSyncDelay = 0.5f;
+
     public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType, bool canOverrideRole)
     {
         if (RpcSetRoleReplacer.DoReplace()) return true;
@@ -803,7 +805,8 @@ class PlayerControlSetRolePatch
         var targetName = __instance.GetNameWithRole();
         Logger.Info($"{targetName} =>{roleType}", "PlayerControl.RpcSetRole");
         if (!ShipStatus.Instance.enabled) return true;
-        if (roleType is RoleTypes.CrewmateGhost or RoleTypes.ImpostorGhost)
+        bool isGhostConversion = roleType is RoleTypes.CrewmateGhost or RoleTypes.ImpostorGhost;
+        if (isGhostConversion)
         {
             var targetIsKiller = target.GetRoleClass() is IKiller;
             var ghostRoles = new Dictionary<PlayerControl, RoleTypes>();
@@ -835,13 +838,32 @@ class PlayerControlSetRolePatch
                 foreach ((var seer, var role) in ghostRoles)
                 {
                     Logger.Info($"Desync {targetName} =>{role} for{seer.GetNameWithRole()}", "PlayerControl.RpcSetRole");
-                    target.RpcSetRoleDesync(role, seer.GetClientId());
+                    var capTarget = target;
+                    var capRole = role;
+                    var capSeer = seer;
+                    _ = new LateTask(() =>
+                    {
+                        capTarget.RpcSetRoleDesync(capRole, capSeer.GetClientId());
+                    }, GhostRoleSyncDelay, "DelayedGhostRoleSyncDesync");
                 }
                 return false;
             }
         }
 
-        target.RpcSetRoleNormal(roleType, canOverrideRole);
+        if (isGhostConversion)
+        {
+            var capTarget2 = target;
+            var capRoleType = roleType;
+            var capCanOverride = canOverrideRole;
+            _ = new LateTask(() =>
+            {
+                capTarget2.RpcSetRoleNormal(capRoleType, capCanOverride);
+            }, GhostRoleSyncDelay, "DelayedGhostRoleSyncNormal");
+        }
+        else
+        {
+            target.RpcSetRoleNormal(roleType, canOverrideRole);
+        }
 
         return false;
     }
