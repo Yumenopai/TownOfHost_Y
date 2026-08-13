@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Hazel;
+using UnityEngine;
 
 using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
@@ -49,6 +50,8 @@ namespace TownOfHostY.Roles.Impostor
         };
 
         public bool IsSpellMode;
+        private int LastVentSwitchFrame = -1;
+        private int LastVentSwitchId = -1;
         public List<byte> SpelledPlayer = new();
         public SwitchTrigger NowSwitchTrigger;
 
@@ -224,7 +227,12 @@ namespace TownOfHostY.Roles.Impostor
         public override bool OnEnterVent(PlayerPhysics physics, int ventId)
         {
             if (NowSwitchTrigger is SwitchTrigger.TriggerVent)
-            {
+            {                
+                if (LastVentSwitchFrame == Time.frameCount && LastVentSwitchId == ventId)
+                    return true;
+
+                LastVentSwitchFrame = Time.frameCount;
+                LastVentSwitchId = ventId;
                 SwitchSpellMode(false);
             }
             return true;
