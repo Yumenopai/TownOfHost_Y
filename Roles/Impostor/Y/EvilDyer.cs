@@ -1,4 +1,4 @@
-using AmongUs.GameOptions;
+/*using AmongUs.GameOptions;
 using HarmonyLib;
 
 using TownOfHostY.Roles.Core;
@@ -83,3 +83,4 @@ public sealed class EvilDyer : RoleBase, IImpostor
         }
     }
 }
+*/

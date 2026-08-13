@@ -275,8 +275,8 @@ namespace TownOfHostY
                         Logger.Warn($"IsActive チェックで例外: {ex.Message}", "FixedUpdatePatch");
                     }
 
-                    if (EvilDyer.IsColorCamouflage)
-                        RealName = $"<size=0>{RealName}</size> ";
+                    //if (EvilDyer.IsColorCamouflage)
+                    //    RealName = $"<size=0>{RealName}</size> ";
 
                     string DeathReason = "";
                     try

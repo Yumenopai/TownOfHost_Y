@@ -496,7 +496,7 @@ public enum CustomRoles
     StrayWolf,
     EvilIgnition,
     Escalationer,
-    EvilDyer,
+    //EvilDyer,
     BestieWolf,
     EvilGuesser,
     SelfBomber,
