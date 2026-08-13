@@ -242,7 +242,7 @@ namespace TownOfHostY
                         return false;
                     }
 
-                   
+
                     if (Main.NormalOptions != null && Main.NormalOptions.KillCooldown <= 10f)
                     {
                         var killCooldownMsg = Utils.ColorString(Color.red, $"キルクールタイムは10秒より大きく設定してください。(現在: {Main.NormalOptions.KillCooldown:0.0}秒)");
@@ -256,9 +256,7 @@ namespace TownOfHostY
                     if (Main.NormalOptions != null)
                     {
                         Options.DefaultKillCooldown = Main.NormalOptions.KillCooldown;
-                        Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;
-                        Main.NormalOptions.KillCooldown = 0f;
-
+                        Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;                        
                         var opt = Main.NormalOptions.Cast<IGameOptions>();
                         AURoleOptions.SetOpt(opt);
                         Main.LastShapeshifterCooldown.Value = AURoleOptions.ShapeshifterCooldown;

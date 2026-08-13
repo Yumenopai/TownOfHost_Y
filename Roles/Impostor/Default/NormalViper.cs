@@ -4,6 +4,7 @@ using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 
 namespace TownOfHostY.Roles.Impostor;
+
 public sealed class NormalViper : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -24,7 +25,7 @@ public sealed class NormalViper : RoleBase, IImpostor
     )
     {
         viperDissolveTime = OptionViperDissolveTime.GetFloat();
-        
+        player.SetKillCooldown();
     }
     private static OptionItem OptionViperDissolveTime;
     enum OptionName
@@ -32,7 +33,7 @@ public sealed class NormalViper : RoleBase, IImpostor
         ViperDissolveTime,
     }
     private static float viperDissolveTime;
-   
+
     public static void SetupOptionItem()
     {
         OptionViperDissolveTime = FloatOptionItem.Create(RoleInfo, 3, OptionName.ViperDissolveTime, new(5f, 90f, 5f), 30f, false)

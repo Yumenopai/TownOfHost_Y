@@ -60,7 +60,16 @@ class CheckMurderPatch
     {
         if (!AmongUsClient.Instance.AmHost || AmongUsClient.Instance.IsGameOver) return false;
 
-        // 処理は全てCustomRoleManager側で行う
+        if (__instance.Is(CustomRoles.NormalViper))
+        {
+            if (!CustomRoleManager.OnCheckMurder(__instance, target, __instance, target, false))
+            {
+                __instance.RpcMurderPlayer(target, false);
+                return false;
+            }
+            return true;
+        }
+
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
         {
             __instance.RpcMurderPlayer(target, false);
@@ -733,6 +742,7 @@ class RpcEnterVentPatch
         {
             _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
         }
+
     }
 }
 
@@ -794,7 +804,7 @@ class PlayerControlRemoveProtectionPatch
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSetRole))]
 class PlayerControlSetRolePatch
-{    
+{
     private const float GhostRoleSyncDelay = 0.5f;
 
     public static bool Prefix(PlayerControl __instance, ref RoleTypes roleType, bool canOverrideRole)

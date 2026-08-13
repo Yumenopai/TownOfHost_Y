@@ -5,7 +5,7 @@ using TownOfHostY.Roles.Core.Interfaces;
 
 namespace TownOfHostY.Roles.Vanilla;
 
-public sealed class Viper : RoleBase
+public sealed class Viper : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
         SimpleRoleInfo.CreateForVanilla(
