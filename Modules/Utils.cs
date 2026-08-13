@@ -541,7 +541,7 @@ public static class Utils
                 subroleString = $"<size=95%>{subroleString}</size>".Color(GetRoleColor(subRole).ToReadableColor());
                 var subroleInfoWithWhiteColor = $"<size=80%><line-height=1.8pic>{GetString($"{subroleName}InfoLong")}</line-height></size>".Color(Color.white);
 
-                sb.Append("\n--------------------------------------------------------\n")
+                sb.Append("\n------------------------------------------------------\n")
                     .Append(subroleString).Append(subroleInfoWithWhiteColor);
             }
         }
@@ -655,7 +655,7 @@ public static class Utils
                 if (!role.IsEnable()) continue;
                 var addonName = role.ToString();
 
-                if (multipleRole) addonLongTextBuilder.Append("\n--------------------------------------------------------\n");
+                if (multipleRole) addonLongTextBuilder.Append("\n------------------------------------------------------\n");
                 addonLongTextBuilder.Append($"<size=95%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
                     .Append("<size=80%><line-height=1.8pic>").Append(GetString($"{addonName}InfoLong")).Append("</line-height></size>");
 
