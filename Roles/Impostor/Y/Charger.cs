@@ -102,21 +102,7 @@ public sealed class Charger : RoleBase, IImpostor
         }
         Logger.Info($"{Player.GetNameWithRole()} : チャージ({chargeCount}/{oneGaugeChargeCount})", "Charger");
         Utils.NotifyRoles(SpecifySeer: Player);
-
-
-        _ = new LateTask(() =>
-        {
-            if (!Player.IsAlive() || !AmongUsClient.Instance.AmHost) return;
-
-            Main.AllPlayerKillCooldown[killer.PlayerId] = chargeKillCooldown * 2f;
-
-            if (killer.PlayerId == PlayerControl.LocalPlayer.PlayerId)
-            {
-                killer.killTimer = chargeKillCooldown;
-                return;
-            }
-
-        }, 0f, "Charger_ApplyChargeCooldown");
+        killer.SetKillCooldown(chargeKillCooldown);
 
         info.DoKill = false;
     }
