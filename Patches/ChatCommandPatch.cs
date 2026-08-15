@@ -34,10 +34,8 @@ namespace TownOfHostY
             Main.isChatCommand = true;
             Logger.Info(text, "SendChat");
 
-            /* 
             if (args[0] == "/cmd" && args.Length >= 2)
             {
-                canceled = true;
                 string cmdArg = args[1].StartsWith("/") ? args[1] : "/" + args[1];
                 string[] newArgs = new string[args.Length - 1];
                 newArgs[0] = cmdArg;
@@ -45,7 +43,6 @@ namespace TownOfHostY
                 args = newArgs;
                 text = string.Join(" ", args);
             }
-            */
 
             var tag = !PlayerControl.LocalPlayer.Data.IsDead ? "SendChatHost" : "SendChatDeadHost";
             if (text.StartsWith("試合結果:") || text.StartsWith("キル履歴:")) tag = "SendSystemChat";
@@ -356,7 +353,7 @@ namespace TownOfHostY
                     SendChunk(SendName, chunk, name, sender);
             }
         }
-       
+
         private static IEnumerable<string> SplitChatTextPreserveFormatting(
             string text, int maxLength, int maxLines)
         {
@@ -424,7 +421,7 @@ namespace TownOfHostY
             {
                 string name = match.Groups[2].Value.ToLowerInvariant();
 
-               
+
                 if (match.Value.EndsWith("/>") ||
                     name is "br" or "brk" or "sprite" or "quad" or "space")
                     continue;
@@ -584,19 +581,13 @@ namespace TownOfHostY
             string[] args = text.Split(' ');
             string subArgs = "";
 
-            /* 
-            if (text.StartsWith("/") && !text.Contains("cmd"))
+            if (args[0] == "/cmd" && args.Length > 1)
             {
-                Utils.SendMessage(GetString("Error.CommandFailed"), player.PlayerId);
-                return;
+                args = args.Skip(1).ToArray();
+                if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
             }
-            if (args[0] != "/cmd" || args.Length <= 1) return;
-            args = args.Skip(1).ToArray();
-            if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
-            */
 
-            if (text.StartsWith("/") is false) return;
-            if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
+            if (args[0].StartsWith("/") is false) return;
 
             switch (args[0]?.ToLower())
             {
