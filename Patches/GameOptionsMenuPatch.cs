@@ -100,19 +100,6 @@ public static class GameOptionsMenuPatch
 
             switch (baseGameSetting.Type)
             {
-                case OptionTypes.Checkbox:
-                    {
-                        optionBehaviour = UnityEngine.Object.Instantiate<ToggleOption>(__instance.checkboxOrigin, Vector3.zero, Quaternion.identity, __instance.settingsContainer);
-                        optionBehaviour.transform.localPosition = new Vector3(pos_x, num, pos_z);
-
-                        OptionBehaviourSetSizeAndPosition(optionBehaviour, option, baseGameSetting.Type);
-
-                        optionBehaviour.SetClickMask(__instance.ButtonClickMask);
-                        optionBehaviour.SetUpFromData(baseGameSetting, 20);
-                        ModGameOptionsMenu.OptionList.TryAdd(optionBehaviour, index);
-                        //Logger.Info($"{option.Name}, {index}", "OptionList.TryAdd");
-                        break;
-                    }
                 case OptionTypes.String:
                     {
                         optionBehaviour = UnityEngine.Object.Instantiate<StringOption>(__instance.stringOptionOrigin, Vector3.zero, Quaternion.identity, __instance.settingsContainer);
@@ -217,10 +204,6 @@ public static class GameOptionsMenuPatch
 
         switch (type)
         {
-            case OptionTypes.Checkbox:
-                optionBehaviour.transform.FindChild("Toggle").localPosition = new Vector3(1.46f, -0.042f);
-                break;
-
             case OptionTypes.String:
                 optionBehaviour.transform.FindChild("PlusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 1.7f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
                 optionBehaviour.transform.FindChild("MinusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 0.9f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
@@ -306,11 +289,13 @@ public static class GameOptionsMenuPatch
     {
         BaseGameSetting baseGameSetting = null;
 
-        if (item is BooleanOptionItem)
-        {
-            baseGameSetting = new CheckboxGameSetting
+        if (item is BooleanOptionItem booleanItem)
+        {          
+            baseGameSetting = new StringGameSetting
             {
-                Type = OptionTypes.Checkbox,
+                Type = OptionTypes.String,
+                Values = new StringNames[2], 
+                Index = booleanItem.GetBool() ? 1 : 0,
             };
         }
         else if (item is IntegerOptionItem)
@@ -429,11 +414,10 @@ public static class NumberOptionPatch
 
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
-            var item = OptionItem.AllOptions[index];
-            //Logger.Info($"{item.Name}, {index}", "NumberOption.Initialize.TryGetValue");
+            var item = OptionItem.AllOptions[index]; 
             __instance.TitleText.text = item.GetName();
             return false;
-        }
+        }      
         return true;
     }
     [HarmonyPatch(nameof(NumberOption.UpdateValue)), HarmonyPrefix]
@@ -596,6 +580,14 @@ public static class StringOptionPatch
                 {
                     __instance.oldValue = __instance.Value;
                     __instance.ValueText.text = presetOptionItem.GetString();
+                }
+            }         
+            if (item is BooleanOptionItem booleanOptionItem)
+            {
+                if (__instance.oldValue != __instance.Value)
+                {
+                    __instance.oldValue = __instance.Value;
+                    __instance.ValueText.text = booleanOptionItem.GetString();
                 }
             }
             return false;

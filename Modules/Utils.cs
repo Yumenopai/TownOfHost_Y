@@ -541,7 +541,7 @@ public static class Utils
                 subroleString = $"<size=95%>{subroleString}</size>".Color(GetRoleColor(subRole).ToReadableColor());
                 var subroleInfoWithWhiteColor = $"<size=80%><line-height=1.8pic>{GetString($"{subroleName}InfoLong")}</line-height></size>".Color(Color.white);
 
-                sb.Append("\n--------------------------------------------------------\n")
+                sb.Append("\n------------------------------------------------------\n")
                     .Append(subroleString).Append(subroleInfoWithWhiteColor);
             }
         }
@@ -655,7 +655,7 @@ public static class Utils
                 if (!role.IsEnable()) continue;
                 var addonName = role.ToString();
 
-                if (multipleRole) addonLongTextBuilder.Append("\n--------------------------------------------------------\n");
+                if (multipleRole) addonLongTextBuilder.Append("\n------------------------------------------------------\n");
                 addonLongTextBuilder.Append($"<size=95%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
                     .Append("<size=80%><line-height=1.8pic>").Append(GetString($"{addonName}InfoLong")).Append("</line-height></size>");
 
@@ -927,18 +927,17 @@ public static class Utils
         sb.Append('\n').Append(SetEverythingUpPatch.LastWinsText.Mark(winnerColor, false));
         sb.Append("</align>");
 
-        sb.Append("<size=70%>\n");
         List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
         foreach (var id in Main.winnerList)
-        {
-            sb.Append($"\n★ ".Color(winnerColor)).Append(SummaryTexts(id, true));
-            CheckPageChange(PlayerId, sb, "70%");
+        {            
+            sb.Append('\n').Append("<size=70%>").Append($"★ ".Color(winnerColor)).Append(SummaryTexts(id, true)).Append("</size>");
+            CheckPageChange(PlayerId, sb, size: "70%");
             cloneRoles.Remove(id);
         }
         foreach (var id in cloneRoles)
         {
-            sb.Append($"\n　 ").Append(SummaryTexts(id, true));
-            CheckPageChange(PlayerId, sb, "70%");
+            sb.Append('\n').Append("<size=70%>").Append($"　 ").Append(SummaryTexts(id, true)).Append("</size>");
+            CheckPageChange(PlayerId, sb, size: "70%");
         }
         SendMessage(sb.ToString(), PlayerId);
     }
@@ -998,7 +997,7 @@ public static class Utils
         string fullText = $"{title}\n{text}";
 
         if (fullText.Length <= 320 && (fullText.Split("\n")?.Count() ?? 0) <= 13)
-        {           
+        {
             Main.MessagesToSend.Add((fullText, sendTo, "", true));
             return;
         }
@@ -1014,7 +1013,7 @@ public static class Utils
             bool willExceed = chunkText.Length > 320 || chunk.Count >= 13;
 
             if (willExceed)
-            {               
+            {
                 Main.MessagesToSend.Add(($"{title}\n{string.Join("\n", chunk.Take(chunk.Count - 1))}", sendTo, "", true));
                 chunk.Clear();
                 chunk.Add(lines[i]);
@@ -1022,7 +1021,7 @@ public static class Utils
         }
 
         if (chunk.Count > 0)
-        {            
+        {
             Main.MessagesToSend.Add(($"{title}\n{string.Join("\n", chunk)}", sendTo, "", true));
         }
     }
@@ -1037,7 +1036,7 @@ public static class Utils
 
         if (formattedText.Length <= MaxLength &&
             (formattedText.Split("\n")?.Count() ?? 0) <= MaxLines)
-        {            
+        {
             Main.MessagesToSend.Add((formattedText, sendTo, "", true));
             return;
         }

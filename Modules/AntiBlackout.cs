@@ -140,67 +140,7 @@ public static class AntiBlackout
         isDeadCache[player.PlayerId] = (true, true);
         player.IsDead = player.Disconnected = false;
         SendGameData();
-    }
-
-    /// <summary>
-    /// 会議終了後、各プレイヤーの視点に正しいRoleTypesをDesync送信して暗転を防ぐ
-    /// </summary>
-    public static void ResetSetRole(PlayerControl player)
-    {
-        if (player == null) return;
-        if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return;
-        if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) return;
-
-        var targetClientId = player.GetClientId();
-        if (targetClientId == -1) return;
-
-
-        var playerRoleInfo = player.GetCustomRole().GetRoleInfo();
-        bool viewerIsDesync = playerRoleInfo?.IsDesyncImpostor ?? false;
-
-        var sender = CustomRpcSender.Create("ResetSetRole", Hazel.SendOption.Reliable);
-        sender.StartMessage(targetClientId);
-
-        foreach (var pc in Main.AllPlayerControls)
-        {
-            if (pc == null) continue;
-
-            var customRole = pc.GetCustomRole();
-            var roleInfo = customRole.GetRoleInfo();
-            bool isAlive = pc.IsAlive();
-
-
-            var role = roleInfo?.BaseRoleType?.Invoke() ?? RoleTypes.Scientist;
-
-
-            if (!isAlive)
-            {
-                role = (customRole.IsImpostor() || customRole.IsMadmate()
-                    || roleInfo?.BaseRoleType?.Invoke() == RoleTypes.Impostor)
-                    ? RoleTypes.ImpostorGhost
-                    : RoleTypes.CrewmateGhost;
-            }
-
-
-            if (player.PlayerId != pc.PlayerId && (roleInfo?.IsDesyncImpostor ?? false))
-                role = isAlive ? RoleTypes.Crewmate : RoleTypes.CrewmateGhost;
-
-
-            RoleTypes setrole = (viewerIsDesync && player.PlayerId != pc.PlayerId)
-                ? (isAlive ? RoleTypes.Crewmate : RoleTypes.CrewmateGhost)
-                : role;
-
-            sender.StartRpc(pc.NetId, RpcCalls.SetRole)
-                .Write((ushort)setrole)
-                .Write(true)
-                .EndRpc();
-
-            Logger.Info($"ResetSetRole -> clientId:{targetClientId}({player?.name}) pc:{pc?.name}({customRole}) => {setrole}", "AntiBlackout");
-        }
-
-        sender.EndMessage();
-        sender.SendMessage();
-    }
+    }   
 
     ///<summary>
     ///一時的にIsDeadを本来のものに戻した状態でコードを実行します

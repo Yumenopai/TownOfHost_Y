@@ -59,15 +59,17 @@ namespace TownOfHostY.Modules
             {
                 var isAlive = player.IsAlive();
                 var crewLight = isAlive ? opt.GetFloat(FloatOptionNames.CrewLightMod) : 0f;
-                var impLight  = isAlive ? opt.GetFloat(FloatOptionNames.ImpostorLightMod) : 0f;
-                var killCool  = isAlive ? opt.GetFloat(FloatOptionNames.KillCooldown) : 0f;
-                var speed     = opt.GetFloat(FloatOptionNames.PlayerSpeedMod);
+                var impLight = isAlive ? opt.GetFloat(FloatOptionNames.ImpostorLightMod) : 0f;
+                var killCool = isAlive ? opt.GetFloat(FloatOptionNames.KillCooldown) : 0f;
+                var speed = opt.GetFloat(FloatOptionNames.PlayerSpeedMod);
                 var shapeCool = isAlive ? opt.GetFloat(FloatOptionNames.ShapeshifterCooldown) : 0f;
-                var engCool   = isAlive ? opt.GetFloat(FloatOptionNames.EngineerCooldown) : 0f;
-                var phantom   = isAlive ? opt.GetFloat(FloatOptionNames.PhantomCooldown) : 0f;
+                var engCool = isAlive ? opt.GetFloat(FloatOptionNames.EngineerCooldown) : 0f;
+                var phantom = isAlive ? opt.GetFloat(FloatOptionNames.PhantomCooldown) : 0f;
                 var anonVotes = opt.GetBool(BoolOptionNames.AnonymousVotes);
-                var emerCool  = isAlive ? opt.GetInt(Int32OptionNames.EmergencyCooldown) : 0;
-                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool}";
+                var emerCool = isAlive ? opt.GetInt(Int32OptionNames.EmergencyCooldown) : 0;
+                var noiseAlert = opt.GetBool(BoolOptionNames.NoisemakerImpostorAlert);
+                var noiseAlertDur = opt.GetFloat(FloatOptionNames.NoisemakerAlertDuration);
+                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool},{noiseAlert},{noiseAlertDur}";
                 if (OldOptionstext == nowOpts) return;
                 OldOptionstext = GameStates.IsMeeting ? "" : nowOpts;
                 base.SendGameOptions();
@@ -101,7 +103,7 @@ namespace TownOfHostY.Modules
 
             var opt = BasedGameOptions;
             AURoleOptions.SetOpt(opt);
-            var state = PlayerState.GetByPlayerId(player.PlayerId);            
+            var state = PlayerState.GetByPlayerId(player.PlayerId);
             if (state.IsBlackOut)
             {
                 opt.SetFloat(FloatOptionNames.CrewLightMod, 0f);
@@ -135,6 +137,9 @@ namespace TownOfHostY.Modules
 
             var roleClass = player.GetRoleClass();
             roleClass?.ApplyGameOptions(opt);
+            var noisemaker = Main.AllPlayerControls.FirstOrDefault(pc =>
+                pc.GetCustomRole().GetRoleTypes() == RoleTypes.Noisemaker);
+            noisemaker?.GetRoleClass()?.ApplyGameOptions(opt);
             foreach (var subRole in player.GetCustomSubRoles())
             {
                 switch (subRole)

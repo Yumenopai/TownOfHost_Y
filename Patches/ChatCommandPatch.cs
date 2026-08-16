@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Assets.CoreScripts;
 using HarmonyLib;
 using Hazel;
@@ -33,10 +34,8 @@ namespace TownOfHostY
             Main.isChatCommand = true;
             Logger.Info(text, "SendChat");
 
-            /* 
             if (args[0] == "/cmd" && args.Length >= 2)
             {
-                canceled = true;
                 string cmdArg = args[1].StartsWith("/") ? args[1] : "/" + args[1];
                 string[] newArgs = new string[args.Length - 1];
                 newArgs[0] = cmdArg;
@@ -44,7 +43,6 @@ namespace TownOfHostY
                 args = newArgs;
                 text = string.Join(" ", args);
             }
-            */
 
             var tag = !PlayerControl.LocalPlayer.Data.IsDead ? "SendChatHost" : "SendChatDeadHost";
             if (text.StartsWith("試合結果:") || text.StartsWith("キル履歴:")) tag = "SendSystemChat";
@@ -341,51 +339,118 @@ namespace TownOfHostY
             const int MaxLength = 320;
             const int MaxLines = 13;
 
-           
+
             if (command.Length <= MaxLength &&
                 (command.Split("\n")?.Count() ?? 0) <= MaxLines)
             {
                 SendChunk(SendName, command, name, sender);
                 return;
             }
-           
-            var lines = command.Split("\n").ToList();
-            var chunk = new List<string>();
 
-            for (int i = 0; i < lines.Count; i++)
+            foreach (var chunk in SplitChatTextPreserveFormatting(command, MaxLength, MaxLines))
             {
-                chunk.Add(lines[i]);
-
-                string chunkText = string.Join("\n", chunk);
-
-                bool willExceed =
-                    chunkText.Length > MaxLength ||
-                    chunk.Count > MaxLines;
-
-                if (willExceed)
-                {                    
-                    string sendText = string.Join("\n", chunk.Take(chunk.Count - 1));
-
-                    if (!string.IsNullOrWhiteSpace(sendText))
-                    {
-                        SendChunk(SendName, sendText, name, sender);
-                    }
-                    
-                    chunk.Clear();
-                    chunk.Add(lines[i]);
-                }
-            }
-            
-            if (chunk.Count > 0)
-            {
-                string sendText = string.Join("\n", chunk);
-
-                if (!string.IsNullOrWhiteSpace(sendText))
-                {
-                    SendChunk(SendName, sendText, name, sender);
-                }
+                if (!string.IsNullOrWhiteSpace(chunk))
+                    SendChunk(SendName, chunk, name, sender);
             }
         }
+
+        private static IEnumerable<string> SplitChatTextPreserveFormatting(
+            string text, int maxLength, int maxLines)
+        {
+            var lines = text.Split("\n");
+            var activeTags = new List<(string Name, string Tag)>();
+
+            var chunkLines = new List<string>();
+            List<(string Name, string Tag)> chunkStartTags = null;
+
+            foreach (var line in lines)
+            {
+                var lineStartTags = new List<(string Name, string Tag)>(activeTags);
+                var nextActiveTags = UpdateActiveTags(activeTags, line);
+
+                if (chunkLines.Count == 0)
+                {
+                    chunkStartTags = lineStartTags;
+                }
+
+                string candidateBody = string.Join("\n", chunkLines.Append(line));
+                string candidateText =
+                    BuildOpeningTags(chunkStartTags) +
+                    candidateBody +
+                    BuildClosingTags(nextActiveTags);
+
+                bool exceeds =
+                    chunkLines.Count > 0 &&
+                    (candidateText.Length > maxLength ||
+                     chunkLines.Count + 1 > maxLines);
+
+                if (exceeds)
+                {
+                    var previousActiveTags = activeTags;
+                    string previousBody = string.Join("\n", chunkLines);
+
+                    yield return
+                        BuildOpeningTags(chunkStartTags) +
+                        previousBody +
+                        BuildClosingTags(previousActiveTags);
+
+                    chunkLines.Clear();
+                    chunkStartTags = lineStartTags;
+                }
+
+                chunkLines.Add(line);
+                activeTags = nextActiveTags;
+            }
+
+            if (chunkLines.Count > 0)
+            {
+                yield return
+                    BuildOpeningTags(chunkStartTags) +
+                    string.Join("\n", chunkLines) +
+                    BuildClosingTags(activeTags);
+            }
+        }
+
+        private static List<(string Name, string Tag)> UpdateActiveTags(
+            List<(string Name, string Tag)> activeTags,
+            string line)
+        {
+            var result = new List<(string Name, string Tag)>(activeTags);
+
+            foreach (Match match in Regex.Matches(line, @"<(/?)([A-Za-z][A-Za-z0-9_-]*)(?:\s*[^>]*)?>"))
+            {
+                string name = match.Groups[2].Value.ToLowerInvariant();
+
+
+                if (match.Value.EndsWith("/>") ||
+                    name is "br" or "brk" or "sprite" or "quad" or "space")
+                    continue;
+
+                if (match.Groups[1].Success && match.Groups[1].Value == "/")
+                {
+                    for (int i = result.Count - 1; i >= 0; i--)
+                    {
+                        if (result[i].Name == name)
+                        {
+                            result.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    result.Add((name, match.Value));
+                }
+            }
+
+            return result;
+        }
+
+        private static string BuildOpeningTags(List<(string Name, string Tag)> tags)
+            => string.Concat(tags.Select(x => x.Tag));
+
+        private static string BuildClosingTags(List<(string Name, string Tag)> tags)
+            => string.Concat(tags.AsEnumerable().Reverse().Select(x => $"</{x.Name}>"));
 
         private static void SendChunk(string SendName, string text, string name, PlayerControl sender)
         {
@@ -516,19 +581,13 @@ namespace TownOfHostY
             string[] args = text.Split(' ');
             string subArgs = "";
 
-            /* 
-            if (text.StartsWith("/") && !text.Contains("cmd"))
+            if (args[0] == "/cmd" && args.Length > 1)
             {
-                Utils.SendMessage(GetString("Error.CommandFailed"), player.PlayerId);
-                return;
+                args = args.Skip(1).ToArray();
+                if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
             }
-            if (args[0] != "/cmd" || args.Length <= 1) return;
-            args = args.Skip(1).ToArray();
-            if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
-            */
 
-            if (text.StartsWith("/") is false) return;
-            if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
+            if (args[0].StartsWith("/") is false) return;
 
             switch (args[0]?.ToLower())
             {
@@ -649,7 +708,7 @@ namespace TownOfHostY
             if (clientId == -1)
             {
                 player.SetName(title);
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg);
+                AddChatAsAlive(player, msg);
                 player.SetName(name);
             }
 
@@ -687,7 +746,7 @@ namespace TownOfHostY
             if (clientId == -1)
             {
                 sender.SetName(SendName);
-                DestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, command);
+                AddChatAsAlive(sender, command);
                 sender.SetName(name);
             }
 
@@ -713,6 +772,13 @@ namespace TownOfHostY
                     .EndMessage()
                     .SendMessage();
             }
+        }
+        private static void AddChatAsAlive(PlayerControl player, string msg)
+        {
+            var wasDead = player.Data.IsDead;
+            if (wasDead) player.Data.IsDead = false;
+            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(player, msg);
+            if (wasDead) player.Data.IsDead = true;
         }
         private static void SendMessageAsDeadHost(PlayerControl host, string msg, string title, byte sendTo)
         {

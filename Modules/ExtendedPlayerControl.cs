@@ -215,17 +215,24 @@ static class ExtendedPlayerControl
     {
         if (player == null) return;
         if (!ForceProtect && !player.CanUseKillButton()) return;
-        if (time >= 0f)
-        {
-            Main.AllPlayerKillCooldown[player.PlayerId] = time;
-        }
-        else
-        {
-            Main.AllPlayerKillCooldown[player.PlayerId] =
-                (player.GetRoleClass() as IKiller)?.CalculateKillCooldown()
-                ?? Options.DefaultKillCooldown;
-        }
+
+        float newCooldown = time >= 0f
+            ? time
+            : (player.GetRoleClass() as IKiller)?.CalculateKillCooldown() ?? Options.DefaultKillCooldown;
+
+        Main.AllPlayerKillCooldown[player.PlayerId] = newCooldown * 2f;
         player.SyncSettings();
+
+        _ = new LateTask(() =>
+        {
+            player.RpcProtectedMurderPlayer();
+
+            _ = new LateTask(() =>
+            {
+                player.ResetKillCooldown();
+                player.SyncSettings();
+            }, 1f, "SetKillCooldown_Reset");
+        }, 0.2f, "SetKillCooldown_ProtectedMurder");
     }
     public static void RpcSpecificMurderPlayer(this PlayerControl killer, PlayerControl target = null)
     {
