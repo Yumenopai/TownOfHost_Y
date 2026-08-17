@@ -66,7 +66,8 @@ class CoBeginPatch
             foreach (var pc in Main.AllPlayerControls)
             {
                 var colorId = pc.Data.DefaultOutfit.ColorId;
-                Main.AllPlayerNames[pc.PlayerId] = pc?.Data?.PlayerName;
+                if (!Main.AllPlayerNames.ContainsKey(pc.PlayerId))
+                    Main.AllPlayerNames[pc.PlayerId] = pc?.Data?.PlayerName;
                 Main.PlayerColors[pc.PlayerId] = Palette.PlayerColors[colorId];
                 pc.cosmetics.nameText.text = pc.name;
             }
