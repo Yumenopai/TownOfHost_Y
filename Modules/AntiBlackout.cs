@@ -75,7 +75,8 @@ public static class AntiBlackout
             _ => false,
         };
     }
-    private static void SetRoleChange()
+
+    public static void SetRoleChange()
     {
         if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return;
 
@@ -140,7 +141,7 @@ public static class AntiBlackout
         isDeadCache[player.PlayerId] = (true, true);
         player.IsDead = player.Disconnected = false;
         SendGameData();
-    }   
+    }
 
     ///<summary>
     ///一時的にIsDeadを本来のものに戻した状態でコードを実行します

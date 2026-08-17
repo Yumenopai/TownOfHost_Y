@@ -157,6 +157,11 @@ static class ExtendedPlayerControl
         //Logger.Info($"Set:{player?.Data?.PlayerName}:{name.RemoveHtmlTags()} for {seer.GetNameWithRole()}", "RpcSetNamePrivate");
 
         var clientId = seer.GetClientId();
+        if (AmongUsClient.Instance.ClientId == clientId)
+        {
+            player.SetName(name);
+            return;
+        }
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, Hazel.SendOption.Reliable, clientId);
         writer.Write(player.Data.NetId);
         writer.Write(name);

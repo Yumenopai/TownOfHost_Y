@@ -59,16 +59,7 @@ class CheckMurderPatch
     public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
         if (!AmongUsClient.Instance.AmHost || AmongUsClient.Instance.IsGameOver) return false;
-
-        if (__instance.Is(CustomRoles.NormalViper))
-        {
-            if (!CustomRoleManager.OnCheckMurder(__instance, target, __instance, target, false))
-            {
-                __instance.RpcMurderPlayer(target, false);
-                return false;
-            }
-            return true;
-        }
+        RevealVisualRoleBeforeMurder(__instance, target);
 
         if (!CustomRoleManager.OnCheckMurder(__instance, target))
         {
@@ -76,6 +67,43 @@ class CheckMurderPatch
         }
 
         return false;
+    }
+    private static void RevealVisualRoleBeforeMurder(PlayerControl killer, PlayerControl target)
+    {
+        
+        bool killerIsViper = killer.Is(CustomRoles.Viper) || killer.Is(CustomRoles.NormalViper);       
+        if (killerIsViper)
+        {
+            foreach (var seer in Main.AllPlayerControls)
+            {
+                if (seer.PlayerId == killer.PlayerId) continue;
+                if (seer.GetClientId() == -1) continue;
+                killer.RpcSetRoleDesync(RoleTypes.Viper, seer.GetClientId());
+            }
+           
+            var capKiller = killer;
+            _ = new LateTask(() =>
+            {
+                if (capKiller == null) return;
+                foreach (var seer in Main.AllPlayerControls)
+                {
+                    if (seer.PlayerId == capKiller.PlayerId) continue;
+                    if (seer.GetClientId() == -1) continue;
+                    capKiller.RpcSetRoleDesync(RoleTypes.Impostor, seer.GetClientId());
+                }
+            }, 2f, "RevertViperVisualReveal");
+        }
+        
+        bool targetIsNoisemaker = target.Is(CustomRoles.Noisemaker) || target.Is(CustomRoles.NormalNoisemaker);       
+        if (targetIsNoisemaker)
+        {
+            foreach (var seer in Main.AllPlayerControls)
+            {
+                if (seer.PlayerId == target.PlayerId) continue;
+                if (seer.GetClientId() == -1) continue;
+                target.RpcSetRoleDesync(RoleTypes.Noisemaker, seer.GetClientId());
+            }            
+        }
     }
 
     // 不正キル防止チェック
@@ -208,6 +236,17 @@ class MurderPlayerPatch
         // 以降ホストしか処理しない
         // 処理は全てCustomRoleManager側で行う
         CustomRoleManager.OnMurderPlayer(__instance, target);
+        AntiBlackout.SetRoleChange();
+        var killer = __instance;
+        bool killerIsViper = killer.Is(CustomRoles.Viper) || killer.Is(CustomRoles.NormalViper);
+        if (killerIsViper)
+        {
+            foreach (var seer in Main.AllPlayerControls)
+            {
+                if (seer.GetClientId() == -1) continue;
+                killer.RpcSetRoleDesync(RoleTypes.Viper, seer.GetClientId());
+            }
+        }
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CheckShapeshift))]
@@ -742,7 +781,6 @@ class RpcEnterVentPatch
         {
             _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
         }
-
     }
 }
 
