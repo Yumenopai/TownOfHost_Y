@@ -70,8 +70,8 @@ class CheckMurderPatch
     }
     private static void RevealVisualRoleBeforeMurder(PlayerControl killer, PlayerControl target)
     {
-        
-        bool killerIsViper = killer.Is(CustomRoles.Viper) || killer.Is(CustomRoles.NormalViper);       
+
+        bool killerIsViper = killer.Is(CustomRoles.Viper) || killer.Is(CustomRoles.NormalViper);
         if (killerIsViper)
         {
             foreach (var seer in Main.AllPlayerControls)
@@ -80,7 +80,7 @@ class CheckMurderPatch
                 if (seer.GetClientId() == -1) continue;
                 killer.RpcSetRoleDesync(RoleTypes.Viper, seer.GetClientId());
             }
-           
+
             var capKiller = killer;
             _ = new LateTask(() =>
             {
@@ -93,8 +93,8 @@ class CheckMurderPatch
                 }
             }, 2f, "RevertViperVisualReveal");
         }
-        
-        bool targetIsNoisemaker = target.Is(CustomRoles.Noisemaker) || target.Is(CustomRoles.NormalNoisemaker);       
+
+        bool targetIsNoisemaker = target.Is(CustomRoles.Noisemaker) || target.Is(CustomRoles.NormalNoisemaker);
         if (targetIsNoisemaker)
         {
             foreach (var seer in Main.AllPlayerControls)
@@ -102,7 +102,7 @@ class CheckMurderPatch
                 if (seer.PlayerId == target.PlayerId) continue;
                 if (seer.GetClientId() == -1) continue;
                 target.RpcSetRoleDesync(RoleTypes.Noisemaker, seer.GetClientId());
-            }            
+            }
         }
     }
 
@@ -236,7 +236,10 @@ class MurderPlayerPatch
         // 以降ホストしか処理しない
         // 処理は全てCustomRoleManager側で行う
         CustomRoleManager.OnMurderPlayer(__instance, target);
-        AntiBlackout.SetRoleChange();
+        _ = new LateTask(() =>
+        {
+            AntiBlackout.SetRoleChange();
+        }, 0.5f, "PostMurderSetRoleChange");
         var killer = __instance;
         bool killerIsViper = killer.Is(CustomRoles.Viper) || killer.Is(CustomRoles.NormalViper);
         if (killerIsViper)
