@@ -133,6 +133,7 @@ static class CustomRolesHelper
             or CustomRoles.SKMadmate
           
             or CustomRoles.EvilHacker //一旦封印
+            or CustomRoles.EvilDyer //封印
             or CustomRoles.Potentialist
             or CustomRoles.Impostor or CustomRoles.Crewmate;
     }
