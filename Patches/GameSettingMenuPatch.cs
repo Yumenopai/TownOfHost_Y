@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection.Metadata;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
@@ -40,10 +41,8 @@ public class GameSettingMenuPatch
         "Add-Ons"
     };
 
-    // 左側配置ボタン座標
-    private static Vector3 buttonPosition_Left = new(-3.9f, -0.4f, 0f);
-    // 右側配置ボタン座標
-    private static Vector3 buttonPosition_Right = new(-2.4f, -0.4f, 0f);
+    // 配置ボタン座標
+    private static Vector3 buttonPosition = new(-3.94f, 1.57f, 0f);
     // ボタンサイズ
     private static Vector3 buttonSize = new(0.45f, 0.6f, 1f);
 
@@ -60,6 +59,30 @@ public class GameSettingMenuPatch
     [HarmonyPriority(Priority.First)]
     public static void StartPostfix(GameSettingMenu __instance)
     {
+        /******** パネル ********/
+        var panelSprite = __instance.transform.FindChild("PanelSprite");
+        panelSprite.localScale = new Vector3(0.5635f, 0.62f, 1f);
+
+        var leftSideBack = __instance.transform.Find("PanelSprite/LeftSideTint");
+        leftSideBack.localScale = new Vector3(0.45f, 0.897f, 1f);
+        leftSideBack.localPosition = new Vector3(-7.3133f, 0.0189f, -0.1f);
+
+        var gameSettingsLabel = __instance.transform.FindChild("GameSettingsLabel");
+        gameSettingsLabel.localScale = new Vector3(0.6f, 0.6f, 1f);
+        gameSettingsLabel.localPosition = new Vector3(-4.05f, 2f, -3f);
+
+        var infoTextBox = __instance.transform.FindChild("What Is This?");
+        infoTextBox.localScale = new Vector3(0.8f, 0.8f, 1f);
+        infoTextBox.localPosition = new Vector3(6.44f, 1.38f, -1f);
+
+        var mainArea = __instance.transform.FindChild("MainArea");
+        mainArea.localScale = new Vector3(0.95f, 0.95f, 1f);
+        mainArea.localPosition = new Vector3(-0.26f, -0.817f, -1f);
+
+        var closeButton = __instance.transform.FindChild("CloseButton");
+        closeButton.localScale = new Vector3(0.5f, 0.5f, 1f);
+        closeButton.localPosition = new Vector3(5.05f, 2.05f, -13f);
+
         /******** ボタン作成 ********/
 
         // 各グループ毎にボタンを作成する
@@ -89,9 +112,9 @@ public class GameSettingMenuPatch
             button.selectedSprites.GetComponent<SpriteRenderer>().sprite = activeButton;
 
             // Y座標オフセット
-            Vector3 offset = new(0.0f, 0.5f * (((int)tab + 1) / 2), 0.0f);
+            Vector3 offset = new(0.0f, 0.53f * ((int)tab + 1), 0.0f);
             // ボタンの座標設定
-            button.transform.localPosition = ((((int)tab + 1) % 2 == 0) ? buttonPosition_Left : buttonPosition_Right) - offset;
+            button.transform.localPosition = buttonPosition - offset;
             // ボタンのサイズ設定
             button.transform.localScale = buttonSize;
 
@@ -218,7 +241,7 @@ public class GameSettingMenuPatch
         gameSettingButton.activeSprites.GetComponent<SpriteRenderer>().sprite = vanillaActiveButton;
         gameSettingButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = vanillaActiveButton;
         // ボタンの座標設定
-        gameSettingButton.transform.localPosition = buttonPosition_Left;
+        gameSettingButton.transform.localPosition = buttonPosition;
         // ボタンのサイズ設定
         gameSettingButton.transform.localScale = buttonSize;
         /**** ゲーム設定ボタンを変更 ここまで ****/

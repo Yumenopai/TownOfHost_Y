@@ -50,6 +50,13 @@ public static class GameOptionsMenuPatch
     private static bool CreateSettingsPrefix(GameOptionsMenu __instance)
     {
         Instance ??= __instance;
+
+        var gradient = __instance.transform.FindChild("Gradient");
+        gradient.localPosition = new Vector3(4.54f, -4.44f, -20f);
+
+        var maskBg = __instance.MaskBg.transform;
+        maskBg.localScale = new Vector3(6.6f, 5f, 0.56f);
+
         if (ModGameOptionsMenu.TabIndex < 3) return true;
         var modTab = (TabGroup)(ModGameOptionsMenu.TabIndex - 3);
 
