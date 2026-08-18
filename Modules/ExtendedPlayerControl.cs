@@ -457,9 +457,21 @@ static class ExtendedPlayerControl
 
     public static string GetRealName(this PlayerControl player, bool isMeeting = false)
     {
-        if (Options.GetNameChangeModes() == NameChange.Crew)
-            return isMeeting ? Main.AllPlayerNames[player.PlayerId] : GetString("CustomRoleTypes.Crewmate");       
-        return Main.AllPlayerNames.TryGetValue(player.PlayerId, out var n) ? n : player?.Data?.PlayerName;
+        try
+        {
+            if (player == null) return null;
+            string cachedName = (Main.AllPlayerNames != null && Main.AllPlayerNames.TryGetValue(player.PlayerId, out var n))
+                ? n
+                : player?.Data?.PlayerName;
+            if (Options.GetNameChangeModes() == NameChange.Crew)
+                return isMeeting ? cachedName : GetString("CustomRoleTypes.Crewmate");
+            return cachedName;
+        }
+        catch (System.Exception e)
+        {
+            Logger.Warn($"GetRealNameで例外が発生しました: {e}", "GetRealName");
+            try { return player?.name; } catch { return null; }
+        }
     }
     public static bool CanUseKillButton(this PlayerControl pc)
     {

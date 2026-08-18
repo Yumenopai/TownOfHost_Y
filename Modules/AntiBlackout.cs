@@ -99,7 +99,7 @@ public static class AntiBlackout
             if (pc.IsAlive() && pc.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true) continue;
             foreach (var dummy in list)
             {
-                dummy.RpcSetRoleDesync(RoleTypes.Impostor, pc.GetClientId());
+                dummy.RpcSetRoleDesync(dummy.GetCustomRole().GetRoleTypes(), pc.GetClientId());
             }
             foreach (var dead in Main.AllDeadPlayerControls.Where(x => !x.Data.Disconnected))
             {

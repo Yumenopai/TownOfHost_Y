@@ -29,10 +29,10 @@ class Penguin : RoleBase, IImpostor
         MeetingKill = OptionMeetingKill.GetBool();
         KilledAbductVictim = OptionKilledAbductVictim.GetBool();
 
-        PenguinList = new();
     }
     public override void OnDestroy()
     {
+        PenguinList?.Remove(this);
         AbductVictim = null;
     }
 
@@ -50,10 +50,18 @@ class Penguin : RoleBase, IImpostor
     private static bool MeetingKill;
     private static bool KilledAbductVictim;
 
-    static HashSet<Penguin> PenguinList;
+    static readonly HashSet<Penguin> PenguinList = new();
+    private sealed class AbductState
+    {
+        public byte VictimId;
+        public float Timer;
+    }
+    private static readonly Dictionary<byte, AbductState> AbductStates = new();
+
     public PlayerControl AbductVictim;
     private float AbductTimer;
     private bool stopCount;
+    private bool killScheduled;
 
     //拉致中にキルしそうになった相手の能力を使わせないための処置
     public bool IsKiller => AbductVictim == null;
@@ -67,10 +75,39 @@ class Penguin : RoleBase, IImpostor
     public override void Add()
     {
         PenguinList.Add(this);
-        AbductTimer = 255f;
         stopCount = false;
+
+        if (AbductStates.TryGetValue(Player.PlayerId, out var state))
+        {
+            AbductVictim = Utils.GetPlayerById(state.VictimId);
+            AbductTimer = state.Timer;
+
+            if (AbductVictim == null || !AbductVictim.IsAlive())
+            {
+                AbductStates.Remove(Player.PlayerId);
+                AbductVictim = null;
+                AbductTimer = 255f;
+            }
+        }
+        else
+        {
+            AbductVictim = null;
+            AbductTimer = 255f;
+        }
+
+        PushShapeshiftCooldown();
     }
-    public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.ShapeshifterCooldown = AbductVictim != null ? AbductTimer : 255f;
+    public override void ApplyGameOptions(IGameOptions opt)
+    {
+        AURoleOptions.ShapeshifterCooldown =
+            AbductVictim != null ? Mathf.Max(0f, AbductTimer) : 255f;
+    }
+    private void PushShapeshiftCooldown()
+    {
+        ApplyGameOptions(null);
+        Player.SyncSettings();
+        Player.RpcResetAbilityCooldown();
+    }
     private void SendRPC()
     {
         using var sender = CreateSender(CustomRPC.PenguinSync);
@@ -87,11 +124,17 @@ class Penguin : RoleBase, IImpostor
         {
             AbductVictim = null;
             AbductTimer = 255f;
+            AbductStates.Remove(Player.PlayerId);
         }
         else
         {
             AbductVictim = Utils.GetPlayerById(victim);
             AbductTimer = AbductTimerLimit;
+            AbductStates[Player.PlayerId] = new AbductState
+            {
+                VictimId = victim,
+                Timer = AbductTimer
+            };
         }
     }
 
@@ -99,7 +142,7 @@ class Penguin : RoleBase, IImpostor
     public static bool CanKilledByTarget(PlayerControl pc)
     {
         if (!CustomRoles.Penguin.IsPresent() || KilledAbductVictim) return true;
-        foreach(var pen in PenguinList)
+        foreach (var pen in PenguinList)
         {
             if (pen.AbductVictim == pc) return false;
         }
@@ -108,13 +151,19 @@ class Penguin : RoleBase, IImpostor
 
     void AddVictim(PlayerControl target)
     {
+        stopCount = false;
         PlayerState.GetByPlayerId(target.PlayerId).CanUseMovingPlatform = MyState.CanUseMovingPlatform = false;
         AbductVictim = target;
         AbductTimer = AbductTimerLimit;
-        Player.SyncSettings();
-        Player.RpcResetAbilityCooldown();
+        AbductStates[Player.PlayerId] = new AbductState
+        {
+            VictimId = target.PlayerId,
+            Timer = AbductTimer
+        };
+        PushShapeshiftCooldown();
         SendRPC();
     }
+
     void RemoveVictim()
     {
         if (AbductVictim != null)
@@ -123,9 +172,10 @@ class Penguin : RoleBase, IImpostor
             AbductVictim = null;
         }
         MyState.CanUseMovingPlatform = true;
+        AbductStates.Remove(Player.PlayerId);
         AbductTimer = 255f;
-        Player.SyncSettings();
-        Player.RpcResetAbilityCooldown();
+        killScheduled = false;
+        PushShapeshiftCooldown();
         SendRPC();
     }
     public void OnCheckMurderAsKiller(MurderInfo info)
@@ -171,112 +221,111 @@ class Penguin : RoleBase, IImpostor
     public override void OnReportDeadBody(PlayerControl reporter, NetworkedPlayerInfo target)
     {
         stopCount = true;
-        // 時間切れ状態で会議を迎えたらはしご中でも構わずキルする
-        if (AbductVictim != null && AbductTimer <= 0f)
-        {
-            Player.RpcMurderPlayer(AbductVictim);
-        }
+
+        if (!AmongUsClient.Instance.AmHost) return;
+        if (AbductVictim == null) return;
         if (MeetingKill)
         {
-            if (!AmongUsClient.Instance.AmHost) return;
-            if (AbductVictim == null) return;
-            Player.RpcMurderPlayer(AbductVictim);
+            var victim = AbductVictim;
+            Player.RpcMurderPlayer(victim);
             RemoveVictim();
+            return;
         }
-    }
-    public override void AfterMeetingTasks()
-    {
-        if (Main.NormalOptions.MapId == 4) return;
 
-        //マップがエアシップ以外
-        RestartAbduct();
-    }
-    public void OnSpawnAirship()
-    {
-        RestartAbduct();
+        RemoveVictim();
     }
     public void RestartAbduct()
     {
-        if (AbductVictim != null)
-        {
-            Player.SyncSettings();
-            Player.RpcResetAbilityCooldown();
-            stopCount = false;
-        }
+        RemoveVictim();
     }
     public override void OnFixedUpdate(PlayerControl player)
     {
         if (!AmongUsClient.Instance.AmHost) return;
         if (!GameStates.IsInTask) return;
+        if (AbductVictim == null && AbductStates.TryGetValue(Player.PlayerId, out var saved))
+        {
+            AbductVictim = Utils.GetPlayerById(saved.VictimId);
+            AbductTimer = saved.Timer;
+        }
+
+        if (AbductVictim == null) return;
+
+        if (!Player.IsAlive() || !AbductVictim.IsAlive())
+        {
+            RemoveVictim();
+            return;
+        }
 
         if (!stopCount)
             AbductTimer -= Time.fixedDeltaTime;
 
-        if (AbductVictim != null)
-        {
-            if (!Player.IsAlive() || !AbductVictim.IsAlive())
-            {
-                RemoveVictim();
-                return;
-            }
-            if (AbductTimer <= 0f && !Player.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
-            {
-                // 先にIsDeadをtrueにする(はしごチェイス封じ)
-                AbductVictim.Data.IsDead = true;
-                GameData.Instance.DirtyAllData();
-                // ペンギン自身がはしご上にいる場合，はしごを降りてからキルする
-                if (!AbductVictim.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
-                {
-                    var abductVictim = AbductVictim;
-                    _ = new LateTask(() =>
-                    {
-                        var sId = abductVictim.NetTransform.lastSequenceId + 5;
-                        abductVictim.NetTransform.SnapTo(Player.transform.position, (ushort)sId);
-                        Player.MurderPlayer(abductVictim);
+        AbductTimer = Mathf.Max(0f, AbductTimer);
+        if (AbductStates.TryGetValue(Player.PlayerId, out var state))
+            state.Timer = AbductTimer;
 
-                        var sender = CustomRpcSender.Create("PenguinMurder");
-                        {
-                            sender.AutoStartRpc(abductVictim.NetTransform.NetId, (byte)RpcCalls.SnapTo);
-                            {
-                                NetHelpers.WriteVector2(Player.transform.position, sender.stream);
-                                sender.Write(abductVictim.NetTransform.lastSequenceId);
-                            }
-                            sender.EndRpc();
-                            sender.AutoStartRpc(Player.NetId, (byte)RpcCalls.MurderPlayer);
-                            {
-                                sender.WriteNetObject(abductVictim);
-                                sender.Write((int)ExtendedPlayerControl.SucceededFlags);
-                            }
-                            sender.EndRpc();
-                        }
-                        sender.SendMessage();
-                    }, 0.3f, "PenguinMurder");
-                    RemoveVictim();
-                }
-            }
-            // はしごの上にいるプレイヤーにはSnapToRPCが効かずホストだけ挙動が変わるため，一律でテレポートを行わない
-            else if (!AbductVictim.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
-            {
-                var position = Player.transform.position;
-                if (Player.PlayerId != 0)
-                {
-                    AbductVictim.RpcSnapTo(position);
-                }
-                else
-                {
-                    _ = new LateTask(() =>
-                    {
-                        if (AbductVictim != null)
-                            AbductVictim.RpcSnapTo(position);
-                    }
-                    , 0.25f, "");
-                }
-            }
-        }
-        else if (AbductTimer <= 100f)
+        AURoleOptions.ShapeshifterCooldown = AbductTimer;
+
+        if (AbductTimer <= 0f)
         {
-            AbductTimer = 255f;
-            Player.RpcResetAbilityCooldown();
+            if (killScheduled) return;
+            if (Player.MyPhysics.Animations.IsPlayingAnyLadderAnimation() ||
+                AbductVictim.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
+                return;
+
+            killScheduled = true;
+
+            var abductVictim = AbductVictim;
+            abductVictim.Data.IsDead = true;
+            GameData.Instance.DirtyAllData();
+
+            _ = new LateTask(() =>
+            {
+                if (abductVictim == null) return;
+
+                var sId = abductVictim.NetTransform.lastSequenceId + 5;
+                abductVictim.NetTransform.SnapTo(Player.transform.position, (ushort)sId);
+                Player.MurderPlayer(abductVictim);
+
+                var sender = CustomRpcSender.Create("PenguinMurder");
+                {
+                    sender.AutoStartRpc(abductVictim.NetTransform.NetId, (byte)RpcCalls.SnapTo);
+                    {
+                        NetHelpers.WriteVector2(Player.transform.position, sender.stream);
+                        sender.Write(abductVictim.NetTransform.lastSequenceId);
+                    }
+                    sender.EndRpc();
+
+                    sender.AutoStartRpc(Player.NetId, (byte)RpcCalls.MurderPlayer);
+                    {
+                        sender.WriteNetObject(abductVictim);
+                        sender.Write((int)ExtendedPlayerControl.SucceededFlags);
+                    }
+                    sender.EndRpc();
+                }
+                sender.SendMessage();
+
+                RemoveVictim();
+            }, 0.3f, "PenguinMurder");
+
+            return;
+        }
+        if (!AbductVictim.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
+        {
+            var position = Player.transform.position;
+            if (Player.PlayerId != 0)
+            {
+                AbductVictim.RpcSnapTo(position);
+            }
+            else
+            {
+                var victim = AbductVictim;
+                _ = new LateTask(() =>
+                {
+                    if (victim != null && victim.IsAlive())
+                        victim.RpcSnapTo(position);
+                }, 0.25f, "");
+            }
         }
     }
+
 }
