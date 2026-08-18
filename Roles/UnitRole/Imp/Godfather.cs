@@ -6,6 +6,7 @@ using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Roles.Unit.GodfatherAndJanitor;
 
 namespace TownOfHostY.Roles.Impostor;
+
 public sealed class Godfather : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -45,7 +46,7 @@ public sealed class Godfather : RoleBase, IImpostor
     public override void Add()
     {
         godfather = Player;
-        Logger.Info($"{Player.GetNameWithRole()} : Godfather登録", "G&J");
+        Logger.Info($"{Player.GetNameWithRole()} : Godfather登録", "G&J");       
 
         JanitorTarget.Clear();
         canLockKill = false;

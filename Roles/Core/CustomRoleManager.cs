@@ -111,7 +111,20 @@ public static class CustomRoleManager
         {
             //MurderPlayer用にinfoを保存
             CheckMurderInfos[appearanceKiller.PlayerId] = info;
-            appearanceKiller.RpcMurderPlayer(appearanceTarget);
+            bool killerIsViper = appearanceKiller.Is(CustomRoles.Viper) || appearanceKiller.Is(CustomRoles.NormalViper);
+            if (killerIsViper)
+            {
+                var capKiller = appearanceKiller;
+                var capTarget = appearanceTarget;
+                _ = new LateTask(() =>
+                {
+                    capKiller.RpcMurderPlayer(capTarget);
+                }, 0.2f, "ViperMurderDelay");
+            }
+            else
+            {
+                appearanceKiller.RpcMurderPlayer(appearanceTarget);
+            }
             return true;
         }
         else

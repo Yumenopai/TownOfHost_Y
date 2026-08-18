@@ -92,7 +92,7 @@ class ChangeRoleSettings
 
             HudManagerCoShowIntroPatch.Cancel = true;
 
-           
+
             SelectRolesPatch.roleAssigned = false;
             RpcSetTasksPatch.taskIds.Clear();
 
@@ -107,7 +107,7 @@ class ChangeRoleSettings
                     stream.Write(AmongUsClient.Instance.GameId);
                     foreach (var data in GameData.Instance.AllPlayers)
                     {
-                        if (data.PlayerId == 0) continue; 
+                        if (data.PlayerId == 0) continue;
                         if (IsSend)
                         {
                             stream = MessageWriter.Get(SendOption.Reliable);
@@ -184,7 +184,8 @@ class ChangeRoleSettings
                     }
                 }
                 PlayerState.Create(pc.PlayerId);
-                Main.AllPlayerNames[pc.PlayerId] = pc?.Data?.PlayerName;
+                if (!Main.AllPlayerNames.ContainsKey(pc.PlayerId))
+                    Main.AllPlayerNames[pc.PlayerId] = pc?.Data?.PlayerName;
                 Main.PlayerColors[pc.PlayerId] = Palette.PlayerColors[colorId];
                 Main.AllPlayerSpeed[pc.PlayerId] = Main.RealOptionsData.GetFloat(FloatOptionNames.PlayerSpeedMod);
                 ReportDeadBodyPatch.WaitReport[pc.PlayerId] = new();

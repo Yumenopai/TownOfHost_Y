@@ -33,6 +33,7 @@ public sealed class NormalViper : RoleBase, IImpostor
         ViperDissolveTime,
     }
     private static float viperDissolveTime;
+    public static float DissolveTime => OptionViperDissolveTime?.GetFloat() ?? 30f;
 
     public static void SetupOptionItem()
     {

@@ -8,6 +8,7 @@ using TownOfHostY.Roles.Core.Interfaces;
 using static TownOfHostY.Roles.Unit.GodfatherAndJanitor;
 
 namespace TownOfHostY.Roles.Impostor;
+
 public sealed class Janitor : RoleBase, IImpostor
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -81,18 +82,19 @@ public sealed class Janitor : RoleBase, IImpostor
 
         // ターゲットの状態を取得
         var targetPlayerState = PlayerState.GetByPlayerId(target.PlayerId);
+        JanitorTarget.Remove(target.PlayerId);
+        Main.AllPlayerSpeed[target.PlayerId] = Main.RealOptionsData.GetFloat(FloatOptionNames.PlayerSpeedMod);
+        targetPlayerState.CanUseMovingPlatform = true;
+        target.NetTransform.Halt();
+        target.MarkDirtySettings();
 
         /* ターゲットを死体なしで霊界転送する */
         targetPlayerState.SetDead();
+        target.RpcSetRoleNormal(RoleTypes.CrewmateGhost);
+        target.Exiled();
         target.RpcExileV3();
         targetPlayerState.DeathReason = CustomDeathReason.Clean;
         Logger.Info($"{Player.GetNameWithRole()} : ターゲット({target.GetNameWithRole()})を掃除", "G&J");
-
-        // 掃除したプレイヤーはリストから削除
-        JanitorTarget.Remove(target.PlayerId);
-        // ターゲットの足止め解除
-        Main.AllPlayerSpeed[target.PlayerId] = Main.RealOptionsData.GetFloat(FloatOptionNames.PlayerSpeedMod);
-        target.MarkDirtySettings();
 
         // 自身のキルクールリセット
         killer.SetKillCooldown();

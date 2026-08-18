@@ -157,6 +157,11 @@ static class ExtendedPlayerControl
         //Logger.Info($"Set:{player?.Data?.PlayerName}:{name.RemoveHtmlTags()} for {seer.GetNameWithRole()}", "RpcSetNamePrivate");
 
         var clientId = seer.GetClientId();
+        if (AmongUsClient.Instance.ClientId == clientId)
+        {
+            player.SetName(name);
+            return;
+        }
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, Hazel.SendOption.Reliable, clientId);
         writer.Write(player.Data.NetId);
         writer.Write(name);
@@ -452,10 +457,21 @@ static class ExtendedPlayerControl
 
     public static string GetRealName(this PlayerControl player, bool isMeeting = false)
     {
-        if (Options.GetNameChangeModes() == NameChange.Crew)
-            return isMeeting ? Main.AllPlayerNames[player.PlayerId] : GetString("CustomRoleTypes.Crewmate");
-
-        return isMeeting ? player?.Data?.PlayerName : player?.name;
+        try
+        {
+            if (player == null) return null;
+            string cachedName = (Main.AllPlayerNames != null && Main.AllPlayerNames.TryGetValue(player.PlayerId, out var n))
+                ? n
+                : player?.Data?.PlayerName;
+            if (Options.GetNameChangeModes() == NameChange.Crew)
+                return isMeeting ? cachedName : GetString("CustomRoleTypes.Crewmate");
+            return cachedName;
+        }
+        catch (System.Exception e)
+        {
+            Logger.Warn($"GetRealNameで例外が発生しました: {e}", "GetRealName");
+            try { return player?.name; } catch { return null; }
+        }
     }
     public static bool CanUseKillButton(this PlayerControl pc)
     {

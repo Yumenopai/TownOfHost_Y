@@ -1386,7 +1386,7 @@ public static class Utils
                     }
 
                     //RealNameを取得 なければ現在の名前をRealNamesに書き込む
-                    string TargetPlayerName = target.GetRealName(isForMeeting);
+                    string TargetPlayerName = isForMeeting ? target.GetRealName(true): Main.AllPlayerNames[target.PlayerId];
 
                     //ターゲットのプレイヤー名の色を書き換えます。
                     TargetPlayerName = TargetPlayerName.ApplyNameColorData(seer, target, isForMeeting);
