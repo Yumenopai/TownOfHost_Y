@@ -69,7 +69,8 @@ namespace TownOfHostY.Modules
                 var emerCool = isAlive ? opt.GetInt(Int32OptionNames.EmergencyCooldown) : 0;
                 var noiseAlert = opt.GetBool(BoolOptionNames.NoisemakerImpostorAlert);
                 var noiseAlertDur = opt.GetFloat(FloatOptionNames.NoisemakerAlertDuration);
-                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool},{noiseAlert},{noiseAlertDur}";
+                var viperDissolve = opt.GetFloat(FloatOptionNames.ViperDissolveTime);
+                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool},{noiseAlert},{noiseAlertDur},{viperDissolve}";
                 if (OldOptionstext == nowOpts) return;
                 OldOptionstext = GameStates.IsMeeting ? "" : nowOpts;
                 base.SendGameOptions();
@@ -103,6 +104,8 @@ namespace TownOfHostY.Modules
 
             var opt = BasedGameOptions;
             AURoleOptions.SetOpt(opt);
+            if (Roles.Impostor.NormalViper.RoleInfo.IsEnable)
+                AURoleOptions.ViperDissolveTime = Roles.Impostor.NormalViper.DissolveTime;
             var state = PlayerState.GetByPlayerId(player.PlayerId);
             if (state.IsBlackOut)
             {
