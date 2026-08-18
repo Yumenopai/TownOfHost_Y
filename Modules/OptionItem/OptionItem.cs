@@ -230,13 +230,14 @@ namespace TownOfHostY
         }
         public static void SyncAllOptions()
         {
-            if (
-                Main.AllPlayerControls.Count() <= 1 ||
-                AmongUsClient.Instance.AmHost == false ||
-                PlayerControl.LocalPlayer == null
-            ) return;
+            // 同期無効化: ホスト専用モードでは他プレイヤーへオプションを送信しない
+            //if (
+            //    Main.AllPlayerControls.Count() <= 1 ||
+            //    AmongUsClient.Instance.AmHost == false ||
+            //    PlayerControl.LocalPlayer == null
+            //) return;
 
-            RPC.SyncCustomSettingsRPC();
+            //RPC.SyncCustomSettingsRPC();
         }
 
         // EventArgs
