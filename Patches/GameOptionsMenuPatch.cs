@@ -52,13 +52,21 @@ public static class GameOptionsMenuPatch
         Instance ??= __instance;
 
         var gradient = __instance.transform.FindChild("Gradient");
-        gradient.localPosition = new Vector3(4.54f, -4.44f, -20f);
+        gradient.localPosition = new Vector3(3.88f, -4.44f, -20f);
+        gradient.localScale = new Vector3(0.449f, 0.3605f, 7.2125f);
 
         var maskBg = __instance.MaskBg.transform;
         maskBg.localScale = new Vector3(6.6f, 5f, 0.56f);
+        var maskArea = __instance.MaskArea.transform;
+        maskArea.localScale = new Vector3(6.6f, 5f, 0.56f);
 
         if (ModGameOptionsMenu.TabIndex < 3) return true;
         var modTab = (TabGroup)(ModGameOptionsMenu.TabIndex - 3);
+
+        var scrollbarTrack = __instance.transform.FindChild("UI_ScrollbarTrack");
+        scrollbarTrack.localPosition -= new Vector3(1f, 0f, 0f);
+        var scrollbar = __instance.transform.FindChild("UI_Scrollbar");
+        scrollbar.localPosition -= new Vector3(1f, 0f, 0f);
 
         //float num = 0.713f;
         float num = 2.0f;
@@ -81,30 +89,39 @@ public static class GameOptionsMenuPatch
                 categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, pos_z);
                 categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
 
+                var dividerImage = categoryHeaderMasked.transform.FindChild("DividerImage");
+                dividerImage.localPosition = new Vector3(2.36f, 0.05f, -2f);
+                dividerImage.localScale = new Vector3(0.72f, 0.5f, 1f);
+
+                var headerText = categoryHeaderMasked.transform.FindChild("HeaderText");
                 if (option.Tab != TabGroup.ModMainSettings && option is not TextOptionItem)
                 {
-                    categoryHeaderMasked.transform.FindChild("LabelSprite").transform.localPosition -= new Vector3(0f, 0.06f, 0f);
-                    categoryHeaderMasked.transform.FindChild("LabelSprite").transform.localScale = new Vector3(1.5f, 1.25f, 1f);
+                    var labelSprite = categoryHeaderMasked.transform.FindChild("LabelSprite");
+                    labelSprite.localPosition -= new Vector3(0f, 0.06f, 0f);
+                    labelSprite.localScale = new Vector3(1.5f, 1.25f, 1f);
 
-                    categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<RectTransform>().sizeDelta = new Vector2(4.4f, 0.38f);
-                    categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<RectTransform>().localPosition = new Vector3(0.55f, -0.22f, -1f);
+                    var headerTextRectTransform = headerText.GetComponent<RectTransform>();
+                    headerTextRectTransform.sizeDelta = new Vector2(4.4f, 0.38f);
+                    headerTextRectTransform.localPosition = new Vector3(0.55f, -0.22f, -1f);
                 }
+                var headerTextTMP = headerText.GetComponent<TMPro.TextMeshPro>();
+                headerTextTMP.fontStyle = TMPro.FontStyles.Bold;
+                headerTextTMP.outlineWidth = 0.17f;
 
-                categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<TMPro.TextMeshPro>().fontStyle = TMPro.FontStyles.Bold;
-                categoryHeaderMasked.transform.FindChild("HeaderText").GetComponent<TMPro.TextMeshPro>().outlineWidth = 0.17f;
                 categoryHeaderMasked.gameObject.SetActive(enabled);
                 ModGameOptionsMenu.CategoryHeaderList.TryAdd(index, categoryHeaderMasked);
 
-                if (enabled) num -= 0.63f;
+                if (enabled)
+                {
+                    num -= 0.63f;
+                }
             }
             if (option is TextOptionItem) continue;
 
             var baseGameSetting = GetSetting(option);
             if (baseGameSetting == null) continue;
 
-
             OptionBehaviour optionBehaviour;
-
             switch (baseGameSetting.Type)
             {
                 case OptionTypes.String:
@@ -164,71 +181,89 @@ public static class GameOptionsMenuPatch
     }
     private static void OptionBehaviourSetSizeAndPosition(OptionBehaviour optionBehaviour, OptionItem option, OptionTypes type)
     {
-        optionBehaviour.transform.FindChild("LabelBackground").GetComponent<SpriteRenderer>().sprite = Utils.LoadSprite($"TownOfHost_Y.Resources.SettingMenu_LabelBackground.png", 100f);
-
         Vector3 positionOffset = new(0f, 0f, 0f);
         Vector3 scaleOffset = new(0f, 0f, 0f);
         Color color = new(0.7f, 0.7f, 0.7f);
-        float sizeDelta_x = 5.7f;
-        float sizeDelta_y = 0.37f;
+        Vector2 sizeDelta = new(4.7f, 0.37f);
 
         if (option.Parent?.Parent?.Parent != null)
         {
-            scaleOffset = new(-0.18f, 0, 0);
             positionOffset = new(0.3f, 0f, 0f);
+            scaleOffset = new(-0.18f, 0, 0);
             color = new(0.7f, 0.5f, 0.5f);
-            sizeDelta_x = 5.1f;
+            sizeDelta.x = 4.1f;
         }
         else if (option.Parent?.Parent != null)
         {
-            scaleOffset = new(-0.12f, 0, 0);
             positionOffset = new(0.2f, 0f, 0f);
+            scaleOffset = new(-0.12f, 0, 0);
             color = new(0.5f, 0.5f, 0.7f);
-            sizeDelta_x = 5.3f;
+            sizeDelta.x = 4.3f;
         }
         else if (option.Parent != null)
         {
-            scaleOffset = new(-0.05f, 0, 0);
             positionOffset = new(0.1f, 0f, 0f);
+            scaleOffset = new(-0.05f, 0, 0);
             color = new(0.5f, 0.7f, 0.5f);
-            sizeDelta_x = 5.5f;
+            sizeDelta.x = 4.5f;
         }
         else if (option.Parent == null && option.Tab != TabGroup.ModMainSettings)
         {
-            sizeDelta_y = 0.43f;
+            sizeDelta.y = 0.43f;
         }
 
-        optionBehaviour.transform.FindChild("LabelBackground").GetComponent<SpriteRenderer>().color = color;
-        optionBehaviour.transform.FindChild("LabelBackground").localScale = new Vector3(1.9f, 0.8f, 1f) + scaleOffset;
-        optionBehaviour.transform.FindChild("LabelBackground").localRotation = UnityEngine.Quaternion.identity;
-        optionBehaviour.transform.FindChild("LabelBackground").localPosition = new Vector3(-1.52f, -0.062f, 0f) + positionOffset;
+        var labelBackground = optionBehaviour.transform.FindChild("LabelBackground");
+        var labelBackgroundSpriteRenderer = labelBackground.GetComponent<SpriteRenderer>();
+        labelBackgroundSpriteRenderer.sprite = Utils.LoadSprite($"TownOfHost_Y.Resources.SettingMenu_LabelBackground.png", 100f);
+        labelBackgroundSpriteRenderer.color = color;
 
-        optionBehaviour.transform.FindChild("Title Text").localPosition = new Vector3(-1.52f, 0f, 0f) + positionOffset;
-        optionBehaviour.transform.FindChild("Title Text").GetComponent<RectTransform>().sizeDelta = new Vector2(sizeDelta_x, sizeDelta_y);
-        optionBehaviour.transform.FindChild("Title Text").GetComponent<TMPro.TextMeshPro>().alignment = TMPro.TextAlignmentOptions.MidlineLeft;
-        optionBehaviour.transform.FindChild("Title Text").GetComponent<TMPro.TextMeshPro>().fontStyle = TMPro.FontStyles.Bold;
-        optionBehaviour.transform.FindChild("Title Text").GetComponent<TMPro.TextMeshPro>().outlineWidth = 0.17f;
+        labelBackground.localScale = new Vector3(1.57f, 0.8f, 1f) + scaleOffset;
+        labelBackground.localRotation = UnityEngine.Quaternion.identity;
+        labelBackground.localPosition = new Vector3(-2.54f, -0.062f, 0f) + positionOffset;
 
-        switch (type)
+        var titleText = optionBehaviour.transform.FindChild("Title Text");
+        titleText.localPosition = new Vector3(-2.54f, -0.05f, 0f) + positionOffset;
+        titleText.GetComponent<RectTransform>().sizeDelta = sizeDelta;
+
+        var titleTextTMP = titleText.GetComponent<TMPro.TextMeshPro>();
+        titleTextTMP.alignment = TMPro.TextAlignmentOptions.MidlineLeft;
+        titleTextTMP.fontStyle = TMPro.FontStyles.Bold;
+        titleTextTMP.outlineWidth = 0.17f;
+
+        if (type is OptionTypes.Int or OptionTypes.Float or OptionTypes.String)
         {
-            case OptionTypes.String:
-                optionBehaviour.transform.FindChild("PlusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 1.7f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
-                optionBehaviour.transform.FindChild("MinusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 0.9f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
-                optionBehaviour.transform.FindChild("Value_TMP (1)").localPosition += new Vector3(1.3f, 0f, 0f);
-                optionBehaviour.transform.FindChild("Value_TMP (1)").GetComponent<RectTransform>().sizeDelta = new Vector2(2.3f, 0.4f);
-                goto default;
+            string valueTMPName = "";
+            switch (type)
+            {
+                case OptionTypes.String:
+                    valueTMPName = "Value_TMP (1)";
+                    optionBehaviour.transform.FindChild(valueTMPName).GetComponent<RectTransform>().sizeDelta = new Vector2(2.3f, 0.4f);
+                    break;
 
-            case OptionTypes.Float:
-            case OptionTypes.Int:
-                optionBehaviour.transform.FindChild("PlusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 1.7f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
-                optionBehaviour.transform.FindChild("MinusButton").localPosition += new Vector3(option.IsFixValue ? 100f : 0.9f, option.IsFixValue ? 100f : 0f, option.IsFixValue ? 100f : 0f);
-                optionBehaviour.transform.FindChild("Value_TMP").localPosition += new Vector3(1.3f, 0f, 0f);
-                goto default;
+                case OptionTypes.Float:
+                case OptionTypes.Int:
+                    valueTMPName = "Value_TMP";
+                    break;
+            }
 
-            default:// Number & String 共通
-                optionBehaviour.transform.FindChild("ValueBox").localScale += new Vector3(0.2f, 0f, 0f);
-                optionBehaviour.transform.FindChild("ValueBox").localPosition += new Vector3(1.3f, 0f, 0f);
-                break;
+            var plusButton = optionBehaviour.transform.FindChild("PlusButton");
+            var minusButton = optionBehaviour.transform.FindChild("MinusButton");
+            if (option.IsFixValue)
+            {
+                plusButton.gameObject.SetActive(false);
+                minusButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                plusButton.localPosition += new Vector3(0.1f, 0f, 0f);
+                minusButton.localPosition += new Vector3(-0.7f, 0f, 0f);
+            }
+
+            var valueBox = optionBehaviour.transform.FindChild("ValueBox");
+            valueBox.localPosition += new Vector3(-0.3f, 0f, 0f);
+            valueBox.localScale += new Vector3(0.2f, 0f, 0f);
+
+            optionBehaviour.transform.FindChild(valueTMPName).localPosition += new Vector3(-0.3f, 0f, 0f);
         }
     }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.RemoteConfigSettingsHelper;
 using Object = UnityEngine.Object;
 
 namespace TownOfHostY;
@@ -41,7 +40,7 @@ public class GameSettingMenuPatch
     };
 
     // 配置ボタン座標
-    private static Vector3 buttonPosition = new(-3.94f, 1.57f, 0f);
+    private static Vector3 buttonPosition = new(-3.94f, 0.9f, 0f);
     // ボタンサイズ
     private static Vector3 buttonSize = new(0.45f, 0.6f, 1f);
 
@@ -58,6 +57,22 @@ public class GameSettingMenuPatch
     [HarmonyPriority(Priority.First)]
     public static void StartPostfix(GameSettingMenu __instance)
     {
+        /******** テキスト複製 ********/
+        var infoBox = __instance.transform.FindChild("What Is This?");
+        var gameSettingTextObject = Object.Instantiate(infoBox.gameObject, __instance.transform);
+        gameSettingTextObject.gameObject.SetActive(true);
+        gameSettingTextObject.name = "GameSettingText";
+        gameSettingTextObject.transform.localPosition = new Vector3(-1.65f, 1.08f, -1f);
+        gameSettingTextObject.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+
+        gameSettingTextObject.transform.FindChild("InfoImage").gameObject.SetActive(false);
+        gameSettingTextObject.transform.FindChild("Cube").gameObject.SetActive(false);
+
+        var gameSettingTextTMP = gameSettingTextObject.GetComponentInChildren<TextMeshPro>();
+        gameSettingTextTMP.DestroyTranslator();
+        gameSettingTextTMP.text = Translator.GetString("GameSettingHelpText");
+        gameSettingTextTMP.alignment = TextAlignmentOptions.BottomLeft;
+
         /******** パネル ********/
         var panelSprite = __instance.transform.FindChild("PanelSprite");
         panelSprite.localScale = new Vector3(0.5635f, 0.62f, 1f);
@@ -68,11 +83,15 @@ public class GameSettingMenuPatch
 
         var gameSettingsLabel = __instance.transform.FindChild("GameSettingsLabel");
         gameSettingsLabel.localScale = new Vector3(0.6f, 0.6f, 1f);
-        gameSettingsLabel.localPosition = new Vector3(-4.05f, 2f, -3f);
+        gameSettingsLabel.localPosition = new Vector3(-4.03f, 2f, -3f);
 
-        var infoTextBox = __instance.transform.FindChild("What Is This?");
-        infoTextBox.localScale = new Vector3(0.8f, 0.8f, 1f);
-        infoTextBox.localPosition = new Vector3(6.44f, 1.38f, -1f);
+        infoBox.localScale = new Vector3(0.8f, 0.8f, 1f);
+        infoBox.localPosition = new Vector3(5.74f, -2.42f, -1f);
+        infoBox.FindChild("Cube").gameObject.SetActive(false);
+
+        var infoBoxText = infoBox.FindChild("InfoText");
+        infoBoxText.localPosition = new Vector3(-2.945f, 3.2145f, -2f);
+        infoBoxText.GetComponent<RectTransform>().sizeDelta = new(3.5f, 5f);
 
         var mainArea = __instance.transform.FindChild("MainArea");
         mainArea.localScale = new Vector3(0.95f, 0.95f, 1f);
@@ -111,7 +130,7 @@ public class GameSettingMenuPatch
             button.selectedSprites.GetComponent<SpriteRenderer>().sprite = activeButton;
 
             // Y座標オフセット
-            Vector3 offset = new(0.0f, 0.53f * ((int)tab + 1), 0.0f);
+            Vector3 offset = new(0.0f, 0.45f * ((int)tab + 1), 0.0f);
             // ボタンの座標設定
             button.transform.localPosition = buttonPosition - offset;
             // ボタンのサイズ設定
@@ -257,14 +276,6 @@ public class GameSettingMenuPatch
     [HarmonyPatch(nameof(GameSettingMenu.ChangeTab)), HarmonyPrefix]
     public static bool ChangeTabPrefix(GameSettingMenu __instance, ref int tabNum, [HarmonyArgument(1)] bool previewOnly)
     {
-        //// プリセットタブは表示させないため、ゲーム設定タブを設定する
-        //if (tabNum == (int)GameSettingMenuTab.GamePresets) {
-        //    tabNum = (int)GameSettingMenuTab.GameSettings;
-
-        //    // What Is this?のテキスト文を変更
-        //    // __instance.MenuDescriptionText.text = "test";
-        //}
-
         ModGameOptionsMenu.TabIndex = tabNum;
 
         GameOptionsMenu settingsTab;
@@ -290,7 +301,15 @@ public class GameSettingMenuPatch
             }
         }
 
-        if (tabNum < 3) return true;
+        if (!previewOnly)
+        {
+            var whatIsThis = __instance.transform.FindChild("What Is This?");
+            whatIsThis.gameObject.SetActive(tabNum >= 3);
+        }
+        if (tabNum < 3)
+        {
+            return true;
+        }
 
         if ((previewOnly && Controller.currentTouchType == Controller.TouchType.Joystick) || !previewOnly)
         {
