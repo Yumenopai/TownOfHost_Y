@@ -95,7 +95,7 @@ public class GameSettingMenuPatch
 
         var mainArea = __instance.transform.FindChild("MainArea");
         mainArea.localScale = new Vector3(0.95f, 0.95f, 1f);
-        mainArea.localPosition = new Vector3(-0.26f, -0.817f, -1f);
+        mainArea.localPosition = new Vector3(0.6f, -0.817f, -1f);
 
         var closeButton = __instance.transform.FindChild("CloseButton");
         closeButton.localScale = new Vector3(0.5f, 0.5f, 1f);
@@ -304,7 +304,18 @@ public class GameSettingMenuPatch
         if (!previewOnly)
         {
             var whatIsThis = __instance.transform.FindChild("What Is This?");
-            whatIsThis.gameObject.SetActive(tabNum >= 3);
+            var mainArea = __instance.transform.FindChild("MainArea");
+
+            if (tabNum < 3)
+            {
+                whatIsThis.gameObject.SetActive(false);
+                mainArea.localPosition = new Vector3(0.6f, -0.817f, -1f);
+            }
+            else
+            {
+                whatIsThis.gameObject.SetActive(true);
+                mainArea.localPosition = new Vector3(-0.26f, -0.817f, -1f);
+            }
         }
         if (tabNum < 3)
         {
