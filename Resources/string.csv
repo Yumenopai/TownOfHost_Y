@@ -1228,7 +1228,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "MenuDescriptionText.UnitRoles","Edit unit role settings for your game lobby.","ユニット役職の設定を編集する。",
 "MenuDescriptionText.Addons","Edit add-on settings for your game lobby.","属性の設定を編集する。",
 
-"GameSettingHelpText","","左Shift+±クリック:\n5倍幅変更",
+"GameSettingHelpText","","・オプション名クリック:\n　詳細説明を表示\n・左Shift+±クリック:\n　5倍幅で変更",
 
 "OptionNoExplanation","","設定の説明はありません。",
 

@@ -62,8 +62,8 @@ public class GameSettingMenuPatch
         var gameSettingTextObject = Object.Instantiate(infoBox.gameObject, __instance.transform);
         gameSettingTextObject.gameObject.SetActive(true);
         gameSettingTextObject.name = "GameSettingText";
-        gameSettingTextObject.transform.localPosition = new Vector3(-1.65f, 1.08f, -1f);
-        gameSettingTextObject.transform.localScale = new Vector3(0.8f, 0.8f, 1f);
+        gameSettingTextObject.transform.localPosition = new Vector3(-0.45f, 0.88f, -1f);
+        gameSettingTextObject.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
 
         gameSettingTextObject.transform.FindChild("InfoImage").gameObject.SetActive(false);
         gameSettingTextObject.transform.FindChild("Cube").gameObject.SetActive(false);
