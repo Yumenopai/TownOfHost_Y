@@ -277,8 +277,7 @@ public class Main : BasePlugin
 
         ClassInjector.RegisterTypeInIl2Cpp<ErrorText>();
         ClassInjector.RegisterTypeInIl2Cpp<BooleanOptionItem.BooleanGameSetting>();
-
-
+        ClassInjector.RegisterTypeInIl2Cpp<LabelHoverBehaviour>();
 
         Harmony.PatchAll();
         Application.quitting += new Action(Utils.SaveNowLog);

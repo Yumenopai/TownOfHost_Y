@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using HarmonyLib;
 using TMPro;
 using UnityEngine;
-using static UnityEngine.RemoteConfigSettingsHelper;
 using Object = UnityEngine.Object;
 
 namespace TownOfHostY;
@@ -40,10 +39,8 @@ public class GameSettingMenuPatch
         "Add-Ons"
     };
 
-    // 左側配置ボタン座標
-    private static Vector3 buttonPosition_Left = new(-3.9f, -0.4f, 0f);
-    // 右側配置ボタン座標
-    private static Vector3 buttonPosition_Right = new(-2.4f, -0.4f, 0f);
+    // 配置ボタン座標
+    private static Vector3 buttonPosition = new(-3.94f, 0.9f, 0f);
     // ボタンサイズ
     private static Vector3 buttonSize = new(0.45f, 0.6f, 1f);
 
@@ -60,6 +57,50 @@ public class GameSettingMenuPatch
     [HarmonyPriority(Priority.First)]
     public static void StartPostfix(GameSettingMenu __instance)
     {
+        /******** テキスト複製 ********/
+        var infoBox = __instance.transform.FindChild("What Is This?");
+        var gameSettingTextObject = Object.Instantiate(infoBox.gameObject, __instance.transform);
+        gameSettingTextObject.gameObject.SetActive(true);
+        gameSettingTextObject.name = "GameSettingText";
+        gameSettingTextObject.transform.localPosition = new Vector3(-0.45f, 0.88f, -1f);
+        gameSettingTextObject.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
+
+        gameSettingTextObject.transform.FindChild("InfoImage").gameObject.SetActive(false);
+        gameSettingTextObject.transform.FindChild("Cube").gameObject.SetActive(false);
+
+        var gameSettingTextTMP = gameSettingTextObject.GetComponentInChildren<TextMeshPro>();
+        gameSettingTextTMP.DestroyTranslator();
+        gameSettingTextTMP.text = Translator.GetString("GameSettingHelpText");
+        gameSettingTextTMP.alignment = TextAlignmentOptions.BottomLeft;
+
+        /******** パネル ********/
+        var panelSprite = __instance.transform.FindChild("PanelSprite");
+        panelSprite.localScale = new Vector3(0.5635f, 0.62f, 1f);
+
+        var leftSideBack = __instance.transform.Find("PanelSprite/LeftSideTint");
+        leftSideBack.localScale = new Vector3(0.45f, 0.897f, 1f);
+        leftSideBack.localPosition = new Vector3(-7.3133f, 0.0189f, -0.1f);
+
+        var gameSettingsLabel = __instance.transform.FindChild("GameSettingsLabel");
+        gameSettingsLabel.localScale = new Vector3(0.6f, 0.6f, 1f);
+        gameSettingsLabel.localPosition = new Vector3(-4.03f, 2f, -3f);
+
+        infoBox.localScale = new Vector3(0.8f, 0.8f, 1f);
+        infoBox.localPosition = new Vector3(5.74f, -2.42f, -1f);
+        infoBox.FindChild("Cube").gameObject.SetActive(false);
+
+        var infoBoxText = infoBox.FindChild("InfoText");
+        infoBoxText.localPosition = new Vector3(-2.945f, 3.2145f, -2f);
+        infoBoxText.GetComponent<RectTransform>().sizeDelta = new(3.5f, 5f);
+
+        var mainArea = __instance.transform.FindChild("MainArea");
+        mainArea.localScale = new Vector3(0.95f, 0.95f, 1f);
+        mainArea.localPosition = new Vector3(0.6f, -0.817f, -1f);
+
+        var closeButton = __instance.transform.FindChild("CloseButton");
+        closeButton.localScale = new Vector3(0.5f, 0.5f, 1f);
+        closeButton.localPosition = new Vector3(5.05f, 2.05f, -13f);
+
         /******** ボタン作成 ********/
 
         // 各グループ毎にボタンを作成する
@@ -89,9 +130,9 @@ public class GameSettingMenuPatch
             button.selectedSprites.GetComponent<SpriteRenderer>().sprite = activeButton;
 
             // Y座標オフセット
-            Vector3 offset = new(0.0f, 0.5f * (((int)tab + 1) / 2), 0.0f);
+            Vector3 offset = new(0.0f, 0.45f * ((int)tab + 1), 0.0f);
             // ボタンの座標設定
-            button.transform.localPosition = ((((int)tab + 1) % 2 == 0) ? buttonPosition_Left : buttonPosition_Right) - offset;
+            button.transform.localPosition = buttonPosition - offset;
             // ボタンのサイズ設定
             button.transform.localScale = buttonSize;
 
@@ -218,7 +259,7 @@ public class GameSettingMenuPatch
         gameSettingButton.activeSprites.GetComponent<SpriteRenderer>().sprite = vanillaActiveButton;
         gameSettingButton.selectedSprites.GetComponent<SpriteRenderer>().sprite = vanillaActiveButton;
         // ボタンの座標設定
-        gameSettingButton.transform.localPosition = buttonPosition_Left;
+        gameSettingButton.transform.localPosition = buttonPosition;
         // ボタンのサイズ設定
         gameSettingButton.transform.localScale = buttonSize;
         /**** ゲーム設定ボタンを変更 ここまで ****/
@@ -235,14 +276,6 @@ public class GameSettingMenuPatch
     [HarmonyPatch(nameof(GameSettingMenu.ChangeTab)), HarmonyPrefix]
     public static bool ChangeTabPrefix(GameSettingMenu __instance, ref int tabNum, [HarmonyArgument(1)] bool previewOnly)
     {
-        //// プリセットタブは表示させないため、ゲーム設定タブを設定する
-        //if (tabNum == (int)GameSettingMenuTab.GamePresets) {
-        //    tabNum = (int)GameSettingMenuTab.GameSettings;
-
-        //    // What Is this?のテキスト文を変更
-        //    // __instance.MenuDescriptionText.text = "test";
-        //}
-
         ModGameOptionsMenu.TabIndex = tabNum;
 
         GameOptionsMenu settingsTab;
@@ -268,7 +301,26 @@ public class GameSettingMenuPatch
             }
         }
 
-        if (tabNum < 3) return true;
+        if (!previewOnly)
+        {
+            var whatIsThis = __instance.transform.FindChild("What Is This?");
+            var mainArea = __instance.transform.FindChild("MainArea");
+
+            if (tabNum < 3)
+            {
+                whatIsThis.gameObject.SetActive(false);
+                mainArea.localPosition = new Vector3(0.6f, -0.817f, -1f);
+            }
+            else
+            {
+                whatIsThis.gameObject.SetActive(true);
+                mainArea.localPosition = new Vector3(-0.26f, -0.817f, -1f);
+            }
+        }
+        if (tabNum < 3)
+        {
+            return true;
+        }
 
         if ((previewOnly && Controller.currentTouchType == Controller.TouchType.Joystick) || !previewOnly)
         {

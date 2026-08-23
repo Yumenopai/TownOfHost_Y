@@ -161,10 +161,19 @@ namespace TownOfHostY
                     RPC.RpcVersionCheck();
                     break;
                 case CustomRPC.SyncCustomSettings:
-                    int indexId = reader.ReadPackedInt32();
-                    int maxId = reader.ReadPackedInt32();
-                    for (var i = indexId; i < maxId; i++)
-                        OptionItem.AllOptions[i].SetValue(reader.ReadPackedInt32());
+                    // 受信を無視する（ホスト専用に変更）
+                    // 受信データは読み捨てて reader を進める（整合性維持のため）
+                    try
+                    {
+                        int indexId = reader.ReadPackedInt32();
+                        int maxId = reader.ReadPackedInt32();
+                        for (var i = indexId; i < maxId; i++)
+                            _ = reader.ReadPackedInt32();
+                    }
+                    catch
+                    {
+                        // 読み取り失敗でも続行
+                    }
 
                     // インポスター数が0に設定されていないかチェック
                     if (AmongUsClient.Instance.AmHost)
@@ -227,27 +236,28 @@ namespace TownOfHostY
         //SyncCustomSettingsRPC Sender
         public static void SyncCustomSettingsRPC()
         {
-            if (!AmongUsClient.Instance.AmHost) return;
+            // ホスト専用モードにより無効化 
+            //if (!AmongUsClient.Instance.AmHost) return;
 
-            int count = 0;
-            MessageWriter writer = null;
+            //int count = 0;
+            //MessageWriter writer = null;
 
-            foreach (var co in OptionItem.AllOptions)
-            {
-                if (count == 0 || count % 500 == 0)
-                {
-                    if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    writer = AmongUsClient.Instance.StartRpcImmediately(
-                        PlayerControl.LocalPlayer.NetId,
-                        (byte)CustomRPC.SyncCustomSettings,
-                        Hazel.SendOption.Reliable, -1);
-                    writer.WritePacked(count);
-                    writer.WritePacked(Math.Min(OptionItem.AllOptions.Count, count + 500));
-                }
-                writer.WritePacked(co.GetValue());
-                count++;
-            }
-            if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
+            //foreach (var co in OptionItem.AllOptions)
+            //{
+            //    if (count == 0 || count % 500 == 0)
+            //    {
+            //        if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
+            //        writer = AmongUsClient.Instance.StartRpcImmediately(
+            //            PlayerControl.LocalPlayer.NetId,
+            //            (byte)CustomRPC.SyncCustomSettings,
+            //            Hazel.SendOption.Reliable, -1);
+            //        writer.WritePacked(count);
+            //        writer.WritePacked(Math.Min(OptionItem.AllOptions.Count, count + 500));
+            //    }
+            //    writer.WritePacked(co.GetValue());
+            //    count++;
+            //}
+            //if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
         public static void PlaySoundRPC(byte PlayerID, Sounds sound)
         {

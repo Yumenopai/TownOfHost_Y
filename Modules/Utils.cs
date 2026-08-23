@@ -547,7 +547,7 @@ public static class Utils
         }
         return sb.ToString();
     }
-    public static string GetRoleInfoLong(CustomRoles role)
+    public static string GetRoleInfoLong(CustomRoles role, bool showCurrentSetting = false)
     {
         var sb = new StringBuilder();
         var r = role.VanillaRoleConversion();
@@ -555,15 +555,20 @@ public static class Utils
         if (r.IsVanilla())
         {
             var tag = "BlurbLong";
-            if (r is CustomRoles.Impostor or CustomRoles.Crewmate)
+            if (r is CustomRoles.Impostor or CustomRoles.Crewmate or CustomRoles.Viper)
             {
                 tag = "Blurb";
             }
-            roleInfoLong = "\n" + GetString(r + tag);
+            roleInfoLong = "\n" + GetString($"{r}{tag}");
         }
         else
         {
-            roleInfoLong = GetString(role.ToString() + "InfoLong");
+            roleInfoLong = GetString($"{role.ToString()}InfoLong");
+        }
+
+        if (!showCurrentSetting)
+        {
+            return $"{GetString(role.ToString()).Color(GetRoleColor(role).ToReadableColor())}\n{roleInfoLong}";
         }
 
         var roleString = $"<size=95%>{GetString(role.ToString())}</size>".Color(GetRoleColor(role).ToReadableColor());

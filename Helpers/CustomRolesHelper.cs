@@ -66,8 +66,8 @@ static class CustomRolesHelper
         {
             CustomRoles.NormalImpostor => CustomRoles.Impostor,
             CustomRoles.NormalShapeshifter => CustomRoles.Shapeshifter,
-             CustomRoles.NormalPhantom => CustomRoles.Phantom,
-           CustomRoles.NormalEngineer => CustomRoles.Engineer,
+            CustomRoles.NormalPhantom => CustomRoles.Phantom,
+            CustomRoles.NormalEngineer => CustomRoles.Engineer,
             CustomRoles.NormalScientist => CustomRoles.Scientist,
             CustomRoles.NormalTracker => CustomRoles.Tracker,
             CustomRoles.NormalNoisemaker => CustomRoles.Noisemaker,
@@ -85,7 +85,9 @@ static class CustomRolesHelper
             CustomRoles.NormalEngineer or
             CustomRoles.NormalScientist or
             CustomRoles.NormalTracker or
-            CustomRoles.NormalNoisemaker;
+            CustomRoles.NormalNoisemaker or
+            CustomRoles.NormalViper or
+            CustomRoles.NormalDetective;
     }
 
     // 新役職等(トップ掲載の常設役職)
@@ -133,6 +135,7 @@ static class CustomRolesHelper
             or CustomRoles.SKMadmate
           
             or CustomRoles.EvilHacker //一旦封印
+            or CustomRoles.EvilDyer //封印
             or CustomRoles.Potentialist
             or CustomRoles.Impostor or CustomRoles.Crewmate;
     }
