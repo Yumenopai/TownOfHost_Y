@@ -12,6 +12,7 @@ public static class ModGameOptionsMenu
     public static Dictionary<int, OptionBehaviour> BehaviourList = new();
     public static Dictionary<int, CategoryHeaderMasked> CategoryHeaderList = new();
 }
+
 [HarmonyPatch(typeof(GameOptionsMenu))]
 public static class GameOptionsMenuPatch
 {
@@ -230,6 +231,13 @@ public static class GameOptionsMenuPatch
         titleTextTMP.fontStyle = TMPro.FontStyles.Bold;
         titleTextTMP.outlineWidth = 0.17f;
 
+        try
+        {
+            var hoverComp = labelBackground.gameObject.GetComponent<LabelHoverBehaviour>() ?? labelBackground.gameObject.AddComponent<LabelHoverBehaviour>();
+            hoverComp.InitializeMenuDescription(option);
+        }
+        catch { }
+
         if (type is OptionTypes.Int or OptionTypes.Float or OptionTypes.String)
         {
             string valueTMPName = "";
@@ -397,6 +405,74 @@ public static class GameOptionsMenuPatch
         return baseGameSetting;
     }
 }
+
+    public class LabelHoverBehaviour : UnityEngine.MonoBehaviour
+    {
+        private OptionItem optionRef = null;
+        private string originalText = string.Empty;
+        private UnityEngine.Collider2D cachedCollider;
+        private GameSettingMenu cachedMenu;
+
+        public void InitializeMenuDescription(OptionItem option)
+        {
+            optionRef = option;
+            cachedCollider = GetComponent<UnityEngine.Collider2D>() ?? gameObject.AddComponent<UnityEngine.BoxCollider2D>();
+            if (cachedCollider is UnityEngine.BoxCollider2D bc) bc.isTrigger = true;
+
+            cachedMenu = UnityEngine.Object.FindObjectOfType<GameSettingMenu>();
+            if (cachedMenu != null && cachedMenu.MenuDescriptionText != null)
+            {
+                originalText = cachedMenu.MenuDescriptionText.text;
+            }
+
+            var sr = GetComponent<UnityEngine.SpriteRenderer>();
+            if (sr != null && cachedCollider is UnityEngine.BoxCollider2D box)
+            {
+                var bounds = sr.bounds.size;
+                var localSizeX = bounds.x / (transform.lossyScale.x == 0f ? 1f : transform.lossyScale.x);
+                var localSizeY = bounds.y / (transform.lossyScale.y == 0f ? 1f : transform.lossyScale.y);
+                box.size = new UnityEngine.Vector2(localSizeX, localSizeY);
+                box.isTrigger = true;
+            }
+        }
+
+        void Update()
+        {
+            if (cachedCollider == null || UnityEngine.Camera.main == null) return;
+
+            UnityEngine.Vector2 worldPoint = UnityEngine.Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
+            UnityEngine.Collider2D hit = UnityEngine.Physics2D.OverlapPoint(worldPoint);
+
+            if (cachedMenu == null)
+            {
+                cachedMenu = UnityEngine.Object.FindObjectOfType<GameSettingMenu>();
+            }
+
+            // クリックで説明文を取得して上書き
+            if (UnityEngine.Input.GetMouseButtonDown(0) && hit == cachedCollider)
+            {
+                if (cachedMenu != null && cachedMenu.MenuDescriptionText != null)
+                {
+                    string title;
+                    string desc;
+                    if (optionRef != null)
+                    {
+                        title = optionRef.GetName(colorLighter: true);
+                        desc = Translator.GetString(optionRef.Name + "InfoLong", optionRef.ReplacementDictionary);
+                        if (desc.StartsWith("<INVALID:")) desc = Translator.GetString("OptionNoExplanation");
+                    }
+                    else
+                    {
+                        title = "";
+                        desc = "";
+                    }
+
+                    cachedMenu.MenuDescriptionText.DestroyTranslator();
+                    cachedMenu.MenuDescriptionText.text = title + "\n" + desc;
+                }
+            }
+        }
+    }
 
 [HarmonyPatch(typeof(ToggleOption))]
 public static class ToggleOptionPatch

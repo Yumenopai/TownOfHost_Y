@@ -1230,6 +1230,8 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 "GameSettingHelpText","","左Shift+±クリック:\n5倍幅変更",
 
+"OptionNoExplanation","","設定の説明はありません。",
+
 "## クライアント設定"
 "Close","Close","閉じる","","","",""
 "TOHOptions","<color=#ffff00>TOH_Y</color> Options","<color=#ffff00>TOH_Y</color>の設定","","","",""
