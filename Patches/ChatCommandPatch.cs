@@ -542,7 +542,7 @@ namespace TownOfHostY
 
                 if (String.Compare(role, roleName, true) == 0 || String.Compare(role, roleShort, true) == 0)
                 {
-                    Utils.SendMessage(Utils.GetRoleInfoLong(r.Key), PlayerId);
+                    Utils.SendMessage(Utils.GetRoleInfoLong(r.Key, true), PlayerId);
                     return;
                 }
             }

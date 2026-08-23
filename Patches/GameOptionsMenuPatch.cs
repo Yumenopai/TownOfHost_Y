@@ -2,6 +2,7 @@ using System;
 using Il2CppSystem.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
+using TownOfHostY.Roles.Core;
 
 namespace TownOfHostY;
 
@@ -406,73 +407,80 @@ public static class GameOptionsMenuPatch
     }
 }
 
-    public class LabelHoverBehaviour : UnityEngine.MonoBehaviour
+public class LabelHoverBehaviour : UnityEngine.MonoBehaviour
+{
+    private OptionItem optionRef = null;
+    private string originalText = string.Empty;
+    private UnityEngine.Collider2D cachedCollider;
+    private GameSettingMenu cachedMenu;
+
+    public void InitializeMenuDescription(OptionItem option)
     {
-        private OptionItem optionRef = null;
-        private string originalText = string.Empty;
-        private UnityEngine.Collider2D cachedCollider;
-        private GameSettingMenu cachedMenu;
+        optionRef = option;
+        cachedCollider = GetComponent<UnityEngine.Collider2D>() ?? gameObject.AddComponent<UnityEngine.BoxCollider2D>();
+        if (cachedCollider is UnityEngine.BoxCollider2D bc) bc.isTrigger = true;
 
-        public void InitializeMenuDescription(OptionItem option)
+        cachedMenu = UnityEngine.Object.FindObjectOfType<GameSettingMenu>();
+        if (cachedMenu != null && cachedMenu.MenuDescriptionText != null)
         {
-            optionRef = option;
-            cachedCollider = GetComponent<UnityEngine.Collider2D>() ?? gameObject.AddComponent<UnityEngine.BoxCollider2D>();
-            if (cachedCollider is UnityEngine.BoxCollider2D bc) bc.isTrigger = true;
-
-            cachedMenu = UnityEngine.Object.FindObjectOfType<GameSettingMenu>();
-            if (cachedMenu != null && cachedMenu.MenuDescriptionText != null)
-            {
-                originalText = cachedMenu.MenuDescriptionText.text;
-            }
-
-            var sr = GetComponent<UnityEngine.SpriteRenderer>();
-            if (sr != null && cachedCollider is UnityEngine.BoxCollider2D box)
-            {
-                var bounds = sr.bounds.size;
-                var localSizeX = bounds.x / (transform.lossyScale.x == 0f ? 1f : transform.lossyScale.x);
-                var localSizeY = bounds.y / (transform.lossyScale.y == 0f ? 1f : transform.lossyScale.y);
-                box.size = new UnityEngine.Vector2(localSizeX, localSizeY);
-                box.isTrigger = true;
-            }
+            originalText = cachedMenu.MenuDescriptionText.text;
         }
 
-        void Update()
+        var sr = GetComponent<UnityEngine.SpriteRenderer>();
+        if (sr != null && cachedCollider is UnityEngine.BoxCollider2D box)
         {
-            if (cachedCollider == null || UnityEngine.Camera.main == null) return;
+            var bounds = sr.bounds.size;
+            var localSizeX = bounds.x / (transform.lossyScale.x == 0f ? 1f : transform.lossyScale.x);
+            var localSizeY = bounds.y / (transform.lossyScale.y == 0f ? 1f : transform.lossyScale.y);
+            box.size = new UnityEngine.Vector2(localSizeX, localSizeY);
+            box.isTrigger = true;
+        }
+    }
 
-            UnityEngine.Vector2 worldPoint = UnityEngine.Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
-            UnityEngine.Collider2D hit = UnityEngine.Physics2D.OverlapPoint(worldPoint);
+    private void Update()
+    {
+        if (cachedCollider == null || UnityEngine.Camera.main == null) return;
 
-            if (cachedMenu == null)
+        UnityEngine.Vector2 worldPoint = UnityEngine.Camera.main.ScreenToWorldPoint(UnityEngine.Input.mousePosition);
+        UnityEngine.Collider2D hit = UnityEngine.Physics2D.OverlapPoint(worldPoint);
+
+        if (cachedMenu == null)
+        {
+            cachedMenu = UnityEngine.Object.FindObjectOfType<GameSettingMenu>();
+        }
+
+        // クリックで説明文を取得して上書き
+        if (UnityEngine.Input.GetMouseButtonDown(0) && hit == cachedCollider)
+        {
+            if (cachedMenu != null && cachedMenu.MenuDescriptionText != null)
             {
-                cachedMenu = UnityEngine.Object.FindObjectOfType<GameSettingMenu>();
-            }
+                string infoText = string.Empty;
 
-            // クリックで説明文を取得して上書き
-            if (UnityEngine.Input.GetMouseButtonDown(0) && hit == cachedCollider)
-            {
-                if (cachedMenu != null && cachedMenu.MenuDescriptionText != null)
+                if (Enum.TryParse(typeof(CustomRoles), optionRef.Name, true, out var role))
                 {
-                    string title;
-                    string desc;
+                    infoText = Utils.GetRoleInfoLong((CustomRoles)role);
+                }
+                else
+                {
                     if (optionRef != null)
                     {
-                        title = optionRef.GetName(colorLighter: true);
-                        desc = Translator.GetString(optionRef.Name + "InfoLong", optionRef.ReplacementDictionary);
-                        if (desc.StartsWith("<INVALID:")) desc = Translator.GetString("OptionNoExplanation");
-                    }
-                    else
-                    {
-                        title = "";
-                        desc = "";
-                    }
+                        string title = optionRef.GetName(colorLighter: true);
+                        string desc = Translator.GetString(optionRef.Name + "InfoLong", optionRef.ReplacementDictionary);
+                        if (desc.StartsWith("<INVALID:"))
+                        {
+                            desc = Translator.GetString("OptionNoExplanation");
+                        }
 
-                    cachedMenu.MenuDescriptionText.DestroyTranslator();
-                    cachedMenu.MenuDescriptionText.text = title + "\n" + desc;
+                        infoText = $"<b>{title}</b>\n{desc}";
+                    }
                 }
+
+                cachedMenu.MenuDescriptionText.DestroyTranslator();
+                cachedMenu.MenuDescriptionText.text = infoText;
             }
         }
     }
+}
 
 [HarmonyPatch(typeof(ToggleOption))]
 public static class ToggleOptionPatch
