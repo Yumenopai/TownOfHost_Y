@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -27,7 +27,7 @@ namespace TownOfHostY.Modules
         private IGameOptions cachedGameOptions = null;
         public override IGameOptions BasedGameOptions =>
             Main.RealOptionsData.Restore(
-                cachedGameOptions ??= new NormalGameOptionsV10(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>()
+                cachedGameOptions ??= new NormalGameOptionsV11(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>()
             );
         public override bool IsDirty { get; protected set; }
 
@@ -70,7 +70,8 @@ namespace TownOfHostY.Modules
                 var noiseAlert = opt.GetBool(BoolOptionNames.NoisemakerImpostorAlert);
                 var noiseAlertDur = opt.GetFloat(FloatOptionNames.NoisemakerAlertDuration);
                 var viperDissolve = opt.GetFloat(FloatOptionNames.ViperDissolveTime);
-                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool},{noiseAlert},{noiseAlertDur},{viperDissolve}";
+                var judgeTaskReq = opt.GetFloat(FloatOptionNames.JudgeTaskRequirementPercentage);
+                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool},{noiseAlert},{noiseAlertDur},{viperDissolve},{judgeTaskReq}";
                 if (OldOptionstext == nowOpts) return;
                 OldOptionstext = GameStates.IsMeeting ? "" : nowOpts;
                 base.SendGameOptions();

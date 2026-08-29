@@ -111,5 +111,10 @@ namespace TownOfHostY
             get => Opt.GetFloat(FloatOptionNames.ViperDissolveTime);
             set => Opt.SetFloat(FloatOptionNames.ViperDissolveTime, value);
         }
+        public static float JudgeTaskRequirementPercentage
+        {
+            get => Opt.GetFloat(FloatOptionNames.JudgeTaskRequirementPercentage);
+            set => Opt.SetFloat(FloatOptionNames.JudgeTaskRequirementPercentage, value);
+        }
     }
 }

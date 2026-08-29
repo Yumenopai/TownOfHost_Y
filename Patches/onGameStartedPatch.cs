@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -52,6 +52,7 @@ class ChangeRoleSettings
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Viper, 0, 0);
             Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Detective, 0, 0);
+            Main.NormalOptions.roleOptions.SetRoleRate(RoleTypes.Judge, 0, 0);
 
             if (Options.IsCCMode) Main.NormalOptions.NumImpostors = 1;
 
@@ -391,6 +392,7 @@ class SelectRolesPatch
         List<PlayerControl> Trackers = new();
         List<PlayerControl> Noisemakers = new();
         List<PlayerControl> Detectives = new();
+        List<PlayerControl> Judges = new();
         List<PlayerControl> GuardianAngels = new();
         List<PlayerControl> Shapeshifters = new();
         List<PlayerControl> Phantoms = new();
@@ -422,6 +424,7 @@ class SelectRolesPatch
                 case RoleTypes.Tracker: Trackers.Add(pc); role = CustomRoles.Tracker; break;
                 case RoleTypes.Noisemaker: Noisemakers.Add(pc); role = CustomRoles.Noisemaker; break;
                 case RoleTypes.Detective: Detectives.Add(pc); role = CustomRoles.Detective; break;
+                case RoleTypes.Judge: Judges.Add(pc); role = CustomRoles.Judge; break;
                 case RoleTypes.GuardianAngel: GuardianAngels.Add(pc); role = CustomRoles.GuardianAngel; break;
                 case RoleTypes.Shapeshifter: Shapeshifters.Add(pc); role = CustomRoles.Shapeshifter; break;
                 case RoleTypes.Phantom: Phantoms.Add(pc); role = CustomRoles.Phantom; break;
@@ -470,6 +473,7 @@ class SelectRolesPatch
                 RoleTypes.Tracker => Trackers,
                 RoleTypes.Noisemaker => Noisemakers,
                 RoleTypes.Detective => Detectives,
+                RoleTypes.Judge => Judges,
                 RoleTypes.GuardianAngel => GuardianAngels,
                 _ => Crewmates,
             };
@@ -667,7 +671,7 @@ class SelectRolesPatch
             RoleTypes.Crewmate, RoleTypes.Scientist, RoleTypes.Engineer,
             RoleTypes.Tracker, RoleTypes.Noisemaker, RoleTypes.GuardianAngel,
             RoleTypes.Impostor, RoleTypes.Shapeshifter, RoleTypes.Phantom,
-            RoleTypes.Viper, RoleTypes.Detective })
+            RoleTypes.Viper, RoleTypes.Detective, RoleTypes.Judge })
         {
             roleTypePlayers.Add(roleType, new());
         }
@@ -699,6 +703,7 @@ class SelectRolesPatch
                 RoleTypes.Phantom => CustomRoles.Phantom,
                 RoleTypes.Viper => CustomRoles.Viper,
                 RoleTypes.Detective => CustomRoles.Detective,
+                RoleTypes.Judge => CustomRoles.Judge,
                 _ => CustomRoles.NotAssigned,
             };
             if (defaultRole != CustomRoles.NotAssigned)

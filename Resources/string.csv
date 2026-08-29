@@ -1,4 +1,4 @@
-"id","0","11","13","14","5","2","3"
+﻿"id","0","11","13","14","5","2","3"
 "## Translators"
 "#5  RusTranslation: Tommy-XL"
 "#13 SChinese:fivefirex&ZeMingOH233  2T&MC-AS-Huier&xiaojin xyjx001(Edit: Tanakanira)"
@@ -16,6 +16,7 @@
 "Phantom","Phantom","ファントム","","",""
 "Viper","Viper","バイパー","","",""
 "Detective","Detective","探偵","侦探","偵探","Детектив","Detetive"
+"Judge","Judge","ジャッジ","","",""
 "NormalImpostor","Normal Impostor","通常インポスター","普通内鬼"
 "NormalShapeshifter","Shapeshifter","シェイプシフター","变形者","變形者","Оборотень","Metamorfo"
 "NormalEngineer","Engineer","エンジニア","工程师","工程師","Инженер","Engenheiro"
@@ -25,6 +26,7 @@
 "NormalNoisemaker","Noisemaker","ノイズメーカー","","",""
 "NormalViper","Viper","バイパー","","",""
 "NormalDetective","Detective","探偵","侦探","偵探","Детектив","Detetive"
+"NormalJudge","Judge","ジャッジ","","",""
 
 
 "# 特殊インポスター役職"
@@ -288,6 +290,7 @@
 "NiceGuesserInfo","Guess and shoot","推測して撃ち抜こう","","","","",
 "ElderInfo","I am still not as young as I used to be.","まだ若者には負けんわい","","","","",
 "NormalDetectiveInfo","Gathering information. Solving murders.","情報収集。殺人事件解決。",
+"NormalJudgeInfo","Pass judgment in the meeting.","会議で裁きを下そう。",
 
 
 "CustomCrewmateInfoLong","(Crewmates):\Crewmate with the ability to Add-On to attributes set by the host.","[クルー陣営]\nホストによって設定された属性の能力をもつクルーメイト。",
@@ -820,6 +823,10 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "NoisemakerImpostorAlert","Impostor get alert","インポスターへの警報"
 "NoisemakerAlertDuration","Alert duration","警報の長さ"
 "DetectiveSuspectLimit","Suspect Limit","事件ごとの容疑者数"
+"JudgeTaskRequirementPercentage","Task requirement to use ability","能力使用に必要なタスク割合"
+"JudgeAbilityCount","Number of judgments","裁決できる回数"
+"JudgeCanJudgeMadmate","Can judge Madmate","マッドメイトを裁けるか"
+"JudgeCanJudgeNeutrals","Can judge Neutrals","第三陣営を裁けるか"
 
 "AssignMode","Assign Algorithm Mode","アサインモード","分配算法","","Алгоритм назначения",""
 "AssignAlgorithm.Fixed","Fixed","固定","固定","","Фиксированный",""

@@ -54,6 +54,7 @@ static class CustomRolesHelper
             CustomRoles.Tracker or
             CustomRoles.Noisemaker or
             CustomRoles.Detective or
+            CustomRoles.Judge or
             CustomRoles.GuardianAngel or
             CustomRoles.Impostor or
             CustomRoles.Shapeshifter or
@@ -73,6 +74,7 @@ static class CustomRolesHelper
             CustomRoles.NormalNoisemaker => CustomRoles.Noisemaker,
             CustomRoles.NormalViper => CustomRoles.Viper,
             CustomRoles.NormalDetective => CustomRoles.Detective,
+            CustomRoles.NormalJudge => CustomRoles.Judge,
             _ => role
         };
     }
@@ -87,7 +89,8 @@ static class CustomRolesHelper
             CustomRoles.NormalTracker or
             CustomRoles.NormalNoisemaker or
             CustomRoles.NormalViper or
-            CustomRoles.NormalDetective;
+            CustomRoles.NormalDetective or
+            CustomRoles.NormalJudge;
     }
 
     // 新役職等(トップ掲載の常設役職)
@@ -279,8 +282,11 @@ static class CustomRolesHelper
                 CustomRoles.Scientist => roleOpt.GetNumPerGame(RoleTypes.Scientist),
                 CustomRoles.Tracker => roleOpt.GetNumPerGame(RoleTypes.Tracker),
                 CustomRoles.Noisemaker => roleOpt.GetNumPerGame(RoleTypes.Noisemaker),
+                CustomRoles.Detective => roleOpt.GetNumPerGame(RoleTypes.Detective),
+                CustomRoles.Judge => roleOpt.GetNumPerGame(RoleTypes.Judge),
                 CustomRoles.Shapeshifter => roleOpt.GetNumPerGame(RoleTypes.Shapeshifter),
                 CustomRoles.Phantom => roleOpt.GetNumPerGame(RoleTypes.Phantom),
+                CustomRoles.Viper => roleOpt.GetNumPerGame(RoleTypes.Viper),
                 CustomRoles.GuardianAngel => roleOpt.GetNumPerGame(RoleTypes.GuardianAngel),
                 CustomRoles.Crewmate => roleOpt.GetNumPerGame(RoleTypes.Crewmate),
                 _ => 0
