@@ -825,8 +825,8 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "DetectiveSuspectLimit","Suspect Limit","事件ごとの容疑者数"
 "JudgeTaskRequirementPercentage","Task requirement to use ability","能力使用に必要なタスク割合"
 "JudgeAbilityCount","Number of judgments","裁決できる回数"
-"JudgeCanJudgeMadmate","Can judge Madmate","マッドメイトを裁けるか"
-"JudgeCanJudgeNeutrals","Can judge Neutrals","第三陣営を裁けるか"
+"JudgeCanJudge%role%","Can judge %role%","%role%を裁ける"
+"JudgeCanJudgeNeutrals","Can judge Neutrals","ニュートラルを裁ける"
 
 "AssignMode","Assign Algorithm Mode","アサインモード","分配算法","","Алгоритм назначения",""
 "AssignAlgorithm.Fixed","Fixed","固定","固定","","Фиксированный",""

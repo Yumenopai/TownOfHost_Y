@@ -1,3 +1,5 @@
+using System;
+
 using AmongUs.GameOptions;
 using TownOfHostY.Roles.Core;
 
@@ -24,7 +26,9 @@ public sealed class Judge : RoleBase
 
     public override bool CallJudgeVote(PlayerControl voter, PlayerControl votefor, ref byte ExilePlayerid)
         => JudgeOverrule(voter, votefor, ref ExilePlayerid, ref isMisfire, ref limitAbility,
-            canJudgeMadmate: true, canJudgeNeutral: false);
+            // バニラのジャッジと同じくインポスター陣営のみ
+            player => player.GetCustomRole().GetCustomRoleTypes()
+                is CustomRoleTypes.Impostor or CustomRoleTypes.Madmate);
 
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)
         => SetMisfireDeathReason(this, exiled, ref isMisfire);
@@ -36,9 +40,10 @@ public sealed class Judge : RoleBase
     /// <param name="isMisfire">誤爆したかどうか。死因の設定に使う</param>
     /// <param name="limitAbility">残りの裁決回数。バニラ側の使用回数管理は
     /// AntiBlackout 有効時に消費されないため、ホスト側でも数える</param>
+    /// <param name="canJudge">裁決対象にできるかどうかの判定</param>
     public static bool JudgeOverrule(PlayerControl voter, PlayerControl votefor, ref byte ExilePlayerid,
                                      ref bool isMisfire, ref int limitAbility,
-                                     bool canJudgeMadmate, bool canJudgeNeutral)
+                                     Func<PlayerControl, bool> canJudge)
     {
         ExilePlayerid = byte.MaxValue;
         if (voter == null || votefor == null) return false;
@@ -50,16 +55,7 @@ public sealed class Judge : RoleBase
         }
         limitAbility--;
 
-        var cRole = votefor.GetCustomRole();
-        var canJudge = cRole.GetCustomRoleTypes() switch
-        {
-            CustomRoleTypes.Impostor => true,
-            CustomRoleTypes.Madmate => canJudgeMadmate,
-            CustomRoleTypes.Neutral => canJudgeNeutral,
-            _ => false,
-        };
-
-        if (canJudge)
+        if (canJudge(votefor))
         {
             ExilePlayerid = votefor.PlayerId;
             votefor.SetRealKiller(voter);
