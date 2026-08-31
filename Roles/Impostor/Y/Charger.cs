@@ -159,7 +159,7 @@ public sealed class Charger : RoleBase, IImpostor
             }
         }
 
-        return true;
+        return false;
     }
 
     public bool OverrideKillButtonText(out string text)

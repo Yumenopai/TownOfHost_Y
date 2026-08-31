@@ -431,7 +431,11 @@ public static class PlayerControlCheckVanishPatch
             {
                 if (phantom.PlayerId != PlayerControl.LocalPlayer.PlayerId)
                 {
-                    SendDummyClearCharge(phantom);
+                    SendVanishToSelfOnly(phantom);
+                    _ = new LateTask(() =>
+                    {
+                        if (phantom != null && phantom.IsAlive()) SendAppearToSelfOnly(phantom);
+                    }, 1.0f, "PhantomVanishCancel");
                 }
                 else
                 {
@@ -452,31 +456,18 @@ public static class PlayerControlCheckVanishPatch
 
         return true;
     }
-    private static void SendDummyClearCharge(PlayerControl phantom)
+    private static void SendVanishToSelfOnly(PlayerControl phantom)
     {
-        int clientId = phantom.GetClientId();
-        var stream = MessageWriter.Get(SendOption.Reliable);
-        stream.StartMessage(6);
-        stream.Write(AmongUsClient.Instance.GameId);
-        stream.WritePacked(clientId);
-        {
-            stream.StartMessage(2);
-            stream.WritePacked(phantom.NetId);
-            stream.Write((byte)RpcCalls.SetRole);
-            stream.Write((ushort)RoleTypes.Impostor);
-            stream.Write(true);     //canOverrideRole
-            stream.EndMessage();
-
-            stream.StartMessage(2);
-            stream.WritePacked(phantom.NetId);
-            stream.Write((byte)RpcCalls.SetRole);
-            stream.Write((ushort)RoleTypes.Phantom);
-            stream.Write(true);     //canOverrideRole
-            stream.EndMessage();
-        }
-        stream.EndMessage();
-        AmongUsClient.Instance.SendOrDisconnect(stream);
-        stream.Recycle();
+        var writer = AmongUsClient.Instance.StartRpcImmediately(
+            phantom.NetId, (byte)RpcCalls.StartVanish, SendOption.Reliable, phantom.GetClientId());
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
+    }
+    private static void SendAppearToSelfOnly(PlayerControl phantom)
+    {
+        var writer = AmongUsClient.Instance.StartRpcImmediately(
+            phantom.NetId, (byte)RpcCalls.StartAppear, SendOption.Reliable, phantom.GetClientId());
+        writer.Write(false);
+        AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdCheckVanish))]
