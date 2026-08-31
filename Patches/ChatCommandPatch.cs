@@ -76,7 +76,7 @@ namespace TownOfHostY
                     case "/win":
                     case "/winner":
                         canceled = true;
-                        Utils.SendMessage("Winner: " + string.Join(",", Main.winnerList.Select(b => Main.AllPlayerNames[b])));
+                        Utils.SendMessage("Winner: " + string.Join(",", Main.winnerList.Select(b => Main.AllPlayerNames[b])), true);
                         break;
 
                     case "/l":
@@ -220,7 +220,7 @@ namespace TownOfHostY
 
                         string RoleInfoTitleString = GetString("RoleInfoTitle");
                         string RoleInfoTitle = Utils.ColorString(Utils.GetRoleColor(PlayerControl.LocalPlayer.GetCustomRole()), RoleInfoTitleString);
-                        Utils.SendMessage(Utils.GetMyRoleInfo(PlayerControl.LocalPlayer), PlayerControl.LocalPlayer.PlayerId, RoleInfoTitle);
+                        Utils.SendMessage(Utils.GetMyRoleInfo(PlayerControl.LocalPlayer), true, RoleInfoTitle, PlayerControl.LocalPlayer.PlayerId);
                         break;
 
                     case "/t":
@@ -236,15 +236,15 @@ namespace TownOfHostY
                         if (args.Length > 1 && float.TryParse(args[1], out float sec))
                         {
                             Main.MessageWait.Value = sec;
-                            Utils.SendMessage(string.Format(GetString("Message.SetToSeconds"), sec), 0);
+                            Utils.SendMessage(string.Format(GetString("Message.SetToSeconds"), sec), true, sendTo: 0);
                         }
-                        else Utils.SendMessage($"{GetString("Message.MessageWaitHelp")}\n{GetString("ForExample")}:\n{args[0]} 3", 0);
+                        else Utils.SendMessage($"{GetString("Message.MessageWaitHelp")}\n{GetString("ForExample")}:\n{args[0]} 3", true, sendTo: 0);
                         break;
 
                     case "/say":
                         canceled = true;
                         if (args.Length > 1)
-                            Utils.SendMessage(args.Skip(1).Join(delimiter: " "), title: $"<color=#ff0000>{GetString("MessageFromTheHost")}</color>");
+                            Utils.SendMessage(args.Skip(1).Join(delimiter: " "), true, $"<color=#ff0000>{GetString("MessageFromTheHost")}</color>");
                         break;
 
                     case "/exile":
@@ -274,10 +274,14 @@ namespace TownOfHostY
                         {
                             var name = VoiceReader.SetHostVoiceNo(voiceNo);
                             if (name != null && name != "")
-                                Utils.SendMessage(string.Format(GetString("Message.VoiceChangeHost"), name), 0);
+                            {
+                                Utils.SendMessage(string.Format(GetString("Message.VoiceChangeHost"), name), true, sendTo: 0);
+                            }
                         }
                         else
-                            Utils.SendMessage(VoiceReader.GetVoiceIdxMsg(), 0);
+                        {
+                            Utils.SendMessage(VoiceReader.GetVoiceIdxMsg(), true, sendTo: 0);
+                        }
                         break;
 
                     case "/killFlash":
@@ -286,8 +290,8 @@ namespace TownOfHostY
                         Utils.SetKillFlashAfterDead(PlayerControl.LocalPlayer, true);
                         break;
 
-                    case "/killFlashAll":
-                    case "/kfa":
+                    case "/brackout":
+                    case "/bo":
                         canceled = true;
                         if (GameStates.InGame)
                             Main.AllPlayerControls.Do(pc => pc.KillFlash());
@@ -310,7 +314,7 @@ namespace TownOfHostY
                                 var visor = args[0] == "/offvisor" || args[0] == "/offskinall";
                                 var pet = args[0] == "/offpet" || args[0] == "/offskinall";
                                 SkinControle.RpcSetSkin(skinTarget, hat, skin, visor, pet);
-                                Utils.SendMessage($"ホストにより {SkinControle.GetSetTypeName(hat, skin, visor, pet)} がリセットにされました", skinTarget.PlayerId);
+                                Utils.SendMessage($"ホストにより {SkinControle.GetSetTypeName(hat, skin, visor, pet)} がリセットにされました", true, sendTo: skinTarget.PlayerId);
                             }
                         }
 
@@ -542,11 +546,11 @@ namespace TownOfHostY
 
                 if (String.Compare(role, roleName, true) == 0 || String.Compare(role, roleShort, true) == 0)
                 {
-                    Utils.SendMessage(Utils.GetRoleInfoLong(r.Key, true), PlayerId);
+                    Utils.SendMessage(Utils.GetRoleInfoLong(r.Key, true), true, sendTo: PlayerId);
                     return;
                 }
             }
-            Utils.SendMessage(GetString("Message.HelpRoleNone"), PlayerId);
+            Utils.SendMessage(GetString("Message.HelpRoleNone"), true, sendTo: PlayerId);
         }
         private static void ConcatCommands(CustomRoleTypes roleType)
         {
@@ -574,7 +578,7 @@ namespace TownOfHostY
                 if (text.Length > 0)
                 {
                     Utils.SendMessage(GetString("Message.NowNimrodMeeting"),
-                        title: $"<color={Utils.GetRoleColorCode(CustomRoles.Nimrod)}>{GetString("IsNimrodMeetingTitle")}</color>");
+                        true, $"<color={Utils.GetRoleColorCode(CustomRoles.Nimrod)}>{GetString("IsNimrodMeetingTitle")}</color>");
                 }
             }
 
@@ -644,34 +648,34 @@ namespace TownOfHostY
 
                     string RoleInfoTitleString = GetString("RoleInfoTitle");
                     string RoleInfoTitle = Utils.ColorString(Utils.GetRoleColor(player.GetCustomRole()), RoleInfoTitleString);
-                    Utils.SendMessage(Utils.GetMyRoleInfo(player), player.PlayerId, RoleInfoTitle);
+                    Utils.SendMessage(Utils.GetMyRoleInfo(player), true, RoleInfoTitle, player.PlayerId);
                     break;
 
                 case "/t":
                 case "/template":
                     if (args.Length > 1) TemplateManager.SendTemplate(args[1], player.PlayerId);
-                    else Utils.SendMessage($"{GetString("ForExample")}:\n{args[0]} test", player.PlayerId);
+                    else Utils.SendMessage($"{GetString("ForExample")}:\n{args[0]} test", true, sendTo: player.PlayerId);
                     break;
 
                 case "/vo":
                 case "/voice":
                     var color = Palette.GetColorName(player.Data.DefaultOutfit.ColorId);
                     if (VoiceReader.VoiceReaderMode == null || !VoiceReader.VoiceReaderMode.GetBool())
-                        Utils.SendMessage(string.Format(GetString("Message.VoiceNotAvailable")), player.PlayerId);
+                        Utils.SendMessage(string.Format(GetString("Message.VoiceNotAvailable")), true, sendTo: player.PlayerId);
                     else if (args.Length > 1 && args[1] == "n")
-                        Utils.SendMessage(string.Format(GetString("Message.VoiceNow"), color, VoiceReader.GetVoiceName(color)), player.PlayerId);
+                        Utils.SendMessage(string.Format(GetString("Message.VoiceNow"), color, VoiceReader.GetVoiceName(color)), true, sendTo: player.PlayerId);
                     else if (args.Length > 1 && int.TryParse(args[1], out int voiceNo))
                     {
                         var name = VoiceReader.SetVoiceNo(color, voiceNo);
                         if (name != null && name != "")
                         {
-                            Utils.SendMessage(string.Format(GetString("Message.VoiceChange"), color, name), player.PlayerId);
+                            Utils.SendMessage(string.Format(GetString("Message.VoiceChange"), color, name), true, sendTo: player.PlayerId);
                             break;
                         }
-                        Utils.SendMessage(string.Format(GetString("Message.VoiceChangeFailed"), color), player.PlayerId);
+                        Utils.SendMessage(string.Format(GetString("Message.VoiceChangeFailed"), color), true, sendTo: player.PlayerId);
                     }
                     else
-                        Utils.SendMessage(VoiceReader.GetVoiceIdxMsg(), player.PlayerId);
+                        Utils.SendMessage(VoiceReader.GetVoiceIdxMsg(), true, sendTo: player.PlayerId);
                     break;
 
                 case "/killFlash":

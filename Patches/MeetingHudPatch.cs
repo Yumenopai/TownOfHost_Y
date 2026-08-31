@@ -193,35 +193,44 @@ public static class MeetingHudPatch
                 // 以前のように NameText 自体をずらす必要はない
             }
             CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnStartMeeting());
+
+            List<string> messageList = new();
+
             if (Options.SyncButtonMode.GetBool())
             {
-                Utils.SendMessage(string.Format(GetString("Message.SyncButtonLeft"), Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount));
+                messageList.Add(string.Format(GetString("Message.SyncButtonLeft"), Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount));
                 Logger.Info("緊急会議ボタンはあと" + (Options.SyncedButtonCount.GetFloat() - Options.UsedButtonCount) + "回使用可能です。", "SyncButtonMode");
             }
             if (Options.ShowReportReason.GetBool())
             {
                 if (ReportDeadBodyPatch.ReportTarget == null)
-                    Utils.SendMessage(GetString("Message.isButton"));
+                    messageList.Add(GetString("Message.isButton"));
                 else if (!ReportDeadBodyPatch.SpecialMeeting)
-                    Utils.SendMessage(string.Format(GetString("Message.isReport"),
+                    messageList.Add(string.Format(GetString("Message.isReport"),
                         $"{ReportDeadBodyPatch.ReportTarget.PlayerName}{ReportDeadBodyPatch.ReportTarget.ColorName.Color(ReportDeadBodyPatch.ReportTarget.Color)}"));
             }
             if (Options.ShowRevengeTarget.GetBool())
             {
                 foreach (var Exiled_Target in RevengeTargetPlayer)
                 {
-                    Utils.SendMessage(string.Format(GetString("Message.RevengeText"),
+                    messageList.Add(string.Format(GetString("Message.RevengeText"),
                         $"{Exiled_Target.exiled.PlayerName}{Exiled_Target.exiled.ColorName.Color(Exiled_Target.exiled.Color)}", $"{Exiled_Target.revengeTarget.PlayerName}{Exiled_Target.revengeTarget.ColorName.Color(Exiled_Target.revengeTarget.Color)}"));
                 }
             }
 
             if (AntiBlackout.OverrideExiledPlayer && !Options.IsCCMode)
             {
-                Utils.SendMessage(GetString("Warning.OverrideExiledPlayer"));
+                messageList.Add(GetString("Warning.OverrideExiledPlayer"));
             }
             if (Options.IsCCMode)
             {
                 CatchCat.Infomation.ShowMeeting();
+            }
+
+            if (messageList.Count > 0)
+            {
+                var message = string.Join("\n", messageList);
+                Utils.SendMessage(message, true);
             }
 
             if (MeetingStates.FirstMeeting) TemplateManager.SendTemplate("OnFirstMeeting", noErr: true);
@@ -257,14 +266,14 @@ public static class MeetingHudPatch
                             targetRole = CustomRoles.Crewmate;
                         string RoleInfoTitleString = $"{GetString("RoleInfoTitle")}";
                         string RoleInfoTitle = $"{Utils.ColorString(Utils.GetRoleColor(targetRole), RoleInfoTitleString)}";
-                        Utils.SendMessage(Utils.GetMyRoleInfo(pc), pc.PlayerId, RoleInfoTitle);
+                        Utils.SendMessage(Utils.GetMyRoleInfo(pc),true, RoleInfoTitle, pc.PlayerId);
                         Main.ShowRoleInfoAtMeeting.Remove(pc.PlayerId);
                     }
                     ChatUpdatePatch.DoBlockChat = false;
                 }, 3f, "SetName To Chat");
                 if (ReportDeadBodyPatch.SpecialMeeting)
                 {
-                    Utils.SendMessage("強制会議の場合は一部役職名が表示されず名前が赤く見えることがありますが、会議終了後回復します。");
+                    Utils.SendMessage("強制会議の場合は一部役職名が表示されず名前が赤く見えることがありますが、会議終了後回復します。", true);
                 }
             }
 
@@ -368,7 +377,7 @@ public static class MeetingHudPatch
                         if (voter == null) continue;
                         __instance.RpcClearVote(voter.PlayerId);
                     }
-                    Utils.SendMessage(string.Format(GetString("Message.Executed"), player.Data.PlayerName));
+                    Utils.SendMessage(string.Format(GetString("Message.Executed"), player.Data.PlayerName), true);
                     Logger.Info($"{player.GetNameWithRole()}を処刑しました", "Execution");
                 });
             }

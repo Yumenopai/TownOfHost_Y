@@ -199,7 +199,7 @@ namespace TownOfHostY
                     {
                         if (client.Character == null) return;
                         if (client.Character.PlayerId == PlayerControl.LocalPlayer.PlayerId) return;
-                        if (AmongUsClient.Instance.IsGamePublic) Utils.SendMessage(string.Format(GetString("Message.AnnounceUsingTOH"), Main.PluginVersion), client.Character.PlayerId);
+                        if (AmongUsClient.Instance.IsGamePublic) Utils.SendMessage(string.Format(GetString("Message.AnnounceUsingTOH"), Main.PluginVersion), true, sendTo: client.Character.PlayerId);
                         TemplateManager.SendTemplate("welcome", client.Character.PlayerId, true);
                     }
                     catch { }

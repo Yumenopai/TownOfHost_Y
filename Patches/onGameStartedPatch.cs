@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using AmongUs.GameOptions;
@@ -158,7 +158,7 @@ class ChangeRoleSettings
                 var msg = Translator.GetString("Error.InvalidColor");
                 Logger.SendInGame(msg);
                 msg += "\n" + string.Join(",", invalidColor.Select(p => $"{p.name}({p.Data.DefaultOutfit.ColorId})"));
-                Utils.SendMessage(msg);
+                Utils.SendMessage(msg, true);
                 Logger.Error(msg, "CoStartGame");
             }
 

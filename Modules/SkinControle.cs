@@ -91,9 +91,9 @@ public static class SkinControle
             RpcSetSkin(target, hat: hat, skin: skin);
             Logger.Info($"ClearHat name: {target.name}, hat: {hat}, skin: {skin}", "DuplicateSkinCheck");
             if (hat)
-                Utils.SendMessage($"重複しているためハットがリセットにされました", target.PlayerId);
+                Utils.SendMessage($"重複しているためハットがリセットにされました", true, sendTo: target.PlayerId);
             if (skin)
-                Utils.SendMessage($"重複しているためスキンがリセットにされました", target.PlayerId);
+                Utils.SendMessage($"重複しているためスキンがリセットにされました", true, sendTo: target.PlayerId);
         }
     }
     public static void ProhibitedSkinCheck(PlayerControl target)
@@ -114,7 +114,7 @@ public static class SkinControle
         Logger.Info($"ClearHat name: {target.name}, hat: {hat} {target.Data.DefaultOutfit.HatId}, skin: {skin} {target.Data.DefaultOutfit.SkinId}, visor: {visor} {target.Data.DefaultOutfit.VisorId}, pet: {pet} {target.Data.DefaultOutfit.PetId}", "ProhibitedSkinCheck");
         RpcSetSkin(target, hat, skin, visor, pet);
 
-        Utils.SendMessage($"{GetSetTypeName(hat, skin, visor, pet, !Options.NoHat.GetBool())} は設定で禁止されています。\nスキンがリセットにされました", target.PlayerId);
+        Utils.SendMessage($"{GetSetTypeName(hat, skin, visor, pet, !Options.NoHat.GetBool())} は設定で禁止されています。\nスキンがリセットにされました", true, sendTo: target.PlayerId);
     }
     public static string GetSetTypeName(bool hat = false, bool skin = false, bool visor = false, bool pet = false, bool fullFace = false)
     {

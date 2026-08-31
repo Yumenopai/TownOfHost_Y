@@ -66,7 +66,7 @@ public sealed class Administer : RoleBase, IImpostor
         var message = sb.ToString();
         var title = GetString("AdministerMessage").Color(Color.green);
 
-        _ = new LateTask(() => Utils.SendMessage(message, Player.PlayerId, title), 3f, "Administer Message");
+        _ = new LateTask(() => Utils.SendMessage(message, true, title, Player.PlayerId), 3f, "Administer Message");
     }
 
     // ホスト
