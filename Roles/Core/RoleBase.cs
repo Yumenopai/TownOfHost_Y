@@ -387,6 +387,15 @@ public abstract class RoleBase : IDisposable
         return null; // 見つからなかった場合は null を返す
     }
 
+    /// <summary>
+    /// ジャッジが裁決を行ったときに呼ばれます。<br/>
+    /// 裁決を無かったことにするなら false
+    /// </summary>
+    /// <param name="voter">裁決を行ったジャッジ</param>
+    /// <param name="votefor">裁決された人</param>
+    /// <param name="ExilePlayerid">実際に追放する人</param>
+    /// <returns>裁決を成立させるかどうか</returns>
+    public virtual bool CallJudgeVote(PlayerControl voter, PlayerControl votefor, ref byte ExilePlayerid) => false;
 
     protected enum GeneralOption
     {

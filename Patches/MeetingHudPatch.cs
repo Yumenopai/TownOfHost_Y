@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using AmongUs.GameOptions;
 using HarmonyLib;
+using InnerNet;
 using TownOfHostY.Modules;
 using TownOfHostY.Roles.AddOns.Common;
 using TownOfHostY.Roles.Core;
@@ -28,7 +29,7 @@ public static class MeetingHudPatch
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.VotingComplete))]
     class VotingCompletePatch
     {
-        public static void Postfix([HarmonyArgument(1)] NetworkedPlayerInfo exiled, [HarmonyArgument(2)] bool tie)
+        public static void Postfix(MeetingHud __instance, [HarmonyArgument(1)] NetworkedPlayerInfo exiled, [HarmonyArgument(2)] bool tie)
         {
             if (exiled == null) return;
 
@@ -40,19 +41,70 @@ public static class MeetingHudPatch
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.CastVote))]
     public static class CastVotePatch
     {
-        public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)] byte srcPlayerId /* 投票した人 */ , [HarmonyArgument(1)] byte suspectPlayerId /* 投票された人 */ )
+        public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)] PlayerId srcPlayerId /* 投票した人 */ , [HarmonyArgument(1)] PlayerId suspectPlayerId /* 投票された人 */ )
         {
             var voter = Utils.GetPlayerById(srcPlayerId);
             var voted = Utils.GetPlayerById(suspectPlayerId);
             if (voter.GetRoleClass()?.CheckVoteAsVoter(voted) == false)
             {
-                __instance.RpcClearVote(voter.GetClientId());
+                __instance.RpcClearVote(voter.PlayerId);
                 Logger.Info($"{voter.GetNameWithRole()} は投票しない", nameof(CastVotePatch));
                 return false;
             }
 
             MeetingVoteManager.Instance?.SetVote(srcPlayerId, suspectPlayerId);
             return true;
+        }
+    }
+    
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.SetJudgeOverrule))]
+    public static class SetJudgeOverrulePatch
+    {        
+        public static void ShowOverruleLocally(ushort overruleNonce)
+        {
+            var meetingHud = MeetingHud.Instance;
+            if (meetingHud == null) return;
+
+            bool anotherJudgeBeatYouToIt = false;            
+            var judgeRole = PlayerControl.LocalPlayer?.Data?.Role?.TryCast<JudgeRole>();
+            if (judgeRole != null && judgeRole.HasAlreadyOverruledThisMeeting)
+            {
+                if (judgeRole.OverruleNonce == overruleNonce) judgeRole.ConsumeOverruleVotesUsage();
+                else anotherJudgeBeatYouToIt = true;
+            }
+            meetingHud.ShowJudgeOverrule(anotherJudgeBeatYouToIt);
+        }
+
+        public static bool Prefix(MeetingHud __instance,
+            [HarmonyArgument(0)] PlayerId judgePlayerId /* 裁決した人 */,
+            [HarmonyArgument(1)] PlayerId targetPlayerId /* 裁決された人 */,
+            [HarmonyArgument(2)] ushort overruleNonce)
+        {           
+            if (!AmongUsClient.Instance.AmHost) return false;
+
+            var voter = Utils.GetPlayerById(judgePlayerId);
+            var votefor = Utils.GetPlayerById(targetPlayerId);
+            if (voter == null || votefor == null)
+            {
+                Logger.Warn($"裁決者({judgePlayerId})か対象({targetPlayerId})が見つかりません", nameof(SetJudgeOverrulePatch));
+                return false;
+            }
+            Logger.Info($"{voter.GetNameWithRole()} => {votefor.GetNameWithRole()} (nonce: {overruleNonce})", nameof(SetJudgeOverrulePatch));
+
+            byte exilePlayerId = byte.MaxValue;
+            if (voter.GetRoleClass()?.CallJudgeVote(voter, votefor, ref exilePlayerId) != true
+                || exilePlayerId == byte.MaxValue)
+            {                
+                __instance.RpcClearVote(voter.PlayerId);
+                Logger.Info($"{voter.GetNameWithRole()} の裁決は無効化されました", nameof(SetJudgeOverrulePatch));
+                return false;
+            }
+
+            MeetingVoteManager.Instance?.SetVote(
+                judgePlayerId, targetPlayerId,
+                judgeExiledId: exilePlayerId, judgeNonce: overruleNonce);
+            MeetingVoteManager.Instance?.EndMeeting();
+            return false;
         }
     }
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Start))]
@@ -84,19 +136,33 @@ public static class MeetingHudPatch
             var myRole = PlayerControl.LocalPlayer.GetRoleClass();
             foreach (var pva in __instance.playerStates)
             {
-                var pc = Utils.GetPlayerById(pva.TargetPlayerId);
-                if (pc == null) continue;
+                var pc = Utils.GetPlayerById(pva.PlayerId);
+                if (pc == null) continue;                
+                foreach (var name in new[] { "RoleTextMeeting", "SuffixTextMeeting" })
+                {
+                    var old = pva.PlayerIcon.transform.Find(name);
+                    if (old != null) Object.Destroy(old.gameObject);
+                }
+
                 var roleTextMeeting = Object.Instantiate(pva.NameText);
                 var suffixTextMeeting = Object.Instantiate(pva.NameText);
-                roleTextMeeting.transform.SetParent(pva.NameText.transform);
-                suffixTextMeeting.transform.SetParent(pva.NameText.transform);
+                roleTextMeeting.transform.SetParent(pva.PlayerIcon.transform);
+                suffixTextMeeting.transform.SetParent(pva.PlayerIcon.transform);
 
-                roleTextMeeting.transform.localPosition = new Vector3(0f, 0.2f, 0f);
+                roleTextMeeting.transform.localPosition = new Vector3(3.25f, 1.02f, -5f);
                 roleTextMeeting.fontSize = 1.5f;
                 roleTextMeeting.gameObject.name = "RoleTextMeeting";
                 roleTextMeeting.enableWordWrapping = false;
                 (roleTextMeeting.enabled, roleTextMeeting.text)
                     = Utils.GetRoleNameAndProgressTextData(true, PlayerControl.LocalPlayer, pc);
+
+                
+                suffixTextMeeting.transform.localPosition = new Vector3(3.25f, 0.02f, 0f);
+                suffixTextMeeting.fontSize = 1.5f;
+                suffixTextMeeting.gameObject.name = "SuffixTextMeeting";
+                suffixTextMeeting.enableWordWrapping = false;
+                suffixTextMeeting.enabled = false;
+                suffixTextMeeting.text = "";
 
                 // シンクロカラーモード
                 if (Options.IsSyncColorMode && Options.SCM_NothingMeetingNameColor.GetBool()
@@ -105,13 +171,6 @@ public static class MeetingHudPatch
                     roleTextMeeting.enabled = false;
                     continue;
                 }
-
-                suffixTextMeeting.transform.localPosition = new Vector3(0f, -0.18f, 0f);
-                suffixTextMeeting.fontSize = 1.5f;
-                suffixTextMeeting.gameObject.name = "SuffixTextMeeting";
-                suffixTextMeeting.enableWordWrapping = false;
-                suffixTextMeeting.enabled = false;
-                suffixTextMeeting.text = "";
 
                 var suffixBuilder = new StringBuilder(32);
                 if (myRole != null)
@@ -129,16 +188,9 @@ public static class MeetingHudPatch
                 {
                     suffixTextMeeting.text = suffixBuilder.ToString();
                     suffixTextMeeting.enabled = true;
-
-                    if (roleTextMeeting.text == "")
-                    {
-                        pva.NameText.transform.SetLocalY(0.05f);
-                    }
                 }
-                else if (roleTextMeeting.text != "")
-                {
-                    pva.NameText.transform.SetLocalY(-0.05f);
-                }
+                // 役職/属性テキストは NameText の外(PlayerIcon側)に置いているため、
+                // 以前のように NameText 自体をずらす必要はない
             }
             CustomRoleManager.AllActiveRoles.Values.Do(role => role.OnStartMeeting());
             if (Options.SyncButtonMode.GetBool())
@@ -225,8 +277,11 @@ public static class MeetingHudPatch
                 var seer = PlayerControl.LocalPlayer;
                 var seerRole = seer.GetRoleClass();
 
-                var target = Utils.GetPlayerById(pva.TargetPlayerId);
+                var target = Utils.GetPlayerById(pva.PlayerId);
                 if (target == null) continue;
+
+               
+                pva.NameText.text = target.GetRealName(isMeeting: true);
 
                 // 役職説明表示
                 if (Main.ShowRoleInfoAtMeeting.Contains(target.PlayerId))
@@ -241,9 +296,9 @@ public static class MeetingHudPatch
                 //NameColorManager準拠の処理
                 if (target.AmOwner && AmongUsClient.Instance.IsGameStarted) //変更先が自分自身
                 {
-                    //if (Options.IsONMode && (Main.DefaultRole[pva.TargetPlayerId] != CustomRoles.ONPhantomThief))
-                    //    pva.NameText.color = Utils.GetRoleColor(Main.DefaultRole[pva.TargetPlayerId]);
-                    //else if (Options.IsONMode && (Main.DefaultRole[pva.TargetPlayerId] == CustomRoles.ONPhantomThief))
+                    //if (Options.IsONMode && (Main.DefaultRole[pva.PlayerId] != CustomRoles.ONPhantomThief))
+                    //    pva.NameText.color = Utils.GetRoleColor(Main.DefaultRole[pva.PlayerId]);
+                    //else if (Options.IsONMode && (Main.DefaultRole[pva.PlayerId] == CustomRoles.ONPhantomThief))
                     //    pva.NameText.color = Utils.GetRoleColor(seer.GetCustomRole());
                     //else
                     pva.NameText.text = pva.NameText.text.ApplyNameColorData(seer, target, true);
@@ -297,7 +352,7 @@ public static class MeetingHudPatch
             {
                 __instance.playerStates.DoIf(x => x.HighlightedFX.enabled, x =>
                 {
-                    var player = Utils.GetPlayerById(x.TargetPlayerId);
+                    var player = Utils.GetPlayerById(x.PlayerId);
                     // ゲッサーと完全同等の方式でキル（バン・hacking判定回避）
                     player.Data.IsDead = true;
                     player.RpcExileV3();
@@ -308,10 +363,10 @@ public static class MeetingHudPatch
                     Main.AllPlayerControls.Do(pc => pc.KillFlash());
                     foreach (var va in __instance.playerStates)
                     {
-                        if (va.VotedFor != player.PlayerId) continue;
-                        var voter = Utils.GetPlayerById(va.TargetPlayerId);
+                        if (va.VotedForId != player.PlayerId) continue;
+                        var voter = Utils.GetPlayerById(va.PlayerId);
                         if (voter == null) continue;
-                        __instance.RpcClearVote(voter.GetClientId());
+                        __instance.RpcClearVote(voter.PlayerId);
                     }
                     Utils.SendMessage(string.Format(GetString("Message.Executed"), player.Data.PlayerName));
                     Logger.Info($"{player.GetNameWithRole()}を処刑しました", "Execution");

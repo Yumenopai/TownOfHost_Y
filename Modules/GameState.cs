@@ -64,6 +64,7 @@ public class PlayerState
                 RoleTypes.Scientist => CustomRoles.Scientist,
                 RoleTypes.Tracker => CustomRoles.Tracker,
                 RoleTypes.Noisemaker => CustomRoles.Noisemaker,
+                RoleTypes.Judge => CustomRoles.Judge,
                 RoleTypes.GuardianAngel => CustomRoles.GuardianAngel,
                 RoleTypes.Impostor => CustomRoles.Impostor,
                 RoleTypes.Shapeshifter => CustomRoles.Shapeshifter,

@@ -163,6 +163,10 @@ public class SimpleRoleInfo
                 roleName = CustomRoles.Detective;
                 customRoleType = CustomRoleTypes.Crewmate;
                 break;
+            case RoleTypes.Judge:
+                roleName = CustomRoles.Judge;
+                customRoleType = CustomRoleTypes.Crewmate;
+                break;
             case RoleTypes.GuardianAngel:
                 roleName = CustomRoles.GuardianAngel;
                 customRoleType = CustomRoleTypes.Crewmate;

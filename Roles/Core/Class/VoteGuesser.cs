@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
@@ -195,7 +195,7 @@ public abstract class VoteGuesser : RoleBase
             {
                 if (MeetingHud.Instance != null)
                 {
-                    MeetingHud.Instance.RpcClearVote(Player.GetClientId());
+                    MeetingHud.Instance.RpcClearVote(Player.PlayerId);
                 }
             }, 0.5f, "GuesserClearVote");
         }
@@ -305,9 +305,9 @@ public abstract class VoteGuesser : RoleBase
 
         foreach (var va in MeetingHud.Instance.playerStates)
         {
-            if (va.VotedFor != target.PlayerId) continue;
-            var voter = Utils.GetPlayerById(va.TargetPlayerId);
-            MeetingHud.Instance.RpcClearVote(voter.GetClientId());
+            if (va.VotedForId != target.PlayerId) continue;
+            var voter = Utils.GetPlayerById(va.PlayerId);
+            MeetingHud.Instance.RpcClearVote(voter.PlayerId);
         }
     }
     private class GuesserInfo

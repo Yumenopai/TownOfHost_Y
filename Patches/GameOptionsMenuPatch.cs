@@ -165,7 +165,8 @@ public static class GameOptionsMenuPatch
             }
             optionBehaviour.transform.localPosition = new Vector3(0.952f, num, -2f);
             optionBehaviour.SetClickMask(__instance.ButtonClickMask);
-            optionBehaviour.SetUpFromData(baseGameSetting, 20);
+            optionBehaviour.SetUpFromData(baseGameSetting, 20);  
+            optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((o) => { });
             ModGameOptionsMenu.OptionList.TryAdd(optionBehaviour, index);
             ModGameOptionsMenu.BehaviourList.TryAdd(index, optionBehaviour);
             optionBehaviour.gameObject.SetActive(enabled);
@@ -283,10 +284,10 @@ public static class GameOptionsMenuPatch
             try
             {
                 optionBehaviour.Initialize();
-                Instance?.ValueChanged(optionBehaviour);
             }
             catch { }
         }
+        if (Instance != null) ReCreateSettings(Instance);
     }
 
     [HarmonyPatch(nameof(GameOptionsMenu.ValueChanged)), HarmonyPrefix]

@@ -151,7 +151,7 @@ namespace TownOfHostY
             //投票をクリア
             if (Input.GetKeyDown(KeyCode.V) && GameStates.IsMeeting && !GameStates.IsOnlineGame)
             {
-                MeetingHud.Instance.RpcClearVote(AmongUsClient.Instance.ClientId);
+                MeetingHud.Instance.RpcClearVote(PlayerControl.LocalPlayer.PlayerId);
             }
             //ログをゲーム内にも出力するかトグル
             if (GetKeysDown(KeyCode.F2, KeyCode.LeftControl))

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -69,8 +69,8 @@ public class Main : BasePlugin
     public static string ExceptionMessage;
     public static bool ExceptionMessageIsShown = false;
     public static string credentialsText;    
-    public static NormalGameOptionsV10 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
-    public static HideNSeekGameOptionsV10 HideNSeekOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
+    public static NormalGameOptionsV11 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
+    public static HideNSeekGameOptionsV11 HideNSeekOptions => GameOptionsManager.Instance.currentHideNSeekGameOptions;
 
     //Client Options
     public static ConfigEntry<string> HideName { get; private set; }

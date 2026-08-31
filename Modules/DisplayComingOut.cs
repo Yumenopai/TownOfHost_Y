@@ -95,6 +95,7 @@ class DisplayComingOut
             or CustomRoles.Scientist
             or CustomRoles.Tracker
             or CustomRoles.Noisemaker
+            or CustomRoles.Judge
             or CustomRoles.Potentialist
 
             or CustomRoles.EvilHacker // 一旦封印
