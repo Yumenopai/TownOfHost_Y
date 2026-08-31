@@ -47,6 +47,23 @@ public class GameSettingMenuPatch
     private static GameOptionsMenu templateGameOptionsMenu;
     private static PassiveButton templateGameSettingsButton;
 
+    public static bool PresetChanged = false;
+
+    private static string PresetChangedWarning
+        => $"\n\n<color=#ffff00><b>{Translator.GetString("PresetChangedWarning")}</b></color>";
+
+    public static void NotifyPresetChanged()
+    {
+        PresetChanged = true;
+
+        var menu = Object.FindObjectOfType<GameSettingMenu>();
+        if (menu == null || menu.MenuDescriptionText == null) return;
+
+        menu.MenuDescriptionText.DestroyTranslator();
+        if (!menu.MenuDescriptionText.text.Contains(PresetChangedWarning))
+            menu.MenuDescriptionText.text += PresetChangedWarning;
+    }
+
     // MOD設定用ボタン格納変数
     static Dictionary<TabGroup, PassiveButton> ModSettingsButtons = new();
     // MOD設定メニュー用タブ格納変数
@@ -57,6 +74,8 @@ public class GameSettingMenuPatch
     [HarmonyPriority(Priority.First)]
     public static void StartPostfix(GameSettingMenu __instance)
     {
+        PresetChanged = false;
+
         /******** テキスト複製 ********/
         var infoBox = __instance.transform.FindChild("What Is This?");
         var gameSettingTextObject = Object.Instantiate(infoBox.gameObject, __instance.transform);
@@ -337,6 +356,7 @@ public class GameSettingMenuPatch
                 settingsTab.gameObject.SetActive(true);
                 __instance.MenuDescriptionText.DestroyTranslator();
                 __instance.MenuDescriptionText.text = Translator.GetString($"MenuDescriptionText.{(TabGroup)(tabNum - 3)}");
+                if (PresetChanged) __instance.MenuDescriptionText.text += PresetChangedWarning;
             }
         }
         if (previewOnly)

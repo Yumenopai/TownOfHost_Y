@@ -1236,6 +1236,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "MenuDescriptionText.Addons","Edit add-on settings for your game lobby.","属性の設定を編集する。",
 
 "GameSettingHelpText","","・オプション名クリック:\n　詳細説明を表示\n・左Shift+±クリック:\n　5倍幅で変更",
+"PresetChangedWarning","Reopen the settings screen before editing settings after switching presets.","プリセットを切り替えた後に設定を編集する場合は設定画面を開き直してください",
 
 "OptionNoExplanation","","設定の説明はありません。",
 

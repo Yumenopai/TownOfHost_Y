@@ -677,6 +677,10 @@ public static class StringOptionPatch
             {
                 GameOptionsMenuPatch.UpdateSettings();
             }
+            if (item is PresetOptionItem)
+            {
+                GameSettingMenuPatch.NotifyPresetChanged();
+            }
             return false;
         }
         return true;
