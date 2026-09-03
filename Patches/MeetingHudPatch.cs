@@ -232,7 +232,7 @@ public static class MeetingHudPatch
                 string formatTag = "<size=70%><line-height=1.6pic>";
 
                 var message = string.Join("\n", messageList);
-                Utils.SendMessageAutoSplit($"{formatTag}{message}", true, formatTag);
+                Utils.SendMessageAutoSplit($"{formatTag}{message}", true, formatTag: formatTag);
             }
 
             if (MeetingStates.FirstMeeting) TemplateManager.SendTemplate("OnFirstMeeting", noErr: true);
