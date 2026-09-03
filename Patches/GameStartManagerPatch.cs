@@ -259,7 +259,7 @@ namespace TownOfHostY
                         var msg = GetString("Error.InvalidColor");
                         Logger.SendInGame(msg);
                         msg += "\n" + string.Join(",", invalidColor.Select(p => $"{p.name}({p.Data.DefaultOutfit.ColorId})"));
-                        Utils.SendMessage(msg, true);
+                        Utils.SendMessageAutoSplit(msg, true);
                         return false;
                     }
 
@@ -268,7 +268,7 @@ namespace TownOfHostY
                     {
                         var killCooldownMsg = Utils.ColorString(Color.red, $"キルクールタイムは10秒より大きく設定してください。(現在: {Main.NormalOptions.KillCooldown:0.0}秒)");
                         Logger.SendInGame(killCooldownMsg);
-                        Utils.SendMessage(killCooldownMsg, true);
+                        Utils.SendMessageAutoSplit(killCooldownMsg, true);
                         return false;
                     }
 

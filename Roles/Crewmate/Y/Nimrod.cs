@@ -113,7 +113,7 @@ public sealed class Nimrod : RoleBase
     {
         if (!IsExecutionMeeting()) return;
 
-        Utils.SendMessage(Translator.GetString("IsNimrodMeetingText"),
+        Utils.SendMessageAutoSplit(Translator.GetString("IsNimrodMeetingText"),
             true, $"<color={RoleInfo.RoleColorCode}>{Translator.GetString("IsNimrodMeetingTitle")}</color>");
     }
     public static (string, int) AddMeetingDisplay()

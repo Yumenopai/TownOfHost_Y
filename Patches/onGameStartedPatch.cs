@@ -158,7 +158,7 @@ class ChangeRoleSettings
                 var msg = Translator.GetString("Error.InvalidColor");
                 Logger.SendInGame(msg);
                 msg += "\n" + string.Join(",", invalidColor.Select(p => $"{p.name}({p.Data.DefaultOutfit.ColorId})"));
-                Utils.SendMessage(msg, true);
+                Utils.SendMessageAutoSplit(msg, true);
                 Logger.Error(msg, "CoStartGame");
             }
 

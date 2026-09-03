@@ -150,7 +150,7 @@ public sealed class Bakery : RoleBase
         {
             if (PoisonPlayer.IsAlive())
             {
-                SendMessage(GetString("BakeryChangeNow"), true, BakeryTitle);
+                SendMessageAutoSplit(GetString("BakeryChangeNow"), true, BakeryTitle);
             }
             else //配る予定だった人が死んでいたら
             {
@@ -159,7 +159,7 @@ public sealed class Bakery : RoleBase
                 {
                     SendRPC();
                 }
-                SendMessage(GetString("BakeryChangeNONE"), true, BakeryTitle);
+                SendMessageAutoSplit(GetString("BakeryChangeNONE"), true, BakeryTitle);
             }
         }
         else if (Player.Is(CustomRoles.Bakery) && Player.IsAlive())
@@ -220,7 +220,7 @@ public sealed class Bakery : RoleBase
                 panMessage = string.Format(GetString("PanAlive25"), TargetPlayer.GetRealName(Options.GetNameChangeModes() == NameChange.Crew));
             }
 
-            SendMessage(panMessage, true, BakeryTitle);
+            SendMessageAutoSplit(panMessage, true, BakeryTitle);
         }
     }
     public override void AfterMeetingTasks()

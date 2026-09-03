@@ -70,7 +70,7 @@ static class Infomation
             }
             break;
         }
-        SendMessage(sb.ToString(), true, title);
+        SendMessageAutoSplit(sb.ToString(), true, title);
         Logger.Info("リーダー" + Leader + "人生存中。無陣営猫残り" + NoCat + "人", "MidwayResults");
     }
 
@@ -145,7 +145,7 @@ static class Infomation
     // /h nコマンド
     public static void ShowSettingHelp(byte PlayerId)
     {
-        SendMessage(GetString("CCInfoStart") + ":", true, sendTo: PlayerId);
+        SendMessageAutoSplit(GetString("CCInfoStart") + ":", true, sendTo: PlayerId);
 
         var sb = new StringBuilder();
         sb.Append(GetString("CCInfo1LeaderHeader")).Append(GetString("CCInfo1MakeCat")).Append("<color=#000080>");
@@ -179,7 +179,7 @@ static class Infomation
         if (LeaderIgnoreVent.GetBool()) sb.Append(GetString("CCInfo1LeaderCannotVent"));
         else sb.Append(GetString("CCInfo1LeaderCanVent"));
         sb.Append("</color>");
-        SendMessage(sb.ToString(), false, sendTo: PlayerId);
+        SendMessageAutoSplit(sb.ToString(), false, sendTo: PlayerId);
         sb.Clear();
 
         sb.Append(GetString("CCInfo2CatHeader")).Append(GetString("CCInfo2BelongsCamp"));
@@ -206,7 +206,7 @@ static class Infomation
         }
         else sb.Append(GetString("CCInfo2CatTask"));
         sb.Append("</color>");
-        SendMessage(sb.ToString(), false, sendTo: PlayerId);
+        SendMessageAutoSplit(sb.ToString(), false, sendTo: PlayerId);
         sb.Clear();
 
         sb.Append(GetString("CCInfo3DecisionHeader")).Append(GetString("CCInfo3WinMostMember"));
@@ -225,11 +225,11 @@ static class Infomation
         if (M_ColorCatCount.GetBool())
             sb.Append($"\n ▷{M_ColorCatCount.GetName(true)}");
 
-        SendMessage(sb.ToString(), false, sendTo: PlayerId);
+        SendMessageAutoSplit(sb.ToString(), false, sendTo: PlayerId);
         sb.Clear();
 
         sb.Append(GetString("CCInfo4KillCooldown")).Append($"\n<color=#000080>{GetString("KillCooldown")}：{Options.DefaultKillCooldown}s</color>")
             .Append(GetString("CCInfo4Prohibitions"));
-        SendMessage(sb.ToString(),  false, sendTo: PlayerId);
+        SendMessageAutoSplit(sb.ToString(),  false, sendTo: PlayerId);
     }
 }

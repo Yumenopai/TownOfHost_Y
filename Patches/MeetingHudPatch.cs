@@ -230,7 +230,7 @@ public static class MeetingHudPatch
             if (messageList.Count > 0)
             {
                 var message = string.Join("\n", messageList);
-                Utils.SendMessage(message, true);
+                Utils.SendMessageAutoSplit(message, true);
             }
 
             if (MeetingStates.FirstMeeting) TemplateManager.SendTemplate("OnFirstMeeting", noErr: true);
@@ -266,14 +266,14 @@ public static class MeetingHudPatch
                             targetRole = CustomRoles.Crewmate;
                         string RoleInfoTitleString = $"{GetString("RoleInfoTitle")}";
                         string RoleInfoTitle = $"{Utils.ColorString(Utils.GetRoleColor(targetRole), RoleInfoTitleString)}";
-                        Utils.SendMessage(Utils.GetMyRoleInfo(pc),true, RoleInfoTitle, pc.PlayerId);
+                        Utils.SendMessageAutoSplit(Utils.GetMyRoleInfo(pc),true, RoleInfoTitle, pc.PlayerId);
                         Main.ShowRoleInfoAtMeeting.Remove(pc.PlayerId);
                     }
                     ChatUpdatePatch.DoBlockChat = false;
                 }, 3f, "SetName To Chat");
                 if (ReportDeadBodyPatch.SpecialMeeting)
                 {
-                    Utils.SendMessage("強制会議の場合は一部役職名が表示されず名前が赤く見えることがありますが、会議終了後回復します。", true);
+                    Utils.SendMessageAutoSplit("強制会議の場合は一部役職名が表示されず名前が赤く見えることがありますが、会議終了後回復します。", true);
                 }
             }
 
@@ -377,7 +377,7 @@ public static class MeetingHudPatch
                         if (voter == null) continue;
                         __instance.RpcClearVote(voter.PlayerId);
                     }
-                    Utils.SendMessage(string.Format(GetString("Message.Executed"), player.Data.PlayerName), true);
+                    Utils.SendMessageAutoSplit(string.Format(GetString("Message.Executed"), player.Data.PlayerName), true);
                     Logger.Info($"{player.GetNameWithRole()}を処刑しました", "Execution");
                 });
             }

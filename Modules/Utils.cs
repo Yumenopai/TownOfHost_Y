@@ -587,10 +587,10 @@ public static class Utils
     {
         if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
         {
-            SendMessage(GetString("CurrentActiveSettingsHelp") + ":", true, sendTo: PlayerId);
-            SendMessage(GetString("HideAndSeekInfo"), true, sendTo: PlayerId);
-            if (CustomRoles.HASFox.IsEnable()) { SendMessage(GetRoleName(CustomRoles.HASFox) + GetString("HASFoxInfoLong"), true, sendTo: PlayerId); }
-            if (CustomRoles.HASTroll.IsEnable()) { SendMessage(GetRoleName(CustomRoles.HASTroll) + GetString("HASTrollInfoLong"), true, sendTo: PlayerId); }
+            SendMessageAutoSplit(GetString("CurrentActiveSettingsHelp") + ":", true, sendTo: PlayerId);
+            SendMessageAutoSplit(GetString("HideAndSeekInfo"), true, sendTo: PlayerId);
+            if (CustomRoles.HASFox.IsEnable()) { SendMessageAutoSplit(GetRoleName(CustomRoles.HASFox) + GetString("HASFoxInfoLong"), true, sendTo: PlayerId); }
+            if (CustomRoles.HASTroll.IsEnable()) { SendMessageAutoSplit(GetRoleName(CustomRoles.HASTroll) + GetString("HASTrollInfoLong"), true, sendTo: PlayerId); }
         }
         else if (Options.IsCCMode)
         {
@@ -606,14 +606,14 @@ public static class Utils
             //    SendMessage(GetString("ONInfo3"), PlayerId);
             //}
             //else
-            SendMessage(GetString("CurrentActiveSettingsHelp") + ":", true, sendTo: PlayerId);
+            SendMessageAutoSplit(GetString("CurrentActiveSettingsHelp") + ":", true, sendTo: PlayerId);
 
             //if (Options.DisableDevices.GetBool()) { SendMessage(GetString("DisableDevicesInfo"), PlayerId); }
             //if (Options.SyncButtonMode.GetBool()) { SendMessage(GetString("SyncButtonModeInfo"), PlayerId); }
             //if (Options.SabotageTimeControl.GetBool()) { SendMessage(GetString("SabotageTimeControlInfo"), PlayerId); }
-            if (Options.RandomMapsMode.GetBool()) { SendMessage(GetString("RandomMapsModeInfo"), true, sendTo: PlayerId); }
-            if (Options.IsStandardHAS) { SendMessage(GetString("StandardHASInfo"), true, sendTo: PlayerId); }
-            if (Options.EnableGM.GetBool()) { SendMessage(GetRoleName(CustomRoles.GM) + GetString("GMInfoLong"), true, sendTo: PlayerId); }
+            if (Options.RandomMapsMode.GetBool()) { SendMessageAutoSplit(GetString("RandomMapsModeInfo"), true, sendTo: PlayerId); }
+            if (Options.IsStandardHAS) { SendMessageAutoSplit(GetString("StandardHASInfo"), true, sendTo: PlayerId); }
+            if (Options.EnableGM.GetBool()) { SendMessageAutoSplit(GetRoleName(CustomRoles.GM) + GetString("GMInfoLong"), true, sendTo: PlayerId); }
             foreach (var role in CustomRolesHelper.AllStandardRoles)// OneNight追加時にワンナイト役職も含める
             {
                 //if (Options.IsONMode && !role.IsONRole()) continue;
@@ -635,7 +635,7 @@ public static class Utils
                 ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
                 sb.Append("</size></line-height>");
 
-                SendMessage(sb.ToString(), true, sendTo: PlayerId);
+                SendMessageAutoSplit(sb.ToString(), true, sendTo: PlayerId);
             }
             foreach (var role in CustomRolesHelper.AllAddOnRoles.Where(role => role.IsOtherAddOn()))
             {
@@ -651,7 +651,7 @@ public static class Utils
                 ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
                 sb.Append("</size></line-height>");
 
-                SendMessage(sb.ToString(), true, sendTo: PlayerId);
+                SendMessageAutoSplit(sb.ToString(), true, sendTo: PlayerId);
             }
             var addonLongTextBuilder = new StringBuilder();
             bool multipleRole = false;
@@ -667,18 +667,20 @@ public static class Utils
                 multipleRole = true;
             }
             if (addonLongTextBuilder.Length != 0)
-                SendMessage(addonLongTextBuilder.ToString(), true, sendTo: PlayerId);
+                SendMessageAutoSplit(addonLongTextBuilder.ToString(), true, sendTo: PlayerId);
         }
-        if (Options.NoGameEnd.GetBool()) { SendMessage(GetString("NoGameEndInfo"), true, sendTo: PlayerId); }
+        if (Options.NoGameEnd.GetBool()) { SendMessageAutoSplit(GetString("NoGameEndInfo"), true, sendTo: PlayerId); }
     }
     // Now
     public static void ShowActiveSettings(byte PlayerId = byte.MaxValue)
     {
+        string formatTag = $"<size={ActiveSettingsSize}";
+
         var title = $"【{GetString("Settings")}】".Color(Color.yellow);
         var mapId = Main.NormalOptions.MapId;
         if (Options.HideGameSettings.GetBool() && PlayerId != byte.MaxValue)
         {
-            SendMessage(GetString("Message.HideGameSettings"), true, title, PlayerId);
+            SendMessageAutoSplit(GetString("Message.HideGameSettings"), true, title, PlayerId);
             return;
         }
         var sb = new StringBuilder();
@@ -687,13 +689,15 @@ public static class Utils
             sb.Append(GetString("Roles")).Append(':');
             if (CustomRoles.HASFox.IsEnable()) sb.AppendFormat("\n{0}:{1}", GetRoleName(CustomRoles.HASFox), CustomRoles.HASFox.GetCount());
             if (CustomRoles.HASTroll.IsEnable()) sb.AppendFormat("\n{0}:{1}", GetRoleName(CustomRoles.HASTroll), CustomRoles.HASTroll.GetCount());
-            SendMessage(sb.ToString(), true, title, PlayerId);
+            SendMessageAutoSplit(sb.ToString(), true, title, PlayerId);
             sb.Clear().Append(GetString("Settings")).Append(':');
             sb.Append(GetString("HideAndSeek"));
+            SendMessageAutoSplit(PlayerId, sb, title, formatTag);
         }
         else if (Options.IsCCMode)
         {
             CatchCat.Infomation.ShowSetting(sb);
+            SendMessageAutoSplit(PlayerId, sb, title, formatTag);
         }
         else
         {
@@ -715,35 +719,52 @@ public static class Utils
             //else
             {
                 sb.AppendFormat("<size={0}>", ActiveSettingsSize);
-                sb.AppendFormat("<size=65%>【{0}: {1}】\n<line-height=1.5pic>", RoleAssignManager.OptionAssignMode.GetName(true), RoleAssignManager.OptionAssignMode.GetString());
+
+                formatTag = "<size=65%><line-height=1.5pic>";
+                sb.AppendFormat("<size={0}>【{1}: {2}】\n<line-height=1.5pic>", "65%", RoleAssignManager.OptionAssignMode.GetName(true), RoleAssignManager.OptionAssignMode.GetString());
                 if (RoleAssignManager.OptionAssignMode.GetBool())
                 {
                     ShowChildrenSettings(RoleAssignManager.OptionAssignMode, ref sb);
                 }
                 sb.Append("\n</line-height></size>");
-                CheckPageChange(PlayerId, sb, title);
+                SendMessageAutoSplit(PlayerId, sb, title, formatTag);
 
                 foreach (var role in Options.CustomRoleCounts.Keys)
                 {
                     if (!role.IsEnable() || role is CustomRoles.HASFox or CustomRoles.HASTroll
-                        || role.IsCCRole() /*|| role.Key.IsONRole()*/) continue;
+                        || role.IsCCRole() /*|| role.Key.IsONRole()*/)
+                    {
+                        continue;
+                    }
 
+                    formatTag = "<size=85%>";
+                    sb.Append(formatTag);
                     if (role.IsAddOn() || role.IsOtherAddOn())
-                        sb.Append("<size=75%><color=#c71585>○</color>");
-                    else if (role.GetCustomRoleTypes() == CustomRoleTypes.Unit) sb.Append("<color=#7fff00>Ⓤ</color>");
-                    else sb.Append(GetTeamMark(role, 75));
+                    {
+                        sb.Append("<color=#c71585>○</color>");
+                    }
+                    else if (role.GetCustomRoleTypes() == CustomRoleTypes.Unit)
+                    {
+                        sb.Append("<color=#7fff00>Ⓤ</color>");
+                    }
+                    else
+                    {
+                        sb.Append(GetTeamMark(role, 85, false));
+                    }
 
                     sb.Append($"<u><b>{GetRoleName(role)}</b></u>".Color(GetRoleColor(role).ToReadableColor()));
-                    sb.AppendFormat(" ：<size=70%>{0}×</size><size=80%>{1}{2}</size>\n", $"{role.GetChance()}%", role.GetCount(), role.IsPairRole() ? GetString("Pair") : "");
+                    sb.AppendFormat(" ×{1}{2}</size><size=70%>({0})\n", $"{role.GetChance()}%", role.GetCount(), role.IsPairRole() ? GetString("Pair") : "");
 
-                    sb.Append("<size=65%><line-height=1.5pic>");
+                    formatTag = "<size=65%><line-height=1.5pic>";
+                    sb.Append(formatTag);
                     ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
                     sb.Append("</line-height>\n</size>");
 
-                    CheckPageChange(PlayerId, sb, title);
+                    SendMessageAutoSplit(PlayerId, sb, formatTag: formatTag);
                 }
             }
-            sb.Append('\n');
+
+            formatTag = "<size=65%><line-height=1.5pic>";
             foreach (var opt in OptionItem.AllOptions.Where(x => x.GetBool() && x.Parent == null && x.Id >= 100000 && !x.IsHiddenOn(Options.CurrentGameMode)))
             {
                 // 常時表示しないオプション
@@ -757,30 +778,33 @@ public static class Utils
                 if (opt.Name == "MapOption_Fungle" && !Options.IsActiveFungle) continue;
 
                 if (opt.Name is "NameChangeMode" && Options.GetNameChangeModes() != NameChange.None)
-                    sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u> ：<size=68%>{opt.GetString()}</size>\n</size>");
+                {
+                    sb.Append($"<size=72%>◆<u>{opt.GetName(true)}</u> ：{opt.GetString()}\n</size>");
+                }
                 else if (opt.Name is "SyncColorMode" && Options.GetSyncColorMode() != SyncColorMode.None)
-                    sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u> ：<size=68%>{opt.GetString()}</size>\n</size>");
+                {
+                    sb.Append($"<size=72%>◆<u>{opt.GetName(true)}</u> ：{opt.GetString()}\n</size>");
+                }
                 else
-                    sb.Append($"<size=60%>◆<u><size=72%>{opt.GetName(true)}</size></u>\n</size>");
+                {
+                    sb.Append($"<size=72%>◆<u>{opt.GetName(true)}</u>\n</size>");
+                }
 
-                sb.Append("<size=65%><line-height=1.5pic>");
+                sb.Append(formatTag);
                 ShowChildrenSettings(opt, ref sb);
                 sb.Append("</line-height>\n</size>");
-
-                CheckPageChange(PlayerId, sb, title);
             }
+            SendMessageAutoSplit(PlayerId, sb, formatTag: formatTag);
         }
-        SendMessage(sb.ToString(), true, title, PlayerId);
     }
-    private static void CheckPageChange(byte PlayerId, StringBuilder sb, string title = "", string size = ActiveSettingsSize)
+
+    private static void SendMessageAutoSplit(byte PlayerId, StringBuilder sb, string title = "", string formatTag = "")
     {
-        if (sb.Length > 4000)
-        {
-            SendMessage(sb.ToString(), true, title, PlayerId);
-            sb.Clear();
-            sb.AppendFormat("<size={0}>", size);
-        }
+        bool showTitle = title != string.Empty;
+        SendMessageAutoSplit(sb.ToString(), showTitle, title, PlayerId, formatTag);
+        sb.Clear();
     }
+
     public static void CopyCurrentSettings()
     {
         var sb = new StringBuilder();
@@ -820,7 +844,7 @@ public static class Utils
     {
         if (Options.HideGameSettings.GetBool() && PlayerId != byte.MaxValue)
         {
-            SendMessage(GetString("Message.HideGameSettings"), true, sendTo: PlayerId);
+            SendMessageAutoSplit(GetString("Message.HideGameSettings"), true, sendTo: PlayerId);
             return;
         }
         var sb = new StringBuilder();
@@ -878,7 +902,7 @@ public static class Utils
                 sb.AppendFormat(" ：<size=70%>{0}×</size><size=80%>{1}</size>\n", $"{role.GetChance()}%", role.GetCount());
             }
         }
-        SendMessage(sb.ToString(), true, $"【{GetString("Roles")}】".Color(Color.yellow), PlayerId);
+        SendMessageAutoSplit(sb.ToString(), true, $"【{GetString("Roles")}】".Color(Color.yellow), PlayerId);
     }
 
     public static void ShowChildrenSettings(OptionItem option, ref StringBuilder sb, int deep = 0)
@@ -915,14 +939,14 @@ public static class Utils
             message.Append(s);
         }
         message.Append("</line-height>");
-        SendMessage(message.ToString(), true, "【Vanilla Setting】", PlayerId);
+        SendMessageAutoSplit(message.ToString(), true, "【Vanilla Setting】", PlayerId);
     }
 
     public static void ShowLastResult(byte PlayerId = byte.MaxValue)
     {
         if (AmongUsClient.Instance.IsGameStarted)
         {
-            SendMessage(GetString("CantUse.lastresult"), true, sendTo: PlayerId);
+            SendMessageAutoSplit(GetString("CantUse.lastresult"), true, sendTo: PlayerId);
             return;
         }
         var sb = new StringBuilder();
@@ -937,26 +961,27 @@ public static class Utils
         foreach (var id in Main.winnerList)
         {            
             sb.Append('\n').Append("<size=70%>").Append($"★ ".Color(winnerColor)).Append(SummaryTexts(id, true)).Append("</size>");
-            CheckPageChange(PlayerId, sb, size: "70%");
+            SendMessageAutoSplit(PlayerId, sb, formatTag: "<size=70%>");
             cloneRoles.Remove(id);
         }
         foreach (var id in cloneRoles)
         {
             sb.Append('\n').Append("<size=70%>").Append($"　 ").Append(SummaryTexts(id, true)).Append("</size>");
-            CheckPageChange(PlayerId, sb, size: "70%");
+            SendMessageAutoSplit(PlayerId, sb, formatTag: "<size=70%>");
         }
-        SendMessage(sb.ToString(), true, sendTo: PlayerId);
+        SendMessageAutoSplit(sb.ToString(), true, sendTo: PlayerId);
     }
     public static void ShowKillLog(byte PlayerId = byte.MaxValue)
     {
         if (GameStates.IsInGame)
         {
-            SendMessage(GetString("CantUse.killlog"), true, sendTo: PlayerId);
+            SendMessageAutoSplit(GetString("CantUse.killlog"), true, sendTo: PlayerId);
             return;
         }
-        SendMessage(EndGamePatch.KillLog, true, sendTo: PlayerId);
+        SendMessageAutoSplit(EndGamePatch.KillLog, true, sendTo: PlayerId);
     }
-    public static string GetTeamMark(CustomRoles role, int sizePer)
+
+    public static string GetTeamMark(CustomRoles role, int sizePer, bool sizeTag = true)
     {
         string text = "　";
         if (role.IsImpostor()) text = "<color=#ff1919>Ⓘ</color>";
@@ -964,12 +989,12 @@ public static class Utils
         else if (role.IsCrewmate()) text = "<color=#7ee6e6>Ⓒ</color>";
         else if (role.IsNeutral()) text = "<color=#ffa500>Ⓝ</color>";
 
-        return $"<size={sizePer}%>{text}</size>";
+        return sizeTag ? $"<size={sizePer}%>{text}</size>": text;
     }
 
     public static void ShowHelp()
     {
-        SendMessage(
+        SendMessageAutoSplit(
             GetString("CommandList")
             + $"\n/winner - {GetString("Command.winner")}"
             + $"\n/lastresult - {GetString("Command.lastresult")}"
@@ -993,7 +1018,7 @@ public static class Utils
         Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessage");
         Main.MessagesToSend.Add(($"<align={"left"}><size=90%>{text}</size></align>", sendTo, $"<align={"left"}>{title}</align>", false));
     }*/
-    public static void SendMessage(string text, bool showTitle, string title = "", byte sendTo = byte.MaxValue)
+    public static void SendMessageAutoSplit(string text, bool showTitle, string title = "", byte sendTo = byte.MaxValue, string formatTag = "")
     {
         if (!AmongUsClient.Instance.AmHost) return;
 
@@ -1006,11 +1031,11 @@ public static class Utils
         string fullText;
         if (showTitle)
         {
-            fullText = $"{FORMAT_TAG_START}{titleText}\n<size=90%>{text}";
+            fullText = $"{FORMAT_TAG_START}{titleText}\n{text}";
         }
         else
         {
-            fullText = $"{FORMAT_TAG_START}<size=90%>{text}";
+            fullText = $"{FORMAT_TAG_START}{text}";
         }
 
         // 一回の送信で収まる場合はそのまま送信
@@ -1024,6 +1049,8 @@ public static class Utils
         var chunk = new List<string>();
 
         bool showedTitle = false;
+        bool firstSending = true;
+
         for (int i = 0; i < lines.Count; i++)
         {
             chunk.Add(lines[i]);
@@ -1031,11 +1058,14 @@ public static class Utils
             string chunkText;
             if (showTitle && !showedTitle)
             {
-                chunkText = $"{FORMAT_TAG_START}{titleText}\n<size=90%>{string.Join("\n", chunk)}";
+                chunkText = firstSending ?
+                    $"{FORMAT_TAG_START}{titleText}\n{string.Join("\n", chunk)}"
+                    : $"{FORMAT_TAG_START}{titleText}\n{formatTag}{string.Join("\n", chunk)}";
             }
             else
             {
-                chunkText = $"{FORMAT_TAG_START}<size=90%>{string.Join("\n", chunk)}";
+                chunkText = firstSending ? $"{FORMAT_TAG_START}{string.Join("\n", chunk)}"
+                    : $"{FORMAT_TAG_START}{formatTag}{string.Join("\n", chunk)}";
             }
 
             bool willExceed = chunkText.Length > MAX_LENGTH || chunk.Count > MAX_LINES;
@@ -1053,11 +1083,13 @@ public static class Utils
                     var sendRaw = string.Join("\n", chunk.Take(chunk.Count - 1));
                     if (showTitle && !showedTitle)
                     {
-                        sendText = $"{FORMAT_TAG_START}{titleText}\n<size=90%>{sendRaw}";
+                        sendText = firstSending ? $"{FORMAT_TAG_START}{titleText}\n{sendRaw}"
+                            : $"{FORMAT_TAG_START}{titleText}\n{formatTag}{sendRaw}";
                     }
                     else
                     {
-                        sendText = $"{FORMAT_TAG_START}<size=90%>{sendRaw}";
+                        sendText = firstSending ? $"{FORMAT_TAG_START}{sendRaw}"
+                            : $"{FORMAT_TAG_START}{formatTag}{sendRaw}";
                     }
                     var last = chunk.Last();
                     chunk.Clear();
@@ -1066,10 +1098,10 @@ public static class Utils
 
                 if (HasVisibleText(sendText))
                 {
-                    Main.MessagesToSend.Add((sendText, sendTo, "", true));
+                    Main.MessagesToSend.Add((RemoveFirstNewLine(sendText), sendTo, "", true));
                     showedTitle = true;
+                    firstSending = false;
                 }
-                
             }
         }
 
@@ -1080,15 +1112,18 @@ public static class Utils
             var finalRaw = string.Join("\n", chunk);
             if (showTitle && !showedTitle)
             {
-                finalText = $"{FORMAT_TAG_START}{titleText}\n<size=90%>{finalRaw}";
+                finalText = firstSending ? $"{FORMAT_TAG_START}{titleText}\n{finalRaw}"
+                    : $"{FORMAT_TAG_START}{titleText}\n{formatTag}{finalRaw}";
             }
             else
             {
-                finalText = $"{FORMAT_TAG_START}<size=90%>{finalRaw}";
+                finalText = firstSending ? $"{FORMAT_TAG_START}{finalRaw}"
+                    : $"{FORMAT_TAG_START}{formatTag}{finalRaw}";
             }
+
             if (HasVisibleText(finalRaw))
             {
-                Main.MessagesToSend.Add((finalText, sendTo, "", true));
+                Main.MessagesToSend.Add((RemoveFirstNewLine(finalText), sendTo, "", true));
             }
         }
     }
@@ -1099,6 +1134,30 @@ public static class Utils
         string withoutTags = Regex.Replace(text, "<.*?>", "");
         withoutTags = withoutTags.Replace("\r", "").Replace("\n", "").Replace("\t", "");
         return !string.IsNullOrWhiteSpace(withoutTags);
+    }
+
+    private static string RemoveFirstNewLine(string text)
+    {
+        int tagEndIndex = 0;
+
+        while (tagEndIndex < text.Length && text[tagEndIndex] == '<')
+        {
+            int closeIndex = text.IndexOf('>', tagEndIndex);
+
+            if (closeIndex < 0)
+            {
+                break;
+            }
+
+            tagEndIndex = closeIndex + 1;
+        }
+
+        if (tagEndIndex < text.Length && text[tagEndIndex] == '\n')
+        {
+            return text.Remove(tagEndIndex, 1);
+        }
+
+        return text;
     }
 
     public static void ApplySuffix()
@@ -1486,7 +1545,7 @@ public static class Utils
             // 登録
             if (isHost) Main.KillFlashAfterDeadByHost.Value = true;
             Main.KillFlashAfterDead.Add(name);
-            SendMessage(string.Format(GetString("Message.KillFlashAfterDeadOn"), name), true, sendTo: pc.PlayerId);
+            SendMessageAutoSplit(string.Format(GetString("Message.KillFlashAfterDeadOn"), name), true, sendTo: pc.PlayerId);
             Logger.Info($"KillFlashAfterDead ON - {name}", "ChatCommand");
         }
         else
@@ -1494,7 +1553,7 @@ public static class Utils
             // 解除
             if (isHost) Main.KillFlashAfterDeadByHost.Value = false;
             Main.KillFlashAfterDead.Remove(name);
-            SendMessage(string.Format(GetString("Message.KillFlashAfterDeadOff"), name), true, sendTo: pc.PlayerId);
+            SendMessageAutoSplit(string.Format(GetString("Message.KillFlashAfterDeadOff"), name), true, sendTo: pc.PlayerId);
             Logger.Info($"KillFlashAfterDead OFF - {name}", "ChatCommand");
         }
     }

@@ -91,7 +91,7 @@ public abstract class VoteGuesser : RoleBase
                 targetGuess = null;
                 targetForRole = null;
 
-                Utils.SendMessage(GetString("Message.GuesserSelectionCancel"), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionCancel"), true, sendTo: Player.PlayerId);
                 SendMessageGuide();
                 return false;
             }
@@ -104,7 +104,7 @@ public abstract class VoteGuesser : RoleBase
                     selecting = false;
                     targetGuess = null;
                     targetForRole = null;
-                    Utils.SendMessage(GetString("Message.GuesserSelectionSelfSelect"), true, sendTo: Player.PlayerId);
+                    Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionSelfSelect"), true, sendTo: Player.PlayerId);
                     return DoVote();
                 }
                 targetGuess = votedFor;
@@ -119,12 +119,12 @@ public abstract class VoteGuesser : RoleBase
 
             if (targetGuess == null)
             {
-                Utils.SendMessage(GetString("Message.GuesserSelectionTarget"), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionTarget"), true, sendTo: Player.PlayerId);
                 return false;
             }
             if (targetForRole == null)
             {
-                Utils.SendMessage(string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide()), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit(string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide()), true, sendTo: Player.PlayerId);
                 return false;
             }
 
@@ -143,7 +143,7 @@ public abstract class VoteGuesser : RoleBase
                 //ページ切り替え
                 Logger.Info($"NextPage pageNo: {guesserInfo.PageNo}", "Guesser.CheckVoteAsVoter");
                 guesserInfo.NextPage();
-                Utils.SendMessage(string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide()), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit(string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide()), true, sendTo: Player.PlayerId);
                 return false;
             }
 
@@ -154,7 +154,7 @@ public abstract class VoteGuesser : RoleBase
                 targetGuess = null;
                 targetForRole = null;
 
-                Utils.SendMessage(GetString("Message.GuesserSelectionCancel"), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionCancel"), true, sendTo: Player.PlayerId);
                 SendMessageGuide();
                 return false;
             }
@@ -176,7 +176,7 @@ public abstract class VoteGuesser : RoleBase
             selecting = true;
             if (guesserInfo == null) guesserInfo = new();
             else guesserInfo.ResetList();
-            Utils.SendMessage(GetString("Message.GuesserSelectionTarget"), true, sendTo: Player.PlayerId);
+            Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionTarget"), true, sendTo: Player.PlayerId);
 
             return false;
         }
@@ -238,11 +238,11 @@ public abstract class VoteGuesser : RoleBase
     {
         if (NumOfGuess > 0 && (!guessed || MultipleInMeeting))
         {
-            Utils.SendMessage(GetString("Message.SelfVoteForActivate"), true, sendTo: Player.PlayerId);
+            Utils.SendMessageAutoSplit(GetString("Message.SelfVoteForActivate"), true, sendTo: Player.PlayerId);
         }
         else
         {
-            Utils.SendMessage(GetString("Message.SelfVoteUsed"), true, sendTo: Player.PlayerId);
+            Utils.SendMessageAutoSplit(GetString("Message.SelfVoteUsed"), true, sendTo: Player.PlayerId);
         }
     }
     private void SendGuessedMessage(PlayerControl target)
