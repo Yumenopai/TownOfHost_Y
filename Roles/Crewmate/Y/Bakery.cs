@@ -145,12 +145,13 @@ public sealed class Bakery : RoleBase
     {
         var PlayerId = Player.PlayerId;
         var BakeryTitle = $"<color={RoleInfo.RoleColorCode}>{GetString("PanAliveMessageTitle")}</color>";
+        string formatTag = $"<size=70%><line-height=1.6pic>";
 
         if (nBakeries.Contains(this) && Player.IsAlive())
         {
             if (PoisonPlayer.IsAlive())
             {
-                SendMessageAutoSplit(GetString("BakeryChangeNow"), true, BakeryTitle);
+                SendMessageAutoSplit($"{formatTag}{GetString("BakeryChangeNow")}", true, BakeryTitle, formatTag: formatTag);
             }
             else //配る予定だった人が死んでいたら
             {
@@ -159,7 +160,7 @@ public sealed class Bakery : RoleBase
                 {
                     SendRPC();
                 }
-                SendMessageAutoSplit(GetString("BakeryChangeNONE"), true, BakeryTitle);
+                SendMessageAutoSplit($"{formatTag}{GetString("BakeryChangeNONE")}", true, BakeryTitle, formatTag: formatTag);
             }
         }
         else if (Player.Is(CustomRoles.Bakery) && Player.IsAlive())
@@ -220,7 +221,7 @@ public sealed class Bakery : RoleBase
                 panMessage = string.Format(GetString("PanAlive25"), TargetPlayer.GetRealName(Options.GetNameChangeModes() == NameChange.Crew));
             }
 
-            SendMessageAutoSplit(panMessage, true, BakeryTitle);
+            SendMessageAutoSplit($"{formatTag}{panMessage}", true, BakeryTitle, formatTag: formatTag);
         }
     }
     public override void AfterMeetingTasks()

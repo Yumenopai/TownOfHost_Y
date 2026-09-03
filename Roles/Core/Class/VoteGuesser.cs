@@ -82,6 +82,8 @@ public abstract class VoteGuesser : RoleBase
         // Ensure helper object exists when needed
         if (guesserInfo == null) guesserInfo = new();
 
+        string formatTag = $"<size=70%><line-height=1.6pic>";
+
         if (selecting)
         {
             if (votedFor == null)
@@ -91,7 +93,7 @@ public abstract class VoteGuesser : RoleBase
                 targetGuess = null;
                 targetForRole = null;
 
-                Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionCancel"), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit($"{formatTag}{GetString("Message.GuesserSelectionCancel")}", true, "", Player.PlayerId, formatTag);
                 SendMessageGuide();
                 return false;
             }
@@ -104,7 +106,7 @@ public abstract class VoteGuesser : RoleBase
                     selecting = false;
                     targetGuess = null;
                     targetForRole = null;
-                    Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionSelfSelect"), true, sendTo: Player.PlayerId);
+                    Utils.SendMessageAutoSplit($"{formatTag}{GetString("Message.GuesserSelectionSelfSelect")}", true, "", Player.PlayerId, formatTag);
                     return DoVote();
                 }
                 targetGuess = votedFor;
@@ -119,12 +121,12 @@ public abstract class VoteGuesser : RoleBase
 
             if (targetGuess == null)
             {
-                Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionTarget"), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit($"{formatTag}{GetString("Message.GuesserSelectionTarget")}", true, "", Player.PlayerId, formatTag);
                 return false;
             }
             if (targetForRole == null)
             {
-                Utils.SendMessageAutoSplit(string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide()), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit($"{formatTag}{string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide())}", true, "", Player.PlayerId, formatTag);
                 return false;
             }
 
@@ -143,7 +145,7 @@ public abstract class VoteGuesser : RoleBase
                 //ページ切り替え
                 Logger.Info($"NextPage pageNo: {guesserInfo.PageNo}", "Guesser.CheckVoteAsVoter");
                 guesserInfo.NextPage();
-                Utils.SendMessageAutoSplit(string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide()), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit($"{formatTag}{string.Format(GetString("Message.GuesserSelectionRole"), targetGuess.name, guesserInfo.PageNo, guesserInfo.GetRoleGuide())}", true, "", Player.PlayerId, formatTag);
                 return false;
             }
 
@@ -154,7 +156,7 @@ public abstract class VoteGuesser : RoleBase
                 targetGuess = null;
                 targetForRole = null;
 
-                Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionCancel"), true, sendTo: Player.PlayerId);
+                Utils.SendMessageAutoSplit($"{formatTag}{GetString("Message.GuesserSelectionCancel")}", true, "", Player.PlayerId, formatTag);
                 SendMessageGuide();
                 return false;
             }
@@ -176,7 +178,7 @@ public abstract class VoteGuesser : RoleBase
             selecting = true;
             if (guesserInfo == null) guesserInfo = new();
             else guesserInfo.ResetList();
-            Utils.SendMessageAutoSplit(GetString("Message.GuesserSelectionTarget"), true, sendTo: Player.PlayerId);
+            Utils.SendMessageAutoSplit($"{formatTag}{GetString("Message.GuesserSelectionTarget")}", true, "", Player.PlayerId, formatTag);
 
             return false;
         }
@@ -236,13 +238,15 @@ public abstract class VoteGuesser : RoleBase
     }
     private void SendMessageGuide()
     {
+        string formatTag = $"<size=70%><line-height=1.6pic>";
+
         if (NumOfGuess > 0 && (!guessed || MultipleInMeeting))
         {
-            Utils.SendMessageAutoSplit(GetString("Message.SelfVoteForActivate"), true, sendTo: Player.PlayerId);
+            Utils.SendMessageAutoSplit($"{formatTag}{GetString("Message.SelfVoteForActivate")}", true, "", Player.PlayerId, formatTag);
         }
         else
         {
-            Utils.SendMessageAutoSplit(GetString("Message.SelfVoteUsed"), true, sendTo: Player.PlayerId);
+            Utils.SendMessageAutoSplit($"{formatTag}{GetString("Message.SelfVoteUsed")}", true, "", Player.PlayerId, formatTag);
         }
     }
     private void SendGuessedMessage(PlayerControl target)

@@ -1025,12 +1025,14 @@ public static class Utils
     }
     public static void ShowKillLog(byte PlayerId = byte.MaxValue)
     {
+        string formatTag = $"<size=70%><line-height=1.6pic>";
+
         if (GameStates.IsInGame)
         {
-            SendMessageAutoSplit(GetString("CantUse.killlog"), true, sendTo: PlayerId);
+            SendMessageAutoSplit($"{formatTag}{GetString("CantUse.killlog")}", true, "", PlayerId, formatTag);
             return;
         }
-        SendMessageAutoSplit(EndGamePatch.KillLog, true, sendTo: PlayerId);
+        SendMessageAutoSplit($"{formatTag}{EndGamePatch.KillLog}", true, "", PlayerId, formatTag);
     }
 
     public static string GetTeamMark(CustomRoles role, int sizePer, bool sizeTag = true)
