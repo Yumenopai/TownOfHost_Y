@@ -80,6 +80,7 @@ public sealed class BestieWolf : RoleBase, IImpostor
 
     public static PlayerControl EnableKillFlash = null;
     int killCount = 0;
+    bool isChainKilling = false;
 
     static CustomRoles[] BuffAddonRoles = CustomRolesHelper.AllAddOnRoles.Where(role => role.IsBuffAddOn() && role != CustomRoles.Loyalty).ToArray();
     static string[] buffRoleArrays = BuffAddonRoles.Select(role => role.ToString()).ToArray();
@@ -110,6 +111,7 @@ public sealed class BestieWolf : RoleBase, IImpostor
     public override void Add()
     {
         killCount = 0;
+        isChainKilling = false;
     }
 
     public float CalculateKillCooldown() => Main.AliveImpostorCount >= 2 ? KillCooldownSeveral : KillCooldownSingle;
@@ -136,6 +138,7 @@ public sealed class BestieWolf : RoleBase, IImpostor
         else //単独インポスター
         {
             if (!AmongUsClient.Instance.AmHost) return; //爆破処理はホストのみ
+            if (isChainKilling) return; //巻き添えキルから更に巻き添えを起こさない
 
             (float d, PlayerControl pc) nearTarget = (2.3f, null);
             foreach (var fire in Main.AllAlivePlayerControls)
@@ -152,12 +155,20 @@ public sealed class BestieWolf : RoleBase, IImpostor
             if (nearTarget.pc != null)
             {
                 EnableKillFlash = nearTarget.pc;
-                if (CustomRoleManager.OnCheckMurder(
-                        killer, nearTarget.pc,
-                        nearTarget.pc, nearTarget.pc,
-                        true))
+                isChainKilling = true;
+                try
                 {
-                    nearTarget.pc.SetRealKiller(killer);
+                    if (CustomRoleManager.OnCheckMurder(
+                            killer, nearTarget.pc,
+                            nearTarget.pc, nearTarget.pc,
+                            true))
+                    {
+                        nearTarget.pc.SetRealKiller(killer);
+                    }
+                }
+                finally
+                {
+                    isChainKilling = false;
                 }
             }
         }
