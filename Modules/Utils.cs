@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using Il2CppInterop.Runtime.InteropTypes;
+using InnerNet;
 using Microsoft.VisualBasic;
 using TownOfHostY.Modules;
 using TownOfHostY.Roles;
@@ -585,6 +586,8 @@ public static class Utils
     // Help Now
     public static void ShowActiveSettingsHelp(byte PlayerId = byte.MaxValue)
     {
+        string formatTag = "<size=65%><line-height=1.5pic>";
+
         if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
         {
             SendMessageAutoSplit(GetString("CurrentActiveSettingsHelp") + ":", true, sendTo: PlayerId);
@@ -606,14 +609,25 @@ public static class Utils
             //    SendMessage(GetString("ONInfo3"), PlayerId);
             //}
             //else
-            SendMessageAutoSplit(GetString("CurrentActiveSettingsHelp") + ":", true, sendTo: PlayerId);
 
             //if (Options.DisableDevices.GetBool()) { SendMessage(GetString("DisableDevicesInfo"), PlayerId); }
             //if (Options.SyncButtonMode.GetBool()) { SendMessage(GetString("SyncButtonModeInfo"), PlayerId); }
             //if (Options.SabotageTimeControl.GetBool()) { SendMessage(GetString("SabotageTimeControlInfo"), PlayerId); }
-            if (Options.RandomMapsMode.GetBool()) { SendMessageAutoSplit(GetString("RandomMapsModeInfo"), true, sendTo: PlayerId); }
-            if (Options.IsStandardHAS) { SendMessageAutoSplit(GetString("StandardHASInfo"), true, sendTo: PlayerId); }
-            if (Options.EnableGM.GetBool()) { SendMessageAutoSplit(GetRoleName(CustomRoles.GM) + GetString("GMInfoLong"), true, sendTo: PlayerId); }
+
+            formatTag = "<size=70%><line-height=1.6pic>";
+            if (Options.RandomMapsMode.GetBool())
+            {
+                SendMessageAutoSplit($"{formatTag}{GetString("RandomMapsModeInfo")}", false, "", PlayerId, formatTag);
+            }
+            if (Options.IsStandardHAS)
+            {
+                SendMessageAutoSplit($"{formatTag}{GetString("StandardHASInfo")}", false, "", PlayerId, formatTag);
+            }
+            if (Options.EnableGM.GetBool())
+            {
+                SendMessageAutoSplit($"{formatTag}{GetRoleName(CustomRoles.GM)}{GetString("GMInfoLong")}", false, "", PlayerId, formatTag);
+            }
+
             foreach (var role in CustomRolesHelper.AllStandardRoles)// OneNight追加時にワンナイト役職も含める
             {
                 //if (Options.IsONMode && !role.IsONRole()) continue;
@@ -622,54 +636,66 @@ public static class Utils
 
                 string infoLongText = "";
                 if (role.IsNormalVanillaRole())
+                {
                     infoLongText = '\n' + GetString(Enum.GetName(typeof(CustomRoles), role.VanillaRoleConversion()) + "BlurbLong");
+                }
                 else
+                {
                     infoLongText = GetString(Enum.GetName(typeof(CustomRoles), role) + "InfoLong");
+                }
 
                 var sb = new StringBuilder();
-                sb.Append($"<size=95%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
-                    .Append("<size=80%><line-height=1.8pic>").Append(infoLongText).Append("</line-height></size>");
+                formatTag = "<size=70%><line-height=1.6pic>";
+
+                sb.Append($"<size=85%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
+                    .Append(formatTag).Append(infoLongText);
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
 
                 //setting
-                sb.Append("\n<size=65%><line-height=1.5pic>");
+                formatTag = "<size=60%><line-height=1.5pic>";
+                sb.Append(formatTag);
                 ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
-                sb.Append("</size></line-height>");
 
-                SendMessageAutoSplit(sb.ToString(), true, sendTo: PlayerId);
+                SendMessageAutoSplit(sb.ToString(), false, "", PlayerId, formatTag);
             }
+
             foreach (var role in CustomRolesHelper.AllAddOnRoles.Where(role => role.IsOtherAddOn()))
             {
                 if (!role.IsEnable()) continue;
                 var addonName = role.ToString();
                 var sb = new StringBuilder();
+                formatTag = "<size=70%><line-height=1.6pic>";
 
-                sb.Append($"<size=95%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
-                    .Append("<size=80%><line-height=1.8pic>").Append(GetString($"{addonName}InfoLong")).Append("</line-height></size>");
+                sb.Append($"<size=85%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
+                    .Append(formatTag).Append(GetString($"{addonName}InfoLong"));
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
 
                 //setting
-                sb.Append("\n<size=65%><line-height=1.5pic>");
+                formatTag = "<size=60%><line-height=1.5pic>";
+                sb.Append(formatTag);
                 ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
-                sb.Append("</size></line-height>");
 
-                SendMessageAutoSplit(sb.ToString(), true, sendTo: PlayerId);
+                SendMessageAutoSplit(sb.ToString(), false, "", PlayerId, formatTag);
             }
-            var addonLongTextBuilder = new StringBuilder();
-            bool multipleRole = false;
+
             foreach (var role in CustomRolesHelper.AllAddOnRoles.Where(role => role.IsAddOn()))
             {
                 if (!role.IsEnable()) continue;
                 var addonName = role.ToString();
+                var sb = new StringBuilder();
+                formatTag = "<size=70%><line-height=1.6pic>";
 
-                if (multipleRole) addonLongTextBuilder.Append("\n------------------------------------------------------\n");
-                addonLongTextBuilder.Append($"<size=95%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
-                    .Append("<size=80%><line-height=1.8pic>").Append(GetString($"{addonName}InfoLong")).Append("</line-height></size>");
+                sb.Append($"<size=85%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
+                    .Append(formatTag).Append(GetString($"{addonName}InfoLong"));
 
-                multipleRole = true;
+                SendMessageAutoSplit(sb.ToString(), false, "", PlayerId, formatTag);
             }
-            if (addonLongTextBuilder.Length != 0)
-                SendMessageAutoSplit(addonLongTextBuilder.ToString(), true, sendTo: PlayerId);
         }
-        if (Options.NoGameEnd.GetBool()) { SendMessageAutoSplit(GetString("NoGameEndInfo"), true, sendTo: PlayerId); }
+        if (Options.NoGameEnd.GetBool())
+        {
+            formatTag = "<size=70%><line-height=1.6pic>";
+            SendMessageAutoSplit($"{formatTag}{GetString("NoGameEndInfo")}", false, "", PlayerId, formatTag);
+        }
     }
     // Now
     public static void ShowActiveSettings(byte PlayerId = byte.MaxValue)
@@ -940,15 +966,16 @@ public static class Utils
     }
     public static void ShowVanillaSetting(byte PlayerId = byte.MaxValue)
     {
+        string formatTag = $"<size=70%><line-height=1.6pic>";
+
         StringBuilder message = new();
-        message.Append("<line-height=0.94em>");
+        message.Append(formatTag);
         foreach (var s in GameOptionsManager.Instance.CurrentGameOptions.ToHudString(GameData.Instance ? GameData.Instance.PlayerCount : 10))
         {
             if (s == '科') break;
             message.Append(s);
         }
-        message.Append("</line-height>");
-        SendMessageAutoSplit(message.ToString(), true, "【Vanilla Setting】", PlayerId);
+        SendMessageAutoSplit(message.ToString(), true, "【Vanilla Setting】", PlayerId, formatTag);
     }
 
     public static void ShowLastResult(byte PlayerId = byte.MaxValue)
@@ -1003,20 +1030,24 @@ public static class Utils
 
     public static void ShowHelp()
     {
-        SendMessageAutoSplit(
-            GetString("CommandList")
-            + $"\n/winner - {GetString("Command.winner")}"
-            + $"\n/lastresult - {GetString("Command.lastresult")}"
-            + $"\n/rename - {GetString("Command.rename")}"
-            + $"\n/now - {GetString("Command.now")}"
-            + $"\n/h now - {GetString("Command.h_now")}"
-            + $"\n/h roles {GetString("Command.h_roles")}"
-            + $"\n/h addons {GetString("Command.h_addons")}"
-            + $"\n/h modes {GetString("Command.h_modes")}"
-            + $"\n/dump - {GetString("Command.dump")}"
-            + $"\n/brackout - {GetString("Command.killflashall")}"
-            + $"\n\n視界が暗転した参加者が発生した場合は、\nチャットコマンド[/brackout・/bo]か、左Control,K,Lを同時に押下してください、",
-            true);
+        string formatTag = $"<size=70%><line-height=1.6pic>";
+        StringBuilder sb = new();
+
+        sb.Append(formatTag);
+        sb.Append(GetString("CommandList"));
+        sb.Append($"\n/winner - {GetString("Command.winner")}");
+        sb.Append($"\n/lastresult - {GetString("Command.lastresult")}");
+        sb.Append($"\n/rename - {GetString("Command.rename")}");
+        sb.Append($"\n/now - {GetString("Command.now")}");
+        sb.Append($"\n/h now - {GetString("Command.h_now")}");
+        sb.Append($"\n/h roles {GetString("Command.h_roles")}");
+        sb.Append($"\n/h addons {GetString("Command.h_addons")}");
+        sb.Append($"\n/h modes {GetString("Command.h_modes")}");
+        sb.Append($"\n/dump - {GetString("Command.dump")}");
+        sb.Append($"\n/brackout - {GetString("Command.killflashall")}");
+        sb.Append($"\n\n視界が暗転した参加者が発生した場合は、\nチャットコマンド[/brackout・/bo]か、左Control,K,Lを同時に押下してください");
+
+        SendMessageAutoSplit(sb.ToString(), true);
     }
 
     private static void SendMessageAutoSplitAndClearSB(byte PlayerId, StringBuilder sb, string title = "", string formatTag = "")
