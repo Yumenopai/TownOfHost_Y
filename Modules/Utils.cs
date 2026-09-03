@@ -674,7 +674,8 @@ public static class Utils
     // Now
     public static void ShowActiveSettings(byte PlayerId = byte.MaxValue)
     {
-        string formatTag = $"<size={ActiveSettingsSize}";
+        bool roleAssignRandomMode = RoleAssignManager.OptionAssignMode.GetBool();
+        string formatTag = $"<size={ActiveSettingsSize}>";
 
         var title = $"【{GetString("Settings")}】".Color(Color.yellow);
         var mapId = Main.NormalOptions.MapId;
@@ -692,12 +693,12 @@ public static class Utils
             SendMessageAutoSplit(sb.ToString(), true, title, PlayerId);
             sb.Clear().Append(GetString("Settings")).Append(':');
             sb.Append(GetString("HideAndSeek"));
-            SendMessageAutoSplit(PlayerId, sb, title, formatTag);
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, title, formatTag);
         }
         else if (Options.IsCCMode)
         {
             CatchCat.Infomation.ShowSetting(sb);
-            SendMessageAutoSplit(PlayerId, sb, title, formatTag);
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, title, formatTag);
         }
         else
         {
@@ -722,12 +723,12 @@ public static class Utils
 
                 formatTag = "<size=65%><line-height=1.5pic>";
                 sb.AppendFormat("<size={0}>【{1}: {2}】\n<line-height=1.5pic>", "65%", RoleAssignManager.OptionAssignMode.GetName(true), RoleAssignManager.OptionAssignMode.GetString());
-                if (RoleAssignManager.OptionAssignMode.GetBool())
+                if (roleAssignRandomMode)
                 {
                     ShowChildrenSettings(RoleAssignManager.OptionAssignMode, ref sb);
                 }
                 sb.Append("\n</line-height></size>");
-                SendMessageAutoSplit(PlayerId, sb, title, formatTag);
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, title, formatTag);
 
                 foreach (var role in Options.CustomRoleCounts.Keys)
                 {
@@ -753,14 +754,14 @@ public static class Utils
                     }
 
                     sb.Append($"<u><b>{GetRoleName(role)}</b></u>".Color(GetRoleColor(role).ToReadableColor()));
-                    sb.AppendFormat(" ×{1}{2}</size><size=70%>({0})\n", $"{role.GetChance()}%", role.GetCount(), role.IsPairRole() ? GetString("Pair") : "");
+                    sb.AppendFormat(" x{0}{1}{2}\n", role.GetCount(), role.IsPairRole() ? GetString("Pair") : "", roleAssignRandomMode ? $"</size><size=70%> ({role.GetChance()}%)</size>" : "");
 
                     formatTag = "<size=65%><line-height=1.5pic>";
                     sb.Append(formatTag);
                     ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
                     sb.Append("</line-height>\n</size>");
 
-                    SendMessageAutoSplit(PlayerId, sb, formatTag: formatTag);
+                    SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: formatTag);
                 }
             }
 
@@ -794,15 +795,8 @@ public static class Utils
                 ShowChildrenSettings(opt, ref sb);
                 sb.Append("</line-height>\n</size>");
             }
-            SendMessageAutoSplit(PlayerId, sb, formatTag: formatTag);
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: formatTag);
         }
-    }
-
-    private static void SendMessageAutoSplit(byte PlayerId, StringBuilder sb, string title = "", string formatTag = "")
-    {
-        bool showTitle = title != string.Empty;
-        SendMessageAutoSplit(sb.ToString(), showTitle, title, PlayerId, formatTag);
-        sb.Clear();
     }
 
     public static void CopyCurrentSettings()
@@ -847,12 +841,15 @@ public static class Utils
             SendMessageAutoSplit(GetString("Message.HideGameSettings"), true, sendTo: PlayerId);
             return;
         }
-        var sb = new StringBuilder();
-        //if (Options.IsONMode) sb.Append("\n").Append(GetString("ONInfoWarning")).Append("\n");
 
+        bool roleAssignRandomMode = RoleAssignManager.OptionAssignMode.GetBool();
+        string formatTag = $"<size=80%><line-height=1.8pic>";
+        var sb = new StringBuilder();
+
+        //if (Options.IsONMode) sb.Append("\n").Append(GetString("ONInfoWarning")).Append("\n");
         if (Options.EnableGM.GetBool())
         {
-            sb.AppendFormat("<size=80%>{0} ：{1}</size>\n", $"<color={GetRoleColorCode(CustomRoles.GM)}>{GetRoleName(CustomRoles.GM)}</color>", Options.EnableGM.GetString());
+            sb.AppendFormat("{0}{1} ：{2}</size>\n</line-height>", formatTag, $"<color={GetRoleColorCode(CustomRoles.GM)}>{GetRoleName(CustomRoles.GM)}</color>", Options.EnableGM.GetString());
         }
         // TOHY独自のMODゲームモードがあるため各モードに分けてに書き換え
         if (Options.CurrentGameMode != CustomGameMode.Standard)
@@ -862,47 +859,59 @@ public static class Utils
             else if (Options.IsCCMode) targetRoles = CustomRolesHelper.AllCCRoles.Where(role => role.IsCCLeaderRoles()).ToArray();
             //else if (Options.IsONMode) targetRoles = CustomRolesHelper.AllONRoles;
 
+            sb.Append(formatTag);
             foreach (CustomRoles role in targetRoles)
             {
                 if (!role.IsEnable()) continue;
 
                 // 役職名表示
-                sb.Append($" <size=80%>{GetRoleName(role)}".Color(GetRoleColor(role)));
+                sb.Append($" {GetRoleName(role)}".Color(GetRoleColor(role)));
                 // 確率＆人数
-                sb.Append($" ：<size=70%>×</size>{role.GetCount()}</size>\n");
+                sb.Append($" x{role.GetCount()}\n");
             }
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, $"【{GetString("Roles")}】".Color(Color.yellow), formatTag);
         }
         else
         {
+            sb.Append(formatTag);
             foreach (CustomRoles role in CustomRolesHelper.AllStandardRoles)
             {
                 if (!role.IsEnable()) continue;
                 // バニラ役職(元)は反映させないので表示させない
                 if (role.IsVanilla()) continue;
 
-                sb.Append("<size=80%>");
                 // 陣営ごとのマーク
-                if (role.GetCustomRoleTypes() == CustomRoleTypes.Unit) sb.Append("<color=#7fff00>Ⓤ</color>");
-                else sb.Append(GetTeamMark(role, 80));
+                if (role.GetCustomRoleTypes() == CustomRoleTypes.Unit)
+                {
+                    sb.Append("<color=#7fff00>Ⓤ</color>");
+                }
+                else
+                {
+                    sb.Append(GetTeamMark(role, 80, false));
+                }
 
                 // 役職名表示
-                sb.Append($"</size><size=90%> {GetRoleName(role)}</size>".Color(GetRoleColor(role)));
+                sb.Append($" {GetRoleName(role)}".Color(GetRoleColor(role)));
                 // 確率＆人数
-                sb.AppendFormat(" ：<size=70%>{0}×</size><size=80%>{1}{2}</size>\n", $"{role.GetChance()}%", role.GetCount(), role.IsPairRole() ? GetString("Pair") : "");
+                sb.AppendFormat(" x{0}{1}{2}\n", role.GetCount(), role.IsPairRole() ? GetString("Pair") : "", roleAssignRandomMode ? $"<size=70%> ({role.GetChance()}%)</size>" : "");
             }
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, $"【{GetString("Roles")}】".Color(Color.yellow), formatTag);
+
+            formatTag = $"<size=70%><line-height=1.5pic>";
+            sb.Append(formatTag);
             foreach (CustomRoles role in CustomRolesHelper.AllAddOnRoles)
             {
                 if (!role.IsEnable()) continue;
 
                 // 陣営ごとのマーク
-                sb.Append("<size=70%><color=#ee82ee>○</color></size>");
+                sb.Append("<color=#ee82ee>○</color>");
                 // 役職名表示
-                sb.Append($"<size=80%> {GetRoleName(role)}</size>".Color(GetRoleColor(role)));
+                sb.Append($" {GetRoleName(role)}".Color(GetRoleColor(role)));
                 // 確率＆人数
-                sb.AppendFormat(" ：<size=70%>{0}×</size><size=80%>{1}</size>\n", $"{role.GetChance()}%", role.GetCount());
+                sb.AppendFormat(" x{0}{1}\n", role.GetCount(), roleAssignRandomMode ? $"<size=65%> ({role.GetChance()}%)</size>" : "");
             }
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, string.Empty, formatTag);
         }
-        SendMessageAutoSplit(sb.ToString(), true, $"【{GetString("Roles")}】".Color(Color.yellow), PlayerId);
     }
 
     public static void ShowChildrenSettings(OptionItem option, ref StringBuilder sb, int deep = 0)
@@ -961,13 +970,13 @@ public static class Utils
         foreach (var id in Main.winnerList)
         {            
             sb.Append('\n').Append("<size=70%>").Append($"★ ".Color(winnerColor)).Append(SummaryTexts(id, true)).Append("</size>");
-            SendMessageAutoSplit(PlayerId, sb, formatTag: "<size=70%>");
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: "<size=70%>");
             cloneRoles.Remove(id);
         }
         foreach (var id in cloneRoles)
         {
             sb.Append('\n').Append("<size=70%>").Append($"　 ").Append(SummaryTexts(id, true)).Append("</size>");
-            SendMessageAutoSplit(PlayerId, sb, formatTag: "<size=70%>");
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: "<size=70%>");
         }
         SendMessageAutoSplit(sb.ToString(), true, sendTo: PlayerId);
     }
@@ -1009,6 +1018,14 @@ public static class Utils
             + $"\n\n視界が暗転した参加者が発生した場合は、\nチャットコマンド[/brackout・/bo]か、左Control,K,Lを同時に押下してください、",
             true);
     }
+
+    private static void SendMessageAutoSplitAndClearSB(byte PlayerId, StringBuilder sb, string title = "", string formatTag = "")
+    {
+        bool showTitle = title != string.Empty;
+        SendMessageAutoSplit(sb.ToString(), showTitle, title, PlayerId, formatTag);
+        sb.Clear();
+    }
+
     /*public static void SendMessage(string text, byte sendTo = byte.MaxValue, string title = "")
     {
         if (!AmongUsClient.Instance.AmHost) return;
