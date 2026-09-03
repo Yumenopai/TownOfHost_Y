@@ -1,6 +1,7 @@
 using AmongUs.GameOptions;
 using UnityEngine;
 
+using TownOfHostY.Attributes;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
 using System.Linq;
@@ -47,6 +48,12 @@ public sealed class EvilIgnition : RoleBase, IImpostor
 
     static int IgnitionCount;
     static bool OccurredBombed;
+
+    [GameModuleInitializer]
+    public static void Init()
+    {
+        OccurredBombed = false;
+    }
 
     public static void SetupOptionItem()
     {
@@ -132,7 +139,7 @@ public sealed class EvilIgnition : RoleBase, IImpostor
 
     public static (string, int) AddMeetingDisplay()
     {
-        if (!IsCanBombTarget || !OccurredBombed) return ("", 0);
+        if (!CanBombTarget() || !OccurredBombed) return ("", 0);
 
         string text = "●Bombed!!\n".Color(Palette.ImpostorRed);
         return (text, 1);
