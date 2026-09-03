@@ -218,9 +218,7 @@ namespace TownOfHostY
                         canceled = true;
                         if (!AmongUsClient.Instance.IsGameStarted) break;
 
-                        string RoleInfoTitleString = GetString("RoleInfoTitle");
-                        string RoleInfoTitle = Utils.ColorString(Utils.GetRoleColor(PlayerControl.LocalPlayer.GetCustomRole()), RoleInfoTitleString);
-                        Utils.SendMessageAutoSplit(Utils.GetMyRoleInfo(PlayerControl.LocalPlayer), true, RoleInfoTitle, PlayerControl.LocalPlayer.PlayerId);
+                        Utils.ShowMyRoleInfo(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer.PlayerId);
                         break;
 
                     case "/t":
@@ -646,9 +644,7 @@ namespace TownOfHostY
                 case "/myrole":
                     if (!AmongUsClient.Instance.IsGameStarted) break;
 
-                    string RoleInfoTitleString = GetString("RoleInfoTitle");
-                    string RoleInfoTitle = Utils.ColorString(Utils.GetRoleColor(player.GetCustomRole()), RoleInfoTitleString);
-                    Utils.SendMessageAutoSplit(Utils.GetMyRoleInfo(player), true, RoleInfoTitle, player.PlayerId);
+                    Utils.ShowMyRoleInfo(player, player.PlayerId);
                     break;
 
                 case "/t":

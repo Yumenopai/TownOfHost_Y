@@ -261,12 +261,8 @@ public static class MeetingHudPatch
                     foreach (var pc in Main.AllPlayerControls)
                     {
                         if (!Main.ShowRoleInfoAtMeeting.Contains(pc.PlayerId)) continue;
-                        var targetRole = pc.GetCustomRole();
-                        if (targetRole == CustomRoles.Potentialist)
-                            targetRole = CustomRoles.Crewmate;
-                        string RoleInfoTitleString = $"{GetString("RoleInfoTitle")}";
-                        string RoleInfoTitle = $"{Utils.ColorString(Utils.GetRoleColor(targetRole), RoleInfoTitleString)}";
-                        Utils.SendMessageAutoSplit(Utils.GetMyRoleInfo(pc),true, RoleInfoTitle, pc.PlayerId);
+
+                        Utils.ShowMyRoleInfo(pc, pc.PlayerId);
                         Main.ShowRoleInfoAtMeeting.Remove(pc.PlayerId);
                     }
                     ChatUpdatePatch.DoBlockChat = false;

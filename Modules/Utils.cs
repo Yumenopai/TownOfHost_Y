@@ -502,9 +502,10 @@ public static class Utils
         return (completed + vtComp, all + vtTotal);
     }
 
-    public static string GetMyRoleInfo(PlayerControl player)
+    public static void ShowMyRoleInfo(PlayerControl player, byte PlayerId = byte.MaxValue)
     {
-        if (!GameStates.IsInGame) return null;
+        if (!GameStates.IsInGame) return;
+        string formatTag = "<size=70%><line-height=1.6pic>";
 
         var sb = new StringBuilder();
         var myRole = player.GetCustomRole();
@@ -514,21 +515,33 @@ public static class Utils
             myRole = CustomRoles.Crewmate;
             roleInfoLong = GetString("PotentialistInfo");
         }
+
         var roleName = myRole.ToString();
         if (myRole == CustomRoles.Bakery && Bakery.IsNeutral(player))
+        {
             roleName = "NBakery";
-        var roleString = GetString(roleName);
-        roleString = $"<size=95%>{roleString}</size>".Color(GetRoleColor(myRole).ToReadableColor());
-        var roleInfoWithWhiteColor = $"<size=80%><line-height=1.8pic>{roleInfoLong}</line-height></size>".Color(Color.white);
+        }
 
-        sb.Append(roleString).Append(roleInfoWithWhiteColor);
+        string RoleInfoTitleString = $"{GetString("RoleInfoTitle")}";
+        string RoleInfoTitle = $"{ColorString(GetRoleColor(myRole), RoleInfoTitleString)}";
+
+        var roleString = $"<size=85%>{GetString(roleName)}</size>".Color(GetRoleColor(myRole).ToReadableColor());
+        var roleInfoString = $"{roleInfoLong}</line-height></size>";
+        sb.Append(roleString).Append(formatTag).Append(roleInfoString);
+
+        SendMessageAutoSplitAndClearSB(PlayerId, sb, RoleInfoTitle, formatTag);
 
         if (!myRole.IsDontShowOptionRole() && myRole != CustomRoles.GM)
         {
-            sb.Append("\n<size=65%><line-height=1.5pic>");
+            formatTag = "<size=65%><line-height=1.5pic>";
+
+            sb.Append(formatTag);
             ShowChildrenSettings(Options.CustomRoleSpawnChances[myRole], ref sb);
-            sb.Append("</size></line-height>");
+
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
         }
+
+        formatTag = "<size=70%><line-height=1.6pic>";
         foreach (var subRole in player.GetCustomSubRoles())
         {
             if (subRole != CustomRoles.NotAssigned)
@@ -537,17 +550,20 @@ public static class Utils
 
                 var subroleName = subRole.ToString();
                 if (subRole == CustomRoles.ChainShifterAddon)
+                {
                     subroleName = CustomRoles.ChainShifter.ToString();
-                var subroleString = GetString(subroleName);
-                subroleString = $"<size=95%>{subroleString}</size>".Color(GetRoleColor(subRole).ToReadableColor());
-                var subroleInfoWithWhiteColor = $"<size=80%><line-height=1.8pic>{GetString($"{subroleName}InfoLong")}</line-height></size>".Color(Color.white);
+                }
 
-                sb.Append("\n------------------------------------------------------\n")
-                    .Append(subroleString).Append(subroleInfoWithWhiteColor);
+                var subroleString = $"<size=85%>{GetString(subroleName)}</size>".Color(GetRoleColor(subRole).ToReadableColor());
+                var subroleInfoString = $"{GetString($"{subroleName}InfoLong")}</line-height></size>";
+
+                sb.Append(subroleString).Append(formatTag).Append(subroleInfoString);
+
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
             }
         }
-        return sb.ToString();
     }
+
     public static string GetRoleInfoLong(CustomRoles role, bool showCurrentSetting = false)
     {
         var sb = new StringBuilder();
