@@ -534,11 +534,12 @@ public static class Utils
         if (!myRole.IsDontShowOptionRole() && myRole != CustomRoles.GM)
         {
             formatTag = "<size=65%><line-height=1.5pic>";
-
-            sb.Append(formatTag);
             ShowChildrenSettings(Options.CustomRoleSpawnChances[myRole], ref sb);
-
-            SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
+            if (sb.Length > 0)
+            {
+                sb.Insert(0, formatTag);
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
+            }
         }
 
         formatTag = "<size=70%><line-height=1.6pic>";
@@ -616,11 +617,12 @@ public static class Utils
         if (!role.IsDontShowOptionRole() && role != CustomRoles.GM)
         {
             formatTag = "<size=65%><line-height=1.5pic>";
-
-            sb.Append(formatTag);
             ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
-
-            SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
+            if (sb.Length > 0)
+            {
+                sb.Insert(0, formatTag);
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
+            }
         }
     }
 
@@ -704,10 +706,12 @@ public static class Utils
 
                 //setting
                 formatTag = "<size=60%><line-height=1.5pic>";
-                sb.Append(formatTag);
                 ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
-
-                SendMessageAutoSplit(sb.ToString(), false, "", PlayerId, formatTag);
+                if (sb.Length > 0)
+                {
+                    sb.Insert(0, formatTag);
+                    SendMessageAutoSplit(sb.ToString(), false, "", PlayerId, formatTag);
+                }
             }
 
             foreach (var role in CustomRolesHelper.AllAddOnRoles.Where(role => role.IsOtherAddOn()))
@@ -723,10 +727,12 @@ public static class Utils
 
                 //setting
                 formatTag = "<size=60%><line-height=1.5pic>";
-                sb.Append(formatTag);
                 ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
-
-                SendMessageAutoSplit(sb.ToString(), false, "", PlayerId, formatTag);
+                if (sb.Length > 0)
+                {
+                    sb.Insert(0, formatTag);
+                    SendMessageAutoSplit(sb.ToString(), false, "", PlayerId, formatTag);
+                }
             }
 
             foreach (var role in CustomRolesHelper.AllAddOnRoles.Where(role => role.IsAddOn()))
