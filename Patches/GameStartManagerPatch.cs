@@ -25,21 +25,6 @@ namespace TownOfHostY
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public class GameStartManagerStartPatch
         {
-            private static void ResetDesyncedNames()
-            {
-                if (Main.LastNotifyNames == null || Main.AllPlayerNames == null) return;
-                if (!AmongUsClient.Instance.AmHost) return;
-                int resetCount = 0;
-                foreach (var pair in Main.LastNotifyNames.Keys.ToList())
-                {
-                    var target = Utils.GetPlayerById(pair.Item1);
-                    var seer = Utils.GetPlayerById(pair.Item2);
-                    if (target == null || seer == null) continue;
-                    if (!Main.AllPlayerNames.TryGetValue(pair.Item1, out var realName) || realName == null) continue;
-                    target.RpcSetNamePrivate(realName, seer: seer, force: true);
-                    resetCount++;
-                }               
-            }
             public static void Postfix(GameStartManager __instance)
             {
                 try
@@ -80,12 +65,6 @@ namespace TownOfHostY
                     cancelButton.gameObject.SetActive(false);
 
                     if (!AmongUsClient.Instance.AmHost) return;
-
-                    if (Main.LastNotifyNames != null && Main.AllPlayerNames != null)
-                    {
-                        ResetDesyncedNames();
-                        _ = new LateTask(ResetDesyncedNames, 2f, "LobbyNameResetRetry");
-                    }
 
                     // Make Public Button
                     if (!Main.AllowPublicRoom || ModUpdater.hasUpdate || !VersionChecker.IsSupported || !Main.IsPublicAvailableOnThisVersion)
@@ -277,7 +256,7 @@ namespace TownOfHostY
                     if (Main.NormalOptions != null)
                     {
                         Options.DefaultKillCooldown = Main.NormalOptions.KillCooldown;
-                        Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;
+                        Main.LastKillCooldown.Value = Main.NormalOptions.KillCooldown;                        
                         var opt = Main.NormalOptions.Cast<IGameOptions>();
                         AURoleOptions.SetOpt(opt);
                         Main.LastShapeshifterCooldown.Value = AURoleOptions.ShapeshifterCooldown;

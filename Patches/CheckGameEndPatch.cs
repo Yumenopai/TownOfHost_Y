@@ -101,7 +101,7 @@ namespace TownOfHostY
                         if (pc.Is(CustomRoles.DarkHide) && !pc.Data.IsDead
                             && ((originalWinnerTeam == CustomWinner.Impostor && !reason.Equals(GameOverReason.ImpostorsBySabotage)) || originalWinnerTeam == CustomWinner.DarkHide
                             || (originalWinnerTeam == CustomWinner.Crewmate && !reason.Equals(GameOverReason.CrewmatesByTask) && ((DarkHide)pc.GetRoleClass()).IsWinKill == true)))
-                        {
+                        {                          
                             if (!darkHideOrNBakeryTriggered)
                             {
                                 CustomWinnerHolder.ResetAndSetWinner(CustomWinner.DarkHide);
@@ -201,7 +201,7 @@ namespace TownOfHostY
                     }
                 }
                 ShipStatus.Instance.enabled = false;
-
+                
                 if (CustomWinnerHolder.WinnerTeam != CustomWinner.Crewmate
                     && (reason.Equals(GameOverReason.CrewmatesByTask) || reason.Equals(GameOverReason.CrewmatesByVote)))
                     reason = GameOverReason.ImpostorsByVote;
@@ -234,7 +234,7 @@ namespace TownOfHostY
                 bool canWin = CustomWinnerHolder.WinnerIds.Contains(pc.PlayerId) ||
                     CustomWinnerHolder.WinnerRoles.Contains(pc.GetCustomRole());
                 canWin &= !CustomWinnerHolder.CantWinPlayerIds.Contains(pc.PlayerId);
-                bool isCrewmateWin = winner == CustomWinner.Crewmate;
+                bool isCrewmateWin = reason.Equals(GameOverReason.CrewmatesByVote) || reason.Equals(GameOverReason.CrewmatesByTask);
                 SetGhostRole(ToGhostImpostor: canWin ^ isCrewmateWin);
 
                 void SetGhostRole(bool ToGhostImpostor)
@@ -293,18 +293,11 @@ namespace TownOfHostY
 
             // ゲーム終了
             GameManager.Instance.RpcEndGame(reason, false);
-
+          
             float delay = EndGameDelay;
             for (int i = 0; i < PostEndGameResendCount; i++)
             {
                 yield return new WaitForSeconds(delay);
-
-                // 再送の合計時間は最大7秒超に及ぶため、その間にホスト/クライアントが
-                // ロビーへ戻っているとGameStartManagerPatch側の名前リセットより後に
-                // このRPCが届いてしまい、勝利演出用の名前がロビーに残る原因になる。
-                // ロビーに戻っていたら以降の再送は行わない。
-                if (GameStates.IsLobby) break;
-
                 try
                 {
                     SetRoleSummaryText();
@@ -313,7 +306,7 @@ namespace TownOfHostY
                 {
                     Logger.Exception(ex, $"SetRoleSummaryText(post RpcEndGame #{i + 1})");
                 }
-                delay += EndGameDelay;
+                delay += EndGameDelay; 
             }
         }
         private static void SetRoleSummaryText(CustomRpcSender sender = null)
