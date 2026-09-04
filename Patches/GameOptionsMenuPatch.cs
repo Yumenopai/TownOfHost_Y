@@ -459,7 +459,7 @@ public class LabelHoverBehaviour : UnityEngine.MonoBehaviour
 
                 if (Enum.TryParse(typeof(CustomRoles), optionRef.Name, true, out var role))
                 {
-                    infoText = Utils.GetRoleInfoLong((CustomRoles)role);
+                    infoText = Utils.GetRoleInfoLongWithColor((CustomRoles)role);
                 }
                 else
                 {

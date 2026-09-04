@@ -564,9 +564,8 @@ public static class Utils
         }
     }
 
-    public static string GetRoleInfoLong(CustomRoles role, bool showCurrentSetting = false)
+    private static string GetRoleInfoLongText(CustomRoles role)
     {
-        var sb = new StringBuilder();
         var r = role.VanillaRoleConversion();
         string roleInfoLong = "";
         if (Translator.HasString($"{role}InfoLong"))
@@ -591,22 +590,40 @@ public static class Utils
             roleInfoLong = GetString($"{role.ToString()}InfoLong");
         }
 
-        if (!showCurrentSetting)
-        {
-            return $"{GetString(role.ToString()).Color(GetRoleColor(role).ToReadableColor())}\n{roleInfoLong}";
-        }
+        return roleInfoLong;
+    }
 
-        var roleString = $"<size=95%>{GetString(role.ToString())}</size>".Color(GetRoleColor(role).ToReadableColor());
-        sb.Append(roleString).Append("<size=80%><line-height=1.8pic>").Append(roleInfoLong).Append("</line-height></size>");
+    public static string GetRoleInfoLongWithColor(CustomRoles role)
+    {
+        string roleInfoLong = GetRoleInfoLongText(role);
+
+        return $"{GetString(role.ToString()).Color(GetRoleColor(role).ToReadableColor())}\n{roleInfoLong}";
+    }
+
+    public static void ShowRoleInfoLong(CustomRoles role, byte PlayerId = byte.MaxValue)
+    {
+        var sb = new StringBuilder();
+        var r = role.VanillaRoleConversion();
+        string roleInfoLong = GetRoleInfoLongText(r);
+
+        string formatTag = "<size=70%><line-height=1.6pic>";
+
+        var roleString = $"<size=85%>{GetString(role.ToString())}</size>".Color(GetRoleColor(role).ToReadableColor());
+        sb.Append(roleString).Append(formatTag).Append(roleInfoLong).Append("</line-height></size>");
+
+        SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
 
         if (!role.IsDontShowOptionRole() && role != CustomRoles.GM)
         {
-            sb.Append("\n<size=65%><line-height=1.5pic>");
+            formatTag = "<size=65%><line-height=1.5pic>";
+
+            sb.Append(formatTag);
             ShowChildrenSettings(Options.CustomRoleSpawnChances[role], ref sb);
-            sb.Append("</size></line-height>");
+
+            SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
         }
-        return sb.ToString();
     }
+
     // Help Now
     public static void ShowActiveSettingsHelp(byte PlayerId = byte.MaxValue)
     {
@@ -1102,7 +1119,7 @@ public static class Utils
         Logger.Info($"[MessagesToSend.Add] sendTo: {sendTo}", "SendMessage");
         Main.MessagesToSend.Add(($"<align={"left"}><size=90%>{text}</size></align>", sendTo, $"<align={"left"}>{title}</align>", false));
     }*/
-    public static void SendMessageAutoSplit(string text, bool showTitle, string title = "", byte sendTo = byte.MaxValue, string formatTag = "")
+    public static void SendMessageAutoSplit(string text, bool showTitle, string title = "", byte sendTo = byte.MaxValue, string formatTag = "<size=70%><line-height=1.6pic>")
     {
         if (!AmongUsClient.Instance.AmHost) return;
 

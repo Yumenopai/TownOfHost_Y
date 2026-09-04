@@ -565,7 +565,7 @@ namespace TownOfHostY
 
                 if (String.Compare(role, roleName, true) == 0 || String.Compare(role, roleShort, true) == 0)
                 {
-                    Utils.SendMessageAutoSplit(Utils.GetRoleInfoLong(r.Key, true), true, sendTo: PlayerId);
+                    Utils.ShowRoleInfoLong(r.Key, PlayerId);
                     return;
                 }
             }
