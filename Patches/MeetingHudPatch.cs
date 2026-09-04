@@ -204,10 +204,15 @@ public static class MeetingHudPatch
             if (Options.ShowReportReason.GetBool())
             {
                 if (ReportDeadBodyPatch.ReportTarget == null)
+                {
                     messageList.Add(GetString("Message.isButton"));
+                }
                 else if (!ReportDeadBodyPatch.SpecialMeeting)
+                {
+                    var playerName = Utils.GetPlayerById(ReportDeadBodyPatch.ReportTarget.PlayerId).GetRealName(true);
                     messageList.Add(string.Format(GetString("Message.isReport"),
-                        $"{ReportDeadBodyPatch.ReportTarget.PlayerName}{ReportDeadBodyPatch.ReportTarget.ColorName.Color(ReportDeadBodyPatch.ReportTarget.Color)}"));
+                        $"{playerName}{ReportDeadBodyPatch.ReportTarget.ColorName.Color(ReportDeadBodyPatch.ReportTarget.Color)}"));
+                }
             }
             if (Options.ShowRevengeTarget.GetBool())
             {
