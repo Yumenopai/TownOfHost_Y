@@ -128,13 +128,13 @@ public class Main : BasePlugin
     public static bool isFirstTurn = false;
     public static bool IsSetRoleFinished = false;//廃村条件用
 
-    // 期間限定
-    public static bool IsValentine = DateTime.Now.Month == 2 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
-    public static bool IsWhiteDay = DateTime.Now.Month == 3 && (DateTime.Now.Day >= 13 && DateTime.Now.Day <= 16);
-    public static bool IsAprilFool = DateTime.Now.Month == 4 && DateTime.Now.Day == 1;
-    public static bool IsHalloween = (DateTime.Now.Month == 10 && DateTime.Now.Day >= 26) || (DateTime.Now.Month == 11 && DateTime.Now.Day <= 4);
-    public static bool IsInitialRelease = DateTime.Now.Month == 11 && DateTime.Now.Day >= 1 && DateTime.Now.Day <= 10;
-    public static bool IsChristmas = DateTime.Now.Month == 12 && DateTime.Now.Day <= 25;
+    // 期間限定 月13は無効
+    public static bool IsValentine = DateTime.Now.Month == 13 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
+    public static bool IsWhiteDay = DateTime.Now.Month == 13 && (DateTime.Now.Day >= 13 && DateTime.Now.Day <= 16);
+    public static bool IsAprilFool = DateTime.Now.Month == 13 && DateTime.Now.Day == 1;
+    public static bool IsHalloween = (DateTime.Now.Month == 13 && DateTime.Now.Day >= 26) || (DateTime.Now.Month == 11 && DateTime.Now.Day <= 4);
+    public static bool IsInitialRelease = DateTime.Now.Month == 13 && DateTime.Now.Day >= 1 && DateTime.Now.Day <= 10;
+    public static bool IsChristmas = DateTime.Now.Month == 13 && DateTime.Now.Day <= 25;
 
     public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
     public static IEnumerable<PlayerControl> AllAlivePlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null && p.IsAlive());
