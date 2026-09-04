@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -488,7 +488,7 @@ namespace TownOfHostY
         {
             if (!DebugModeManager.IsDebugMode)
             {
-                Utils.SendMessageAutoSplit(GetString("Message.SelectRolesDebugOnly"), true);
+                // Debugモードでない時はコマンドを無視する
                 return;
             }
             if (!GameStates.IsLobby)
