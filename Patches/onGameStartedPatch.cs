@@ -260,6 +260,7 @@ class SelectRolesPatch
         RoleAssignManager.SelectAssignRoles();
 
         var assignRoleList = RoleAssignManager.GetAssignRoleList();
+        SelectRoles.AddToAssignRoleList(assignRoleList);
         List<PlayerControl> UnassignedPlayers = new(Main.AllPlayerControls);
         var rand = IRandom.Instance;
 
@@ -273,7 +274,8 @@ class SelectRolesPatch
             var roleInfo = CustomRoleManager.GetRoleInfo(customRole);
             if (roleInfo != null && roleInfo.IsDesyncImpostor) continue;
 
-            var selectedPlayer = UnassignedPlayers[rand.Next(UnassignedPlayers.Count)];
+            var selectedPlayer = SelectRoles.TakePlayer(customRole, UnassignedPlayers)
+                ?? UnassignedPlayers[rand.Next(UnassignedPlayers.Count)];
             UnassignedPlayers.Remove(selectedPlayer);
 
             PlayerState.GetByPlayerId(selectedPlayer.PlayerId).SetMainRole(customRole, true);
@@ -308,7 +310,8 @@ class SelectRolesPatch
             if (roleInfo == null || !roleInfo.IsDesyncImpostor) continue;
             if (AllPlayers.Count == 0) break;
 
-            var player = AllPlayers[rand.Next(AllPlayers.Count)];
+            var player = SelectRoles.TakePlayer(customRole, AllPlayers)
+                ?? AllPlayers[rand.Next(AllPlayers.Count)];
             AllPlayers.Remove(player);
             PlayerState.GetByPlayerId(player.PlayerId).SetMainRole(customRole);
             Logger.Info($"役職設定(desync): {player?.Data?.PlayerName} = {customRole}", "AssignRoles");
@@ -374,6 +377,7 @@ class SelectRolesPatch
             }
         }
 
+        SelectRoles.Clear();
         AssignCustomRolesPostProcess(senders);
 
         return false;

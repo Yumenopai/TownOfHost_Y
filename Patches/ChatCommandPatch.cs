@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,6 +73,13 @@ namespace TownOfHostY
                 Main.isChatCommand = true;
                 switch (args[0]?.ToLower())
                 {
+#if DEBUG
+                    case "/sr":
+                    case "/selectroles":
+                        canceled = true;
+                        SelectRolesCommand(args);
+                        break;
+#endif
                     case "/win":
                     case "/winner":
                         canceled = true;
@@ -476,7 +483,95 @@ namespace TownOfHostY
             sender.SetName(name);
         }
 
+#if DEBUG
+        private static void SelectRolesCommand(string[] args)
+        {
+            if (!DebugModeManager.IsDebugMode)
+            {
+                Utils.SendMessageAutoSplit(GetString("Message.SelectRolesDebugOnly"), true);
+                return;
+            }
+            if (!GameStates.IsLobby)
+            {
+                Utils.SendMessageAutoSplit(GetString("Message.SelectRolesLobbyOnly"), true);
+                return;
+            }
+
+            if (args.Length >= 2 && String.Compare(args[1], "clear", true) == 0)
+            {
+                Modules.SelectRoles.Clear();
+                Utils.SendMessageAutoSplit(GetString("Message.SelectRolesCleared"), true);
+                return;
+            }
+            if (args.Length < 3)
+            {
+                Utils.SendMessageAutoSplit(GetString("Message.SelectRolesUsage"), true);
+                return;
+            }
+
+            var roleArg = args[^1];
+            var nameArg = string.Join(" ", args[1..^1]);
+
+            var target = Main.AllPlayerControls.FirstOrDefault(pc =>
+                String.Compare(pc?.Data?.PlayerName, nameArg, true) == 0);
+            target ??= Main.AllPlayerControls.FirstOrDefault(pc =>
+                pc?.Data?.PlayerName?.Contains(nameArg, StringComparison.OrdinalIgnoreCase) == true);
+            if (target == null)
+            {
+                Utils.SendMessageAutoSplit(string.Format(GetString("Message.SelectRolesNoPlayer"), nameArg), true);
+                return;
+            }
+
+            if (!TryGetRoleByName(roleArg, out var role))
+            {
+                Utils.SendMessageAutoSplit(string.Format(GetString("Message.SelectRolesNoRole"), roleArg), true);
+                return;
+            }
+            if (role.IsAddOn() || role is CustomRoles.GM)
+            {
+                Utils.SendMessageAutoSplit(string.Format(GetString("Message.SelectRolesNotMainRole"), Utils.GetRoleName(role)), true);
+                return;
+            }
+
+            Modules.SelectRoles.Set(target.PlayerId, role);
+            Utils.SendMessageAutoSplit(string.Format(GetString("Message.SelectRolesSet"),
+                target.Data.PlayerName, Utils.ColorString(Utils.GetRoleColor(role), Utils.GetRoleName(role))), true);
+        }
+#endif
+        public static bool TryGetRoleByName(string input, out CustomRoles role)
+        {
+            InitRoleCommands();
+            foreach (var r in roleCommands)
+            {
+                if ((int)r.Key < 0) continue;
+
+                if (String.Compare(input, r.Key.ToString(), true) == 0 || String.Compare(input, r.Value, true) == 0)
+                {
+                    role = r.Key;
+                    return true;
+                }
+            }
+            role = CustomRoles.NotAssigned;
+            return false;
+        }
         public static void GetRolesInfo(string role, byte PlayerId = byte.MaxValue)
+        {
+            InitRoleCommands();
+
+            foreach (var r in roleCommands)
+            {
+                var roleName = r.Key.ToString();
+                var roleShort = r.Value;
+
+                if (String.Compare(role, roleName, true) == 0 || String.Compare(role, roleShort, true) == 0)
+                {
+                    Utils.SendMessageAutoSplit(Utils.GetRoleInfoLong(r.Key, true), true, sendTo: PlayerId);
+                    return;
+                }
+            }
+            Utils.SendMessageAutoSplit(GetString("Message.HelpRoleNone"), true, sendTo: PlayerId);
+        }
+        private static void InitRoleCommands()
         {
             // 初回のみ処理
             if (roleCommands == null)
@@ -536,19 +631,6 @@ namespace TownOfHostY
                 roleCommands.Add(CustomRoles.HASTroll, "htr");
 #pragma warning restore IDE0028
             }
-
-            foreach (var r in roleCommands)
-            {
-                var roleName = r.Key.ToString();
-                var roleShort = r.Value;
-
-                if (String.Compare(role, roleName, true) == 0 || String.Compare(role, roleShort, true) == 0)
-                {
-                    Utils.SendMessageAutoSplit(Utils.GetRoleInfoLong(r.Key, true), true, sendTo: PlayerId);
-                    return;
-                }
-            }
-            Utils.SendMessageAutoSplit(GetString("Message.HelpRoleNone"), true, sendTo: PlayerId);
         }
         private static void ConcatCommands(CustomRoleTypes roleType)
         {

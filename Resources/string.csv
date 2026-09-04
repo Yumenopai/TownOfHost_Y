@@ -1301,6 +1301,14 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "Message.isButton","The meeting was started by an emergency button.","緊急ボタンにより会議が開かれました。","会议以使用紧急按钮开始."
 "Message.RevengeText","{0} is exiled, and another is died by revenge. \nmurdered：{1}","{0}が追放され、道連れが発生しました。\n{1}が死亡しています。","{0} 被投出，另一人因复仇而死. \n凶杀：{1}"
 "Message.HelpRoleNone","/help roles (/h r) command is only available in Japanese.","/help roles [役職名] (/h r [役職名])\nを入力することでその役職の説明が表示されます。",
+"Message.SelectRolesUsage","Usage: /selectroles <player name> <role>","使い方: /selectroles プレイヤー名 役職",
+"Message.SelectRolesDebugOnly","This command is only available in debug mode.","このコマンドはデバッグモードでのみ使用できます。",
+"Message.SelectRolesLobbyOnly","This command is only available in the lobby.","このコマンドはロビーでのみ使用できます。",
+"Message.SelectRolesNoPlayer","Player not found: {0}","プレイヤーが見つかりません: {0}",
+"Message.SelectRolesNoRole","Role not found: {0}","役職が見つかりません: {0}",
+"Message.SelectRolesNotMainRole","{0} is not a main role.","{0} は役職ではありません。",
+"Message.SelectRolesSet","Next game: {0} will be {1}","次の試合で {0} を {1} にします",
+"Message.SelectRolesCleared","Cleared all reserved roles.","予約した役職をすべて解除しました。",
 "Message.VoiceChangeHost","Changed the reading of the host to {0}.","ホスト の読上げを {0} に変更しました",,,,
 "Message.VoiceNotAvailable","Read chat not available.","現在読上げは停止しています",,,,
 "Message.VoiceNow","Changed the reading of the {0} to {1}.","{0} の現在の読上げは {1} です",,,,
