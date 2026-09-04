@@ -569,7 +569,15 @@ public static class Utils
         var sb = new StringBuilder();
         var r = role.VanillaRoleConversion();
         string roleInfoLong = "";
-        if (r.IsVanilla())
+        if (Translator.HasString($"{role}InfoLong"))
+        {
+            roleInfoLong = GetString($"{role}InfoLong");
+        }
+        else if (Translator.HasString($"{r}InfoLong"))
+        {
+            roleInfoLong = GetString($"{r}InfoLong");
+        }
+        else if (r.IsVanilla())
         {
             var tag = "BlurbLong";
             if (r is CustomRoles.Impostor or CustomRoles.Crewmate or CustomRoles.Viper)
@@ -651,13 +659,23 @@ public static class Utils
                 if (role is CustomRoles.NormalImpostor) continue;
 
                 string infoLongText = "";
-                if (role.IsNormalVanillaRole())
+                var roleName = Enum.GetName(typeof(CustomRoles), role);
+                var vanillaName = Enum.GetName(typeof(CustomRoles), role.VanillaRoleConversion());
+                if (Translator.HasString(roleName + "InfoLong"))
                 {
-                    infoLongText = '\n' + GetString(Enum.GetName(typeof(CustomRoles), role.VanillaRoleConversion()) + "BlurbLong");
+                    infoLongText = GetString(roleName + "InfoLong");
+                }
+                else if (Translator.HasString(vanillaName + "InfoLong"))
+                {
+                    infoLongText = GetString(vanillaName + "InfoLong");
+                }
+                else if (role.IsNormalVanillaRole())
+                {
+                    infoLongText = '\n' + GetString(vanillaName + "BlurbLong");
                 }
                 else
                 {
-                    infoLongText = GetString(Enum.GetName(typeof(CustomRoles), role) + "InfoLong");
+                    infoLongText = GetString(roleName + "InfoLong");
                 }
 
                 var sb = new StringBuilder();

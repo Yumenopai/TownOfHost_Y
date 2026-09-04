@@ -25,8 +25,12 @@
 "NormalTracker","Tracker","トラッカー","","",""
 "NormalNoisemaker","Noisemaker","ノイズメーカー","","",""
 "NormalViper","Viper","バイパー","","",""
+"NormalViperInfo","Killed corpses dissolve and leave no trace.","キルした死体は溶けて残らない",
 "NormalDetective","Detective","探偵","侦探","偵探","Детектив","Detetive"
 "NormalJudge","Judge","ジャッジ","","",""
+"JudgeInfoLong","(Crewmates):\nOnce you finish the required proportion of tasks, you can pass judgment during a meeting.\nIf the target can be judged they are ejected, otherwise you misfire and are ejected instead.\nJudgment takes priority over the voting result.","(クルー陣営):\n設定した割合のタスクを終えると、会議中に裁決が使えるようになる。\n裁決した相手が裁ける対象なら相手が追放され、そうでない場合は誤爆となり自分が追放される。\n裁決は投票結果よりも優先される。",
+"DetectiveInfoLong","(Crewmates):\nWhen you find a body you can open your notes and record clues about the killer.\nYou can narrow down suspects up to the configured limit for each case.","(クルー陣営):\n死体を発見すると手帳を開き、犯人の手がかりを記録できる。\n事件ごとに設定した人数まで容疑者を絞り込むことができる。",
+"ViperInfoLong","(Impostors):\nBodies you kill dissolve over time and eventually disappear.\nOnce a body has fully dissolved it can no longer be reported.","(インポスター陣営):\n自分がキルした死体は時間経過で溶けていき、やがて消滅する。\n完全に溶けた死体は通報できなくなる。",
 
 
 "# 特殊インポスター役職"
@@ -118,7 +122,6 @@
 "EvilHackerInfo","Hack Systmes and kill the crewmate","アドミンを駆使しクルーをキルせよ",
 "TelekineticInfo","Kill them with TK","念力で殺せ",
 "AdministerInfo","Get everybody in position","最終位置を監視し優位に付け",
-"NormalViperInfo","Killed corpses dissolve and leave no trace.","キルした死体は溶けて残らない",
 
 
 "CustomImpostorInfoLong","(Impostors):\nImpostor with the ability to Add-On to attributes set by the host.","[インポスター陣営]\nホストによって設定された属性の能力をもつインポスター。",
