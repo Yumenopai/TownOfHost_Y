@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using AmongUs.Data.Player;
 using Assets.InnerNet;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
@@ -52,7 +53,7 @@ public class ModNews
         };
     }
 
-   
+
     public const string ModNewsURL =
         "https://raw.githubusercontent.com/Yumenopai/TownOfHost_Y/main/modNews.json";
 
@@ -80,12 +81,30 @@ public class ModNews
             var json = JObject.Parse(request.downloadHandler.text);
             for (var news = json["News"].First; news != null; news = news.Next)
             {
+                StringBuilder text = new();
+
+                if (news["Body"] is JArray bodyArray)
+                {
+                    for (int i = 0; i < bodyArray.Count; i++)
+                    {
+                        if (i > 0)
+                        {
+                            text.Append('\n');
+                        }
+                        text.Append(bodyArray[i]?.ToString()?? "");
+                    }
+                }
+                else
+                {
+                    text.Append(news["Body"]?.ToString());
+                }
+
                 var n = new ModNews(
                     int.Parse(news["Number"].ToString()),
                     news["Title"]?.ToString(),
                     news["Subtitle"]?.ToString(),
                     news["Short"]?.ToString(),
-                    news["Body"]?.ToString(),
+                    text.ToString(),
                     news["Date"]?.ToString()
                 );
                 JsonAndAllModNews.Add(n);
@@ -101,7 +120,7 @@ public class ModNews
     {
         if (AllModNews.Count < 1)
         {
-            
+
             AllModNews.Do(n => JsonAndAllModNews.Add(n));
             JsonAndAllModNews.Sort((a1, a2) =>
                 DateTime.Compare(DateTime.Parse(a2.Date), DateTime.Parse(a1.Date)));
