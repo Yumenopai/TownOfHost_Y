@@ -281,33 +281,33 @@ namespace TownOfHostY
                 yield return new WaitForSeconds(EndGameDelay);
             }
 
-            try
-            {
-                SetRoleSummaryText();
-            }
-            catch (System.Exception ex)
-            {
-                Logger.Exception(ex, "SetRoleSummaryText");
-            }
-            yield return new WaitForSeconds(EndGameDelay);
+            //try
+            //{
+            //    SetRoleSummaryText();
+            //}
+            //catch (System.Exception ex)
+            //{
+            //    Logger.Exception(ex, "SetRoleSummaryText");
+            //}
+            //yield return new WaitForSeconds(EndGameDelay);
 
             // ゲーム終了
             GameManager.Instance.RpcEndGame(reason, false);
           
-            float delay = EndGameDelay;
-            for (int i = 0; i < PostEndGameResendCount; i++)
-            {
-                yield return new WaitForSeconds(delay);
-                try
-                {
-                    SetRoleSummaryText();
-                }
-                catch (System.Exception ex)
-                {
-                    Logger.Exception(ex, $"SetRoleSummaryText(post RpcEndGame #{i + 1})");
-                }
-                delay += EndGameDelay; 
-            }
+            //float delay = EndGameDelay;
+            //for (int i = 0; i < PostEndGameResendCount; i++)
+            //{
+            //    yield return new WaitForSeconds(delay);
+            //    try
+            //    {
+            //        SetRoleSummaryText();
+            //    }
+            //    catch (System.Exception ex)
+            //    {
+            //        Logger.Exception(ex, $"SetRoleSummaryText(post RpcEndGame #{i + 1})");
+            //    }
+            //    delay += EndGameDelay; 
+            //}
         }
         private static void SetRoleSummaryText(CustomRpcSender sender = null)
         {
