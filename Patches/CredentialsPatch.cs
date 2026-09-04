@@ -39,7 +39,7 @@ namespace TownOfHostY
                 if (DebugModeManager.IsDebugMode) sb.Append("\r\n").Append(Utils.ColorString(Color.green, "デバッグモード"));
 
                 // 位置調整
-                __instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(2.6f, 6.0f, 0f);
+                __instance.GetComponent<AspectPosition>().DistanceFromEdge = new Vector3(1.8f, 6.0f, 0f);
 
                 if (GameStates.IsLobby)
                 {
