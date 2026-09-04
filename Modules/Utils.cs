@@ -1040,23 +1040,27 @@ public static class Utils
         var winnerColor = ((CustomRoles)CustomWinnerHolder.WinnerTeam).GetRoleInfo()?.RoleColor ?? Palette.DisabledGrey;
 
         sb.Append("""<align="center">""");
-        sb.Append("<size=120%>").Append(GetString("LastResult")).Append("</size>");
-        sb.Append('\n').Append(SetEverythingUpPatch.LastWinsText.Mark(winnerColor, false));
+        sb.Append("<size=120%>").Append(GetString("LastResult")).Append("</size>").Append('\n');
+        sb.Append(SetEverythingUpPatch.LastWinsText.Mark(winnerColor, false)).Append('\n');
         sb.Append("</align>");
 
+        string formatTag = $"<size=70%><line-height=1.6pic>";
+
+        sb.Append(formatTag);
         List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
         foreach (var id in Main.winnerList)
         {            
-            sb.Append('\n').Append("<size=70%>").Append($"★ ".Color(winnerColor)).Append(SummaryTexts(id, true)).Append("</size>");
-            SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: "<size=70%>");
+            sb.Append($"★ ".Color(winnerColor)).Append(SummaryTexts(id, true)).Append('\n');
             cloneRoles.Remove(id);
         }
+        SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: formatTag);
+
+        sb.Append(formatTag);
         foreach (var id in cloneRoles)
         {
-            sb.Append('\n').Append("<size=70%>").Append($"　 ").Append(SummaryTexts(id, true)).Append("</size>");
-            SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: "<size=70%>");
+            sb.Append($"　 ").Append(SummaryTexts(id, true)).Append('\n');
         }
-        SendMessageAutoSplit(sb.ToString(), true, sendTo: PlayerId);
+        SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: formatTag);
     }
     public static void ShowKillLog(byte PlayerId = byte.MaxValue)
     {
