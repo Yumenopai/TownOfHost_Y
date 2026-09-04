@@ -78,6 +78,8 @@ namespace TownOfHostY
             return str;
         }
 
+        public static bool HasString(string str) => translateMaps != null && translateMaps.ContainsKey(str);
+
         public static string GetString(string str, SupportedLangs langId)
         {
             var res = $"<INVALID:{str}>";
