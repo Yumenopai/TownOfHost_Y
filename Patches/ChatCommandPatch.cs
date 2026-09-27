@@ -868,6 +868,9 @@ namespace TownOfHostY
                 ? Main.AllPlayerControls.Where(pc => pc.PlayerId != host.PlayerId)
                 : new[] { Utils.GetPlayerById(sendTo) };
 
+            GameDataSerializePatch.SerializeMessageCount++;
+            try
+            {
             foreach (var target in targets)
             {
                 if (target == null) continue;
@@ -910,6 +913,11 @@ namespace TownOfHostY
                 writer.EndMessage();
                 writer.SendMessage();
             }
+        }
+            finally
+            {
+                GameDataSerializePatch.SerializeMessageCount--;
+    }
         }
     }
 
