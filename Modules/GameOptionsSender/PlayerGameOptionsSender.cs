@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using AmongUs.GameOptions;
 using Hazel;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -27,7 +27,7 @@ namespace TownOfHostY.Modules
         private IGameOptions cachedGameOptions = null;
         public override IGameOptions BasedGameOptions =>
             Main.RealOptionsData.Restore(
-                cachedGameOptions ??= new NormalGameOptionsV11(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>()
+                cachedGameOptions ??= new NormalGameOptionsV12(new UnityLogger().Cast<ILogger>()).Cast<IGameOptions>()
             );
         public override bool IsDirty { get; protected set; }
 
