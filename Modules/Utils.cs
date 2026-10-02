@@ -1135,6 +1135,8 @@ public static class Utils
 
         const int MAX_LENGTH = 320;
         const int MAX_LINES = 13;
+        // 1行が長すぎると下の分割では切れず、1パケットの上限(1200バイト)を超えちゃうようなので
+        const int MAX_LINE_BYTES = 900;
         const string FORMAT_TAG_START = "<align=left><color=#ffffff>";
 
         string titleText = (title == "") ? $"<color=#aaaaff>{GetString("DefaultSystemMessageTitle")}</color>" : title;
@@ -1150,13 +1152,18 @@ public static class Utils
         }
 
         // 一回の送信で収まる場合はそのまま送信
-        if (fullText.Length <= MAX_LENGTH && (fullText.Split("\n")?.Length ?? 0) <= MAX_LINES)
+        if (fullText.Length <= MAX_LENGTH && (fullText.Split("\n")?.Length ?? 0) <= MAX_LINES
+            && Encoding.UTF8.GetByteCount(fullText) <= MAX_LINE_BYTES)
         {
             Main.MessagesToSend.Add((fullText, sendTo, "", true));
             return;
         }
 
-        var lines = text.Split("\n").ToList();
+        var lines = new List<string>();
+        foreach (var line in text.Split("\n"))
+        {
+            lines.AddRange(SplitLineByBytes(line, MAX_LINE_BYTES));
+        }
         var chunk = new List<string>();
 
         bool showedTitle = false;
@@ -1179,7 +1186,8 @@ public static class Utils
                     : $"{FORMAT_TAG_START}{formatTag}{string.Join("\n", chunk)}";
             }
 
-            bool willExceed = chunkText.Length > MAX_LENGTH || chunk.Count > MAX_LINES;
+            bool willExceed = chunkText.Length > MAX_LENGTH || chunk.Count > MAX_LINES
+                || Encoding.UTF8.GetByteCount(chunkText) > MAX_LINE_BYTES;
             if (willExceed)
             {
                 string sendText = string.Empty;
@@ -1237,6 +1245,40 @@ public static class Utils
                 Main.MessagesToSend.Add((RemoveFirstNewLine(finalText), sendTo, "", true));
             }
         }
+    }
+    private static List<string> SplitLineByBytes(string line, int maxBytes)
+    {
+        var result = new List<string>();
+        if (string.IsNullOrEmpty(line) || Encoding.UTF8.GetByteCount(line) <= maxBytes)
+        {
+            result.Add(line);
+            return result;
+        }
+
+        var sb = new StringBuilder();
+        var bytes = 0;
+        var inTag = false;
+        for (int i = 0; i < line.Length; i++)
+        {
+            var charLength = char.IsHighSurrogate(line[i]) && i + 1 < line.Length ? 2 : 1;
+            var piece = line.Substring(i, charLength);
+            var pieceBytes = Encoding.UTF8.GetByteCount(piece);
+
+            if (line[i] == '<') inTag = true;
+            if (!inTag && sb.Length > 0 && bytes + pieceBytes > maxBytes)
+            {
+                result.Add(sb.ToString());
+                sb.Clear();
+                bytes = 0;
+            }
+            sb.Append(piece);
+            bytes += pieceBytes;
+            if (line[i] == '>') inTag = false;
+
+            i += charLength - 1;
+        }
+        if (sb.Length > 0) result.Add(sb.ToString());
+        return result;
     }
 
     private static bool HasVisibleText(string text)

@@ -93,19 +93,46 @@ public static class AntiBlackout
         recognizeType = remaining;
 
         Logger.Info($"SetDummyImpostor type: {recognizeType}, count:{list.Count}", "AntiBlackout");
+        var deadPlayers = Main.AllDeadPlayerControls.Where(x => !x.Data.Disconnected).ToList();
+
         foreach (var pc in Main.AllPlayerControls.Where(x => !x.Data.Disconnected))
         {
             if (pc.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
             if (pc.IsAlive() && pc.GetCustomRole().GetRoleInfo()?.IsDesyncImpostor == true) continue;
+
+            var clientId = pc.GetClientId();
+            if (clientId == -1) continue;
+            var sender = CustomRpcSender.Create("AntiBlackout.SetRoleChange", Hazel.SendOption.Reliable);
+            sender.StartMessage(clientId);
+            var count = 0;
+
             foreach (var dummy in list)
             {
-                dummy.RpcSetRoleDesync(dummy.GetCustomRole().GetRoleTypes(), pc.GetClientId());
+                sender.StartRpc(dummy.NetId, RpcCalls.SetRole)
+                    .Write((ushort)dummy.GetCustomRole().GetRoleTypes())
+                    .Write(true)
+                    .EndRpc();
+                count++;
             }
-            foreach (var dead in Main.AllDeadPlayerControls.Where(x => !x.Data.Disconnected))
+            foreach (var dead in deadPlayers)
             {
-                dead.RpcSetRoleDesync(RoleTypes.CrewmateGhost, pc.GetClientId());
+                sender.StartRpc(dead.NetId, RpcCalls.SetRole)
+                    .Write((ushort)RoleTypes.CrewmateGhost)
+                    .Write(true)
+                    .EndRpc();
+                count++;
             }
-            Logger.Info($"SetDummyImpostor player: {pc?.name}", "AntiBlackout");
+
+            if (count > 0)
+            {
+                sender.EndMessage();
+                sender.SendMessage();
+            }
+            else
+            {
+                sender.stream.Recycle();
+            }
+            Logger.Info($"SetDummyImpostor player: {pc?.name} ({count} rpc)", "AntiBlackout");
         }
         ExiledPlayerId = -1;
     }

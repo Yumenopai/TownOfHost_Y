@@ -34,7 +34,8 @@ namespace TownOfHostY
             Main.isChatCommand = true;
             Logger.Info(text, "SendChat");
 
-            if (args[0] == "/cmd" && args.Length >= 2)
+            var hasCmdPrefix = args[0] == "/cmd" && args.Length >= 2;
+            if (hasCmdPrefix)
             {
                 string cmdArg = args[1].StartsWith("/") ? args[1] : "/" + args[1];
                 string[] newArgs = new string[args.Length - 1];
@@ -47,6 +48,20 @@ namespace TownOfHostY
             var tag = !PlayerControl.LocalPlayer.Data.IsDead ? "SendChatHost" : "SendChatDeadHost";
             if (text.StartsWith("試合結果:") || text.StartsWith("キル履歴:")) tag = "SendSystemChat";
             VoiceReader.ReadHost(text, tag);
+
+            // ホストは /cmd なしでもコマンドを使えるように、それ以外は /cmd 必須
+            if (!hasCmdPrefix && !AmongUsClient.Instance.AmHost)
+            {
+                Main.isChatCommand = false;
+                // 送信せず/cmdつきに自動で書き換えて送る
+                if (args[0].StartsWith("/") && args[0] != "/cmd")
+                {
+                    __instance.freeChatField.textArea.SetText($"/cmd {text.TrimStart('/')}");
+                    SendCommandFailedMessage(PlayerControl.LocalPlayer);
+                    return false;
+                }
+                return true;
+            }
 
             switch (args[0])
             {
@@ -599,6 +614,10 @@ namespace TownOfHostY
                 roleCommands.Add((CustomRoles)(-4), $"== {GetString("Neutral")} ==");  // 区切り用
                 ConcatCommands(CustomRoleTypes.Neutral);
 
+                // ユニット役職
+                roleCommands.Add((CustomRoles)(-7), $"== {GetString("UnitRoles")} ==");  // 区切り用
+                ConcatCommands(CustomRoleTypes.Unit);
+
                 // 属性
                 roleCommands.Add((CustomRoles)(-5), $"== {GetString("Addons")} ==");  // 区切り用
                 roleCommands.Add(CustomRoles.LastImpostor, "ラストインポスター");
@@ -642,6 +661,21 @@ namespace TownOfHostY
                 roleCommands[role.RoleName] = role.ChatCommand;
             }
         }
+        /// <summary>コマンドに /cmd が付いていないとき、送った本人にだけ使い方を教える</summary>
+        private static void SendCommandFailedMessage(PlayerControl player)
+        {
+            if (player == null) return;
+            var message = GetString("Error.CommandFailed");
+
+
+            if (player.AmOwner)
+            {
+                HudManager.Instance?.Chat?.AddChat(player, message);
+                return;
+            }
+            if (!AmongUsClient.Instance.AmHost) return;
+            Utils.SendMessageAutoSplit(message, true, sendTo: player.PlayerId);
+        }
         public static void OnReceiveChat(PlayerControl player, string text)
         {
             if (player != null)
@@ -665,13 +699,13 @@ namespace TownOfHostY
             string[] args = text.Split(' ');
             string subArgs = "";
 
-            if (args[0] == "/cmd" && args.Length > 1)
+            if (args[0] != "/cmd" || args.Length <= 1)
             {
-                args = args.Skip(1).ToArray();
-                if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
+                if (args[0].StartsWith("/") && args[0] != "/cmd") SendCommandFailedMessage(player);
+                return;
             }
-
-            if (args[0].StartsWith("/") is false) return;
+            args = args.Skip(1).ToArray();
+            if (args[0].StartsWith("/") is false) args[0] = $"/{args[0]}";
 
             switch (args[0]?.ToLower())
             {
@@ -868,47 +902,55 @@ namespace TownOfHostY
                 ? Main.AllPlayerControls.Where(pc => pc.PlayerId != host.PlayerId)
                 : new[] { Utils.GetPlayerById(sendTo) };
 
-            foreach (var target in targets)
+            GameDataSerializePatch.SerializeMessageCount++;
+            try
             {
-                if (target == null) continue;
-                int targetClientId = target.GetClientId();
-                if (targetClientId == -1) continue;
-
-                var writer = CustomRpcSender.Create("DeadHostChat", SendOption.None);
-                writer.StartMessage(targetClientId);
-
-                if (target.IsAlive())
+                foreach (var target in targets)
                 {
-                    host.Data.IsDead = false;
-                    writer.stream.StartMessage(1);
-                    writer.stream.WritePacked(host.Data.NetId);
-                    host.Data.Serialize(writer.stream, false);
-                    writer.stream.EndMessage();
+                    if (target == null) continue;
+                    int targetClientId = target.GetClientId();
+                    if (targetClientId == -1) continue;
+
+                    var writer = CustomRpcSender.Create("DeadHostChat", SendOption.None);
+                    writer.StartMessage(targetClientId);
+
+                    if (target.IsAlive())
+                    {
+                        host.Data.IsDead = false;
+                        writer.stream.StartMessage(1);
+                        writer.stream.WritePacked(host.Data.NetId);
+                        host.Data.Serialize(writer.stream, false);
+                        writer.stream.EndMessage();
+                    }
+
+                    writer.StartRpc(host.NetId, (byte)RpcCalls.SetName)
+                        .Write(host.Data.NetId)
+                        .Write(title)
+                        .EndRpc();
+                    writer.StartRpc(host.NetId, (byte)RpcCalls.SendChat)
+                        .Write(msg)
+                        .EndRpc();
+                    writer.StartRpc(host.NetId, (byte)RpcCalls.SetName)
+                        .Write(host.Data.NetId)
+                        .Write(host.Data.PlayerName)
+                        .EndRpc();
+
+                    if (target.IsAlive())
+                    {
+                        host.Data.IsDead = true;
+                        writer.stream.StartMessage(1);
+                        writer.stream.WritePacked(host.Data.NetId);
+                        host.Data.Serialize(writer.stream, false);
+                        writer.stream.EndMessage();
+                    }
+
+                    writer.EndMessage();
+                    writer.SendMessage();
                 }
-
-                writer.StartRpc(host.NetId, (byte)RpcCalls.SetName)
-                    .Write(host.Data.NetId)
-                    .Write(title)
-                    .EndRpc();
-                writer.StartRpc(host.NetId, (byte)RpcCalls.SendChat)
-                    .Write(msg)
-                    .EndRpc();
-                writer.StartRpc(host.NetId, (byte)RpcCalls.SetName)
-                    .Write(host.Data.NetId)
-                    .Write(host.Data.PlayerName)
-                    .EndRpc();
-
-                if (target.IsAlive())
-                {
-                    host.Data.IsDead = true;
-                    writer.stream.StartMessage(1);
-                    writer.stream.WritePacked(host.Data.NetId);
-                    host.Data.Serialize(writer.stream, false);
-                    writer.stream.EndMessage();
-                }
-
-                writer.EndMessage();
-                writer.SendMessage();
+            }
+            finally
+            {
+                GameDataSerializePatch.SerializeMessageCount--;
             }
         }
     }
@@ -916,6 +958,11 @@ namespace TownOfHostY
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.AddChat))]
     class AddChatPatch
     {
+        public static bool Prefix(string chatText)
+        {
+            if (chatText != null && chatText.TrimStart('\n', '\r', ' ').StartsWith("/cmd")) return false;
+            return true;
+        }
         public static void Postfix(string chatText)
         {
             switch (chatText)
@@ -945,7 +992,10 @@ namespace TownOfHostY
             {
                 return_count = localName.Count(x => x == '\n');
             }
-            chatText = new StringBuilder(chatText).Insert(0, "\n", return_count).ToString();
+            if (!chatText.StartsWith("/cmd"))
+            {
+                chatText = new StringBuilder(chatText).Insert(0, "\n", return_count).ToString();
+            }
 
             // Local echo (safe guards)
             if (AmongUsClient.Instance != null && AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance)

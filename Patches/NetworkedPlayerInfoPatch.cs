@@ -31,7 +31,17 @@ class GameDataSerializePatch
             __result = true;
             return true;
         }
-        return true;
+
+        if (Options.CurrentGameMode != CustomGameMode.Standard
+            || !GameStates.IsMeeting
+            || ExileController.Instance != null
+            || AntiBlackout.IsCached)
+        {
+            return true;
+        }
+        __instance.ClearDirtyBits();
+        __result = false;
+        return false;
     }
 }
 

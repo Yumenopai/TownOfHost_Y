@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using AmongUs.GameOptions;
 using Hazel;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -42,15 +42,15 @@ using InnerNet;
                     writer.Write(opt.Version);
                     writer.StartMessage(0);
                     writer.Write((byte)currentGameMode);
-                    NormalGameOptionsV11 normalOpt = null;
-                    HideNSeekGameOptionsV11 hnsOpt = null;
-                    if (opt.TryCast<NormalGameOptionsV11>(out normalOpt) && normalOpt != null)
+                    NormalGameOptionsV12 normalOpt = null;
+                    HideNSeekGameOptionsV12 hnsOpt = null;
+                    if (opt.TryCast<NormalGameOptionsV12>(out normalOpt) && normalOpt != null)
                     {
-                        NormalGameOptionsV11.Serialize(writer, normalOpt);
+                        NormalGameOptionsV12.Serialize(writer, normalOpt);
                     }
-                    else if (opt.TryCast<HideNSeekGameOptionsV11>(out hnsOpt) && hnsOpt != null)
+                    else if (opt.TryCast<HideNSeekGameOptionsV12>(out hnsOpt) && hnsOpt != null)
                     {
-                        HideNSeekGameOptionsV11.Serialize(writer, hnsOpt);
+                        HideNSeekGameOptionsV12.Serialize(writer, hnsOpt);
                     }
                     else
                     {
