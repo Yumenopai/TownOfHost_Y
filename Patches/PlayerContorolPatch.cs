@@ -238,7 +238,7 @@ class MurderPlayerPatch
         CustomRoleManager.OnMurderPlayer(__instance, target);
         _ = new LateTask(() =>
         {
-            AntiBlackout.SetRoleChange();
+            AntiBlackout.SetRoleChange(__instance);
         }, 0.5f, "PostMurderSetRoleChange");
         var killer = __instance;
         bool killerIsViper = killer.Is(CustomRoles.Viper) || killer.Is(CustomRoles.NormalViper);

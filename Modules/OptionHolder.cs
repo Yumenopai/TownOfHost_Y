@@ -26,21 +26,21 @@ public enum CustomGameMode
     HideMenu,
     All = int.MaxValue
 }
-
 [HarmonyPatch]
 public static class Options
 {
-    static Task taskOptionsLoad;
+    //static Task taskOptionsLoad;
     [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.Initialize)), HarmonyPostfix]
     public static void OptionsLoadStart()
     {
         Logger.Info("Options.Load Start", "Options");
-        taskOptionsLoad = Task.Run(Load);
+        //taskOptionsLoad = Task.Run(Load);
+        Load();
     }
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start)), HarmonyPostfix]
     public static void WaitOptionsLoad()
     {
-        taskOptionsLoad.Wait();
+        //taskOptionsLoad.Wait();
         Logger.Info("Options.Load End", "Options");
     }
 
