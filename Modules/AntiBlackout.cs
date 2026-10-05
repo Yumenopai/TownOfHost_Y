@@ -76,7 +76,7 @@ public static class AntiBlackout
         };
     }
 
-    public static void SetRoleChange()
+    public static void SetRoleChange(PlayerControl restoreKillCooldownTarget = null)
     {
         if (CustomWinnerHolder.WinnerTeam != CustomWinner.Default) return;
 
@@ -94,6 +94,7 @@ public static class AntiBlackout
 
         Logger.Info($"SetDummyImpostor type: {recognizeType}, count:{list.Count}", "AntiBlackout");
         var deadPlayers = Main.AllDeadPlayerControls.Where(x => !x.Data.Disconnected).ToList();
+        var restoreKillCooldown = false;
 
         foreach (var pc in Main.AllPlayerControls.Where(x => !x.Data.Disconnected))
         {
@@ -102,6 +103,7 @@ public static class AntiBlackout
 
             var clientId = pc.GetClientId();
             if (clientId == -1) continue;
+            if (restoreKillCooldownTarget != null && pc.PlayerId == restoreKillCooldownTarget.PlayerId && list.Contains(pc)) restoreKillCooldown = true;
             var sender = CustomRpcSender.Create("AntiBlackout.SetRoleChange", Hazel.SendOption.Reliable);
             sender.StartMessage(clientId);
             var count = 0;
@@ -133,6 +135,11 @@ public static class AntiBlackout
                 sender.stream.Recycle();
             }
             Logger.Info($"SetDummyImpostor player: {pc?.name} ({count} rpc)", "AntiBlackout");
+        }
+        if (restoreKillCooldown)
+        {
+            var cooldown = Main.AllPlayerKillCooldown.TryGetValue(restoreKillCooldownTarget.PlayerId, out var value) ? value : -1f;
+            restoreKillCooldownTarget.SetKillCooldown(cooldown);
         }
         ExiledPlayerId = -1;
     }
