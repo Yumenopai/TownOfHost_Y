@@ -240,7 +240,6 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             case TeamType.Jackal: roleText = "(Jack)" + roleText; break;
             case TeamType.Egoist: roleText = "(Ego)" + roleText; break;
             case TeamType.DarkHide: roleText = "(Dark)" + roleText; break;
-            case TeamType.Opportunist: roleText = "(Oppo)" + roleText; break;
             case TeamType.Ogre: roleText = "(Ogre)" + roleText; break;
         }
 
@@ -297,7 +296,6 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             TeamType.Egoist => CustomWinnerHolder.WinnerTeam == CustomWinner.Egoist,
             TeamType.DarkHide => CustomWinnerHolder.WinnerTeam == CustomWinner.DarkHide,
             TeamType.Ogre => CustomWinnerHolder.AdditionalWinnerRoles.Contains(CustomRoles.Ogre),
-            TeamType.Opportunist => Player.IsAlive(),
             _ => null,
         };
         if (!won.HasValue)
@@ -368,10 +366,6 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
         /// </summary>
         DarkHide,
         /// <summary>
-        /// オポチュニスト陣営に所属する状態
-        /// </summary>
-        Opportunist,
-        /// <summary>
         /// 鬼陣営に所属する状態
         /// </summary>
         Ogre,
@@ -386,7 +380,6 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             TeamType.Jackal => Utils.GetRoleColor(CustomRoles.Jackal),
             TeamType.Egoist => Utils.GetRoleColor(CustomRoles.Egoist),
             TeamType.DarkHide => Utils.GetRoleColor(CustomRoles.DarkHide),
-            TeamType.Opportunist => Utils.GetRoleColor(CustomRoles.Opportunist),
             TeamType.Ogre => Utils.GetRoleColor(CustomRoles.Ogre),
             _ => null,
         };
