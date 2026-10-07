@@ -1,5 +1,5 @@
 using System;
-using Il2CppSystem.Collections.Generic;
+using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 using TownOfHostY.Roles.Core;
@@ -12,6 +12,7 @@ public static class ModGameOptionsMenu
     public static Dictionary<OptionBehaviour, int> OptionList = new();
     public static Dictionary<int, OptionBehaviour> BehaviourList = new();
     public static Dictionary<int, CategoryHeaderMasked> CategoryHeaderList = new();
+    public static Dictionary<TabGroup, GameOptionsMenu> SettingsMenus = new();
 }
 
 [HarmonyPatch(typeof(GameOptionsMenu))]
@@ -64,6 +65,7 @@ public static class GameOptionsMenuPatch
 
         if (ModGameOptionsMenu.TabIndex < 3) return true;
         var modTab = (TabGroup)(ModGameOptionsMenu.TabIndex - 3);
+        ModGameOptionsMenu.SettingsMenus[modTab] = __instance;
 
         var scrollbarTrack = __instance.transform.FindChild("UI_ScrollbarTrack");
         scrollbarTrack.localPosition -= new Vector3(1f, 0f, 0f);
@@ -79,8 +81,7 @@ public static class GameOptionsMenuPatch
             var option = OptionItem.AllOptions[index];
             if (option.Tab != modTab) continue;
 
-            var enabled = !option.IsHiddenOn(Options.CurrentGameMode)
-                         && (option.Parent == null || (!option.Parent.IsHiddenOn(Options.CurrentGameMode) && option.Parent.GetBool()));
+            var enabled = IsOptionEnabled(option);
 
             if (option.IsHeader || option is TextOptionItem)
             {
@@ -169,6 +170,7 @@ public static class GameOptionsMenuPatch
             optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((o) => { });
             ModGameOptionsMenu.OptionList.TryAdd(optionBehaviour, index);
             ModGameOptionsMenu.BehaviourList.TryAdd(index, optionBehaviour);
+            option.OptionBehaviour = optionBehaviour;
             optionBehaviour.gameObject.SetActive(enabled);
             __instance.Children.Add(optionBehaviour);
 
@@ -287,7 +289,34 @@ public static class GameOptionsMenuPatch
             }
             catch { }
         }
-        if (Instance != null) ReCreateSettings(Instance);
+
+        RefreshChildSettings();
+    }
+
+    public static void RefreshChildSettings()
+    {
+        foreach (var settingMenu in ModGameOptionsMenu.SettingsMenus)
+        {
+            if (settingMenu.Value != null)
+            {
+                ReCreateSettings(
+                    settingMenu.Value,
+                    settingMenu.Key,
+                    settingMenu.Value.gameObject.activeInHierarchy);
+            }
+        }
+    }
+
+    private static bool IsOptionEnabled(OptionItem option)
+    {
+        if (option.IsHiddenOn(Options.CurrentGameMode)) return false;
+
+        return option.Parent == null || (IsOptionEnabled(option.Parent) && option.Parent.GetBool());
+    }
+
+    public static void RefreshSettings(GameOptionsMenu menu, TabGroup tab)
+    {
+        ReCreateSettings(menu, tab, updateNavigation: true);
     }
 
     [HarmonyPatch(nameof(GameOptionsMenu.ValueChanged)), HarmonyPrefix]
@@ -298,24 +327,22 @@ public static class GameOptionsMenuPatch
         if (ModGameOptionsMenu.OptionList.TryGetValue(option, out var index))
         {
             var item = OptionItem.AllOptions[index];
-            if (item != null && item.Children.Count > 0) ReCreateSettings(__instance);
+            if (item != null && item.Children.Count > 0)
+            {
+                ReCreateSettings(__instance, (TabGroup)(ModGameOptionsMenu.TabIndex - 3), updateNavigation: true);
+            }
         }
         return false;
     }
-    private static void ReCreateSettings(GameOptionsMenu __instance)
+    private static void ReCreateSettings(GameOptionsMenu __instance, TabGroup modTab, bool updateNavigation)
     {
-        if (ModGameOptionsMenu.TabIndex < 3) return;
-        var modTab = (TabGroup)(ModGameOptionsMenu.TabIndex - 3);
-
-        //float num = 0.713f;
         float num = 2.0f;
         for (int index = 0; index < OptionItem.AllOptions.Count; index++)
         {
             var option = OptionItem.AllOptions[index];
             if (option.Tab != modTab) continue;
 
-            var enabled = !option.IsHiddenOn(Options.CurrentGameMode)
-                         && (option.Parent == null || (!option.Parent.IsHiddenOn(Options.CurrentGameMode) && option.Parent.GetBool()));
+            var enabled = IsOptionEnabled(option);
 
             if (ModGameOptionsMenu.CategoryHeaderList.TryGetValue(index, out var categoryHeaderMasked))
             {
@@ -331,9 +358,12 @@ public static class GameOptionsMenuPatch
             }
         }
 
-        __instance.ControllerSelectable.Clear();
-        foreach (var x in __instance.scrollBar.GetComponentsInChildren<UiElement>())
-            __instance.ControllerSelectable.Add(x);
+        if (updateNavigation)
+        {
+            __instance.ControllerSelectable.Clear();
+            foreach (var x in __instance.scrollBar.GetComponentsInChildren<UiElement>())
+                __instance.ControllerSelectable.Add(x);
+        }
         __instance.scrollBar.SetYBoundsMax(-num - 1.65f);
     }
 
