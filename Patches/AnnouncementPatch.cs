@@ -81,26 +81,53 @@ public class ModNews
             var json = JObject.Parse(request.downloadHandler.text);
             for (var news = json["News"].First; news != null; news = news.Next)
             {
+                JToken body = news["Body"];
+
+                if (body?.Type == JTokenType.String)
+                {
+                    string bodyValue = body.ToString();
+
+                    if (!string.IsNullOrWhiteSpace(bodyValue) && bodyValue.TrimStart().StartsWith("["))
+                    {
+                        try
+                        {
+                            JToken parsedBody = JObject.Parse("{\"Body\":" + bodyValue + "}")["Body"];
+                            if (parsedBody?.Type == JTokenType.Array)
+                            {
+                                body = parsedBody;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // 通常の本文文字列として扱う
+                        }
+                    }
+                }
+
                 StringBuilder text = new();
 
-                if (news["Body"] is JArray bodyArray)
+                if (body?.Type == JTokenType.Array)
                 {
-                    for (int i = 0; i < bodyArray.Count; i++)
+                    bool first = true;
+                    for (var item = body.First; item != null; item = item.Next)
                     {
-                        if (i > 0)
+                        if (!first)
                         {
                             text.Append('\n');
                         }
-                        text.Append(bodyArray[i]?.ToString()?? "");
+
+                        text.Append(item.ToString());
+                        first = false;
                     }
                 }
                 else
                 {
-                    text.Append(news["Body"]?.ToString());
+                    text.Append(body?.ToString());
                 }
 
+                int number = int.Parse(news["Number"].ToString());
                 var n = new ModNews(
-                    int.Parse(news["Number"].ToString()),
+                    number,
                     news["Title"]?.ToString(),
                     news["Subtitle"]?.ToString(),
                     news["Short"]?.ToString(),
