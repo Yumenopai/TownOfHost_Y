@@ -174,6 +174,7 @@ public class GameSettingMenuPatch
         ModGameOptionsMenu.OptionList = new();
         ModGameOptionsMenu.BehaviourList = new();
         ModGameOptionsMenu.CategoryHeaderList = new();
+        ModGameOptionsMenu.SettingsMenus = new();
 
         // 各グループ毎にタブを作成する/基盤作成
         ModSettingsTabs = new();
@@ -354,6 +355,7 @@ public class GameSettingMenuPatch
                 settingsTab != null)
             {
                 settingsTab.gameObject.SetActive(true);
+                GameOptionsMenuPatch.RefreshSettings(settingsTab, (TabGroup)(tabNum - 3));
                 __instance.MenuDescriptionText.DestroyTranslator();
                 __instance.MenuDescriptionText.text = Translator.GetString($"MenuDescriptionText.{(TabGroup)(tabNum - 3)}");
                 if (PresetChanged) __instance.MenuDescriptionText.text += PresetChangedWarning;

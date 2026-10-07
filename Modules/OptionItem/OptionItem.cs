@@ -188,11 +188,24 @@ namespace TownOfHostY
         // 外部からの操作
         public virtual void Refresh()
         {
-            if (OptionBehaviour is not null and StringOption opt)
+            if (OptionBehaviour is StringOption stringOption)
             {
-                opt.TitleText.text = GetName();
-                opt.ValueText.text = GetString();
-                opt.oldValue = opt.Value = CurrentValue;
+                stringOption.TitleText.text = GetName();
+                stringOption.Value = CurrentValue;
+                stringOption.oldValue = CurrentValue;
+                stringOption.ValueText.text = GetString();
+            }
+            else if (OptionBehaviour is NumberOption numberOption)
+            {
+                numberOption.TitleText.text = GetName();
+                numberOption.Value = GetFloat();
+                numberOption.oldValue = numberOption.Value;
+                numberOption.ValueText.text = GetString();
+            }
+            else if (OptionBehaviour is ToggleOption toggleOption)
+            {
+                toggleOption.TitleText.text = GetName();
+                toggleOption.CheckMark.enabled = GetBool();
             }
         }
         public virtual void SetValue(int afterValue, bool doSave, bool doSync = true)
@@ -205,6 +218,10 @@ namespace TownOfHostY
 
             CallUpdateValueEvent(beforeValue, afterValue);
             Refresh();
+            if (Children.Count > 0 && beforeValue != CurrentValue)
+            {
+                GameOptionsMenuPatch.RefreshChildSettings();
+            }
             if (doSync)
                 SyncAllOptions();
             if (doSave)
