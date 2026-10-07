@@ -462,9 +462,6 @@ class SelectRolesPatch
         foreach (var role in CustomRolesHelper.AllStandardRoles)
         {
             if (role.IsVanilla()) continue;
-            if (role == CustomRoles.Opportunist && Opportunist.OptionCanKill.GetBool()) continue;
-            if (role is not CustomRoles.Opportunist &&
-                CustomRoleManager.GetRoleInfo(role)?.IsDesyncImpostor == true) continue;
 
             var specificList = role.GetRoleTypes() switch
             {

@@ -608,7 +608,6 @@ static class ExtendedPlayerControl
     }
     public static bool IsNeutralKiller(this PlayerControl player)
     {
-        if (player.Is(CustomRoles.Opportunist) && Opportunist.CanKill) return true;
         return
             player.GetCustomRole() is
             CustomRoles.Egoist or
