@@ -1010,56 +1010,35 @@ public static class Options
     {
         // 親オプションが指定されていなければデフォルトの親を使用
         if (parent == null && CustomRoleSpawnChances.ContainsKey(PlayerRole))
+        {
             parent = CustomRoleSpawnChances[PlayerRole];
+        }
 
-        // 置換用の文字列辞書を作成
+        string roleNameKey = Translator.GetString(role.ToString());
+
+        string colorAddonName = Utils.ColorString(Utils.GetRoleColor(role), Utils.GetRoleName(role));
+        string addonAbilityInfo = Utils.GetAddonAbilityInfo(role);
+
         Dictionary<string, string> replacementDic = new()
-    {
-        { "%role%", Utils.ColorString(Utils.GetRoleColor(role), Utils.GetRoleName(role)) + "ㅤ" + Utils.GetAddonAbilityInfo(role) }
-    };
+        {
+            { roleNameKey,  $"{colorAddonName} {addonAbilityInfo}" }
+        };
 
         var key = (PlayerRole, role);
 
         if (!AddOnRoleOptions.ContainsKey(key))
         {
-            OptionItem newOption;
-
+            var newOption = StringOptionItem.Create(Id, role.ToString(), new[] { "ColoredOff", "ColoredOn" }, defaultValue ? 1 : 0, tab, true);
             if (parent != null)
             {
-                // 親がある場合 → StringOptionItem を作成して親に紐づけ
-                newOption = StringOptionItem.Create(
-                    Id,
-                    role.ToString(),
-                    new string[] { "ColoredOff", "ColoredOn" },
-                    defaultValue ? 1 : 0,
-                    tab,
-                    true
-                );
                 newOption.SetParent(parent);
-            }
-            else
-            {
-                // 親がない場合 → 単独で作成
-                newOption = StringOptionItem.Create(
-                    Id,
-                    role.ToString(),
-                    new string[] { "ColoredOff", "ColoredOn" },
-                    defaultValue ? 1 : 0,
-                    tab,
-                    true
-                );
             }
 
             AddOnRoleOptions[key] = newOption;
         }
 
-
-
-        // ReplacementDictionary を安全に設定
         AddOnRoleOptions[key].ReplacementDictionary = replacementDic;
     }
-
-
 
     public class OverrideTasksData
     {
