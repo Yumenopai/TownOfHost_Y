@@ -31,6 +31,7 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
         player
     )
     {
+        killCooldown = OptionKillCooldown.GetFloat();
         HasImpostorVision = OptionHasImpostorVision.GetBool();
         SelfKillRequired = OptionSelfKillRequired.GetBool();
     }
@@ -40,8 +41,10 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
         VendettaSelfKillRequired
     }
 
+    private static OptionItem OptionKillCooldown;
     private static OptionItem OptionHasImpostorVision;
     private static OptionItem OptionSelfKillRequired;
+    private static float killCooldown;
     private static bool HasImpostorVision;
     private static bool SelfKillRequired;
 
@@ -52,8 +55,10 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
 
     private static void SetupOptionItem()
     {
-        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 10, GeneralOption.ImpostorVision, false, false);
-        OptionSelfKillRequired = BooleanOptionItem.Create(RoleInfo, 11, OptionName.VendettaSelfKillRequired, false, false);
+        OptionKillCooldown = FloatOptionItem.Create(RoleInfo, 10, GeneralOption.KillCooldown, new(0f, 180f, 2.5f), 30f, false)
+            .SetValueFormat(OptionFormat.Seconds);
+        OptionHasImpostorVision = BooleanOptionItem.Create(RoleInfo, 11, GeneralOption.ImpostorVision, false, false);
+        OptionSelfKillRequired = BooleanOptionItem.Create(RoleInfo, 12, OptionName.VendettaSelfKillRequired, false, false);
     }
 
     public override void Add()
@@ -63,7 +68,7 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
         selfKill = false;
     }
 
-    public float CalculateKillCooldown() => CanUseKillButton() ? 0.1f : 0f;
+    public float CalculateKillCooldown() => CanUseKillButton() ? killCooldown : 0f;
     public bool CanUseKillButton() => isChooseTarget && Player.IsAlive() && !Target;
     public bool CanUseImpostorVentButton() => false;
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision);
