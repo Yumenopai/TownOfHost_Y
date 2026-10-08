@@ -124,7 +124,8 @@ static class CustomRolesHelper
             or CustomRoles.Pirate
             or CustomRoles.ChainShifter
             or CustomRoles.PlatonicLover
-            or CustomRoles.FoxSpirit;
+            or CustomRoles.FoxSpirit
+            or CustomRoles.Vendetta;
     }
 
     public static bool IsDontShowOptionRole(this CustomRoles role)

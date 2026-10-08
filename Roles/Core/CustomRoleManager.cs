@@ -625,6 +625,7 @@ public enum CustomRoles
     Pirate,
     Gang,
     ChainShifter,
+    Vendetta,
 
     GM,
     CounselorAndMadDilemma,
