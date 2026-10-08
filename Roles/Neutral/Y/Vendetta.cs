@@ -89,8 +89,8 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
             {
                 numVotes = 0;//投票を見えなくする
                 var VotedForPC = Utils.GetPlayerById(sourceVotedForId);
-                VotedForPC.RpcSetCustomRole(CustomRoles.Archenemy);
                 Target = VotedForPC;
+                isChooseTarget = true;
                 Utils.NotifyRoles();
             }
             else
