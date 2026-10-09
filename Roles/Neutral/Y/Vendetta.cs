@@ -17,7 +17,7 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
             CustomRoleTypes.Neutral,
             (int)Options.offsetId.NeuY + 1200,
             SetupOptionItem,
-            "アベンジャー",
+            "ヴェンデッタ",
             "#e68ae6",
             true,
             assignInfo: new RoleAssignInfo(CustomRoles.Vendetta, CustomRoleTypes.Neutral)
@@ -69,7 +69,7 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
     }
 
     public float CalculateKillCooldown() => CanUseKillButton() ? killCooldown : 0f;
-    public bool CanUseKillButton() => isChooseTarget && Player.IsAlive() && !Target;
+    public bool CanUseKillButton() => isChooseTarget && Player.IsAlive();
     public bool CanUseImpostorVentButton() => false;
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision);
 
@@ -96,7 +96,8 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
                 var VotedForPC = Utils.GetPlayerById(sourceVotedForId);
                 Target = VotedForPC;
                 isChooseTarget = true;
-                Utils.NotifyRoles();
+                Player.ResetKillCooldown();
+                Player.SyncSettings();
             }
             else
             {
