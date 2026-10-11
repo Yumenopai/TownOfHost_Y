@@ -140,7 +140,8 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
         killedThisTurn = false;
 
         if (!Player.IsAlive() || !isChooseTarget) return;
-
+        Main.AfterMeetingDeathPlayers.TryAdd(Player.PlayerId, CustomDeathReason.Suicide);
+        Logger.Info($"Didn't select target. {Player.name} is suicide.", "Vendetta");
         Player.SetKillCooldown(killCooldown);
     }
 
