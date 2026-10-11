@@ -68,7 +68,7 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
         selfKill = false;
     }
 
-    public float CalculateKillCooldown() => CanUseKillButton() ? killCooldown : 0f;
+    public float CalculateKillCooldown() => !isChooseTarget ? killCooldown : (killedThisTurn ? 0f : killCooldown);
     public bool CanUseKillButton() => isChooseTarget && Player.IsAlive();
     public bool CanUseImpostorVentButton() => false;
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(HasImpostorVision);
@@ -98,6 +98,7 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
                 isChooseTarget = true;
                 Player.ResetKillCooldown();
                 Player.SyncSettings();
+                Utils.NotifyRoles();
             }
             else
             {
@@ -138,10 +139,9 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
     {
         killedThisTurn = false;
 
-        if (!Player.IsAlive() || isChooseTarget) return;
-        
-        Main.AfterMeetingDeathPlayers.TryAdd(Player.PlayerId, CustomDeathReason.Suicide);
-        Logger.Info($"Didn't select target. {Player.name} is suicide.", "Vendetta");
+        if (!Player.IsAlive() || !isChooseTarget) return;
+
+        Player.SetKillCooldown(killCooldown);
     }
 
     public void OnCheckMurderAsKiller(MurderInfo info)
@@ -168,5 +168,7 @@ public sealed class Vendetta : RoleBase, IKiller, IAdditionalWinner
         {
             selfKill = true;
         }
+
+        killer.ResetKillCooldown();
     }
 }
