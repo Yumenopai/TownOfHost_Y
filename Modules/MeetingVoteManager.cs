@@ -78,7 +78,12 @@ public class MeetingVoteManager
             logger.Info($"ID: {voter}の投票を上書きします");
         }
         var voterPc = Utils.GetPlayerById(voter);
-       
+
+        if (vote.IsJudgeOverrule && judgeExiledId == byte.MaxValue)
+        {
+            return;
+        }
+
         if (judgeExiledId != byte.MaxValue)
         {
             vote.DoVote(voteFor, numVotes, judgeExiledId, judgeNonce);
@@ -163,7 +168,7 @@ public class MeetingVoteManager
         Logger.Info($"ExiledPlayerIdSet exiled: {exiled?.name}", "AntiBlackout");
         // SetIsDead は MeetingHud.OnDestroy (会議終了ログの直後) で呼ばれるため、
         // ここでは OverrideExiledPlayer の場合のみ即時呼び出しを維持する。
-       
+
         bool isOverruled = result.OverrideExiled != byte.MaxValue;
 
         if (AntiBlackout.OverrideExiledPlayer)
@@ -175,7 +180,7 @@ public class MeetingVoteManager
             if (isOverruled) MeetingHudPatch.SetJudgeOverrulePatch.ShowOverruleLocally(result.OverruleNonce);
         }
         else
-        {         
+        {
             meetingHud.RpcVotingComplete(states.ToArray(), exiled, result.IsTie,
                                          isOverruled && exiled != null, result.OverruleNonce);
         }

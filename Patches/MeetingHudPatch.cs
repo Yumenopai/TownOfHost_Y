@@ -56,16 +56,16 @@ public static class MeetingHudPatch
             return true;
         }
     }
-    
+
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.SetJudgeOverrule))]
     public static class SetJudgeOverrulePatch
-    {        
+    {
         public static void ShowOverruleLocally(ushort overruleNonce)
         {
             var meetingHud = MeetingHud.Instance;
             if (meetingHud == null) return;
 
-            bool anotherJudgeBeatYouToIt = false;            
+            bool anotherJudgeBeatYouToIt = false;
             var judgeRole = PlayerControl.LocalPlayer?.Data?.Role?.TryCast<JudgeRole>();
             if (judgeRole != null && judgeRole.HasAlreadyOverruledThisMeeting)
             {
@@ -79,7 +79,7 @@ public static class MeetingHudPatch
             [HarmonyArgument(0)] PlayerId judgePlayerId /* 裁決した人 */,
             [HarmonyArgument(1)] PlayerId targetPlayerId /* 裁決された人 */,
             [HarmonyArgument(2)] ushort overruleNonce)
-        {           
+        {
             if (!AmongUsClient.Instance.AmHost) return false;
 
             var voter = Utils.GetPlayerById(judgePlayerId);
@@ -91,10 +91,16 @@ public static class MeetingHudPatch
             }
             Logger.Info($"{voter.GetNameWithRole()} => {votefor.GetNameWithRole()} (nonce: {overruleNonce})", nameof(SetJudgeOverrulePatch));
 
+            if (MeetingVoteManager.Instance != null && MeetingVoteManager.Instance.AllVotes.Values.Any(v => v.IsJudgeOverrule))
+            {
+                __instance.RpcClearVote(voter.PlayerId);
+                return false;
+            }
+
             byte exilePlayerId = byte.MaxValue;
             if (voter.GetRoleClass()?.CallJudgeVote(voter, votefor, ref exilePlayerId) != true
                 || exilePlayerId == byte.MaxValue)
-            {                
+            {
                 __instance.RpcClearVote(voter.PlayerId);
                 Logger.Info($"{voter.GetNameWithRole()} の裁決は無効化されました", nameof(SetJudgeOverrulePatch));
                 return false;
@@ -103,7 +109,6 @@ public static class MeetingHudPatch
             MeetingVoteManager.Instance?.SetVote(
                 judgePlayerId, targetPlayerId,
                 judgeExiledId: exilePlayerId, judgeNonce: overruleNonce);
-            MeetingVoteManager.Instance?.EndMeeting();
             return false;
         }
     }
@@ -137,7 +142,7 @@ public static class MeetingHudPatch
             foreach (var pva in __instance.playerStates)
             {
                 var pc = Utils.GetPlayerById(pva.PlayerId);
-                if (pc == null) continue;                
+                if (pc == null) continue;
                 foreach (var name in new[] { "RoleTextMeeting", "SuffixTextMeeting" })
                 {
                     var old = pva.PlayerIcon.transform.Find(name);
@@ -156,7 +161,7 @@ public static class MeetingHudPatch
                 (roleTextMeeting.enabled, roleTextMeeting.text)
                     = Utils.GetRoleNameAndProgressTextData(true, PlayerControl.LocalPlayer, pc);
 
-                
+
                 suffixTextMeeting.transform.localPosition = new Vector3(3.25f, 0.02f, 0f);
                 suffixTextMeeting.fontSize = 1.5f;
                 suffixTextMeeting.gameObject.name = "SuffixTextMeeting";
@@ -296,7 +301,7 @@ public static class MeetingHudPatch
                 var target = Utils.GetPlayerById(pva.PlayerId);
                 if (target == null) continue;
 
-               
+
                 pva.NameText.text = target.GetRealName(isMeeting: true);
 
                 // 役職説明表示
