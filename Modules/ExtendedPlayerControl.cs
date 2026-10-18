@@ -162,11 +162,7 @@ static class ExtendedPlayerControl
             player.SetName(name);
             return;
         }
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, Hazel.SendOption.Reliable, clientId);
-        writer.Write(player.Data.NetId);
-        writer.Write(name);
-        writer.Write(DontShowOnModdedClient);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
+        NameRpcBatcher.Enqueue(clientId, player.NetId, player.Data.NetId, name, DontShowOnModdedClient);
     }
     public static void RpcSetRoleDesync(this PlayerControl player, RoleTypes role, int clientId, bool canOverrideRole = false)
     {
@@ -884,5 +880,60 @@ static class ExtendedPlayerControl
         writer.EndMessage();
         AmongUsClient.Instance.SendOrDisconnect(writer);
         writer.Recycle();
+    }
+}
+
+static class NameRpcBatcher
+{
+    private const int MaxLength = 1000;
+    private const int Overhead = 24;
+    private static readonly Dictionary<int, CustomRpcSender> senders = new();
+    private static bool scheduled;
+
+    public static void Enqueue(int clientId, uint netId, uint dataNetId, string name, bool dontShowOnModdedClient)
+    {
+        var size = System.Text.Encoding.UTF8.GetByteCount(name) + Overhead;
+        if (senders.TryGetValue(clientId, out var current) && current.stream.Length + size > MaxLength)
+        {
+            senders.Remove(clientId);
+            current.SendMessage();
+        }
+        if (!senders.TryGetValue(clientId, out var sender))
+        {
+            sender = CustomRpcSender.Create("NameRpcBatcher", SendOption.Reliable);
+            sender.StartMessage(clientId);
+            senders[clientId] = sender;
+        }
+        sender.StartRpc(netId, RpcCalls.SetName)
+            .Write(dataNetId)
+            .Write(name)
+            .Write(dontShowOnModdedClient)
+            .EndRpc();
+        if (!scheduled)
+        {
+            scheduled = true;
+            _ = new LateTask(Flush, 0f, "");
+        }
+    }
+
+    public static void Flush()
+    {
+        scheduled = false;
+        if (senders.Count == 0) return;
+        var pending = senders.Values.ToList();
+        senders.Clear();
+        foreach (var sender in pending)
+        {
+            sender.SendMessage();
+        }
+    }
+}
+
+[HarmonyLib.HarmonyPatch(typeof(Utils), nameof(Utils.NotifyRoles))]
+class NotifyRolesFlushPatch
+{
+    public static void Postfix()
+    {
+        NameRpcBatcher.Flush();
     }
 }
