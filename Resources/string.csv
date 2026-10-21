@@ -612,16 +612,22 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "#モードオプション"
 "HideAndSeek","Hide and Seek","かくれんぼ","躲猫猫","躲貓貓","Прятки","Esconde-Esconde"
 "NoGameEnd","NoGameEnd","ゲームを終了しない","测试模式","遊戲不會結束模式","Игра не закончится","Jogo Sem Fim"
+"NoGameEndInfoLong",,"勝利判定が存在しないデバッグ用のモード。ホストのSHIFT+L+ENTER以外でのゲーム終了ができない。",
 "SyncButtonMode","SyncButtonMode","ボタン回数同期モード","所有船员共享会议次数","全場拍桌數同步模式","Общая кнопка встречи","Modo de Botão Sincronizado"
+"SyncButtonModeInfoLong",,"プレイヤー全員のボタン回数が同期される機能。",
 "SyncedButtonCount","Max Number of Buttons Allowed","合計ボタン使用可能回数","紧急会议可用次数","全場最大拍桌數量","Максимальное количество нажатий на Кнопку","Número Máximo de Usos do Botão"
 "AllAliveMeeting","Meeting When No One is Dead","全員生存時の会議","全员存活时的会议设定","全員存活會議","Все живые на собрании","Reunião Com Todos Vivos"
+"AllAliveMeetingInfoLong",,"全員生存時の会議時間を変更できる機能。",
 "AllAliveMeetingTime","Meeting Time When No One is Dead","全員生存時の会議時間","全员存活时的会议时间","全員存活會議時間","Время когда все живы на собрании","Tempo de Reunião Com Todos Vivos"
 "AdditionalEmergencyCooldown","Additional Emergency Cooldown","追加の緊急ボタンクールダウン","附加紧急会议冷却时间","附加緊急會議冷卻時間","Дополнительный откат Собраний","Tempo de Emergência Adicional"
+"AdditionalEmergencyCooldownInfoLong",,"設定した残り生存人数になると緊急ボタンのクールダウンが変更される機能。",
 "AdditionalEmergencyCooldownThreshold","Applied Living Player Count","適用する生存人数","适用存活人数","適用於幾個存活人數","Применяемый Порог Выживания","Número de Vivos Para Aplicar"
 "AdditionalEmergencyCooldownTime","Additional Cooldown","追加するクールダウン","附加冷却时间","附加冷卻時間","Дополнительный откат","Tempo Adicional"
 "LadderDeath","Fall From Ladders","ハシゴから転落","从梯子上下滑时有可能摔死","從梯子上下滑時可能會摔死","Падение с Лестницы","Queda de Escadas"
+"LadderDeathInfoLong",,"ハシゴを下る時に転落死するかを設定する機能。",
 "LadderDeathChance","Fall To Death Chance","転落する確率","从梯子上摔死的概率","從梯子上下滑摔死機率","Шанс разбиться насмерть","Chance de Queda"
 "DisableTasks","Disable Tasks","タスクを無効化する","禁用某些任务","禁用某些特定的任務","Отключить Задания","Desativar Tarefas"
+"DisableTasksInfoLong",,"特定の選択したタスクを割り当てられないようにする機能。",
 "DisableSwipeCardTask","Disable SwipeCard Tasks","カードタスク","禁用刷卡任务","禁用刷卡任務","Отключить Задание ''Провести Карту''","Desativar Tarefas de Passar Cartão"
 "DisableSubmitScanTask","Disable SubmitScan Tasks","医務室のスキャンタスク","禁用扫描任务","禁用掃描任務","Отключить Задание ''Сканирование''","Desativar Tarefas de Raio-X"
 "DisableUnlockSafeTask","Disable UnlockSafe Tasks","金庫タスク","禁用解除歧管任务","禁用保險櫃任務","Отключить Задание ''Открытие Сейфа''","Desativar Tarefas de Abrir Cofre"
@@ -643,6 +649,11 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "MapOption_Polus","Polus Map option","Polusのマップ設定"
 "MapOption_Airship","The Airship Map option","The Airshipのマップ設定"
 "MapOption_Fungle","The Fungle Map option","The Fungleのマップ設定"
+"MapOption_SkeldInfoLong",,"The Skeldのマップに適用する機能を設定できる。",
+"MapOption_MiraHQInfoLong",,"MIRA HQのマップに適用する機能を設定できる。",
+"MapOption_PolusInfoLong",,"Polusのマップに適用する機能を設定できる。",
+"MapOption_AirshipInfoLong",,"The Airshipのマップに適用する機能を設定できる。",
+"MapOption_FungleInfoLong",,"The Fungleのマップに適用する機能を設定できる。",
 
 "RandomSpawn","Random Spawn","ランダムスポーン","随机出生点","隨機出生點","Случайный спавн","Spawn Aleatório"
 "AdditionalSpawn","Additional Spawn","スポーン位置を追加する",
