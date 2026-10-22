@@ -656,13 +656,16 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "MapOption_FungleInfoLong",,"The Fungleのマップに適用する機能を設定できる。",
 
 "RandomSpawn","Random Spawn","ランダムスポーン","随机出生点","隨機出生點","Случайный спавн","Spawn Aleatório"
+"RandomSpawnInfoLong","","全員のスポーン位置がランダムになる機能。",
 "AdditionalSpawn","Additional Spawn","スポーン位置を追加する",
 "AdditionalSpawn_Airship","Additional All Spawn","全てのスポーン位置を追加する",
 "AdditionalSpawn_AirshipTAKADA","Additional Spawn(Cockpit,Security,Medical)","ｺｯｸﾋﾟｯﾄ･ｾｷｭﾘﾃｨ･診察室を追加する",
 "DisableNearButton","Exclude Near Button","緊急ボタン近くを除く",
 "FirstFixedSpawn","First Fixed Spawn","最初の固定スポーン",
+"FirstFixedSpawnInfoLong","","最初のスポーンのみ初期位置に固定させる。",
 
 "DisableDevices","Disable Devices","デバイスを無効化",
+"DisableDevicesInfoLong","","各種デバイスを使用できなくする機能。\nホスト以外は付近に近づくとその人のみコミュニケーションサボタージュ状態にすることで使用できなくなっている。",
 "DisableAdmin","Disable Admin","アドミン無効化","禁用管理室地图","禁用管理室地圖","Отключить Стол Администратора","Desativar Admin"
 "DisableAirshipCockpitAdmin","Disable Cockpit Admin","アドミン無効化（コックピット）","禁用飞艇(驾驶舱)管理室地图","禁用The Airship(駕駛艙)的管理室地圖","Отключить Стол Администратора В Кабине","Desativar Admin da Cabine"
 "DisableAirshipRecordsAdmin","Disable Records Admin","アドミン無効化（アーカイブ）","禁用飞艇(档案室)管理室地图","禁用The Airship(檔案室)的管理室地圖","Отключить Стол Администратора В Архиве","Desativar Admin da Sala de Arquivos"
@@ -671,6 +674,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "DisableVital","Disable Vital","バイタル無効化",
 
 "ResetDoorsEveryTurns","Reset Doors After Meeting","会議後にドア状況をリセットする",
+"ResetDoorsEveryTurnsInfoLong","","会議終了後、ドアを設定した状態にリセットする機能。",
 "DoorsResetMode","Reset Mode","リセットモード",
 "AllOpen","All Open","全て開放",
 "AllClosed","All Closed","全て閉鎖",
@@ -678,22 +682,29 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 "## リアクターの時間制御"
 "SabotageTimeControl","Sabotage Duration Control","サボタージュの時間制御","更改修理时限","重新設定緊急任務時間","Изменить время Саботажа","Controle da Duração de Sabotagem"
+"SabotageTimeControlInfoLong","","サボタージュの時間を設定した秒数に変更する機能。",
 "ReactorTimeLimit","Reactor Duration","リアクター制限時間",
 "FungleMushroomMixupDuration","Mushroom Mixup Duration","キノコカオス効果時間",
 
 "LightsOutSpecialSettings_Airship","Restrictions On Where Fix Lights Can Take Place","停電解除場所の制限","停电特殊设定","關燈特殊設定","Специальные настройки при отключении Света","Configuração Especial de Consertar Luzes"
+"LightsOutSpecialSettings_AirshipInfoLong","","停電サボタージュの解除する場所を制限する機能。無効化した場所ではスイッチを押しても反応しなくなる。",
 "DisableAirshipViewingDeckLightsPanel","Disable Viewing Deck Lights Panel","展望の配電盤を無効化","禁用瞭望台配电箱","關閉觀景台的配電箱","Отключить починку Света на Смотровой Палубе","Desativar Painel de Luzes do Deck Panorâmico"
 "DisableAirshipGapRoomLightsPanel","Disable Gap Room Lights Panel","昇降機の配電盤を無効化","禁用升降机配电箱","關閉間隙室右側的配電箱","Отключить починку Света в Комнате Пролета","Desativar Painel de Luzes da Sala Suspensa"
 "DisableAirshipCargoLightsPanel","Disable Cargo Lights Panel","貨物室の配電盤を無効化","禁用货舱配电箱","關閉貨艙的配電箱","Отключить починку Света в Грузовом Отсеке","Desativar Painel de Luzes das Cargas"
 
 "AirShipVariableElectrical","Variable Electrical","電気室の構造変化","改变配电室构造","電力室構造變化","Двери в Электрощитовой меняются случайно",""
+"AirShipVariableElectricalInfoLong","","電気室の構造を毎ターン変化させる機能。",
 "DisableAirshipMovingPlatform","Disable Moving Platform","昇降機のリフトを無効化","禁用升降机","","Отключить движущуюся платформу",""
+"DisableAirshipMovingPlatformInfoLong","","昇降機のリフトを使用できなくする機能。",
 
 "FungleCanUseZipline","Can Use Zipline","ジップラインの方向制限",
+"FungleCanUseZiplineInfoLong","","ジップラインの使用を制限する機能。",
 "FungleCanUseZiplineFromTop","Can't Use From Top","上からの下降を禁止",
 "FungleCanUseZiplineFromUnder","Can't Use From Under","下からの上昇を禁止",
 "FungleCanSporeTrigger","Can Spore Trigger","キノコ胞子モヤをなくす",
+"FungleCanSporeTriggerInfoLong","","道のキノコを踏むと出る胞子モヤを出ないようにする機能。",
 "DisableButtonInMushroomMixup","Disable Button In MushroomMixup","キノコカオス中のボタンを無効化","","","",""
+"DisableButtonInMushroomMixupInfoLong","","キノコカオスサボタージュ中は緊急ボタンを押せなくする機能。",
 
 
 "IgnoreConditions","Disable Device Ignore Conditions","デバイス無効化の除外条件",
@@ -704,6 +715,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "IgnoreAfterAnyoneDied","Ignore After Anyone Has Died","死人が出た後を除く","忽略幽灵","當所有人都死亡時除外","Игнорируют умершие игроки","Ignorar Depois de Alguém Morrer"
 
 "RandomMapsMode","RandomMapsMode","ランダムマップモード","随机地图模式","隨機地圖模式","Случайная карта","Modo de Mapas Aleatórios"
+"RandomMapsModeInfoLong","","試合を開始する毎に設定したマップからランダムに選択される機能。",
 "AddedTheSkeld","Include TheSkeld","The Skeldを追加","添加骷髅舰地图","將The Skeld地圖列入選項","Добавить TheSkeld","Incluir TheSkeld"
 "AddedMIRAHQ","Include MIRAHQ","MIRA HQを追加","添加米拉总部地图","將MIRA HQ地圖列入選項","Добавить MiraHQ","Incluir MIRAHQ"
 "AddedPolus","Include Polus","Polusを追加","添加波鲁斯地图","將Polus地圖列入選項","Добавить Polus","Incluir Polus"
@@ -712,13 +724,17 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 "## サボタージュのクールダウン変更"
 "ModifySabotageCooldown","Sabotage Cooldown Control","サボタージュのクールダウン制御","","","",""
+"ModifySabotageCooldownInfoLong","","サボタージュのクールダウンの秒数を設定した秒数に変更する機能。","","","",""
 "SabotageCooldown","Sabotage Cooldown","サボタージュのクールダウン","","","",""
 
 "BlockDisturbancesToSwitches","Block Disturbances To Switches","配電盤妨害を無効化","","","",""
+"BlockDisturbancesToSwitchesInfoLong","","停電サボタージュの配電盤で上がっているスイッチを下げられなくする機能。",
 "CommsCamouflage","Camouflage During Comms","コミュサボ時のカモフラージュ","通信破坏时伪装","通訊破壞時所有玩家變成小灰人","Камуфляж при Саботаже Связи","Camuflagem Durante Comunicação"
+"CommsCamouflageInfoLong","","コミュニケーションサボタージュ中は全員の姿が灰色になる機能。",
 
 
 "SuffixMode","Suffix","名前の二行目","附加标签","名字標籤","Суффикс","Sufixo"
+"SuffixModeInfoLong","","名前に設定したワードを二行目に表示する機能。",
 "SuffixMode.None","None","なし","无","無","Ничего","Nenhum"
 "SuffixMode.Version","Version","バージョン","版本","版本","Версия","Versão"
 "SuffixMode.Streaming","Streaming","配信中","直播中","直播中","Стримит","Ao Vivo"
@@ -726,7 +742,9 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "SuffixMode.RoomHost","Room Host","部屋主","房主","房主","Хост Румы","Anfitrião"
 "SuffixMode.OriginalName","OriginalName","元の名前","玩家名称","玩家原名稱","Настоящий Никнейм","Nome Original"
 "ColorNameMode","Color Name Mode","色名前モード","显示颜色名称","名字將被顏色名稱替換","Режим: Никнейм соответствует цвету","Modo Nomes de Cores"
+"ColorNameModeInfoLong","","全員の名前表示が色の名前になる機能。",
 "SkinControle","Skin Controle","スキン設定",,,,
+"SkinControleInfoLong","","スキンで禁止する種類を設定できる機能。",
 "NoHat","Prohibited hat","ハット禁止",,,,
 "NoFullFaceHat","Prohibited full face hat","フルフェイスハット禁止",,,,
 "NoSkin","Prohibited skin","スキン禁止",,,,
@@ -735,6 +753,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "NoDuplicateHat","No duplicate hats","他の人と同じハット使用禁止",,,,
 "NoDuplicateSkin","No duplicate skins","他の人と同じスキン使用禁止",,,,
 "FixFirstKillCooldown","Normalize First Kill Cooldown","初期スポーン時のクールダウン修正","修正首刀冷却时间","修正開場時的殺人冷卻時間","Нормализовать откат убийства в начале Игры","Normalizar Tempo de Recarga do Primeiro Abate"
+"FixFirstKillCooldownInfoLong","","最初のスポーン時のみキルクールダウンを変更する機能。",
 "GhostCantSeeOtherRoles","Ghost Can't See Other Roles","幽霊が他人の役職を見ることができない","幽灵不可见他人职业","幽靈不可以看見所有玩家職業",
 "GhostCantSeeOtherVotes","Ghost Can't See Other Votes","幽霊が他人の投票先を見ることができない","幽灵不可见投票情况","幽靈不可以看見所有玩家的投票",
 "GhostCantSeeOtherTasks","Ghosts Can't See Other Tasks","幽霊が他人のタスク進捗を見ることができない"
@@ -743,12 +762,15 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "HostGhostIgnoreTasks","Host Ghosts Exempt From Tasks","ホストは死後タスクを免除する",
 "GhostIgnoreTasks","Ghosts Exempt From Tasks","死人のタスクを免除する","幽灵无视任务","幽靈可以免除任務","Призраки игнорируют Задания","Fantasmas Isentos de Tarefas"
 "DisableTaskWin","Disable Task Win","タスク勝利を無効化","禁用任务胜利","禁用任務勝利","Отключить победу по Заданиям","Desativar Vitória por Tarefas"
+"DisableTaskWinInfoLong","","タスク完了での勝利を無効化する機能。\nキルでの勝利、追放での勝利、第三陣営の特殊勝利等でゲームを決着させなければならない。",
 "HideGameSettings","Hide Game Settings","ゲーム設定を隠す","隐藏游戏设置","隱藏遊戲設定","Скрыть настройки Игры","Esconder Configurações"
+"HideGameSettingsInfoLong","","ゲーム設定を参加者に見せないようにする機能。\n参加者から送信されるコマンドでは現在のゲーム設定を秘匿したりする。",
 "RoleOptions","Role Options","役職設定","职业设置","職業設定","Настройка Ролей","Opções de Papéis"
 "ModeOptions","Mode Options","モード設定","模组设置","模式設定","Настройка Режима","Opções de Modos"
 "AutoDisplayLastResult","Auto Display Last Result","自動的に試合結果を表示","自动显示最终结果","自動顯示上一回合結果","Отображать результат последней игры в чате","Mostrar Ultimo Resultado"
 "AutoDisplayKillLog","Auto Display KillLog","自動的にキルログを表示","自动显示击杀日志","自動顯示擊殺紀錄","Отображать историю убийств в чате",""
 "VoteMode","Voting Mode","投票モード","投票相关设定","投票設定","Режим Голосования","Modo de Votação"
+"VoteModeInfoLong","","各自の投票に応じて設定した投票先に変更する機能。",
 "WhenSkipVote","When Skip Vote","スキップ時","跳过投票相当于投给自己","當跳過投票時","Когда пропускаете Голосование","Quando Pular Voto"
 "WhenSkipVoteIgnoreFirstMeeting","Ignore First Meeting","初回会議を除く","忽略首次会议","忽略首次會議","Игнорировать первое собрание","Ignorar Primeira Reunião"
 "WhenSkipVoteIgnoreNoDeadBody","Ignore When No DeadBody","死体がない時を除く","无尸体时忽略","沒有屍體時無法選擇","Игнорировать когда Нет Трупов","Ignorar Se Não Tiver Corpo"
@@ -763,8 +785,10 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "TieMode.All","Eject All","全員追放","全体放逐","全員放逐","Изгнать всех","Exilar Todos"
 "TieMode.Random","Eject Random","ランダムに追放","随机放逐","隨機放逐","Изгнать случайно","Exilar Aleatório"
 "EnableDebugMode","Enable Debug Mode","デバッグモードを有効化する","开启调试模式","啟用偵錯模式","Включить режим отладки","Ativar Modo de Depuração"
-"ChangeNameToRoleInfo","Show Role Descriptions to Unmodded Client","役職説明を非modクライアントにも表示する","对未安装本mod的玩家显示职业说明","對未安裝本模組的玩家顯示職業說明","Показать описания Ролей игрокам играющие без Мода","Mostrar Descrição de Classe para Clientes Não Modificados"
-"RoleAssigningAlgorithm","Role Assigning Algorithm","役職割り当てのアルゴリズム","职业分配算法","職業分配算法","Алгоритм назначения Ролей",""
+"ChangeNameToRoleInfo","Show Role Descriptions to Unmodded Client","役職説明を非ホストにも表示する","对未安装本mod的玩家显示职业说明","對未安裝本模組的玩家顯示職業說明","Показать описания Ролей игрокам играющие без Мода","Mostrar Descrição de Classe para Clientes Não Modificados"
+"ChangeNameToRoleInfoInfoLong","","最初のスポーン時、非ホストの名前部分に簡易役職紹介文を表示させる機能。",
+"RoleAssigningAlgorithm","Random Algorithm","ランダム抽選アルゴリズム","职业分配算法","職業分配算法","Алгоритм назначения Ролей",""
+"RoleAssigningAlgorithmInfoLong","","役職割り当てやランダムで決定する抽選アルゴリズムを変更する。",
 "RoleAssigningAlgorithm.Default","Default","デフォルト","默认随机算法","預設算法","По умолчанию",""
 "RoleAssigningAlgorithm.NetRandom",".NET System.Random",".NET System.Random",".NET 系统随机算法","NET系統隨機算法","Случайный",""
 "RoleAssigningAlgorithm.HashRandom","HashRandom","HashRandom","哈希随机算法","Hash值隨機算法","HashRandom",""
