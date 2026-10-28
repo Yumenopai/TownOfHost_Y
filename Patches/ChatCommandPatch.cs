@@ -317,28 +317,27 @@ namespace TownOfHostY
                             Main.AllPlayerControls.Do(pc => pc.KillFlash());
                         break;
 
-                    case "/offhat":
-                    case "/offskin":
-                    case "/offvisor":
-                    case "/offpet":
-                    case "/offskinall":
-                        canceled = true;
-                        if (args.Length > 1)
-                        {
-                            var colorName = args[1];
-                            var skinTarget = Utils.GetPlayerByColorName(colorName);
-                            if (skinTarget != null)
-                            {
-                                var hat = args[0] == "/offhat" || args[0] == "/offskinall";
-                                var skin = args[0] == "/offskin" || args[0] == "/offskinall";
-                                var visor = args[0] == "/offvisor" || args[0] == "/offskinall";
-                                var pet = args[0] == "/offpet" || args[0] == "/offskinall";
-                                SkinControle.RpcSetSkin(skinTarget, hat, skin, visor, pet);
-                                Utils.SendMessageAutoSplit($"ホストにより {SkinControle.GetSetTypeName(hat, skin, visor, pet)} がリセットにされました", true, sendTo: skinTarget.PlayerId);
-                            }
-                        }
-
-                        break;
+                    //case "/offhat":
+                    //case "/offskin":
+                    //case "/offvisor":
+                    //case "/offpet":
+                    //case "/offskinall":
+                    //    canceled = true;
+                    //    if (args.Length > 1)
+                    //    {
+                    //        var colorName = args[1];
+                    //        var skinTarget = Utils.GetPlayerByColorName(colorName);
+                    //        if (skinTarget != null)
+                    //        {
+                    //            var hat = args[0] == "/offhat" || args[0] == "/offskinall";
+                    //            var skin = args[0] == "/offskin" || args[0] == "/offskinall";
+                    //            var visor = args[0] == "/offvisor" || args[0] == "/offskinall";
+                    //            var pet = args[0] == "/offpet" || args[0] == "/offskinall";
+                    //            SkinControle.RpcSetSkin(skinTarget, hat, skin, visor, pet);
+                    //            Utils.SendMessageAutoSplit($"ホストにより {SkinControle.GetSetTypeName(hat, skin, visor, pet)} がリセットにされました", true, sendTo: skinTarget.PlayerId);
+                    //        }
+                    //    }
+                    //    break;
 
                     default:
                         Main.isChatCommand = false;
