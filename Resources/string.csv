@@ -734,7 +734,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 
 "SuffixMode","Suffix","名前の二行目","附加标签","名字標籤","Суффикс","Sufixo"
-"SuffixModeInfoLong","","名前に設定したワードを二行目に表示する機能。",
+"SuffixModeInfoLong","","設定したワードをホストの名前の下に表示する機能。",
 "SuffixMode.None","None","なし","无","無","Ничего","Nenhum"
 "SuffixMode.Version","Version","バージョン","版本","版本","Версия","Versão"
 "SuffixMode.Streaming","Streaming","配信中","直播中","直播中","Стримит","Ao Vivo"
@@ -758,6 +758,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "GhostCantSeeOtherVotes","Ghost Can't See Other Votes","幽霊が他人の投票先を見ることができない","幽灵不可见投票情况","幽靈不可以看見所有玩家的投票",
 "GhostCantSeeOtherTasks","Ghosts Can't See Other Tasks","幽霊が他人のタスク進捗を見ることができない"
 "GhostCanSeeOtherTeams","Ghost Can See Other Teams","幽霊が他人の陣営を見ることができる",
+"GhostCanSeeOtherTeamsInfoLong","","幽霊視点で、他人の陣営を表示する機能。\nⒾ：インポスター陣営(インポスター役職)\nⓂ：インポスター陣営(マッド役職)\nⒸ：クルー陣営\nⓃ：第三陣営"
 "GhostCanSeeDeathReason","Ghost Can See Cause Of Death","幽霊が死因を見ることができる","幽灵可以看见死因","幽靈可以看見死因","Призраки могут видеть Причины Смерти","Fantasmas Podem Ver Causa da Morte"
 "HostGhostIgnoreTasks","Host Ghosts Exempt From Tasks","ホストは死後タスクを免除する",
 "GhostIgnoreTasks","Ghosts Exempt From Tasks","死人のタスクを免除する","幽灵无视任务","幽靈可以免除任務","Призраки игнорируют Задания","Fantasmas Isentos de Tarefas"
@@ -801,9 +802,13 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "CheaterAutoBan","Automatically Ban Cheater","自動BANリスト追加","","","",""
 "CheatLobbyKill","Lobby Kill Cheat","ロビーキルチート","","","",""
 "ShowReportReason","Show button or report","ボタンかレポートか表示させる","显示按钮或报告"
+"ShowReportReasonInfoLong","","開かれた会議が緊急ボタンか死体レポートか、チャットと会議画面に表示される機能。\n死体レポート時は誰の死体を通報したかも表示される。",
 "ShowRevengeTarget","Show Revenge player at Meeting","道連れされた人を会議で表示する","在会议上显示复仇玩家"
+"ShowRevengeTargetInfoLong","","道連れされた人が誰か、会議時にチャットと会議画面に表示される機能。",
 "ShowRoleInfoAtFirstMeeting","Show Role description at the first meeting","初めの会議で役職説明を表示する","在第一次会议上显示角色介绍"
+"ShowRoleInfoAtFirstMeetingInfoLong","","最初の会議で、全員のチャットにそれぞれ割り当てられた役職の説明を自動で表示させる機能。",
 "DisplayTeamMark","Display Team Mark","陣営マークを表示する"
+"DisplayTeamMarkInfoLong","","役職名の前に陣営マークを表示する機能。\nⒾ：インポスター陣営(インポスター役職)\nⓂ：インポスター陣営(マッド役職)\nⒸ：クルー陣営\nⓃ：第三陣営"
 
 
 "FixSpawnPacketSize","(Experimental) Only if disconnection occurs with above 8 people.","(試験的機能) ８人以上で切断が発生する場合のみオン"
@@ -879,6 +884,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "KillFlashDuration","""Kill Flash"" Duration","キルフラッシュの長さ","击杀闪烁持续时间","殺人閃光持續時間","Длительность ""Вспышки Убийства""","Duração do ""Clarão de Abate"""
 "DefaultShapeshiftCooldown","Default Shapeshift Cooldown","デフォルトの変身クールダウン","默认变形冷却时间","預設變身時間","Обычная перезарядка Оборотня","Tempo de Recarga Padrão (Mutar)"
 "ImpostorOperateVisibility","(MOD)Impostor Can Not Be Clairvoyant After Death","(MOD)インポスターが霊界で千里眼できない","内鬼死后不可以有千里眼",
+"ImpostorOperateVisibilityInfoLong","","MOD導入者がインポスターになった際、千里眼を使用できなくする機能。\n千里眼：MOD導入者専用機能。霊界にいる時にマウスホイールスクロールでカメラの引きを変更できる。",
 "ChangeIntro","(MOD)Change the Intro the Original TOH Specs.","(MOD)第三陣営やマッド役職のイントロを本家TOH仕様に戻す","(MOD)将介绍更改为原始TOH规格。"
 "CanKill","Can Kill","キルできる","可以击杀",
 "RevengeNeutral","Can Revenge Neutrals","道連れ能力持ちがニュートラル役職を道連れ出来る","可以接受同伴为中立",,
