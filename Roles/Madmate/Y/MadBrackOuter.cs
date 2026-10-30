@@ -5,6 +5,7 @@ using InnerNet;
 using TownOfHostY.Roles.Core;
 
 namespace TownOfHostY.Roles.Madmate;
+
 public sealed class MadBrackOuter : RoleBase
 {
     public static readonly SimpleRoleInfo RoleInfo =
@@ -35,18 +36,12 @@ public sealed class MadBrackOuter : RoleBase
     {
         if (!AmongUsClient.Instance.AmHost) return true;
 
-        MessageWriter SabotageFixWriter = AmongUsClient.Instance.StartRpcImmediately(ShipStatus.Instance.NetId, (byte)RpcCalls.UpdateSystem, SendOption.Reliable, Player.GetClientId());
-        SabotageFixWriter.Write((byte)SystemTypes.Electrical);
-        SabotageFixWriter.WriteNetObject(Player);
-        AmongUsClient.Instance.FinishRpcImmediately(SabotageFixWriter);
+        Player.RpcDesyncUpdateSystem(SystemTypes.Electrical, 0);
 
         foreach (var target in Main.AllPlayerControls)
         {
             if (target == Player || target.Data.Disconnected) continue;
-            SabotageFixWriter = AmongUsClient.Instance.StartRpcImmediately(ShipStatus.Instance.NetId, (byte)RpcCalls.UpdateSystem, SendOption.Reliable, target.GetClientId());
-            SabotageFixWriter.Write((byte)SystemTypes.Electrical);
-            SabotageFixWriter.WriteNetObject(target);
-            AmongUsClient.Instance.FinishRpcImmediately(SabotageFixWriter);
+            target.RpcDesyncUpdateSystem(SystemTypes.Electrical, 0);
         }
         return true;
     }

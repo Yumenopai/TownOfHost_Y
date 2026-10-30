@@ -64,7 +64,14 @@ public sealed class MadNimrod : RoleBase
                 Logger.Info($"{Utils.GetPlayerById(ExecutionMeetingPlayerId).GetNameWithRole()} : ニムロッド会議", "Nimrod");
                 // バニラ側の表示更新
                 Utils.NotifyRoles(true, ForceLoop: true);
-                Utils.GetPlayerById(Exiled.PlayerId).ReportDeadBody(Exiled);
+                if (Exiled.Object.AmOwner)
+                {
+                    Exiled.Object.CmdReportDeadBody(null);
+                }
+                else
+                {
+                    Exiled.Object.ReportDeadBodyForced(null);
+                }
             }
         }, 14.5f, "NimrodExiled");
 
