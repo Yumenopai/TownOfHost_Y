@@ -276,14 +276,14 @@ public static class Options
     public static OptionItem GhostIgnoreTasks;
     public static OptionItem CommsCamouflage;
 
-    public static OptionItem SkinControle;
-    public static OptionItem NoHat;
-    public static OptionItem NoFullFaceHat;
-    public static OptionItem NoSkin;
-    public static OptionItem NoVisor;
-    public static OptionItem NoPet;
-    public static OptionItem NoDuplicateHat;
-    public static OptionItem NoDuplicateSkin;
+    //public static OptionItem SkinControle;
+    //public static OptionItem NoHat;
+    //public static OptionItem NoFullFaceHat;
+    //public static OptionItem NoSkin;
+    //public static OptionItem NoVisor;
+    //public static OptionItem NoPet;
+    //public static OptionItem NoDuplicateHat;
+    //public static OptionItem NoDuplicateSkin;
 
     // プリセット対象外
     public static OptionItem NoGameEnd;
@@ -839,16 +839,16 @@ public static class Options
         LadderDeathChance = StringOptionItem.Create((int)offsetId.FeatOther + 301, "LadderDeathChance", rates[1..], 0, TabGroup.ModMainSettings, false).SetParent(LadderDeath).SetGameMode(CustomGameMode.All);
 
         // スキン設定
-        SkinControle = StringOptionItem.Create((int)offsetId.FeatOther + 400, "SkinControle", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true)
-            .SetColor(Palette.CrewmateBlue)
-            .SetGameMode(CustomGameMode.All);
-        NoHat = StringOptionItem.Create((int)offsetId.FeatOther + 401, "NoHat", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
-        NoFullFaceHat = StringOptionItem.Create((int)offsetId.FeatOther + 402, "NoFullFaceHat", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
-        NoSkin = StringOptionItem.Create((int)offsetId.FeatOther + 403, "NoSkin", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
-        NoVisor = StringOptionItem.Create((int)offsetId.FeatOther + 404, "NoVisor", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
-        NoPet = StringOptionItem.Create((int)offsetId.FeatOther + 405, "NoPet", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
-        NoDuplicateHat = StringOptionItem.Create((int)offsetId.FeatOther + 410, "NoDuplicateHat", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
-        NoDuplicateSkin = StringOptionItem.Create((int)offsetId.FeatOther + 411, "NoDuplicateSkin", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
+        //SkinControle = StringOptionItem.Create((int)offsetId.FeatOther + 400, "SkinControle", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true)
+        //    .SetColor(Palette.CrewmateBlue)
+        //    .SetGameMode(CustomGameMode.All);
+        //NoHat = StringOptionItem.Create((int)offsetId.FeatOther + 401, "NoHat", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
+        //NoFullFaceHat = StringOptionItem.Create((int)offsetId.FeatOther + 402, "NoFullFaceHat", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
+        //NoSkin = StringOptionItem.Create((int)offsetId.FeatOther + 403, "NoSkin", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
+        //NoVisor = StringOptionItem.Create((int)offsetId.FeatOther + 404, "NoVisor", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
+        //NoPet = StringOptionItem.Create((int)offsetId.FeatOther + 405, "NoPet", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
+        //NoDuplicateHat = StringOptionItem.Create((int)offsetId.FeatOther + 410, "NoDuplicateHat", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
+        //NoDuplicateSkin = StringOptionItem.Create((int)offsetId.FeatOther + 411, "NoDuplicateSkin", new string[] { "ColoredOff", "ColoredOn" }, 0, TabGroup.ModMainSettings, true).SetParent(SkinControle).SetGameMode(CustomGameMode.All);
         VoiceReader.SetupCustomOption((int)Options.offsetId.FeatOther + 500);
 
         TextOptionItem.Create((int)offsetId.GModeAdd, "Head.GameMode", TabGroup.ModMainSettings).SetColor(Color.yellow).SetGameMode(CustomGameMode.Standard);

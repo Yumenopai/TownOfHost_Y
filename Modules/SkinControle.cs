@@ -4,6 +4,7 @@ using System.Text;
 namespace TownOfHostY;
 public static class SkinControle
 {
+    /*
     static readonly string Missing = "missing";
     public static NetworkedPlayerInfo.PlayerOutfit PlainOutfit = new NetworkedPlayerInfo.PlayerOutfit().Set("", 15, "hat_NoHat", "skin_None", "visor_EmptyVisor", "pet_EmptyPet");
     public static readonly string[] FullFaceHat = new string[]
@@ -190,4 +191,5 @@ public static class SkinControle
 
         sender.SendMessage();
     }
+    */
 }
