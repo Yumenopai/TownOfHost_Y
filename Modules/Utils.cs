@@ -1573,6 +1573,7 @@ public static class Utils
                 || seer.Is(CustomRoles.Immoralist)
                 || seer.Is(CustomRoles.LoyalDoggy)
                 || seer.Is(CustomRoles.jO)
+                || seer.Is(CustomRoles.Vendetta)
                 || VentEnterTask.HaveTask(seer)
 
                 || Duelist.CheckNotify(seer)

@@ -232,7 +232,7 @@ namespace TownOfHostY
                             }
                         }
                         catch { }
-                    }, 3f, "DisplayKillLog");
+                    }, 3.2f, "DisplayKillLog");
                 }
             }
             catch (Exception ex)
