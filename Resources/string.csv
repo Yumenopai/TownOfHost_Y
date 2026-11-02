@@ -446,7 +446,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "Godfather","Godfather","ゴッドファーザー",
 "Janitor","Janitor","ジャニター",
 
-"Head.LimitedTimeRoleH","Limited Time Role 4/1","期間限定役職 4/1"
+"Head.LimitedTimeRoleH","Limited Time Role","期間限定役職"
 "JackOLantern","Jack-O'-Lantern","ジャック・オー・ランタン",
 "Jack","Jack","ジャック",
 "jO","'O'(madmate)","オー(マッド)",
@@ -1534,7 +1534,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Rate90","90%","90%","90%","90%","90%","90%"
 "Rate100","100%","100%","100%","100%","100%","100%"
 "Preset","Preset","プリセット","预设","設定檔","Сохранения","Predefinição"
-"PresetInfoLong","","プリセットを選択する",
+"PresetInfoLong","","プリセットを選択する。",
 "Preset_1","Preset 1","プリセット1","预设1","設定檔 1","Сохранение 1","Predefinição 1"
 "Preset_2","Preset 2","プリセット2","预设2","設定檔 2","Сохранение 2","Predefinição 2"
 "Preset_3","Preset 3","プリセット3","预设3","設定檔 3","Сохранение 3","Predefinição 3"

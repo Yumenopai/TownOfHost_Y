@@ -133,7 +133,7 @@ namespace TownOfHostY
                         _ => res
                     };
                 }
-                else if (Main.IsInitialRelease)
+                else if (false)
                 {
                     res = str switch
                     {

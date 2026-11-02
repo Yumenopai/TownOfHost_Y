@@ -84,7 +84,12 @@ namespace TownOfHostY
                 Main.credentialsText = $"<color={Main.ModColor}>{Main.ModName}</color> v{Main.PluginVersion}";
                 if (Main.IsPrerelease)
                 {
-                    Main.credentialsText += $"{Main.PluginSubVersion}\r\n<#F39C12>{Main.PluginVersionName}</color>";
+                    Main.credentialsText += $"{Main.PluginSubVersion}";
+
+                    if (!Main.PluginVersionName.IsNullOrWhiteSpace())
+                    {
+                        Main.credentialsText += $"\r\n<#F39C12>{Main.PluginVersionName}</color>";
+                    }
                 }
 #if DEBUG
                 Main.credentialsText += $"\r\n<color={Main.ModColor}>{ThisAssembly.Git.Branch}({ThisAssembly.Git.Commit})</color>";
@@ -150,8 +155,6 @@ namespace TownOfHostY
                 {
                     SpecialEventText.color = Color.yellow;
                     SpecialEventText.text = $"Happy Birthday to {Main.ModName}!";
-                    if (CultureInfo.CurrentCulture.Name == "ja-JP")
-                        SpecialEventText.text += "<size=60%>\n期間限定：ポテンシャリスト・おにぎり屋復刻！</size>";
                 }
                 else if (Main.IsHalloween)
                 {

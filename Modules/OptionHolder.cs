@@ -419,12 +419,12 @@ public static class Options
             .SetGameMode(CustomGameMode.All);
 
         // SpecialEvent
-        if (Main.IsChristmas)
-        {
-            Potentialist.SetupRoleOptions();
-            Potentialist.RoleInfo.OptionCreator?.Invoke();
-        }
-        if (Main.IsAprilFool)
+        //if (Main.IsChristmas)
+        //{
+        //    Potentialist.SetupRoleOptions();
+        //    Potentialist.RoleInfo.OptionCreator?.Invoke();
+        //}
+        if (Main.IsHalloween)
         {
             JackOLantern.SetupRoleOptions();
             JackOLantern.RoleInfo.OptionCreator?.Invoke();

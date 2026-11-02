@@ -96,8 +96,8 @@ static class CustomRolesHelper
     // 新役職等(トップ掲載の常設役職)
     public static bool IsNewRole(this CustomRoles role)
     {
-        if (Main.IsInitialRelease && role == CustomRoles.Bakery)
-            return true;
+        //if (Main.IsInitialRelease && role == CustomRoles.Bakery)
+        //    return true;
 
         //return role is CustomRoles.Administer
         //    or CustomRoles.Charger
@@ -140,6 +140,7 @@ static class CustomRolesHelper
           
             or CustomRoles.EvilHacker //一旦封印
             or CustomRoles.EvilDyer //封印
+            or CustomRoles.Vendetta //封印
             or CustomRoles.Potentialist
             or CustomRoles.Impostor or CustomRoles.Crewmate;
     }

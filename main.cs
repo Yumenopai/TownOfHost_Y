@@ -53,15 +53,15 @@ public class Main : BasePlugin
     // ==========
     //Sorry for many Japanese comments.
     public const string PluginGuid = "com.yumenopai.townofhosty";
-    public const string PluginVersion = "2026.9.5";
+    public const string PluginVersion = "2026.11.2";
     // サポートされている最低のAmongUsバージョン
     public static readonly string LowestSupportedVersion = "2026.9.29";
     // このバージョンのみで公開ルームを無効にする場合
     public static readonly bool IsPublicAvailableOnThisVersion = false;
     // プレリリースかどうか
-    public static bool IsPrerelease { get; } = false;
+    public static bool IsPrerelease { get; } = true;
     public const string PluginSubVersion = "β";
-    public const string PluginVersionName = "StreamerDebug";
+    public const string PluginVersionName = "";
 
     public Harmony Harmony { get; } = new Harmony(PluginGuid);
     public static Version version = Version.Parse(PluginVersion);
@@ -133,8 +133,8 @@ public class Main : BasePlugin
     public static bool IsValentine = DateTime.Now.Month == 13 && DateTime.Now.Day is 9 or 10 or 11 or 12 or 13 or 14 or 15;
     public static bool IsWhiteDay = DateTime.Now.Month == 13 && (DateTime.Now.Day >= 13 && DateTime.Now.Day <= 16);
     public static bool IsAprilFool = DateTime.Now.Month == 13 && DateTime.Now.Day == 1;
-    public static bool IsHalloween = (DateTime.Now.Month == 13 && DateTime.Now.Day >= 26) || (DateTime.Now.Month == 11 && DateTime.Now.Day <= 4);
-    public static bool IsInitialRelease = DateTime.Now.Month == 13 && DateTime.Now.Day >= 1 && DateTime.Now.Day <= 10;
+    public static bool IsHalloween = DateTime.Now.Month == 11 && DateTime.Now.Day <= 8;
+    public static bool IsInitialRelease = DateTime.Now.Month == 11 && DateTime.Now.Day >= 1 && DateTime.Now.Day <= 8;
     public static bool IsChristmas = DateTime.Now.Month == 13 && DateTime.Now.Day <= 25;
 
     public static IEnumerable<PlayerControl> AllPlayerControls => PlayerControl.AllPlayerControls.ToArray().Where(p => p != null);
