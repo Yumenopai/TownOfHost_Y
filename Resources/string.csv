@@ -591,6 +591,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 "# GM"
 "EnableGM","Enable GM","ゲームマスターを有効にする","GM(管理员)","GM(遊戲大師)","GM(Призрак)","GM(Fantasma)"
+"EnableGMInfoLong","The GM (Game Master) is an observer role.\nTheir presence has no effect on the game, and all players know who the GM is. The GM role will be assigned to the host, who will automatically become a ghost at the start of the game.","ゲームマスター(GM)はオブザーバー役職である。\nゲームマスターはゲーム自体には何の影響も与えず、すべてのプレイヤーは誰がゲームマスターであるかがわかる。必ずホストに割り当てられ、始めから幽霊状態になっている。","GM(管理员)是房主专属的观察者职业。从游戏开始时便以幽灵状态在旁边观战。 \n该职业本身对游戏没有影响，且会议中对所有玩家可见。 ","GM(遊戲大師)是遊戲的觀察者, \nGM對遊戲進行過程沒有影響,所有玩家都知道GM是誰,該職業絕對會分配給房主。\nGM(遊戲大師)從開始遊戲時就處於死亡狀態。","Мастер Игры — это роль, которая наблюдает за игрой в роле призрака. \nОн не влияет на игру, и все игроки всегда знают кто Мастер Игры. Всегда назначается только хосту лобби и становится призраком в самом начале игры.","O GM (Mestre do Jogo) é uma classe de observação. \nA sua presença não afeta o jogo, e todos os jogadores sabem quem é o GM. A classe de GM será dada ao anfitrião, que será um fantasma desde o começo do jogo."
 "GM","GM","ゲームマスター","GM(管理员)","GM(遊戲大師)","GM(Призрак)","GM(Fantasma)"
 "GMInfo","You are the Game Master","霊界から見守ろう","你是管理员，在旁边看戏吧","當吃瓜群眾在一旁看戲吧","Вы Мастер Игры","Você é o Mestre do Jogo (GM)"
 "GMInfoLong","(None):\nThe GM (Game Master) is an observer role.\nTheir presence has no effect on the game, and all players know who the GM is. The GM role will be assigned to the host, who will automatically become a ghost at the start of the game.","(なし):\nGM(ゲームマスター)はオブザーバー役職である。\nGMはゲーム自体には何の影響も与えず、すべてのプレイヤーは誰がGMであるかがわかる。必ずホストに割り当てられ、始めから幽霊状態になっている。","（无阵营）：\nGM(管理员)是房主专属的观察者职业。从游戏开始时便以幽灵状态在旁边观战。 \n该职业本身对游戏没有影响，且会议中对所有玩家可见。 ","（不屬於任何陣營）：\nGM(遊戲大師)是遊戲的觀察者, \nGM對遊戲進行過程沒有影響,所有玩家都知道GM是誰,該職業絕對會分配給房主。\nGM(遊戲大師)從開始遊戲時就處於死亡狀態。","(Никто):\nМастер Игры — это роль, которая наблюдает за игрой в роле призрака. \nОн не влияет на игру, и все игроки всегда знают кто Мастер Игры. Всегда назначается только хосту лобби и становится призраком в самом начале игры.","(Nenhum): \nO GM (Mestre do Jogo) é uma classe de observação. \nA sua presença não afeta o jogo, e todos os jogadores sabem quem é o GM. A classe de GM será dada ao anfitrião, que será um fantasma desde o começo do jogo."
@@ -674,7 +675,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "DisableVital","Disable Vital","バイタル無効化",
 
 "ResetDoorsEveryTurns","Reset Doors After Meeting","会議後にドア状況をリセットする",
-"ResetDoorsEveryTurnsInfoLong","","会議終了後、ドアを設定した状態にリセットする機能。",
+"ResetDoorsEveryTurnsInfoLong","","会議終了後、サボタージュで閉めることができるドアを特定の状態にリセットする機能。",
 "DoorsResetMode","Reset Mode","リセットモード",
 "AllOpen","All Open","全て開放",
 "AllClosed","All Closed","全て閉鎖",
@@ -708,6 +709,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 
 "IgnoreConditions","Disable Device Ignore Conditions","デバイス無効化の除外条件",
+"IgnoreConditionsInfoLong","","無効化に設定したデバイスでも使用できる対象者を設定できる機能。",
 "IgnoreImpostors","Ignore Impostors","インポスターを除く","忽略内鬼","偽裝者陣營除外","Игнорируют Предатели","Ignorar Impostores"
 "IgnoreMadmates","Ignore Madmates","マッドメイト系を除く","忽略叛徒","叛徒職業除外","Игнорируют Безумцы","Ignorar Tripulantes Loucos"
 "IgnoreNeutrals","Ignore Neutrals","ニュートラルを除く","忽略独立阵营","中立陣營除外","Игнорируют Нейтралы","Ignorar Neutros"
@@ -753,7 +755,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "NoDuplicateHat","No duplicate hats","他の人と同じハット使用禁止",,,,
 "NoDuplicateSkin","No duplicate skins","他の人と同じスキン使用禁止",,,,
 "FixFirstKillCooldown","Normalize First Kill Cooldown","初期スポーン時のクールダウン修正","修正首刀冷却时间","修正開場時的殺人冷卻時間","Нормализовать откат убийства в начале Игры","Normalizar Tempo de Recarga do Primeiro Abate"
-"FixFirstKillCooldownInfoLong","","最初のスポーン時のみキルクールダウンを変更する機能。",
+"FixFirstKillCooldownInfoLong","","最初のスポーン時のキルクールを10秒ではなく設定したキルクール秒数に変更する機能。",
 "GhostCantSeeOtherRoles","Ghost Can't See Other Roles","幽霊が他人の役職を見ることができない","幽灵不可见他人职业","幽靈不可以看見所有玩家職業",
 "GhostCantSeeOtherVotes","Ghost Can't See Other Votes","幽霊が他人の投票先を見ることができない","幽灵不可见投票情况","幽靈不可以看見所有玩家的投票",
 "GhostCantSeeOtherTasks","Ghosts Can't See Other Tasks","幽霊が他人のタスク進捗を見ることができない"
@@ -873,6 +875,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "JudgeCanJudgeNeutrals","Can judge Neutrals","ニュートラルを裁ける"
 
 "AssignMode","Assign Algorithm Mode","アサインモード","分配算法","","Алгоритм назначения",""
+"AssignModeInfoLong","","役職の割り当てモードを変更する機能。\nランダムを選択すると、設定された陣営毎の人数に則って、設定された割合でランダムに割り当てられる。",
 "AssignAlgorithm.Fixed","Fixed","固定","固定","","Фиксированный",""
 "AssignAlgorithm.Random","Random","ランダム","随机","","Случайный",""
 "RoleTypeMin","Minimum %roleType% Roles","%roleType%役職の最小人数","%roleType%职业的最小人数","","Минимум ролей для %roleType% ",""
@@ -881,7 +884,8 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "FixedRole","Fixed Role","役職を固定","固定职业","","Фиксированная Роль",""
 "Role","Role","役職","职业","","Роль",""
 
-"KillFlashDuration","""Kill Flash"" Duration","キルフラッシュの長さ","击杀闪烁持续时间","殺人閃光持續時間","Длительность ""Вспышки Убийства""","Duração do ""Clarão de Abate"""
+"KillFlashDuration","""Kill Flash"" Duration","フラッシュの長さ","击杀闪烁持续时间","殺人閃光持續時間","Длительность ""Вспышки Убийства""","Duração do ""Clarão de Abate"""
+"KillFlashDurationInfoLong","","誰かがキルされたことを知らせるキルフラッシュや、役職の能力によって起こる通知のフラッシュの明暗転の長さを設定できる。/n/nフラッシュ：ホスト視点ではキルSE＋赤色、非ホスト視点ではリアクターSE＋赤色にフラッシュする。",
 "DefaultShapeshiftCooldown","Default Shapeshift Cooldown","デフォルトの変身クールダウン","默认变形冷却时间","預設變身時間","Обычная перезарядка Оборотня","Tempo de Recarga Padrão (Mutar)"
 "ImpostorOperateVisibility","(MOD)Impostor Can Not Be Clairvoyant After Death","(MOD)インポスターが霊界で千里眼できない","内鬼死后不可以有千里眼",
 "ImpostorOperateVisibilityInfoLong","","MOD導入者がインポスターになった際、千里眼を使用できなくする機能。\n千里眼：MOD導入者専用機能。霊界にいる時にマウスホイールスクロールでカメラの引きを変更できる。",
@@ -1216,11 +1220,13 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "AddOnDebuffAssign%role%","%role% Assign Debuff Add-On","%role%にデバフ属性を付与する","%role% 分配弱化效果"
 "AddOnAssign%role%","%role%","%role%","%role%","%role%"
 "AddonShowMode","Add-On Show Style","属性の表示方法",
+"AddonShowModeInfoLong","","役職に付随する属性の表示方法を設定する。\nデフォルト：一つなら役職名の前に表示し（ライティングシェリフ）、二つ以上は省略する（＋マッドスニッチ）。\n\n全て表示：二つ以上でも全て表示する（シーイングリベンジャーインポスター）。\n\nマーク：属性名を省略したマークで表示する（ワーカホリックRvCl）。",
 "addonShowModes.Default","Default","デフォルト",
 "addonShowModes.All","All","全て表示",
-"addonShowModes.TOH","TOH Original","本家TOH",
+"addonShowModes.TOH","Mark","マーク",
 
 "DisplayComingOutEnable","Display Coming Out Mark","CO可否マークを表示する",
+"DisplayComingOutEnableInfoLong","","ホストが設定するCO可否を、名前上に記載される役職名の横にマークで表示する機能。",
 "displayComingOut.NG","NG","×",
 "displayComingOut.None","None","なし",
 "displayComingOut.OK","OK","○",
@@ -1524,6 +1530,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Rate90","90%","90%","90%","90%","90%","90%"
 "Rate100","100%","100%","100%","100%","100%","100%"
 "Preset","Preset","プリセット","预设","設定檔","Сохранения","Predefinição"
+"PresetInfoLong","","プリセットを選択する",
 "Preset_1","Preset 1","プリセット1","预设1","設定檔 1","Сохранение 1","Predefinição 1"
 "Preset_2","Preset 2","プリセット2","预设2","設定檔 2","Сохранение 2","Predefinição 2"
 "Preset_3","Preset 3","プリセット3","预设3","設定檔 3","Сохранение 3","Predefinição 3"
@@ -1597,6 +1604,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "ShapeSelectPlayerTagBefore","You can choose which target at Shape select.","シェイプ選択画面でターゲットを選択できます。",
 "ShapeSelectPlayerTagMiniBefore","Select target at Shape select.","シェイプ選択画面で対象を選択",
 "NameChangeMode","Name Change Mode","名前変更モード",
+"NameChangeModeInfoLong","","各プレイヤーの名前を強制的に変更する機能。",
 "nameChangeMode.None","None","なし",
 "nameChangeMode.Crew","Crewmate","クルー","船员","船員","Экипаж","Tripulante"
 "nameChangeMode.Color","Color","色名",
