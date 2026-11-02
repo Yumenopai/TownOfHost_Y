@@ -594,6 +594,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 "# GM"
 "EnableGM","Enable GM","ゲームマスターを有効にする","GM(管理员)","GM(遊戲大師)","GM(Призрак)","GM(Fantasma)"
+"EnableGMInfoLong","The GM (Game Master) is an observer role.\nTheir presence has no effect on the game, and all players know who the GM is. The GM role will be assigned to the host, who will automatically become a ghost at the start of the game.","ゲームマスター(GM)はオブザーバー役職である。\nゲームマスターはゲーム自体には何の影響も与えず、すべてのプレイヤーは誰がゲームマスターであるかがわかる。必ずホストに割り当てられ、始めから幽霊状態になっている。","GM(管理员)是房主专属的观察者职业。从游戏开始时便以幽灵状态在旁边观战。 \n该职业本身对游戏没有影响，且会议中对所有玩家可见。 ","GM(遊戲大師)是遊戲的觀察者, \nGM對遊戲進行過程沒有影響,所有玩家都知道GM是誰,該職業絕對會分配給房主。\nGM(遊戲大師)從開始遊戲時就處於死亡狀態。","Мастер Игры — это роль, которая наблюдает за игрой в роле призрака. \nОн не влияет на игру, и все игроки всегда знают кто Мастер Игры. Всегда назначается только хосту лобби и становится призраком в самом начале игры.","O GM (Mestre do Jogo) é uma classe de observação. \nA sua presença não afeta o jogo, e todos os jogadores sabem quem é o GM. A classe de GM será dada ao anfitrião, que será um fantasma desde o começo do jogo."
 "GM","GM","ゲームマスター","GM(管理员)","GM(遊戲大師)","GM(Призрак)","GM(Fantasma)"
 "GMInfo","You are the Game Master","霊界から見守ろう","你是管理员，在旁边看戏吧","當吃瓜群眾在一旁看戲吧","Вы Мастер Игры","Você é o Mestre do Jogo (GM)"
 "GMInfoLong","(None):\nThe GM (Game Master) is an observer role.\nTheir presence has no effect on the game, and all players know who the GM is. The GM role will be assigned to the host, who will automatically become a ghost at the start of the game.","(なし):\nGM(ゲームマスター)はオブザーバー役職である。\nGMはゲーム自体には何の影響も与えず、すべてのプレイヤーは誰がGMであるかがわかる。必ずホストに割り当てられ、始めから幽霊状態になっている。","（无阵营）：\nGM(管理员)是房主专属的观察者职业。从游戏开始时便以幽灵状态在旁边观战。 \n该职业本身对游戏没有影响，且会议中对所有玩家可见。 ","（不屬於任何陣營）：\nGM(遊戲大師)是遊戲的觀察者, \nGM對遊戲進行過程沒有影響,所有玩家都知道GM是誰,該職業絕對會分配給房主。\nGM(遊戲大師)從開始遊戲時就處於死亡狀態。","(Никто):\nМастер Игры — это роль, которая наблюдает за игрой в роле призрака. \nОн не влияет на игру, и все игроки всегда знают кто Мастер Игры. Всегда назначается только хосту лобби и становится призраком в самом начале игры.","(Nenhum): \nO GM (Mestre do Jogo) é uma classe de observação. \nA sua presença não afeta o jogo, e todos os jogadores sabem quem é o GM. A classe de GM será dada ao anfitrião, que será um fantasma desde o começo do jogo."
@@ -615,16 +616,22 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "#モードオプション"
 "HideAndSeek","Hide and Seek","かくれんぼ","躲猫猫","躲貓貓","Прятки","Esconde-Esconde"
 "NoGameEnd","NoGameEnd","ゲームを終了しない","测试模式","遊戲不會結束模式","Игра не закончится","Jogo Sem Fim"
+"NoGameEndInfoLong",,"勝利判定が存在しないデバッグ用のモード。ホストのSHIFT+L+ENTER以外でのゲーム終了ができない。",
 "SyncButtonMode","SyncButtonMode","ボタン回数同期モード","所有船员共享会议次数","全場拍桌數同步模式","Общая кнопка встречи","Modo de Botão Sincronizado"
+"SyncButtonModeInfoLong",,"プレイヤー全員のボタン回数が同期される機能。",
 "SyncedButtonCount","Max Number of Buttons Allowed","合計ボタン使用可能回数","紧急会议可用次数","全場最大拍桌數量","Максимальное количество нажатий на Кнопку","Número Máximo de Usos do Botão"
 "AllAliveMeeting","Meeting When No One is Dead","全員生存時の会議","全员存活时的会议设定","全員存活會議","Все живые на собрании","Reunião Com Todos Vivos"
+"AllAliveMeetingInfoLong",,"全員生存時の会議時間を変更できる機能。",
 "AllAliveMeetingTime","Meeting Time When No One is Dead","全員生存時の会議時間","全员存活时的会议时间","全員存活會議時間","Время когда все живы на собрании","Tempo de Reunião Com Todos Vivos"
 "AdditionalEmergencyCooldown","Additional Emergency Cooldown","追加の緊急ボタンクールダウン","附加紧急会议冷却时间","附加緊急會議冷卻時間","Дополнительный откат Собраний","Tempo de Emergência Adicional"
+"AdditionalEmergencyCooldownInfoLong",,"設定した残り生存人数になると緊急ボタンのクールダウンが変更される機能。",
 "AdditionalEmergencyCooldownThreshold","Applied Living Player Count","適用する生存人数","适用存活人数","適用於幾個存活人數","Применяемый Порог Выживания","Número de Vivos Para Aplicar"
 "AdditionalEmergencyCooldownTime","Additional Cooldown","追加するクールダウン","附加冷却时间","附加冷卻時間","Дополнительный откат","Tempo Adicional"
 "LadderDeath","Fall From Ladders","ハシゴから転落","从梯子上下滑时有可能摔死","從梯子上下滑時可能會摔死","Падение с Лестницы","Queda de Escadas"
+"LadderDeathInfoLong",,"ハシゴを下る時に転落死するかを設定する機能。",
 "LadderDeathChance","Fall To Death Chance","転落する確率","从梯子上摔死的概率","從梯子上下滑摔死機率","Шанс разбиться насмерть","Chance de Queda"
 "DisableTasks","Disable Tasks","タスクを無効化する","禁用某些任务","禁用某些特定的任務","Отключить Задания","Desativar Tarefas"
+"DisableTasksInfoLong",,"特定の選択したタスクを割り当てられないようにする機能。",
 "DisableSwipeCardTask","Disable SwipeCard Tasks","カードタスク","禁用刷卡任务","禁用刷卡任務","Отключить Задание ''Провести Карту''","Desativar Tarefas de Passar Cartão"
 "DisableSubmitScanTask","Disable SubmitScan Tasks","医務室のスキャンタスク","禁用扫描任务","禁用掃描任務","Отключить Задание ''Сканирование''","Desativar Tarefas de Raio-X"
 "DisableUnlockSafeTask","Disable UnlockSafe Tasks","金庫タスク","禁用解除歧管任务","禁用保險櫃任務","Отключить Задание ''Открытие Сейфа''","Desativar Tarefas de Abrir Cofre"
@@ -646,15 +653,23 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "MapOption_Polus","Polus Map option","Polusのマップ設定"
 "MapOption_Airship","The Airship Map option","The Airshipのマップ設定"
 "MapOption_Fungle","The Fungle Map option","The Fungleのマップ設定"
+"MapOption_SkeldInfoLong",,"The Skeldのマップに適用する機能を設定できる。",
+"MapOption_MiraHQInfoLong",,"MIRA HQのマップに適用する機能を設定できる。",
+"MapOption_PolusInfoLong",,"Polusのマップに適用する機能を設定できる。",
+"MapOption_AirshipInfoLong",,"The Airshipのマップに適用する機能を設定できる。",
+"MapOption_FungleInfoLong",,"The Fungleのマップに適用する機能を設定できる。",
 
 "RandomSpawn","Random Spawn","ランダムスポーン","随机出生点","隨機出生點","Случайный спавн","Spawn Aleatório"
+"RandomSpawnInfoLong","","全員のスポーン位置がランダムになる機能。",
 "AdditionalSpawn","Additional Spawn","スポーン位置を追加する",
 "AdditionalSpawn_Airship","Additional All Spawn","全てのスポーン位置を追加する",
 "AdditionalSpawn_AirshipTAKADA","Additional Spawn(Cockpit,Security,Medical)","ｺｯｸﾋﾟｯﾄ･ｾｷｭﾘﾃｨ･診察室を追加する",
 "DisableNearButton","Exclude Near Button","緊急ボタン近くを除く",
 "FirstFixedSpawn","First Fixed Spawn","最初の固定スポーン",
+"FirstFixedSpawnInfoLong","","最初のスポーンのみ初期位置に固定させる。",
 
 "DisableDevices","Disable Devices","デバイスを無効化",
+"DisableDevicesInfoLong","","各種デバイスを使用できなくする機能。\nホスト以外は付近に近づくとその人のみコミュニケーションサボタージュ状態にすることで使用できなくなっている。",
 "DisableAdmin","Disable Admin","アドミン無効化","禁用管理室地图","禁用管理室地圖","Отключить Стол Администратора","Desativar Admin"
 "DisableAirshipCockpitAdmin","Disable Cockpit Admin","アドミン無効化（コックピット）","禁用飞艇(驾驶舱)管理室地图","禁用The Airship(駕駛艙)的管理室地圖","Отключить Стол Администратора В Кабине","Desativar Admin da Cabine"
 "DisableAirshipRecordsAdmin","Disable Records Admin","アドミン無効化（アーカイブ）","禁用飞艇(档案室)管理室地图","禁用The Airship(檔案室)的管理室地圖","Отключить Стол Администратора В Архиве","Desativar Admin da Sala de Arquivos"
@@ -663,6 +678,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "DisableVital","Disable Vital","バイタル無効化",
 
 "ResetDoorsEveryTurns","Reset Doors After Meeting","会議後にドア状況をリセットする",
+"ResetDoorsEveryTurnsInfoLong","","会議終了後、サボタージュで閉めることができるドアを特定の状態にリセットする機能。",
 "DoorsResetMode","Reset Mode","リセットモード",
 "AllOpen","All Open","全て開放",
 "AllClosed","All Closed","全て閉鎖",
@@ -670,25 +686,33 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 "## リアクターの時間制御"
 "SabotageTimeControl","Sabotage Duration Control","サボタージュの時間制御","更改修理时限","重新設定緊急任務時間","Изменить время Саботажа","Controle da Duração de Sabotagem"
+"SabotageTimeControlInfoLong","","サボタージュの時間を設定した秒数に変更する機能。",
 "ReactorTimeLimit","Reactor Duration","リアクター制限時間",
 "FungleMushroomMixupDuration","Mushroom Mixup Duration","キノコカオス効果時間",
 
 "LightsOutSpecialSettings_Airship","Restrictions On Where Fix Lights Can Take Place","停電解除場所の制限","停电特殊设定","關燈特殊設定","Специальные настройки при отключении Света","Configuração Especial de Consertar Luzes"
+"LightsOutSpecialSettings_AirshipInfoLong","","停電サボタージュの解除する場所を制限する機能。無効化した場所ではスイッチを押しても反応しなくなる。",
 "DisableAirshipViewingDeckLightsPanel","Disable Viewing Deck Lights Panel","展望の配電盤を無効化","禁用瞭望台配电箱","關閉觀景台的配電箱","Отключить починку Света на Смотровой Палубе","Desativar Painel de Luzes do Deck Panorâmico"
 "DisableAirshipGapRoomLightsPanel","Disable Gap Room Lights Panel","昇降機の配電盤を無効化","禁用升降机配电箱","關閉間隙室右側的配電箱","Отключить починку Света в Комнате Пролета","Desativar Painel de Luzes da Sala Suspensa"
 "DisableAirshipCargoLightsPanel","Disable Cargo Lights Panel","貨物室の配電盤を無効化","禁用货舱配电箱","關閉貨艙的配電箱","Отключить починку Света в Грузовом Отсеке","Desativar Painel de Luzes das Cargas"
 
 "AirShipVariableElectrical","Variable Electrical","電気室の構造変化","改变配电室构造","電力室構造變化","Двери в Электрощитовой меняются случайно",""
+"AirShipVariableElectricalInfoLong","","電気室の構造を毎ターン変化させる機能。",
 "DisableAirshipMovingPlatform","Disable Moving Platform","昇降機のリフトを無効化","禁用升降机","","Отключить движущуюся платформу",""
+"DisableAirshipMovingPlatformInfoLong","","昇降機のリフトを使用できなくする機能。",
 
 "FungleCanUseZipline","Can Use Zipline","ジップラインの方向制限",
+"FungleCanUseZiplineInfoLong","","ジップラインの使用を制限する機能。",
 "FungleCanUseZiplineFromTop","Can't Use From Top","上からの下降を禁止",
 "FungleCanUseZiplineFromUnder","Can't Use From Under","下からの上昇を禁止",
 "FungleCanSporeTrigger","Can Spore Trigger","キノコ胞子モヤをなくす",
+"FungleCanSporeTriggerInfoLong","","道のキノコを踏むと出る胞子モヤを出ないようにする機能。",
 "DisableButtonInMushroomMixup","Disable Button In MushroomMixup","キノコカオス中のボタンを無効化","","","",""
+"DisableButtonInMushroomMixupInfoLong","","キノコカオスサボタージュ中は緊急ボタンを押せなくする機能。",
 
 
 "IgnoreConditions","Disable Device Ignore Conditions","デバイス無効化の除外条件",
+"IgnoreConditionsInfoLong","","無効化に設定したデバイスでも使用できる対象者を設定できる機能。",
 "IgnoreImpostors","Ignore Impostors","インポスターを除く","忽略内鬼","偽裝者陣營除外","Игнорируют Предатели","Ignorar Impostores"
 "IgnoreMadmates","Ignore Madmates","マッドメイト系を除く","忽略叛徒","叛徒職業除外","Игнорируют Безумцы","Ignorar Tripulantes Loucos"
 "IgnoreNeutrals","Ignore Neutrals","ニュートラルを除く","忽略独立阵营","中立陣營除外","Игнорируют Нейтралы","Ignorar Neutros"
@@ -696,6 +720,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "IgnoreAfterAnyoneDied","Ignore After Anyone Has Died","死人が出た後を除く","忽略幽灵","當所有人都死亡時除外","Игнорируют умершие игроки","Ignorar Depois de Alguém Morrer"
 
 "RandomMapsMode","RandomMapsMode","ランダムマップモード","随机地图模式","隨機地圖模式","Случайная карта","Modo de Mapas Aleatórios"
+"RandomMapsModeInfoLong","","試合を開始する毎に設定したマップからランダムに選択される機能。",
 "AddedTheSkeld","Include TheSkeld","The Skeldを追加","添加骷髅舰地图","將The Skeld地圖列入選項","Добавить TheSkeld","Incluir TheSkeld"
 "AddedMIRAHQ","Include MIRAHQ","MIRA HQを追加","添加米拉总部地图","將MIRA HQ地圖列入選項","Добавить MiraHQ","Incluir MIRAHQ"
 "AddedPolus","Include Polus","Polusを追加","添加波鲁斯地图","將Polus地圖列入選項","Добавить Polus","Incluir Polus"
@@ -704,13 +729,17 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 
 "## サボタージュのクールダウン変更"
 "ModifySabotageCooldown","Sabotage Cooldown Control","サボタージュのクールダウン制御","","","",""
+"ModifySabotageCooldownInfoLong","","サボタージュのクールダウンの秒数を設定した秒数に変更する機能。","","","",""
 "SabotageCooldown","Sabotage Cooldown","サボタージュのクールダウン","","","",""
 
 "BlockDisturbancesToSwitches","Block Disturbances To Switches","配電盤妨害を無効化","","","",""
+"BlockDisturbancesToSwitchesInfoLong","","停電サボタージュの配電盤で上がっているスイッチを下げられなくする機能。",
 "CommsCamouflage","Camouflage During Comms","コミュサボ時のカモフラージュ","通信破坏时伪装","通訊破壞時所有玩家變成小灰人","Камуфляж при Саботаже Связи","Camuflagem Durante Comunicação"
+"CommsCamouflageInfoLong","","コミュニケーションサボタージュ中は全員の姿が灰色になる機能。",
 
 
 "SuffixMode","Suffix","名前の二行目","附加标签","名字標籤","Суффикс","Sufixo"
+"SuffixModeInfoLong","","設定したワードをホストの名前の下に表示する機能。",
 "SuffixMode.None","None","なし","无","無","Ничего","Nenhum"
 "SuffixMode.Version","Version","バージョン","版本","版本","Версия","Versão"
 "SuffixMode.Streaming","Streaming","配信中","直播中","直播中","Стримит","Ao Vivo"
@@ -718,7 +747,9 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "SuffixMode.RoomHost","Room Host","部屋主","房主","房主","Хост Румы","Anfitrião"
 "SuffixMode.OriginalName","OriginalName","元の名前","玩家名称","玩家原名稱","Настоящий Никнейм","Nome Original"
 "ColorNameMode","Color Name Mode","色名前モード","显示颜色名称","名字將被顏色名稱替換","Режим: Никнейм соответствует цвету","Modo Nomes de Cores"
+"ColorNameModeInfoLong","","全員の名前表示が色の名前になる機能。",
 "SkinControle","Skin Controle","スキン設定",,,,
+"SkinControleInfoLong","","スキンで禁止する種類を設定できる機能。",
 "NoHat","Prohibited hat","ハット禁止",,,,
 "NoFullFaceHat","Prohibited full face hat","フルフェイスハット禁止",,,,
 "NoSkin","Prohibited skin","スキン禁止",,,,
@@ -727,20 +758,25 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "NoDuplicateHat","No duplicate hats","他の人と同じハット使用禁止",,,,
 "NoDuplicateSkin","No duplicate skins","他の人と同じスキン使用禁止",,,,
 "FixFirstKillCooldown","Normalize First Kill Cooldown","初期スポーン時のクールダウン修正","修正首刀冷却时间","修正開場時的殺人冷卻時間","Нормализовать откат убийства в начале Игры","Normalizar Tempo de Recarga do Primeiro Abate"
+"FixFirstKillCooldownInfoLong","","最初のスポーン時のキルクールを10秒ではなく設定したキルクール秒数に変更する機能。",
 "GhostCantSeeOtherRoles","Ghost Can't See Other Roles","幽霊が他人の役職を見ることができない","幽灵不可见他人职业","幽靈不可以看見所有玩家職業",
 "GhostCantSeeOtherVotes","Ghost Can't See Other Votes","幽霊が他人の投票先を見ることができない","幽灵不可见投票情况","幽靈不可以看見所有玩家的投票",
 "GhostCantSeeOtherTasks","Ghosts Can't See Other Tasks","幽霊が他人のタスク進捗を見ることができない"
 "GhostCanSeeOtherTeams","Ghost Can See Other Teams","幽霊が他人の陣営を見ることができる",
+"GhostCanSeeOtherTeamsInfoLong","","幽霊視点で、他人の陣営を表示する機能。\nⒾ：インポスター陣営(インポスター役職)\nⓂ：インポスター陣営(マッド役職)\nⒸ：クルー陣営\nⓃ：第三陣営"
 "GhostCanSeeDeathReason","Ghost Can See Cause Of Death","幽霊が死因を見ることができる","幽灵可以看见死因","幽靈可以看見死因","Призраки могут видеть Причины Смерти","Fantasmas Podem Ver Causa da Morte"
 "HostGhostIgnoreTasks","Host Ghosts Exempt From Tasks","ホストは死後タスクを免除する",
 "GhostIgnoreTasks","Ghosts Exempt From Tasks","死人のタスクを免除する","幽灵无视任务","幽靈可以免除任務","Призраки игнорируют Задания","Fantasmas Isentos de Tarefas"
 "DisableTaskWin","Disable Task Win","タスク勝利を無効化","禁用任务胜利","禁用任務勝利","Отключить победу по Заданиям","Desativar Vitória por Tarefas"
+"DisableTaskWinInfoLong","","タスク完了での勝利を無効化する機能。\nキルでの勝利、追放での勝利、第三陣営の特殊勝利等でゲームを決着させなければならない。",
 "HideGameSettings","Hide Game Settings","ゲーム設定を隠す","隐藏游戏设置","隱藏遊戲設定","Скрыть настройки Игры","Esconder Configurações"
+"HideGameSettingsInfoLong","","ゲーム設定を参加者に見せないようにする機能。\n参加者から送信されるコマンドでは現在のゲーム設定を秘匿したりする。",
 "RoleOptions","Role Options","役職設定","职业设置","職業設定","Настройка Ролей","Opções de Papéis"
 "ModeOptions","Mode Options","モード設定","模组设置","模式設定","Настройка Режима","Opções de Modos"
 "AutoDisplayLastResult","Auto Display Last Result","自動的に試合結果を表示","自动显示最终结果","自動顯示上一回合結果","Отображать результат последней игры в чате","Mostrar Ultimo Resultado"
 "AutoDisplayKillLog","Auto Display KillLog","自動的にキルログを表示","自动显示击杀日志","自動顯示擊殺紀錄","Отображать историю убийств в чате",""
 "VoteMode","Voting Mode","投票モード","投票相关设定","投票設定","Режим Голосования","Modo de Votação"
+"VoteModeInfoLong","","各自の投票に応じて設定した投票先に変更する機能。",
 "WhenSkipVote","When Skip Vote","スキップ時","跳过投票相当于投给自己","當跳過投票時","Когда пропускаете Голосование","Quando Pular Voto"
 "WhenSkipVoteIgnoreFirstMeeting","Ignore First Meeting","初回会議を除く","忽略首次会议","忽略首次會議","Игнорировать первое собрание","Ignorar Primeira Reunião"
 "WhenSkipVoteIgnoreNoDeadBody","Ignore When No DeadBody","死体がない時を除く","无尸体时忽略","沒有屍體時無法選擇","Игнорировать когда Нет Трупов","Ignorar Se Não Tiver Corpo"
@@ -755,8 +791,10 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "TieMode.All","Eject All","全員追放","全体放逐","全員放逐","Изгнать всех","Exilar Todos"
 "TieMode.Random","Eject Random","ランダムに追放","随机放逐","隨機放逐","Изгнать случайно","Exilar Aleatório"
 "EnableDebugMode","Enable Debug Mode","デバッグモードを有効化する","开启调试模式","啟用偵錯模式","Включить режим отладки","Ativar Modo de Depuração"
-"ChangeNameToRoleInfo","Show Role Descriptions to Unmodded Client","役職説明を非modクライアントにも表示する","对未安装本mod的玩家显示职业说明","對未安裝本模組的玩家顯示職業說明","Показать описания Ролей игрокам играющие без Мода","Mostrar Descrição de Classe para Clientes Não Modificados"
-"RoleAssigningAlgorithm","Role Assigning Algorithm","役職割り当てのアルゴリズム","职业分配算法","職業分配算法","Алгоритм назначения Ролей",""
+"ChangeNameToRoleInfo","Show Role Descriptions to Unmodded Client","役職説明を非ホストにも表示する","对未安装本mod的玩家显示职业说明","對未安裝本模組的玩家顯示職業說明","Показать описания Ролей игрокам играющие без Мода","Mostrar Descrição de Classe para Clientes Não Modificados"
+"ChangeNameToRoleInfoInfoLong","","最初のスポーン時、非ホストの名前部分に簡易役職紹介文を表示させる機能。",
+"RoleAssigningAlgorithm","Random Algorithm","ランダム抽選アルゴリズム","职业分配算法","職業分配算法","Алгоритм назначения Ролей",""
+"RoleAssigningAlgorithmInfoLong","","役職割り当てやランダムで決定する抽選アルゴリズムを変更する。",
 "RoleAssigningAlgorithm.Default","Default","デフォルト","默认随机算法","預設算法","По умолчанию",""
 "RoleAssigningAlgorithm.NetRandom",".NET System.Random",".NET System.Random",".NET 系统随机算法","NET系統隨機算法","Случайный",""
 "RoleAssigningAlgorithm.HashRandom","HashRandom","HashRandom","哈希随机算法","Hash值隨機算法","HashRandom",""
@@ -769,9 +807,13 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "CheaterAutoBan","Automatically Ban Cheater","自動BANリスト追加","","","",""
 "CheatLobbyKill","Lobby Kill Cheat","ロビーキルチート","","","",""
 "ShowReportReason","Show button or report","ボタンかレポートか表示させる","显示按钮或报告"
+"ShowReportReasonInfoLong","","開かれた会議が緊急ボタンか死体レポートか、チャットと会議画面に表示される機能。\n死体レポート時は誰の死体を通報したかも表示される。",
 "ShowRevengeTarget","Show Revenge player at Meeting","道連れされた人を会議で表示する","在会议上显示复仇玩家"
+"ShowRevengeTargetInfoLong","","道連れされた人が誰か、会議時にチャットと会議画面に表示される機能。",
 "ShowRoleInfoAtFirstMeeting","Show Role description at the first meeting","初めの会議で役職説明を表示する","在第一次会议上显示角色介绍"
+"ShowRoleInfoAtFirstMeetingInfoLong","","最初の会議で、全員のチャットにそれぞれ割り当てられた役職の説明を自動で表示させる機能。",
 "DisplayTeamMark","Display Team Mark","陣営マークを表示する"
+"DisplayTeamMarkInfoLong","","役職名の前に陣営マークを表示する機能。\nⒾ：インポスター陣営(インポスター役職)\nⓂ：インポスター陣営(マッド役職)\nⒸ：クルー陣営\nⓃ：第三陣営"
 
 
 "FixSpawnPacketSize","(Experimental) Only if disconnection occurs with above 8 people.","(試験的機能) ８人以上で切断が発生する場合のみオン"
@@ -836,6 +878,7 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "JudgeCanJudgeNeutrals","Can judge Neutrals","ニュートラルを裁ける"
 
 "AssignMode","Assign Algorithm Mode","アサインモード","分配算法","","Алгоритм назначения",""
+"AssignModeInfoLong","","役職の割り当てモードを変更する機能。\nランダムを選択すると、設定された陣営毎の人数に則って、設定された割合でランダムに割り当てられる。",
 "AssignAlgorithm.Fixed","Fixed","固定","固定","","Фиксированный",""
 "AssignAlgorithm.Random","Random","ランダム","随机","","Случайный",""
 "RoleTypeMin","Minimum %roleType% Roles","%roleType%役職の最小人数","%roleType%职业的最小人数","","Минимум ролей для %roleType% ",""
@@ -844,9 +887,11 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "FixedRole","Fixed Role","役職を固定","固定职业","","Фиксированная Роль",""
 "Role","Role","役職","职业","","Роль",""
 
-"KillFlashDuration","""Kill Flash"" Duration","キルフラッシュの長さ","击杀闪烁持续时间","殺人閃光持續時間","Длительность ""Вспышки Убийства""","Duração do ""Clarão de Abate"""
+"KillFlashDuration","""Kill Flash"" Duration","フラッシュの長さ","击杀闪烁持续时间","殺人閃光持續時間","Длительность ""Вспышки Убийства""","Duração do ""Clarão de Abate"""
+"KillFlashDurationInfoLong","","誰かがキルされたことを知らせるキルフラッシュや、役職の能力によって起こる通知のフラッシュの明暗転の長さを設定できる。/n/nフラッシュ：ホスト視点ではキルSE＋赤色、非ホスト視点ではリアクターSE＋赤色にフラッシュする。",
 "DefaultShapeshiftCooldown","Default Shapeshift Cooldown","デフォルトの変身クールダウン","默认变形冷却时间","預設變身時間","Обычная перезарядка Оборотня","Tempo de Recarga Padrão (Mutar)"
 "ImpostorOperateVisibility","(MOD)Impostor Can Not Be Clairvoyant After Death","(MOD)インポスターが霊界で千里眼できない","内鬼死后不可以有千里眼",
+"ImpostorOperateVisibilityInfoLong","","MOD導入者がインポスターになった際、千里眼を使用できなくする機能。\n千里眼：MOD導入者専用機能。霊界にいる時にマウスホイールスクロールでカメラの引きを変更できる。",
 "ChangeIntro","(MOD)Change the Intro the Original TOH Specs.","(MOD)第三陣営やマッド役職のイントロを本家TOH仕様に戻す","(MOD)将介绍更改为原始TOH规格。"
 "CanKill","Can Kill","キルできる","可以击杀",
 "RevengeNeutral","Can Revenge Neutrals","道連れ能力持ちがニュートラル役職を道連れ出来る","可以接受同伴为中立",,
@@ -1179,11 +1224,13 @@ DSchrodingerCatInfo,You are now on Team Darkhide,ダークハイドの味方に�
 "AddOnDebuffAssign%role%","%role% Assign Debuff Add-On","%role%にデバフ属性を付与する","%role% 分配弱化效果"
 "AddOnAssign%role%","%role%","%role%","%role%","%role%"
 "AddonShowMode","Add-On Show Style","属性の表示方法",
+"AddonShowModeInfoLong","","役職に付随する属性の表示方法を設定する。\nデフォルト：一つなら役職名の前に表示し（ライティングシェリフ）、二つ以上は省略する（＋マッドスニッチ）。\n\n全て表示：二つ以上でも全て表示する（シーイングリベンジャーインポスター）。\n\nマーク：属性名を省略したマークで表示する（ワーカホリックRvCl）。",
 "addonShowModes.Default","Default","デフォルト",
 "addonShowModes.All","All","全て表示",
-"addonShowModes.TOH","TOH Original","本家TOH",
+"addonShowModes.TOH","Mark","マーク",
 
 "DisplayComingOutEnable","Display Coming Out Mark","CO可否マークを表示する",
+"DisplayComingOutEnableInfoLong","","ホストが設定するCO可否を、名前上に記載される役職名の横にマークで表示する機能。",
 "displayComingOut.NG","NG","×",
 "displayComingOut.None","None","なし",
 "displayComingOut.OK","OK","○",
@@ -1487,6 +1534,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "Rate90","90%","90%","90%","90%","90%","90%"
 "Rate100","100%","100%","100%","100%","100%","100%"
 "Preset","Preset","プリセット","预设","設定檔","Сохранения","Predefinição"
+"PresetInfoLong","","プリセットを選択する",
 "Preset_1","Preset 1","プリセット1","预设1","設定檔 1","Сохранение 1","Predefinição 1"
 "Preset_2","Preset 2","プリセット2","预设2","設定檔 2","Сохранение 2","Predefinição 2"
 "Preset_3","Preset 3","プリセット3","预设3","設定檔 3","Сохранение 3","Predefinição 3"
@@ -1560,6 +1608,7 @@ PanAlive25,\nBread was served by the bakery.\nㅤ,\nパン屋は{0}に向けて�
 "ShapeSelectPlayerTagBefore","You can choose which target at Shape select.","シェイプ選択画面でターゲットを選択できます。",
 "ShapeSelectPlayerTagMiniBefore","Select target at Shape select.","シェイプ選択画面で対象を選択",
 "NameChangeMode","Name Change Mode","名前変更モード",
+"NameChangeModeInfoLong","","各プレイヤーの名前を強制的に変更する機能。",
 "nameChangeMode.None","None","なし",
 "nameChangeMode.Crew","Crewmate","クルー","船员","船員","Экипаж","Tripulante"
 "nameChangeMode.Color","Color","色名",
