@@ -1055,7 +1055,7 @@ public static class Utils
         sb.Append(formatTag);
         List<byte> cloneRoles = new(PlayerState.AllPlayerStates.Keys);
         foreach (var id in Main.winnerList)
-        {            
+        {
             sb.Append($"★ ".Color(winnerColor)).Append(SummaryTexts(id, true)).Append('\n');
             cloneRoles.Remove(id);
         }
@@ -1573,7 +1573,6 @@ public static class Utils
                 || seer.Is(CustomRoles.Immoralist)
                 || seer.Is(CustomRoles.LoyalDoggy)
                 || seer.Is(CustomRoles.jO)
-                || seer.Is(CustomRoles.Vendetta)
                 || VentEnterTask.HaveTask(seer)
 
                 || Duelist.CheckNotify(seer)
@@ -1732,6 +1731,15 @@ public static class Utils
             Logger.Info("生存しているインポスター:" + AliveImpostorCount + "人", "CountAliveImpostors");
             Main.AliveImpostorCount = AliveImpostorCount;
             LastImpostor.SetSubRole();
+            if (AmongUsClient.Instance.AmHost)
+            {
+                foreach (var pc in Main.AllAlivePlayerControls)
+                {
+                    if (pc.GetRoleClass() is not BestieWolf) continue;
+                    pc.ResetKillCooldown();
+                    pc.SyncSettings();
+                }
+            }
         }
 
         if (sendLog)
