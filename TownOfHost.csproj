@@ -12,6 +12,7 @@
 		<Product>TownOfHost_Y</Product>
 		<AssemblyName>TownOfHost_Y</AssemblyName>
 		<RootNamespace>TownOfHost_Y</RootNamespace>
+		<AmongUs>C:\Program Files (x86)\Steam\steamapps\common\TownOfHost_Y -Dev</AmongUs>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
 		<DefineConstants>TRACE</DefineConstants>
