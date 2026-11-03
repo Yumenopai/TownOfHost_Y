@@ -114,7 +114,7 @@ public sealed class Elder : RoleBase
         // 老衰設定でない、または長老が死んでいる時は関係ない
         if (!DiaInLife || !Player.IsAlive()) return;
         // 会議時間中に変化しない設定の場合はタスクターン以外返す
-        if (!GameStates.IsInTask && !TimeMoveMeeting) return;
+        if ((!GameStates.IsInTask || ExileController.Instance != null) && !TimeMoveMeeting) return;
 
         // 寿命のカウントダウン
         Lifetime -= Time.fixedDeltaTime;
