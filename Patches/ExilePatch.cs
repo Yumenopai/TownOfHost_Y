@@ -155,6 +155,8 @@ namespace TownOfHostY
                         Logger.Info($"{player.GetNameWithRole()}を{reason}で死亡させました", "AfterMeetingDeath");
                         state.DeathReason = reason;
                         player?.RpcExileV3();
+                        if (reason == CustomDeathReason.FollowingSuicide)
+                            player?.RpcMurderPlayerToClients();
                         state.SetDead();
                         if (reason == CustomDeathReason.Suicide)
                             player?.SetRealKiller(player, true);
@@ -168,7 +170,7 @@ namespace TownOfHostY
                     });
                     Main.AfterMeetingDeathPlayers.Clear();
                 }, 0.6f, "AfterMeetingDeathPlayers Task");
-                               
+
 
                 _ = new LateTask(() =>
                 {
@@ -176,7 +178,7 @@ namespace TownOfHostY
                     foreach (var pc in Main.AllPlayerControls)
                     {
                         var state = PlayerState.GetByPlayerId(pc.PlayerId);
-                        state.IsBlackOut = false;              
+                        state.IsBlackOut = false;
                     }
                     Utils.SyncAllSettings();
                 }, 1.0f, "AfterMeeting_SetKillCooldown");
