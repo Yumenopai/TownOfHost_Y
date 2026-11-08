@@ -731,14 +731,14 @@ class CoEnterVentPatch
                 __instance.RpcBootFromVent(id);
 
 
-            bool roleAllowsVent = user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false;
+            bool roleAllowsVent = user.GetRoleClass()?.OnEnterVent(__instance, id) ?? true;
             bool ventTaskAllows = VentEnterTask.OnEnterVent(__instance, id);
+            bool canVent = (VentEnterTask.HaveTask(user) && ventTaskAllows) ||
+                (user.GetCustomRole().IsCCCatRoles() && CatchCat.CatPlayer.CanUseVent(user)) ||
+                user.Data.Role.Role == RoleTypes.Engineer ||
+                user.CanUseImpostorVentButton();
 
-            if (!roleAllowsVent &&
-                !ventTaskAllows &&
-                !(user.GetCustomRole().IsCCCatRoles() && CatchCat.CatPlayer.CanUseVent(user)) &&
-                user.Data.Role.Role != RoleTypes.Engineer &&
-                !user.CanUseImpostorVentButton())
+            if (!roleAllowsVent || !canVent)
             {
                 _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
             }
@@ -760,14 +760,14 @@ class RpcEnterVentPatch
         var user = __instance.myPlayer;
         if (user == null) return;
 
-        bool roleAllowsVent = user.GetRoleClass()?.OnEnterVent(__instance, id) ?? false;
+        bool roleAllowsVent = user.GetRoleClass()?.OnEnterVent(__instance, id) ?? true;
         bool ventTaskAllows = VentEnterTask.OnEnterVent(__instance, id);
+        bool canVent = (VentEnterTask.HaveTask(user) && ventTaskAllows) ||
+            (user.GetCustomRole().IsCCCatRoles() && CatchCat.CatPlayer.CanUseVent(user)) ||
+            user.Data.Role.Role == RoleTypes.Engineer ||
+            user.CanUseImpostorVentButton();
 
-        if (!roleAllowsVent &&
-            !ventTaskAllows &&
-            !(user.GetCustomRole().IsCCCatRoles() && CatchCat.CatPlayer.CanUseVent(user)) &&
-            user.Data.Role.Role != RoleTypes.Engineer &&
-            !user.CanUseImpostorVentButton())
+        if (!roleAllowsVent || !canVent)
         {
             _ = new LateTask(() => { __instance.RpcBootFromVent(id); }, 0.5f, "Cancel Vent");
         }
