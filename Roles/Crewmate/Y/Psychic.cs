@@ -85,6 +85,8 @@ public sealed class Psychic : RoleBase
         VentSelect.ClearSelect();
     }
 
+    public override void AfterMeetingTasks() => Player.RpcResetAbilityCooldown();
+
     public override void ApplyGameOptions(IGameOptions opt)
     {
         AURoleOptions.EngineerCooldown = CanUseVent() ? (IsCoolTimeOn ? Cooldown : 0f) : 255f;
@@ -113,7 +115,9 @@ public sealed class Psychic : RoleBase
 
         if (VentSelect.OnFixedUpdate(Player, out var selectedId))
         {
-            player.MarkDirtySettings();
+            IsCoolTimeOn = true;
+            player.SyncSettings();
+            player.RpcResetAbilityCooldown();
             Utils.NotifyRoles(SpecifySeer: Player);
 
             // 霊視確定時にカスタムRPCで全クライアントへ同期する
