@@ -24,44 +24,70 @@ namespace TownOfHostY
         }
         public static void LoadLangs()
         {
-            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream("TownOfHost_Y.Resources.string.csv");
             translateMaps = new Dictionary<string, Dictionary<int, string>>();
+            var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
-            var options = new CsvOptions()
+            foreach (var lang in EnumHelper.GetAllValues<SupportedLangs>())
             {
-                HeaderMode = HeaderMode.HeaderPresent,
-                AllowNewLineInEnclosedFieldValues = false,
-            };
-            foreach (var line in CsvReader.ReadFromStream(stream, options))
-            {
-                if (line.Values[0][0] == '#') continue;
-                try
+                string resourceName = $"TownOfHost_Y.Resources.string.{lang}.tsv";
+                using var stream = assembly.GetManifestResourceStream(resourceName);
+                if (stream == null)
                 {
-                    Dictionary<int, string> dic = new();
-                    for (int i = 1; i < line.ColumnCount; i++)
-                    {
-                        int id = int.Parse(line.Headers[i]);
-                        dic[id] = line.Values[i].Replace("\\n", "\n").Replace("\\r", "\r");
-                    }
-                    if (!translateMaps.TryAdd(line.Values[0], dic))
-                        Logger.Warn($"翻訳用CSVに重複があります。{line.Index}行目: \"{line.Values[0]}\"", "Translator");
+                    Logger.Warn($"翻訳用TSVが見つかりません: {resourceName}", "Translator");
+                    continue;
                 }
-                catch (Exception ex)
+
+                using var reader = new StreamReader(stream, Encoding.UTF8);
+                string line;
+                int lineNumber = 0;
+
+                while ((line = reader.ReadLine()) != null)
                 {
-                    Logger.Warn(ex.ToString(), "Translator");
+                    lineNumber++;
+                    if (string.IsNullOrWhiteSpace(line) || line.StartsWith("#"))
+                    {
+                        continue;
+                    }
+
+                    int separatorIndex = line.IndexOf('\t');
+                    if (separatorIndex < 1)
+                    {
+                        Logger.Warn($"翻訳用TSVの形式が不正です。{resourceName} {lineNumber}行目", "Translator");
+                        continue;
+                    }
+
+                    string key = line.Substring(0, separatorIndex);
+                    string value = line.Substring(separatorIndex + 1)
+                        .Replace("\\n", "\n")
+                        .Replace("\\r", "\r");
+
+                    if (!translateMaps.TryGetValue(key, out var translations))
+                    {
+                        translations = new Dictionary<int, string>();
+                        translateMaps.Add(key, translations);
+                    }
+
+                    if (!translations.TryAdd((int)lang, value))
+                    {
+                        Logger.Warn($"翻訳用TSVに重複があります。{resourceName} {lineNumber}行目: \"{key}\"", "Translator");
+                    }
                 }
             }
 
             // カスタム翻訳ファイルの読み込み
-            if (!Directory.Exists(LANGUAGE_FOLDER_NAME)) Directory.CreateDirectory(LANGUAGE_FOLDER_NAME);
+            if (!Directory.Exists(LANGUAGE_FOLDER_NAME))
+            {
+                Directory.CreateDirectory(LANGUAGE_FOLDER_NAME);
+            }
 
             // 翻訳テンプレートの作成
             CreateTemplateFile();
             foreach (var lang in EnumHelper.GetAllValues<SupportedLangs>())
             {
                 if (File.Exists(@$"./{LANGUAGE_FOLDER_NAME}/{lang}.dat"))
+                {
                     LoadCustomTranslation($"{lang}.dat", lang);
+                }
             }
         }
 
@@ -85,7 +111,7 @@ namespace TownOfHostY
             var res = $"<INVALID:{str}>";
             if (translateMaps.TryGetValue(str, out var dic) && (!dic.TryGetValue((int)langId, out res) || res == "")) //strに該当する&無効なlangIdかresが空
             {
-                res = $"*{dic[0]}";
+                res = $"*{dic[(int)SupportedLangs.Japanese]}";
             }
             if (langId == SupportedLangs.Japanese)
             {
@@ -239,6 +265,9 @@ namespace TownOfHostY
             sb.Clear();
             foreach (var title in translateMaps) sb.Append($"{title.Key}:{title.Value[0].Replace("\n", "\\n").Replace("\r", "\\r")}\n");
             File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template_English.dat", sb.ToString());
+            sb.Clear();
+            foreach (var title in translateMaps) sb.Append($"{title.Key}:{title.Value[(int)SupportedLangs.Japanese].Replace("\n", "\\n").Replace("\r", "\\r")}\n");
+            File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template_Japanese.dat", sb.ToString());
         }
         public static void ExportCustomTranslation()
         {
