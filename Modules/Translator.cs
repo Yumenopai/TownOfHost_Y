@@ -263,10 +263,18 @@ namespace TownOfHostY
             foreach (var title in translateMaps) sb.Append($"{title.Key}:\n");
             File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template.dat", sb.ToString());
             sb.Clear();
-            foreach (var title in translateMaps) sb.Append($"{title.Key}:{title.Value[0].Replace("\n", "\\n").Replace("\r", "\\r")}\n");
+            foreach (var title in translateMaps)
+            {
+                if (!title.Value.TryGetValue((int)SupportedLangs.English, out var en)) en = "";
+                sb.Append($"{title.Key}:{en.Replace("\n", "\\n").Replace("\r", "\\r")}\n");
+            }
             File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template_English.dat", sb.ToString());
             sb.Clear();
-            foreach (var title in translateMaps) sb.Append($"{title.Key}:{title.Value[(int)SupportedLangs.Japanese].Replace("\n", "\\n").Replace("\r", "\\r")}\n");
+            foreach (var title in translateMaps)
+            {
+                if (!title.Value.TryGetValue((int)SupportedLangs.Japanese, out var ja)) ja = "";
+                sb.Append($"{title.Key}:{ja.Replace("\n", "\\n").Replace("\r", "\\r")}\n");
+            }
             File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template_Japanese.dat", sb.ToString());
         }
         public static void ExportCustomTranslation()
