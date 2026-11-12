@@ -98,7 +98,7 @@ public sealed class EvilIgnition : RoleBase, IImpostor
 
         target.SetRealKiller(killer);
         killer.RpcMurderPlayer(target, true);
-        Logger.Info($"{killer.GetNameWithRole()}：発火 発火先→{target.GetNameWithRole()} || 残り{IgnitionCount}回", "EvilFire");
+        Logger.Info($"{killer.GetNameWithRole()}：着火 着火先→{target.GetNameWithRole()} || 残り{IgnitionCount}回", "EvilFire");
 
         //爆破処理はホストのみ
         if (AmongUsClient.Instance.AmHost)
@@ -123,7 +123,7 @@ public sealed class EvilIgnition : RoleBase, IImpostor
             {
                 IgnitionCount--;
                 OccurredBombed = true;
-                Logger.Info($"{killer.GetNameWithRole()}：発火爆破 爆破先→{nearTarget.pc.GetNameWithRole()}", "EvilFire");
+                Logger.Info($"{killer.GetNameWithRole()}：着火爆破 爆破先→{nearTarget.pc.GetNameWithRole()}", "EvilFire");
 
                 PlayerState.GetByPlayerId(nearTarget.pc.PlayerId).DeathReason = CustomDeathReason.IgnitionBombed;
                 nearTarget.pc.SetRealKiller(killer);
