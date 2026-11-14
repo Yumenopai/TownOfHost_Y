@@ -7,6 +7,7 @@ using TownOfHostY.Roles.Impostor;
 using static TownOfHostY.Translator;
 
 namespace TownOfHostY.Modules;
+
 public static class MeetingDisplayText
 {
     /***************************************
@@ -22,11 +23,18 @@ public static class MeetingDisplayText
     ***************************************/
 
     // 左上(1番)
-    private static (string, int, float) LeftUp()
+    private static (string, int, float) LeftUp(bool forVanilla)
     {
         StringBuilder addText = new();
         int column = 0;
         float height = 2f;
+
+        if (forVanilla)
+        {
+            addText.Append($"<size=80%><color={Main.ModColor}>TOH_Y</color></size>")
+                .Append($"<size=70%> v{Main.PluginVersion}</size>\n".Color(Color.white));
+            column += 1;
+        }
 
         // パン屋が居ればパン屋生存中を表示する
         (string t, int c) = Bakery.AddMeetingDisplay();
@@ -79,15 +87,15 @@ public static class MeetingDisplayText
         float height = 2f;
 
         // ModName&Version (Vanilla Only)
-        if (forVanilla)
-        {
-            addText.Append("<line-height=0.68em>\n</line-height>")
-                .Append($"<size=80%><color={Main.ModColor}>TOH_Y</color>\n</size>")
-                .Append($"<size=70%> v{Main.PluginVersion}\n</size>\n".Color(Color.white));
+        //if (forVanilla)
+        //{
+        //    addText.Append("<line-height=0.68em>\n</line-height>")
+        //        .Append($"<size=80%><color={Main.ModColor}>TOH_Y</color>\n</size>")
+        //        .Append($"<size=70%> v{Main.PluginVersion}\n</size>\n".Color(Color.white));
 
-            column += 3;
-            height = 2.7f;
-        }
+        //    column += 3;
+        //    height = 2.7f;
+        //}
 
         // Revenge
         if (Options.ShowRevengeTarget.GetBool())
@@ -129,7 +137,7 @@ public static class MeetingDisplayText
         // 0 = 左上(1番目)
         if (area == 0)
         {
-            (addText, column, height) = LeftUp();
+            (addText, column, height) = LeftUp(false);
         }
         // 1 = 真ん中上(2番目)
         else if (area == 1)
@@ -170,7 +178,7 @@ public static class MeetingDisplayText
         // 0 = 左上(1番目)
         if (pc == Main.AllAlivePlayerControls.OrderBy(x => x.PlayerId).ElementAtOrDefault(0))
         {
-            (addText, column, height) = LeftUp();
+            (addText, column, height) = LeftUp(true);
             if (addText == "") return name;
         }
         // 1 = 真ん中上(2番目)
@@ -183,6 +191,7 @@ public static class MeetingDisplayText
         else if (pc == Main.AllAlivePlayerControls.OrderBy(x => x.PlayerId).ElementAtOrDefault(2))
         {
             (addText, column, height) = RightUp(true);
+            if (addText == "") return name;
         }
         // それ以外は早期リターン
         else return name;
