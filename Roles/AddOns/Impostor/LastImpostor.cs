@@ -26,7 +26,7 @@ namespace TownOfHostY.Roles.AddOns.Impostor
         public static void Add(byte id) => currentId = id;
         public static void SetKillCooldown(PlayerControl pc)
         {
-            if (currentId == byte.MaxValue || !CanChangeKillColldown(pc)) return;
+            if (currentId == byte.MaxValue || !IsChangeKillCooldown.GetBool() || !CanChangeKillColldown(pc)) return;
             Main.AllPlayerKillCooldown[currentId] = KillCooldown.GetFloat();
         }
         public static bool CanBeLastImpostor(PlayerControl pc)
@@ -35,8 +35,8 @@ namespace TownOfHostY.Roles.AddOns.Impostor
             && pc.Is(CustomRoleTypes.Impostor)
             && pc.GetCustomRole()
             is not CustomRoles.CCRedLeader;
-            //and not CustomRoles.ONWerewolf
-            //and not CustomRoles.ONBigWerewolf;
+        //and not CustomRoles.ONWerewolf
+        //and not CustomRoles.ONBigWerewolf;
 
         public static bool CanChangeKillColldown(PlayerControl pc)
             => pc.IsAlive()
@@ -55,7 +55,7 @@ namespace TownOfHostY.Roles.AddOns.Impostor
             //ラストインポスターがすでにいれば処理不要
             if (currentId != byte.MaxValue) return;
             if (CurrentGameMode == CustomGameMode.HideAndSeek
-                || !CustomRoles.LastImpostor.IsPresent() || Main.AliveImpostorCount != 1)
+                || !CustomRoles.LastImpostor.IsEnable() || Main.AliveImpostorCount != 1)
                 return;
             foreach (var pc in Main.AllAlivePlayerControls)
             {
