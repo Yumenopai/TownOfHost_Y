@@ -102,14 +102,13 @@ public static class AntiBlackout
 
             var clientId = pc.GetClientId();
             if (clientId == -1) continue;
-            var isKiller = killer != null && pc.PlayerId == killer.PlayerId;
             var sender = CustomRpcSender.Create("AntiBlackout.SetRoleChange", Hazel.SendOption.Reliable);
             sender.StartMessage(clientId);
             var count = 0;
 
             foreach (var dummy in list)
             {
-                if (isKiller && dummy.PlayerId == pc.PlayerId) continue;
+                if (killer != null && dummy.PlayerId == pc.PlayerId) continue;
                 sender.StartRpc(dummy.NetId, RpcCalls.SetRole)
                     .Write((ushort)dummy.GetCustomRole().GetRoleTypes())
                     .Write(true)
