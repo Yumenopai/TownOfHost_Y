@@ -27,16 +27,15 @@ namespace TownOfHostY
             translateMaps = new Dictionary<string, Dictionary<int, string>>();
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
-            foreach (var lang in EnumHelper.GetAllValues<SupportedLangs>())
+            SupportedLangs lang = SupportedLangs.Japanese;
+            string resourceName = $"TownOfHost_Y.Resources.string.{lang}.tsv";
+            using var stream = assembly.GetManifestResourceStream(resourceName);
+            if (stream == null)
             {
-                string resourceName = $"TownOfHost_Y.Resources.string.{lang}.tsv";
-                using var stream = assembly.GetManifestResourceStream(resourceName);
-                if (stream == null)
-                {
-                    Logger.Warn($"翻訳用TSVが見つかりません: {resourceName}", "Translator");
-                    continue;
-                }
-
+                Logger.Warn($"翻訳用TSVが見つかりません: {resourceName}", "Translator");
+            }
+            else
+            {
                 using var reader = new StreamReader(stream, Encoding.UTF8);
                 string line;
                 int lineNumber = 0;
@@ -82,11 +81,11 @@ namespace TownOfHostY
 
             // 翻訳テンプレートの作成
             CreateTemplateFile();
-            foreach (var lang in EnumHelper.GetAllValues<SupportedLangs>())
+            foreach (var customLang in EnumHelper.GetAllValues<SupportedLangs>())
             {
-                if (File.Exists(@$"./{LANGUAGE_FOLDER_NAME}/{lang}.dat"))
+                if (File.Exists(@$"./{LANGUAGE_FOLDER_NAME}/{customLang}.dat"))
                 {
-                    LoadCustomTranslation($"{lang}.dat", lang);
+                    LoadCustomTranslation($"{customLang}.dat", customLang);
                 }
             }
         }
@@ -260,21 +259,22 @@ namespace TownOfHostY
         private static void CreateTemplateFile()
         {
             var sb = new StringBuilder();
-            foreach (var title in translateMaps) sb.Append($"{title.Key}:\n");
-            File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template.dat", sb.ToString());
-            sb.Clear();
             foreach (var title in translateMaps)
             {
-                if (!title.Value.TryGetValue((int)SupportedLangs.English, out var en)) en = "";
-                sb.Append($"{title.Key}:{en.Replace("\n", "\\n").Replace("\r", "\\r")}\n");
+                sb.Append($"{title.Key}:\n");
             }
-            File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template_English.dat", sb.ToString());
+            File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template.dat", sb.ToString());
+
             sb.Clear();
             foreach (var title in translateMaps)
             {
-                if (!title.Value.TryGetValue((int)SupportedLangs.Japanese, out var ja)) ja = "";
+                if (!title.Value.TryGetValue((int)SupportedLangs.Japanese, out var ja))
+                {
+                    ja = "";
+                }
                 sb.Append($"{title.Key}:{ja.Replace("\n", "\\n").Replace("\r", "\\r")}\n");
             }
+
             File.WriteAllText(@$"./{LANGUAGE_FOLDER_NAME}/template_Japanese.dat", sb.ToString());
         }
         public static void ExportCustomTranslation()
