@@ -21,7 +21,7 @@
 		<Reference Include="$(AmongUs)\BepInEx\core\*.dll" />
 		<Reference Include="$(AmongUs)\BepInEx\interop\*.dll" />
 		<EmbeddedResource Include=".\Resources\*.png" />
-		<EmbeddedResource Include=".\Resources\string.csv" />
+		<EmbeddedResource Include=".\Resources\string.Japanese.tsv" />
 	</ItemGroup>
 
 	<ItemGroup>
