@@ -1789,7 +1789,7 @@ public static class Utils
     public static string CopyLog(string path)
     {
         string t = DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss");
-        string fileName = $"{path}/TownOfHost-v{Main.PluginVersion}-{t}.log";
+        string fileName = $"{path}/TownOfHostY-v{Main.PluginVersion}-{t}.log";
         FileInfo file = new(@$"{System.Environment.CurrentDirectory}/BepInEx/LogOutput.log");
         var logFile = file.CopyTo(fileName);
 
