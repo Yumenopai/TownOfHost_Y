@@ -701,7 +701,7 @@ public static class Utils
                 formatTag = "<size=70%><line-height=1.6pic>";
 
                 sb.Append($"<size=85%>{GetRoleName(role)}</size>".Color(GetRoleColor(role).ToReadableColor()))
-                    .Append(formatTag).Append(infoLongText);
+                    .Append(formatTag).Append('\n').Append(infoLongText);
                 SendMessageAutoSplitAndClearSB(PlayerId, sb, "", formatTag);
 
                 //setting
