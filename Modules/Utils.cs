@@ -993,7 +993,8 @@ public static class Utils
                 // 確率＆人数
                 sb.AppendFormat(" x{0}{1}\n", role.GetCount(), roleAssignRandomMode ? $"<size=65%> ({role.GetChance()}%)</size>" : "");
             }
-            SendMessageAutoSplitAndClearSB(PlayerId, sb, string.Empty, formatTag);
+            if (sb.Length > formatTag.Length)
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, string.Empty, formatTag);
         }
     }
 
@@ -1088,7 +1089,7 @@ public static class Utils
         else if (role.IsCrewmate()) text = "<color=#7ee6e6>Ⓒ</color>";
         else if (role.IsNeutral()) text = "<color=#ffa500>Ⓝ</color>";
 
-        return sizeTag ? $"<size={sizePer}%>{text}</size>": text;
+        return sizeTag ? $"<size={sizePer}%>{text}</size>" : text;
     }
 
     public static void ShowHelp()
@@ -1614,7 +1615,7 @@ public static class Utils
                     }
 
                     //RealNameを取得 なければ現在の名前をRealNamesに書き込む
-                    string TargetPlayerName = isForMeeting ? target.GetRealName(true): Main.AllPlayerNames[target.PlayerId];
+                    string TargetPlayerName = isForMeeting ? target.GetRealName(true) : Main.AllPlayerNames[target.PlayerId];
 
                     //ターゲットのプレイヤー名の色を書き換えます。
                     TargetPlayerName = TargetPlayerName.ApplyNameColorData(seer, target, isForMeeting);
