@@ -166,7 +166,7 @@ public static class GameOptionsMenuPatch
             }
             optionBehaviour.transform.localPosition = new Vector3(0.952f, num, -2f);
             optionBehaviour.SetClickMask(__instance.ButtonClickMask);
-            optionBehaviour.SetUpFromData(baseGameSetting, 20);  
+            optionBehaviour.SetUpFromData(baseGameSetting, 20);
             optionBehaviour.OnValueChanged = new Action<OptionBehaviour>((o) => { });
             ModGameOptionsMenu.OptionList.TryAdd(optionBehaviour, index);
             ModGameOptionsMenu.BehaviourList.TryAdd(index, optionBehaviour);
@@ -372,11 +372,11 @@ public static class GameOptionsMenuPatch
         BaseGameSetting baseGameSetting = null;
 
         if (item is BooleanOptionItem booleanItem)
-        {          
+        {
             baseGameSetting = new StringGameSetting
             {
                 Type = OptionTypes.String,
-                Values = new StringNames[2], 
+                Values = new StringNames[2],
                 Index = booleanItem.GetBool() ? 1 : 0,
             };
         }
@@ -571,10 +571,10 @@ public static class NumberOptionPatch
 
         if (ModGameOptionsMenu.OptionList.TryGetValue(__instance, out var index))
         {
-            var item = OptionItem.AllOptions[index]; 
+            var item = OptionItem.AllOptions[index];
             __instance.TitleText.text = item.GetName();
             return false;
-        }      
+        }
         return true;
     }
     [HarmonyPatch(nameof(NumberOption.UpdateValue)), HarmonyPrefix]
@@ -632,23 +632,13 @@ public static class NumberOptionPatch
         // Shift押しながらの値更新
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            __instance.Value = __instance.Value + (__instance.Increment * 5);
-            // 超えている場合は最大値
-            if (__instance.Value > __instance.ValidRange.max)
-            {
-                __instance.Value = __instance.ValidRange.max;
-            }
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
-            return false;
+            __instance.Value = Mathf.Clamp(__instance.Value + (__instance.Increment * 4), __instance.ValidRange.min, __instance.ValidRange.max);
+            return true;
         }
 
         if (__instance.Value == __instance.ValidRange.max)
         {
-            __instance.Value = __instance.ValidRange.min;
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
-            return false;
+            __instance.Value = __instance.ValidRange.min - __instance.Increment;
         }
         return true;
     }
@@ -658,23 +648,13 @@ public static class NumberOptionPatch
         // Shift押しながらの値更新
         if (Input.GetKey(KeyCode.LeftShift))
         {
-            __instance.Value = __instance.Value - (__instance.Increment * 5);
-            // 超えている場合は最小値
-            if (__instance.Value < __instance.ValidRange.min)
-            {
-                __instance.Value = __instance.ValidRange.min;
-            }
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
-            return false;
+            __instance.Value = Mathf.Clamp(__instance.Value - (__instance.Increment * 4), __instance.ValidRange.min, __instance.ValidRange.max);
+            return true;
         }
 
         if (__instance.Value == __instance.ValidRange.min)
         {
-            __instance.Value = __instance.ValidRange.max;
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
-            return false;
+            __instance.Value = __instance.ValidRange.max + __instance.Increment;
         }
         return true;
     }
@@ -742,7 +722,7 @@ public static class StringOptionPatch
                     __instance.oldValue = __instance.Value;
                     __instance.ValueText.text = presetOptionItem.GetString();
                 }
-            }         
+            }
             if (item is BooleanOptionItem booleanOptionItem)
             {
                 if (__instance.oldValue != __instance.Value)
