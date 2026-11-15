@@ -878,7 +878,10 @@ public static class Utils
                 ShowChildrenSettings(opt, ref sb);
                 sb.Append("</line-height>\n</size>");
             }
-            SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: formatTag);
+            if (sb.Length > formatTag.Length)
+            {
+                SendMessageAutoSplitAndClearSB(PlayerId, sb, formatTag: formatTag);
+            }
         }
     }
 
@@ -994,7 +997,9 @@ public static class Utils
                 sb.AppendFormat(" x{0}{1}\n", role.GetCount(), roleAssignRandomMode ? $"<size=65%> ({role.GetChance()}%)</size>" : "");
             }
             if (sb.Length > formatTag.Length)
+            {
                 SendMessageAutoSplitAndClearSB(PlayerId, sb, string.Empty, formatTag);
+            }
         }
     }
 
