@@ -184,15 +184,6 @@ class BeginCrewmatePatch
 
             switch (role)
             {
-                case CustomRoles.Jackal:
-                case CustomRoles.JClient:
-                    __instance.TeamTitle.text = Utils.GetRoleName(CustomRoles.Jackal);
-                    __instance.TeamTitle.color = Utils.GetRoleColor(CustomRoles.Jackal);
-                    __instance.ImpostorText.gameObject.SetActive(true);
-                    __instance.ImpostorText.text = GetString("TeamJackal");
-                    __instance.BackgroundBar.material.color = Utils.GetRoleColor(CustomRoles.Jackal);
-                    break;
-
                 case CustomRoles.FoxSpirit:
                 case CustomRoles.Immoralist:
                     __instance.TeamTitle.text = Utils.GetRoleName(CustomRoles.FoxSpirit);
@@ -379,6 +370,14 @@ class BeginImpostorPatch
         if (localRole.GetCustomRoleTypes() == CustomRoleTypes.Impostor || localRole == CustomRoles.StrayWolf)
         {
             BeginCrewmatePatch.Prefix(__instance, ref yourTeam);
+            if (localRole.GetCustomRoleTypes() == CustomRoleTypes.Impostor)
+            {
+                foreach (var pc in Main.AllPlayerControls)
+                {
+                    if (pc.AmOwner || yourTeam.Contains(pc)) continue;
+                    if (pc.GetCustomRole().GetCustomRoleTypes() == CustomRoleTypes.Impostor) yourTeam.Add(pc);
+                }
+            }
             return true;
         }
 
