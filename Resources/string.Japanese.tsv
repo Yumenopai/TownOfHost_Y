@@ -1246,8 +1246,6 @@ Close	閉じる
 # その他	
 	
 TOHOptions	<color=#ffff00>TOH_Y</color>の設定
-ForceJapanese	日本語に強制
-JapaneseRoleName	日本語の役職名
 CanPublicRoom	公開ルーム可能
 ModNameLobbyDisplay	Mod名ロビー表示
 OpenLogFolder	ログフォルダを開く
