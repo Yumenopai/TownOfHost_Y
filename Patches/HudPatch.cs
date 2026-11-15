@@ -80,7 +80,7 @@ class HudManagerPatch
             }
             optionShowerText.text = optionText;
             optionShowerText.fontSizeMin =
-            optionShowerText.fontSizeMax = (TranslationController.Instance.currentLanguage.languageID == SupportedLangs.Japanese || Main.ForceJapanese.Value) ? 1.05f : 1.2f;
+            optionShowerText.fontSizeMax = (TranslationController.Instance.currentLanguage.languageID == SupportedLangs.Japanese) ? 1.05f : 1.2f;
         }
         else
         { optionShowerText.gameObject.SetActive(false); }

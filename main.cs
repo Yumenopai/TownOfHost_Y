@@ -76,8 +76,6 @@ public class Main : BasePlugin
     //Client Options
     public static ConfigEntry<string> HideName { get; private set; }
     public static ConfigEntry<string> HideColor { get; private set; }
-    public static ConfigEntry<bool> ForceJapanese { get; private set; }
-    public static ConfigEntry<bool> JapaneseRoleName { get; private set; }
     public static ConfigEntry<bool> IsMuteLobbyBGM { get; private set; }
     public static ConfigEntry<float> MessageWait { get; private set; }
     public static ConfigEntry<bool> KillFlashAfterDeadByHost { get; private set; }
@@ -151,8 +149,6 @@ public class Main : BasePlugin
         //Client Options
         HideName = Config.Bind("Client Options", "Hide Game Code Name", "TOH_Y");
         HideColor = Config.Bind("Client Options", "Hide Game Code Color", $"{ModColor}");
-        ForceJapanese = Config.Bind("Client Options", "Force Japanese", false);
-        JapaneseRoleName = Config.Bind("Client Options", "Japanese Role Name", true);
         IsMuteLobbyBGM = Config.Bind("Client Options", "Mute Lobby BGM", false);
         DebugKeyInput = Config.Bind("Authentication", "Debug Key", "");
 
