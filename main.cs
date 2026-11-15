@@ -53,7 +53,7 @@ public class Main : BasePlugin
     // ==========
     //Sorry for many Japanese comments.
     public const string PluginGuid = "com.yumenopai.townofhosty";
-    public const string PluginVersion = "2026.11.2";
+    public const string PluginVersion = "2026.11.15";
     // サポートされている最低のAmongUsバージョン
     public static readonly string LowestSupportedVersion = "2026.9.29";
     // このバージョンのみで公開ルームを無効にする場合
