@@ -71,7 +71,9 @@ namespace TownOfHostY.Modules
                 var noiseAlertDur = opt.GetFloat(FloatOptionNames.NoisemakerAlertDuration);
                 var viperDissolve = opt.GetFloat(FloatOptionNames.ViperDissolveTime);
                 var judgeTaskReq = opt.GetFloat(FloatOptionNames.JudgeTaskRequirementPercentage);
-                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool},{noiseAlert},{noiseAlertDur},{viperDissolve},{judgeTaskReq}";
+                var discussionTime = opt.GetInt(Int32OptionNames.DiscussionTime);
+                var votingTime = opt.GetInt(Int32OptionNames.VotingTime);
+                string nowOpts = $"{crewLight},{impLight},{killCool},{speed},{shapeCool},{engCool},{phantom},{anonVotes},{emerCool},{noiseAlert},{noiseAlertDur},{viperDissolve},{judgeTaskReq},{discussionTime},{votingTime}";
                 if (OldOptionstext == nowOpts) return;
                 OldOptionstext = GameStates.IsMeeting ? "" : nowOpts;
                 base.SendGameOptions();
