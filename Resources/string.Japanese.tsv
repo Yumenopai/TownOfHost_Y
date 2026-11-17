@@ -982,10 +982,10 @@ WorkhorseNumShortTasks	追加ショートタスクの個数
 LastImpostorChangeKillCooldown	キルクールを変更する(一部役職除く)
 AddLightAddCrewmateVision	- クルー視界増加率(+)
 AddLightAddImpostorVision	- インポスター視界増加率(+)
-AddLighterDisableLightOut	#NAME?
+AddLighterDisableLightOut	停電を無効にする
 SunglassesSubCrewmateVision	- クルー視界減少率(-)
 SunglassesSubImpostorVision	- インポスター視界減少率(-)
-ManagementSeeNowtask	#NAME?
+ManagementSeeNowtask	会議時以外でもタスク数が見える
 	
 # オプション:ゲーム設定	
 	
