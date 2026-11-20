@@ -842,6 +842,7 @@ SpeedBoosterTaskTrigger	効果を発動するタスク数
 MayorAdditionalVote	追加投票の個数
 MayorHasPortableButton	ポータブルボタンを持っている
 MayorNumOfUseButton	ポータブルボタンの使用可能回数
+TrapperBlockMoveTime	移動を封じる時間
 TimeManagerIncreaseMeetingTime	伸びる会議時間
 TimeManagerLimitMeetingTime	会議時間の伸びる限界
 BaitWaitTime	ベイトキルから通報までの時間
