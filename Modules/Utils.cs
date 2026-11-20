@@ -526,7 +526,7 @@ public static class Utils
         string RoleInfoTitle = $"{ColorString(GetRoleColor(myRole), RoleInfoTitleString)}";
 
         var roleString = $"<size=85%>{GetString(roleName)}</size>".Color(GetRoleColor(myRole).ToReadableColor());
-        var roleInfoString = $"{roleInfoLong}</line-height></size>";
+        var roleInfoString = $"\n{roleInfoLong}</line-height></size>";
         sb.Append(roleString).Append(formatTag).Append(roleInfoString);
 
         SendMessageAutoSplitAndClearSB(PlayerId, sb, RoleInfoTitle, formatTag);
