@@ -409,14 +409,12 @@ public static class MeetingHudPatch
             if (AmongUsClient.Instance.AmHost)
             {
                 if (!AntiBlackout.IsCached) AntiBlackout.SetIsDead();
-                Utils.AfterMeetingTasks();
 
                 Main.AllPlayerControls.Where(pc => !pc.Is(CustomRoles.GM)).Do(pc => RandomSpawn.CustomNetworkTransformPatch.FirstTP[pc.PlayerId] = true);
 
                 _ = new LateTask(() =>
                 {
                     if (!GameStates.IsInGame) return;
-
 
                     foreach (var pc in Main.AllPlayerControls)
                     {
@@ -425,10 +423,8 @@ public static class MeetingHudPatch
                         var role = pc.GetCustomRole();
                         var roleInfo = role.GetRoleInfo();
 
-
                         if (pc.PlayerId == PlayerControl.LocalPlayer.PlayerId
                             && Options.EnableGM.GetBool()) continue;
-
 
                         // 霊界（死亡済み）プレイヤーにはSetRoleしない
                         if (PlayerState.GetByPlayerId(pc.PlayerId).IsDead) continue;
