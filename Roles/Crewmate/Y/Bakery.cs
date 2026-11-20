@@ -1,12 +1,12 @@
-using System.Linq;
 using System.Collections.Generic;
-using Hazel;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 
 using AmongUs.GameOptions;
+using TownOfHostY.Roles.Core;
 using static TownOfHostY.Translator;
 using static TownOfHostY.Utils;
-using TownOfHostY.Roles.Core;
 
 namespace TownOfHostY.Roles.Crewmate;
 public sealed class Bakery : RoleBase
@@ -30,13 +30,13 @@ public sealed class Bakery : RoleBase
         () => IsNeutral(player) ? HasTask.False : HasTask.True
     )
     {
-        ChangeChances = OptionChangeChances.GetInt();
+        changeChances = OptionChangeChances.GetFloat();
 
         CustomRoleManager.MarkOthers.Add(GetMarkOthers);
     }
     public override void OnDestroy()
     {
-        nBakeries.Clear();
+        nBakeries.Remove(this);
         CustomRoleManager.MarkOthers.Remove(GetMarkOthers);
     }
 
@@ -45,75 +45,69 @@ public sealed class Bakery : RoleBase
     {
         BakeryChangeChances,
     }
-    private static int ChangeChances;
+    private static float changeChances;
 
     public PlayerControl PoisonPlayer;
     public static List<Bakery> nBakeries = new();
 
     private static void SetupOptionItem()
     {
-        OptionChangeChances = IntegerOptionItem.Create(RoleInfo, 10, OptionName.BakeryChangeChances, new(0, 20, 2), 10, false)
+        OptionChangeChances = FloatOptionItem.Create(RoleInfo, 10, OptionName.BakeryChangeChances, new(0f, 20f, 0.5f), 5f, false)
             .SetValueFormat(OptionFormat.Percent);
     }
     public override void Add()
     {
-        nBakeries.Clear();
         PoisonPlayer = null;
     }
-    private void SendRPC(byte targetId = byte.MaxValue)
-    {
-        using var sender = CreateSender(CustomRPC.SetNBakryPoison);
-        sender.Writer.Write(targetId);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetNBakryPoison) return;
 
-        var targetId = reader.ReadByte();
-        if (targetId != byte.MaxValue)
-        {
-            PoisonPlayer.PlayerId = targetId;
-        }
-        else
-        {
-            PoisonPlayer = null;
-        }
-    }
     public static bool IsPoisoned(PlayerControl target = null)
     {
         foreach (var nBakery in nBakeries)
         {
-            if (target == null && nBakery.PoisonPlayer != null) return true;
-            if (target != null && nBakery.PoisonPlayer == target) return true;
+            if (target == null && nBakery.PoisonPlayer != null)
+            {
+                return true;
+            }
+            if (target != null && nBakery.PoisonPlayer == target)
+            {
+                return true;
+            }
         }
         return false;
     }
+
     public static bool IsNeutral(PlayerControl bakery)
     {
-        foreach(var ba in nBakeries)
+        foreach (var nBakery in nBakeries)
         {
-            if (ba.Player == bakery)
+            if (nBakery.Player == bakery)
+            {
                 return true;
+            }
         }
         return false;
     }
+
     public override void OverrideShowMainRoleText(ref Color roleColor, ref string roleText)
     {
-        if (IsNeutral(Player))
+        if (!IsNeutral(Player)) return;
+
+        if (roleText == null)
         {
-            if (roleText == null) roleText = GetString("NBakery");
-            else roleText = roleText.Replace(GetRoleName(CustomRoles.Bakery), GetString("NBakery"));
+            roleText = GetString("NBakery");
+        }
+        else
+        {
+            roleText = roleText.Replace(GetRoleName(CustomRoles.Bakery), GetString("NBakery"));
         }
     }
 
     public override void OnMurderPlayerAsTarget(MurderInfo info)
     {
         var (killer, target) = info.AttemptTuple;
-        //第三パン屋じゃないなら関係ないので返す
         if (!nBakeries.Contains(this) || info.IsSuicide) return;
 
         PoisonPlayer = null;
-        if (AmongUsClient.Instance.AmHost) SendRPC();
         Logger.Info($"{target.GetNameWithRole()}の配布毒パン回収", "NBakery");
     }
 
@@ -129,121 +123,113 @@ public sealed class Bakery : RoleBase
 
     public static (string, int) AddMeetingDisplay()
     {
-        int aliveBakeryCount = Main.AllAlivePlayerControls.Where(p => p.Is(CustomRoles.Bakery)).Count();
-        // パン屋が居無ければ早期リターン
-        if (aliveBakeryCount == 0) return ("", 0);
-        string addText = "";
-        if (aliveBakeryCount >= 2) addText = "<size=90%>";
-        addText += $"<color={GetRoleColorCode(CustomRoles.Bakery)}><u>{GetString("PanAliveMessageTitle")}</color>";
-        if (aliveBakeryCount >= 2) addText += $"<color=#ffffff>x{aliveBakeryCount}</color></size>";
-        addText += "</u>\n";
+        int aliveBakeryCount = Main.AllAlivePlayerControls.Count(p => p.Is(CustomRoles.Bakery));
+        if (aliveBakeryCount == 0)
+        {
+            return ("", 0);
+        }
 
-        return (addText, 1);
+        StringBuilder addText = new();
+
+        if (aliveBakeryCount >= 2)
+        {
+            addText.Append("<size=90%>");
+        }
+        addText.Append($"<color={GetRoleColorCode(CustomRoles.Bakery)}><u>{GetString("BakeryAliveMessageTitle")}</color>");
+        if (aliveBakeryCount >= 2)
+        {
+            addText.Append($"<color=#ffffff>x{aliveBakeryCount}</color></size>");
+        }
+        addText.Append("</u>\n");
+
+        return (addText.ToString(), 1);
     }
 
     public override void OnStartMeeting()
     {
-        var PlayerId = Player.PlayerId;
-        var BakeryTitle = $"<color={RoleInfo.RoleColorCode}>{GetString("PanAliveMessageTitle")}</color>";
+        var BakeryTitle = $"<color={RoleInfo.RoleColorCode}>{GetString("BakeryAliveMessageTitle")}</color>";
         string formatTag = $"<size=70%><line-height=1.6pic>";
+
+        string message = "";
 
         if (nBakeries.Contains(this) && Player.IsAlive())
         {
-            if (PoisonPlayer.IsAlive())
-            {
-                SendMessageAutoSplit($"{formatTag}{GetString("BakeryChangeNow")}", true, BakeryTitle, formatTag: formatTag);
-            }
-            else //配る予定だった人が死んでいたら
+            if (!PoisonPlayer.IsAlive())
             {
                 PoisonPlayer = null;
-                if (AmongUsClient.Instance.AmHost)
-                {
-                    SendRPC();
-                }
-                SendMessageAutoSplit($"{formatTag}{GetString("BakeryChangeNONE")}", true, BakeryTitle, formatTag: formatTag);
             }
+
+            message = GetNeutralBakeryMessage();
         }
         else if (Player.Is(CustomRoles.Bakery) && Player.IsAlive())
         {
-            string panMessage = "";
-            int chance = IRandom.Instance.Next(1, 101);
-            if (chance <= ChangeChances)
+            float chance = IRandom.Instance.Next(1, 10001) / 100f;
+            if (chance <= changeChances)
             {
-                panMessage = GetString("BakeryChange");
                 nBakeries.Add(this);
+                message = GetString("BakeryChange");
             }
-            else if (chance <= 75) panMessage = GetString("PanAlive");
-            else if (chance <= 76) panMessage = GetString("PanAlive1");
-            else if (chance <= 77) panMessage = GetString("PanAlive2");
-            else if (chance <= 78) panMessage = GetString("PanAlive3");
-            else if (chance <= 79) panMessage = GetString("PanAlive4");
-            else if (chance <= 80) panMessage = GetString("PanAlive5");
-            else if (chance <= 81) panMessage = GetString("PanAlive6");
-            else if (chance <= 82) panMessage = GetString("PanAlive7");
-            else if (chance <= 83) panMessage = GetString("PanAlive8");
-            else if (chance <= 84) panMessage = GetString("PanAlive9");
-            else if (chance <= 85) panMessage = GetString("PanAlive10");
-            else if (chance <= 86) panMessage = GetString("PanAlive11");
-            else if (chance <= 87) panMessage = GetString("PanAlive12");
-            else if (chance <= 88) panMessage = GetString("PanAlive13");
-            else if (chance <= 89) panMessage = GetString("PanAlive14");
-            else if (chance <= 90) panMessage = GetString("PanAlive15");
-            else if (chance <= 91) panMessage = GetString("PanAlive16");
-            else if (chance <= 92) panMessage = GetString("PanAlive17");
-            else if (chance <= 93) panMessage = GetString("PanAlive18");
-            else if (chance <= 94) panMessage = GetString("PanAlive19");
-            else if (chance <= 95) panMessage = GetString("PanAlive20");
-            else if (chance <= 96) panMessage = GetString("PanAlive21");
-            else if (chance <= 97) panMessage = GetString("PanAlive22");
-            else if (chance <= 98) panMessage = GetString("PanAlive23");
-            else if (chance <= 99)
+            else
             {
-                List<PlayerControl> targetList = new();
-                var rand = IRandom.Instance;
-                foreach (var p in Main.AllAlivePlayerControls)
-                {
-                    if (p.Is(CustomRoles.Bakery)) continue;
-                    targetList.Add(p);
-                }
-                var TargetPlayer = targetList[rand.Next(targetList.Count)];
-                panMessage = string.Format(GetString("PanAlive24"), TargetPlayer.GetRealName(Options.GetNameChangeModes() == NameChange.Crew));
+                message = GetBakeryMessage();
             }
-            else if (chance <= 100)
-            {
-                List<PlayerControl> targetList = new();
-                var rand = IRandom.Instance;
-                foreach (var p in Main.AllAlivePlayerControls)
-                {
-                    if (p.Is(CustomRoles.Bakery)) continue;
-                    targetList.Add(p);
-                }
-                var TargetPlayer = targetList[rand.Next(targetList.Count)];
-                panMessage = string.Format(GetString("PanAlive25"), TargetPlayer.GetRealName(Options.GetNameChangeModes() == NameChange.Crew));
-            }
+        }
 
-            SendMessageAutoSplit($"{formatTag}{panMessage}", true, BakeryTitle, formatTag: formatTag);
+        if (!message.IsNullOrWhiteSpace())
+        {
+            SendMessageAutoSplit($"{formatTag}\n{message}\nㅤ", true, BakeryTitle, formatTag: formatTag);
         }
     }
-    public override void AfterMeetingTasks()
-    {
-        var PlayerId = Player.PlayerId;
-        //第三パン屋でない||死亡
-        if (!nBakeries.Contains(this) || !Player.IsAlive()) return;
 
-        if (Player.IsAlive() || MyState.DeathReason != CustomDeathReason.Vote)
-        {   //吊られなかった時毒発動
-            if (PoisonPlayer != null
-                && !Main.AfterMeetingDeathPlayers.ContainsKey(PoisonPlayer.PlayerId))
+    private string GetNeutralBakeryMessage()
+    {
+        return PoisonPlayer.IsAlive() ? GetString("BakeryChangeNow") : GetString("BakeryChangeNone");
+    }
+
+    private string GetBakeryMessage()
+    {
+        string message = "";
+
+        int chance = IRandom.Instance.Next(1, 101);
+        if (chance <= 98)
+        {
+            string messageKey = chance <= 75 ? "BakeryAlliveMessage" : $"BakeryAlliveMessageRare{chance - 75}";
+            message = GetString(messageKey);
+        }
+        else
+        {
+            List<PlayerControl> targetList = [.. Main.AllAlivePlayerControls.Where(p => !p.Is(CustomRoles.Bakery))];
+
+            if (targetList.Count > 0)
             {
-                PoisonPlayer.SetRealKiller(Player);
-                MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Poisoning, PoisonPlayer.PlayerId);
+                PlayerControl targetPlayer = targetList[IRandom.Instance.Next(targetList.Count)];
+                string messageKey = chance == 99 ? "BakeryAlliveMessageRare24" : "BakeryAlliveMessageRare25";
+                string targetName = targetPlayer.GetRealName(Options.GetNameChangeModes() == NameChange.Crew);
+                message = string.Format(GetString(messageKey), targetName);
+            }
+            else
+            {
+                message = GetString("BakeryAlliveMessage");
             }
         }
-        else //吊られた時のKey取り消し 以降のパンセットいらないので返す
+
+        return message;
+    }
+
+    public override void AfterMeetingTasks()
+    {
+        if (!nBakeries.Contains(this)) return;
+
+        if (!Player.IsAlive() || MyState.DeathReason == CustomDeathReason.Vote)
         {
             PoisonPlayer = null;
-            if (AmongUsClient.Instance.AmHost) SendRPC();
             return;
+        }
+
+        if (PoisonPlayer != null && !Main.AfterMeetingDeathPlayers.ContainsKey(PoisonPlayer.PlayerId))
+        {
+            PoisonPlayer.SetRealKiller(Player);
+            MeetingHudPatch.TryAddAfterMeetingDeathPlayers(CustomDeathReason.Poisoning, PoisonPlayer.PlayerId);
         }
 
         //次のターゲットを決めておく
@@ -251,13 +237,17 @@ public sealed class Bakery : RoleBase
         var rand = IRandom.Instance;
         foreach (var pc in Main.AllAlivePlayerControls)
         {
-            if (Player == pc) continue;
-            if (Main.AfterMeetingDeathPlayers.ContainsKey(pc.PlayerId)) continue;
+            if (Player == pc || Main.AfterMeetingDeathPlayers.ContainsKey(pc.PlayerId)) continue;
             targetList.Add(pc);
         }
+        if (targetList.Count == 0)
+        {
+            PoisonPlayer = null;
+            return;
+        }
+
         var PoisonedSelectPlayer = targetList[rand.Next(targetList.Count)];
         PoisonPlayer = PoisonedSelectPlayer;
-        if (AmongUsClient.Instance.AmHost) SendRPC(PoisonPlayer.PlayerId);
         Logger.Info($"{Player.GetNameWithRole()}の次ターン配布先：{PoisonedSelectPlayer.GetNameWithRole()}", "NBakery");
     }
 }
