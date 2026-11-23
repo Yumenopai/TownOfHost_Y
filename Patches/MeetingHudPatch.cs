@@ -267,7 +267,6 @@ public static class MeetingHudPatch
                         {
                             seen.RpcSetNamePrivate(
                                 seer == seen ? coloredName : seenName,
-                                true,
                                 seer);
                         }
                     }

@@ -127,7 +127,7 @@ static class ExtendedPlayerControl
         player.RpcSetName(name);
     }
 
-    public static void RpcSetNamePrivate(this PlayerControl player, string name, bool DontShowOnModdedClient = false, PlayerControl seer = null, bool force = false)
+    public static void RpcSetNamePrivate(this PlayerControl player, string name, PlayerControl seer = null, bool force = false)
     {
         //player: 名前の変更対象
         //seer: 上の変更を確認することができるプレイヤー
@@ -151,7 +151,7 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, Hazel.SendOption.Reliable, clientId);
         writer.Write(player.Data.NetId);
         writer.Write(name);
-        writer.Write(DontShowOnModdedClient);
+        writer.Write(false);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
     public static void RpcSetRoleDesync(this PlayerControl player, RoleTypes role, int clientId, bool canOverrideRole = false)

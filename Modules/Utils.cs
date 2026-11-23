@@ -1545,7 +1545,7 @@ public static class Utils
             // ミーティングテキスト
             string name = MeetingDisplayText.AddTextForVanilla(seer, SelfName.ToString(), SelfSuffix.ToString(), SelfRoleName, isForMeeting);
             //適用
-            seer.RpcSetNamePrivate(name, true, force: NoCache);
+            seer.RpcSetNamePrivate(name, force: NoCache);
 
             //seerが死んでいる場合など、必要なときのみ第二ループを実行する
             if (seer.Data.IsDead //seerが死んでいる
@@ -1640,7 +1640,7 @@ public static class Utils
                     TargetName = MeetingDisplayText.AddTextForVanilla(target, TargetName, TargetSuffix.ToString(), TargetRoleText, isForMeeting);
 
                     //適用
-                    target.RpcSetNamePrivate(TargetName, true, seer, force: NoCache);
+                    target.RpcSetNamePrivate(TargetName, seer, force: NoCache);
 
                     logger.Info("NotifyRoles-Loop2-" + target.GetNameWithRole() + ":END");
                 }
