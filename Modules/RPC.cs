@@ -233,32 +233,6 @@ namespace TownOfHostY
     }
     static class RPC
     {
-        //SyncCustomSettingsRPC Sender
-        public static void SyncCustomSettingsRPC()
-        {
-            // ホスト専用モードにより無効化 
-            //if (!AmongUsClient.Instance.AmHost) return;
-
-            //int count = 0;
-            //MessageWriter writer = null;
-
-            //foreach (var co in OptionItem.AllOptions)
-            //{
-            //    if (count == 0 || count % 500 == 0)
-            //    {
-            //        if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
-            //        writer = AmongUsClient.Instance.StartRpcImmediately(
-            //            PlayerControl.LocalPlayer.NetId,
-            //            (byte)CustomRPC.SyncCustomSettings,
-            //            Hazel.SendOption.Reliable, -1);
-            //        writer.WritePacked(count);
-            //        writer.WritePacked(Math.Min(OptionItem.AllOptions.Count, count + 500));
-            //    }
-            //    writer.WritePacked(co.GetValue());
-            //    count++;
-            //}
-            //if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
         public static void PlaySoundRPC(byte PlayerID, Sounds sound)
         {
             if (AmongUsClient.Instance.AmHost)

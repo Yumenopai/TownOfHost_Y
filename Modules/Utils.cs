@@ -1436,7 +1436,6 @@ public static class Utils
             //seerが落ちているときに何もしない
             if (seer == null || seer.Data.Disconnected) continue;
 
-            //if (seer.IsModClient()) continue;
             string fontSize = isForMeeting ? "1.5" : Main.RoleTextSize.ToString();
             if (isForMeeting && (seer.GetClient().PlatformData.Platform is Platforms.Playstation or Platforms.Switch)) fontSize = "70%";
             logger.Info("NotifyRoles-Loop1-" + seer.GetNameWithRole() + ":START");

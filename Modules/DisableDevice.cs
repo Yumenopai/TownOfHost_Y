@@ -131,7 +131,7 @@ namespace TownOfHostY
 
                 try
                 {
-                    if (pc == PlayerControl.LocalPlayer/*pc.IsModClient()*/) continue;
+                    if (pc == PlayerControl.LocalPlayer) continue;
 
                     bool doComms = false;
                     Vector2 PlayerPos = pc.GetTruePosition();

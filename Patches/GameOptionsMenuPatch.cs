@@ -39,10 +39,6 @@ public static class GameOptionsMenuPatch
             {
                 OptionBehaviour optionBehaviour = __instance.Children[i];
                 optionBehaviour.OnValueChanged = new Action<OptionBehaviour>(__instance.ValueChanged);
-                //if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost)
-                //{
-                //    optionBehaviour.SetAsPlayer();
-                //}
             }
             __instance.InitializeControllerNavigation();
         }
