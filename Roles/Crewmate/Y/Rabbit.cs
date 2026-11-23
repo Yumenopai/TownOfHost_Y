@@ -88,6 +88,7 @@ public sealed class Rabbit : RoleBase
         }
 
         var Impostors = Main.AllAlivePlayerControls.Where(pc=>pc.Is(CustomRoleTypes.Impostor)).ToArray();
+        if (Impostors.Length == 0) return true;
         var target = Impostors[IRandom.Instance.Next(Impostors.Length)];
 
         //対象の方角ベクトルを取る

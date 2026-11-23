@@ -54,6 +54,10 @@ public sealed class Medic : RoleBase
 
         Player.AddVentSelect();
     }
+    public override void OnDestroy()
+    {
+        Medics.Remove(this);
+    }
 
     public override void ApplyGameOptions(IGameOptions opt)
     {
@@ -63,7 +67,7 @@ public sealed class Medic : RoleBase
     public bool CanUseVent()
     => Player.IsAlive()
     && UseVent
-    && MyTaskState.CompletedTasksCount >= TaskTrigger;
+    && (MyTaskState.CompletedTasksCount >= TaskTrigger || IsTaskFinished);
 
     /// <summary>
     /// 使用する時true
