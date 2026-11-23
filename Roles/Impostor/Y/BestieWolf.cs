@@ -76,7 +76,7 @@ public sealed class BestieWolf : RoleBase, IImpostor
 
     private static float KillCooldownSeveral;
     private static float KillCooldownSingle;
-    private static CustomRoles[] grantAddonRole = { CustomRoles.NotAssigned, CustomRoles.NotAssigned, CustomRoles.NotAssigned, CustomRoles.NotAssigned, CustomRoles.NotAssigned };
+    private CustomRoles[] grantAddonRole = { CustomRoles.NotAssigned, CustomRoles.NotAssigned, CustomRoles.NotAssigned, CustomRoles.NotAssigned, CustomRoles.NotAssigned };
 
     public static PlayerControl EnableKillFlash = null;
     int killCount = 0;
@@ -113,6 +113,10 @@ public sealed class BestieWolf : RoleBase, IImpostor
         killCount = 0;
         isChainKilling = false;
     }
+    public override void OnDestroy()
+    {
+        EnableKillFlash = null;
+    }
 
     public float CalculateKillCooldown() => Main.AliveImpostorCount >= 2 ? KillCooldownSeveral : KillCooldownSingle;
     public override string GetProgressText(bool comms = false)
@@ -127,7 +131,8 @@ public sealed class BestieWolf : RoleBase, IImpostor
 
         if (Main.AliveImpostorCount >= 2)
         {
-            foreach(var imp in Main.AllAlivePlayerControls.Where(pc=>pc.Is(CustomRoleTypes.Impostor)))
+            if (killCount >= grantAddonRole.Length) return;
+            foreach (var imp in Main.AllAlivePlayerControls.Where(pc=>pc.Is(CustomRoleTypes.Impostor)))
             {
                 if (imp == Player) continue;//自身ではない
 
