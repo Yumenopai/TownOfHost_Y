@@ -75,7 +75,7 @@ public static class CustomRoleManager
             if (killer.IsKiller)
             {
                 // イビルディバイナーのみ占いのためここで先に処理
-                if (killerRole is EvilDiviner && !EvilDiviner.OnCheckMurder(info)) return false;
+                if (killerRole is EvilDiviner evilDiviner && !evilDiviner.OnCheckMurder(info)) return false;
                 // ガーディング属性によるガード
                 if (Guarding.OnCheckMurder(info)) { }
                 // メディックの対象プレイヤー
