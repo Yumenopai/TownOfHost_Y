@@ -1,11 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using HarmonyLib;
-using UnityEngine;
-using Hazel;
-
 using AmongUs.GameOptions;
+using Hazel;
+using UnityEngine;
+using TownOfHostY.Attributes;
 using TownOfHostY.Roles.Core;
 using static TownOfHostY.Translator;
 
@@ -35,7 +33,6 @@ public sealed class Psychic : RoleBase
         Cooldown = OptionCooldown.GetFloat();
         TaskTrigger = OptionTaskTrigger.GetInt();
 
-        VentSelect.Init();
     }
     private static OptionItem OptionCooldown;
     public static OptionItem MaxCheckRole;
@@ -50,10 +47,15 @@ public sealed class Psychic : RoleBase
         TaskTrigger,
     }
 
-    public static float Cooldown = 30;
+    public static float Cooldown;
     public static int TaskTrigger;
-    int DivinationLeftCount = 0;
+    int divinationLimit = 0;
     bool IsCoolTimeOn = true;
+
+    readonly HashSet<byte> revealedRolePlayers = new();
+
+    [GameModuleInitializer]
+    public static void Init() => VentSelect.Init();
 
     private static void SetupOptionItem()
     {
@@ -69,8 +71,11 @@ public sealed class Psychic : RoleBase
     public override void Add()
     {
         IsCoolTimeOn = true;
-        DivinationLeftCount = MaxCheckRole.GetInt();
+        divinationLimit = MaxCheckRole.GetInt();
+        revealedRolePlayers.Clear();
+        VentSelect.ClearSelect(Player.PlayerId);
     }
+    public override void OnDestroy() => VentSelect.ClearSelect(Player.PlayerId);
     public override void OnStartMeeting()
     {
         IsCoolTimeOn = true;
@@ -85,6 +90,18 @@ public sealed class Psychic : RoleBase
         VentSelect.ClearSelect();
     }
 
+    public override bool OnCompleteTask()
+    {
+        if (!Player.IsAlive()) return true;
+
+        if (MyTaskState.CompletedTasksCount == TaskTrigger || IsTaskFinished)
+        {
+            Player.MarkDirtySettings();
+        }
+
+        return true;
+    }
+
     public override void AfterMeetingTasks() => Player.RpcResetAbilityCooldown();
 
     public override void ApplyGameOptions(IGameOptions opt)
@@ -94,17 +111,17 @@ public sealed class Psychic : RoleBase
     }
     public bool CanUseVent()
         => Player.IsAlive()
-        && DivinationLeftCount > 0
-        && MyTaskState.CompletedTasksCount >= TaskTrigger;
+        && divinationLimit > 0
+        && (MyTaskState.CompletedTasksCount >= TaskTrigger || IsTaskFinished);
 
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
     {
         if (!CanUseVent()) return false;
 
+        if (!VentSelect.PlayerSelect(Player, GetSelectableTargets())) return false;
+
         IsCoolTimeOn = false;
         Player.MarkDirtySettings();
-
-        VentSelect.PlayerSelect(Player);
 
         Utils.NotifyRoles(SpecifySeer: Player);
         return true;
@@ -115,46 +132,23 @@ public sealed class Psychic : RoleBase
 
         if (VentSelect.OnFixedUpdate(Player, out var selectedId))
         {
+            if (selectedId < 0) return;
+
+            revealedRolePlayers.Add((byte)selectedId);
+            if (divinationLimit > 0)
+            {
+                divinationLimit--;
+            }
             IsCoolTimeOn = true;
             player.SyncSettings();
             player.RpcResetAbilityCooldown();
             Utils.NotifyRoles(SpecifySeer: Player);
-
-            // 霊視確定時にカスタムRPCで全クライアントへ同期する
-            // targetId=-1 なので1つのMessageWriterで済み hacking判定を受けない
-            SendRPC(Player.PlayerId, (byte)selectedId);
         }
-    }
-
-    /// <summary>
-    /// 霊視結果を全クライアントに送信する
-    /// </summary>
-    /// <param name="psychicId">霊媒師のPlayerId</param>
-    /// <param name="targetId">霊視対象のPlayerId</param>
-    private void SendRPC(byte psychicId, byte targetId)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        using var sender = CreateSender(CustomRPC.SyncPsychicResult);
-        // RoleRPCSender が psychicId を先頭に書いてくれるため
-        // ここでは霊視対象のPlayerId のみ追記する
-        sender.Writer.Write(targetId);
-    }
-
-    /// <summary>
-    /// SyncPsychicResult RPCを受信したときの処理
-    /// ホスト以外のクライアントがローカルの CheckRolePlayer を更新する
-    /// </summary>
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SyncPsychicResult) return;
-        // psychicId は DispatchRpc → RoleBase 側で消費済み
-        byte targetId = reader.ReadByte();
-        VentSelect.ReceiveSyncResult(Player.PlayerId, targetId);
     }
 
     public override void OverrideDisplayRoleNameAsSeer(PlayerControl seen, bool isMeeting, ref bool enabled, ref string roleText)
     {
-        if (!VentSelect.IsShowTargetRole(Player, seen)) return;
+        if (!revealedRolePlayers.Contains(seen.PlayerId)) return;
         if (KillerOnly.GetBool() &&
             !(seen.GetCustomRole().IsImpostor() || seen.IsNeutralKiller() || seen.IsCrewKiller()
             || seen.Is(CustomRoles.MadSheriff) || seen.Is(CustomRoles.GrudgeSheriff))) return;
@@ -179,7 +173,7 @@ public sealed class Psychic : RoleBase
     }
     public bool KnowTargetRoleColor(PlayerControl target)
     {
-        if (!VentSelect.IsShowTargetRole(Player, target)) return false;
+        if (!revealedRolePlayers.Contains(target.PlayerId)) return false;
         if (!ConfirmCamp.GetBool()) return false;   //役職表示
         if (KillerOnly.GetBool() &&
         !(target.GetCustomRole().IsImpostor() || target.IsNeutralKiller() || target.IsCrewKiller()
@@ -192,84 +186,76 @@ public sealed class Psychic : RoleBase
         seen ??= seer;
         if (!Is(seer) || !Is(seen) || !CanUseVent() || isForMeeting) return string.Empty;
 
-        return VentSelect.GetCheckPlayerText(seer, isForHud);
+        var target = VentSelect.GetSelectedPlayer(seer);
+        if (target == null) return GetString(isForHud ? "SelectPlayerTagBefore" : "SelectPlayerTagMiniBefore");
+
+        return GetString(isForHud ? "SelectPlayerTag" : "SelectPlayerTagMini")
+            + target.GetRealName(Options.GetNameChangeModes() == NameChange.Crew);
     }
 
     public override string GetProgressText(bool comms = false)
-        => Utils.ColorString(RoleInfo.RoleColor, $"[{DivinationLeftCount}]");
+        => Utils.ColorString(RoleInfo.RoleColor, $"[{divinationLimit}]");
     public override string GetAbilityButtonText() => GetString("ChangeButtonText");
 
+    private IEnumerable<PlayerControl> GetSelectableTargets()
+        => Main.AllDeadPlayerControls.Where(target => !revealedRolePlayers.Contains(target.PlayerId));
 
     //死人がターゲットの特別なセレクト
-    public static class VentSelect
+    private static class VentSelect
     {
-        public static Dictionary<byte, PlayerControl> SelectPlayer = new();
-        public static Dictionary<byte, bool> SelectFix = new();
-        public static Dictionary<byte, float> TergetFixTimer = new();
-        public static Dictionary<byte, List<byte>> CheckRolePlayer = new();
+        private static readonly Dictionary<byte, PlayerControl> SelectedTargets = new();
+        private static readonly HashSet<byte> FixedSelections = new();
+        private static readonly Dictionary<byte, float> SelectionTimers = new();
+
         public static void Init()
         {
-            SelectPlayer = new();
-            SelectFix = new();
-            TergetFixTimer = new();
-            CheckRolePlayer = new();
+            SelectedTargets.Clear();
+            FixedSelections.Clear();
+            SelectionTimers.Clear();
         }
+
         public static void ClearSelect()
         {
-            SelectPlayer.Clear();
-            SelectFix.Clear();
-            TergetFixTimer.Clear();
+            SelectedTargets.Clear();
+            FixedSelections.Clear();
+            SelectionTimers.Clear();
         }
-        public static IEnumerable<PlayerControl> SelectList(byte playerId)
+
+        public static void ClearSelect(byte playerId)
         {
-            if (!CheckRolePlayer.ContainsKey(playerId)) CheckRolePlayer.Add(playerId, new());
-            return Main.AllDeadPlayerControls.Where(x => !CheckRolePlayer[playerId].Contains(x.PlayerId));
+            SelectedTargets.Remove(playerId);
+            FixedSelections.Remove(playerId);
+            SelectionTimers.Remove(playerId);
         }
-        public static void PlayerSelect(PlayerControl player)
+
+        public static bool PlayerSelect(PlayerControl player, IEnumerable<PlayerControl> candidates)
         {
-            if (player == null) return;
+            if (player == null) return false;
 
             var playerId = player.PlayerId;
-            if (TergetFixTimer.ContainsKey(playerId)) //タイマーリセット
-                TergetFixTimer.Remove(playerId);
+            SelectionTimers.Remove(playerId); // 選択中ならタイマーをリセット
 
-            if (SelectFix.TryGetValue(playerId, out var fix) && fix) return;
+            if (FixedSelections.Contains(playerId)) return false;
 
-            PlayerControl first = null;
-            SelectPlayer.TryGetValue(playerId, out var selectedPlayer);
-            var preSelected = false;
-            var selected = false;
-            if (!CheckRolePlayer.ContainsKey(playerId)) CheckRolePlayer.Add(playerId, new());
-            foreach (var target in SelectList(playerId))
+            var targets = candidates?.Where(target => target != null && target != player).ToList() ?? new();
+            if (targets.Count == 0)
             {
-                if (target == player) continue;
-
-                if (first == null) first = target;
-
-                if (preSelected)
-                {
-                    SelectPlayer[playerId] = target;
-                    selected = true;
-                    Logger.Info($"{player.name} PlayerSelectNow:{target.name}, nextTarget", "player");
-                    break;
-                }
-
-                if (target == selectedPlayer) preSelected = true;
-            }
-            if (first == null)
-            {
-                SelectPlayer[playerId] = null;
-                Logger.Info($"{player.name} PlayerSelectNow:null, ターゲットなし", "player");
-                return;
-            }
-            if (!selected)
-            {
-                SelectPlayer[playerId] = first;
-                Logger.Info($"{player.name} PlayerSelectNow:{first?.name}, firstTarget", "player");
+                SelectedTargets.Remove(playerId);
+                return false;
             }
 
-            TergetFixTimer.Add(player.PlayerId, 3f);
+            var currentIndex = SelectedTargets.TryGetValue(playerId, out var currentTarget)
+                ? targets.IndexOf(currentTarget)
+                : -1;
+            var nextIndex = currentIndex < 0 ? 0 : (currentIndex + 1) % targets.Count;
+            var selectedTarget = targets[nextIndex];
+            SelectedTargets[playerId] = selectedTarget;
+
+            SelectionTimers[playerId] = 3f;
+            Logger.Info($"{player.name} PlayerSelectNow:{selectedTarget.name}", "VentSelect");
+            return true;
         }
+
         public static bool OnFixedUpdate(PlayerControl player, out int selectedId)
         {
             selectedId = -1;
@@ -278,66 +264,29 @@ public sealed class Psychic : RoleBase
             if (!GameStates.IsInTask) return false;
 
             var playerId = player.PlayerId;
-            if (!TergetFixTimer.ContainsKey(playerId)) return false;
+            if (!SelectionTimers.ContainsKey(playerId)) return false;
 
-            TergetFixTimer[playerId] -= Time.fixedDeltaTime;
-            if (TergetFixTimer[playerId] > 0) return false;
+            SelectionTimers[playerId] -= Time.fixedDeltaTime;
+            if (SelectionTimers[playerId] > 0) return false;
 
-            //以下ターゲット確定
-            SelectFix[playerId] = true;
-            selectedId = SelectPlayer[playerId].PlayerId;
+            if (!SelectedTargets.TryGetValue(playerId, out var target) || target == null || target.Data == null || target.Data.Disconnected)
+            {
+                ClearSelect(playerId);
+                return false;
+            }
 
-            // ホスト側のみ CheckRolePlayer を更新する
-            // 他クライアントは SyncPsychicResult RPC 受信時に ReceiveSyncResult で更新する
-            if (!CheckRolePlayer.ContainsKey(playerId)) CheckRolePlayer.Add(playerId, new());
-            CheckRolePlayer[playerId].Add(SelectPlayer[playerId].PlayerId);
-            TergetFixTimer.Remove(playerId);
+            FixedSelections.Add(playerId);
+            selectedId = target.PlayerId;
+            SelectionTimers.Remove(playerId);
 
-            Logger.Info($"{player.name} PlayerDecision:{SelectPlayer[playerId].name}", "player");
+            Logger.Info($"{player.name} PlayerDecision:{target.name}", "VentSelect");
 
-            player.RpcProtectedMurderPlayer();   //設定完了のパリン
-            player.RpcResetAbilityCooldown();
+            player.RpcProtectedMurderPlayer(); // 選択確定のフィードバック
 
             return true;
         }
 
-        /// <summary>
-        /// SyncPsychicResult RPC 受信時に呼ばれる
-        /// ホスト以外のクライアントが CheckRolePlayer を更新する
-        /// </summary>
-        public static void ReceiveSyncResult(byte psychicId, byte targetId)
-        {
-            if (!CheckRolePlayer.ContainsKey(psychicId)) CheckRolePlayer.Add(psychicId, new());
-            if (!CheckRolePlayer[psychicId].Contains(targetId))
-                CheckRolePlayer[psychicId].Add(targetId);
-            Logger.Info($"Psychic({psychicId}) ReceiveSyncResult target:{targetId}", "Psychic");
-        }
-
-        public static bool IsShowTargetRole(PlayerControl seer, PlayerControl target)
-        {
-            var IsWatch = false;
-            CheckRolePlayer.Do(x =>
-            {
-                if (x.Value != null && seer.PlayerId == x.Key && x.Value.Contains(target.PlayerId) && Utils.GetPlayerById(x.Key).IsAlive())
-                    IsWatch = true;
-            });
-            return IsWatch;
-        }
-        public static string GetCheckPlayerText(PlayerControl psychic, bool isForHud)
-        {
-            if (psychic == null) return "";
-            var psychicId = psychic.PlayerId;
-
-            var str = new StringBuilder();
-            SelectPlayer.TryGetValue(psychicId, out var target);
-            if (target == null)
-                str.Append(GetString(isForHud ? "SelectPlayerTagBefore" : "SelectPlayerTagMiniBefore"));
-            else
-            {
-                str.Append(GetString(isForHud ? "SelectPlayerTag" : "SelectPlayerTagMini"));
-                str.Append(target.GetRealName(Options.GetNameChangeModes() == NameChange.Crew));
-            }
-            return str.ToString();
-        }
+        public static PlayerControl GetSelectedPlayer(PlayerControl player)
+            => player != null && SelectedTargets.TryGetValue(player.PlayerId, out var target) ? target : null;
     }
 }
