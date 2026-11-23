@@ -150,8 +150,8 @@ namespace TownOfHostY.Roles.Impostor
             }
             //実行してもしなくても呪いはすべて解除
             SpelledPlayer.Clear();
-            if (AmongUsClient.Instance.AmHost)
         }
+
         public static string GetMarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
         {
             seen ??= seer;
