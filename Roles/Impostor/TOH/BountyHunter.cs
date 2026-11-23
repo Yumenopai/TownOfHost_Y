@@ -69,26 +69,9 @@ public sealed class BountyHunter : RoleBase, IImpostor
     }
     public override void Add()
     {
-        if (AmongUsClient.Instance.AmHost)
-            ResetTarget();
-    }
-    private void SendRPC(byte targetId)
-    {
-        using var sender = CreateSender(CustomRPC.SetBountyTarget);
-        sender.Writer.Write(targetId);
+        ResetTarget();
     }
 
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetBountyTarget) return;
-
-        byte targetId = reader.ReadByte();
-
-        Target = Utils.GetPlayerById(targetId);
-        if (ShowTargetArrow) TargetArrow.Add(Player.PlayerId, targetId);
-        Logger.Info($"{Player.GetNameWithRole()}のターゲットを{Target.GetNameWithRole()}に変更", "BountyHunter");
-    }
-    //public static void SetKillCooldown(byte id, float amount) => Main.AllPlayerKillCooldown[id] = amount;
     public override void ApplyGameOptions(IGameOptions opt) => AURoleOptions.ShapeshifterCooldown = TargetChangeTime;
 
     public void OnCheckMurderAsKiller(MurderInfo info)
@@ -175,8 +158,6 @@ public sealed class BountyHunter : RoleBase, IImpostor
         if (ShowTargetArrow) TargetArrow.Add(playerId, targetId);
         Logger.Info($"{Player.GetNameWithRole()}のターゲットを{Target.GetNameWithRole()}に変更", "BountyHunter");
 
-        //RPCによる同期
-        SendRPC(targetId);
         return target;
     }
     public override string GetAbilityButtonText() => GetString("BountyHunterChangeButtonText");
@@ -184,6 +165,7 @@ public sealed class BountyHunter : RoleBase, IImpostor
     {
         if (Player.IsAlive())
         {
+            Player.ResetKillCooldown();
             Player.RpcResetAbilityCooldown();
             ChangeTimer = 0f;
         }
