@@ -126,13 +126,10 @@ namespace TownOfHostY
                         {
                             if (client.Character == null) continue;
                             var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
-                            if (dummyComponent != null && dummyComponent.enabled)
-                                continue;
-                            if (!MatchVersions(client.Character.PlayerId, true))
-                            {
-                                canStartGame = false;
-                                mismatchedPlayerNameList.Add(Utils.ColorString(Palette.PlayerColors[client.ColorId], client.Character.Data.PlayerName));
-                            }
+                            if (dummyComponent != null && dummyComponent.enabled) continue;
+                            if (MatchVersions(client.Character.PlayerId, true)) continue;
+                            canStartGame = false;
+                            mismatchedPlayerNameList.Add(Utils.ColorString(Palette.PlayerColors[client.ColorId], client.Character.Data.PlayerName));
                         }
                         string[] kickName =
                         {
@@ -161,16 +158,6 @@ namespace TownOfHostY
                             warningMessage = Utils.ColorString(Color.red, string.Format(GetString("Warning.MismatchedVersion"), String.Join(" ", mismatchedPlayerNameList), $"<color={Main.ModColor}>{Main.ModName}</color>"));
                         }
                         if (cancelButton != null) cancelButton.gameObject.SetActive(__instance.startState == GameStartManager.StartingStates.Countdown);
-                    }
-                    else
-                    {
-                        if (!MatchVersions(0))
-                        {
-                            ErrorText.Instance.NotHostFlag = true;
-                            ErrorText.Instance.AddError(ErrorCode.NotHostUnload);
-                            Harmony.UnpatchAll();
-                            Main.Instance?.Unload();
-                        }
                     }
                     if (warningMessage == "")
                     {

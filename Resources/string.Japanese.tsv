@@ -1374,7 +1374,6 @@ RevealerExiledText	[リヴェラー]{0}の{1}
 Warning.EgoistCannotWin	エゴイストが勝利できません
 Warning.OverrideExiledPlayer	今回の追放はすべて同数投票として表示されます。
 Warning.InvalidRpc	不正なRPCを受信したため{0}をキックしました。\nTOH以外のMODが入っていないか確認してください。
-Warning.NoModHost	ホストにMODが導入されていません
 Warning.MismatchedVersion	{0} の\n{1} のバージョンがホストと合致しません。
 Warning.AutoExitAtMismatchedVersion	{0} のバージョンがホストと合致しません。\nあと {1} 秒で切断されます。
 Warning.NotMatchImpostorCount	インポスター役職の最小/最大割り当て人数がインポスターより多すぎます。

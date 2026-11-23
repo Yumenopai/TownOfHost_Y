@@ -25,7 +25,7 @@ class SetUpRoleTextPatch
 {
     public static void Apply(IntroCutscene __instance)
     {
-        if (!GameStates.IsModHost) return;
+        if (!AmongUsClient.Instance.AmHost) return;
         _ = new LateTask(() =>
         {
             CustomRoles role = PlayerControl.LocalPlayer.GetCustomRole();
@@ -61,18 +61,6 @@ class CoBeginPatch
 {
     public static void Prefix()
     {
-        if (AmongUsClient.Instance.AmHost is false)
-        {
-            foreach (var pc in Main.AllPlayerControls)
-            {
-                var colorId = pc.Data.DefaultOutfit.ColorId;
-                if (!Main.AllPlayerNames.ContainsKey(pc.PlayerId))
-                    Main.AllPlayerNames[pc.PlayerId] = pc?.Data?.PlayerName;
-                Main.PlayerColors[pc.PlayerId] = Palette.PlayerColors[colorId];
-                pc.cosmetics.nameText.text = pc.name;
-            }
-        }
-
         var logger = Logger.Handler("Info");
         logger.Info("------------名前表示------------");
         foreach (var pc in Main.AllPlayerControls)
@@ -115,11 +103,6 @@ class CoBeginPatch
         Main.AllPlayerControls.Do(x => PlayerState.GetByPlayerId(x.PlayerId).InitTask(x));
         GameData.Instance.RecomputeTaskCounts();
         TaskState.InitialTotalTasks = GameData.Instance.TotalTasks;
-
-        if (AmongUsClient.Instance.AmHost is false)
-        {
-            Utils.NotifyRoles();
-        }
 
         GameStates.InGame = true;
     }

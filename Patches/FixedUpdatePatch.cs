@@ -38,7 +38,7 @@ namespace TownOfHostY
 
                 var player = __instance;
 
-                if (!GameStates.IsModHost) return;
+                if (!AmongUsClient.Instance.AmHost) return;
 
                 TargetArrow.OnFixedUpdate(player);
                 TargetDeadArrow.OnFixedUpdate(player);

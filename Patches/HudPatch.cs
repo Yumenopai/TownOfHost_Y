@@ -39,7 +39,7 @@ class HudManagerPatch
     [HarmonyPatch(nameof(HudManager.Update)), HarmonyPostfix]
     public static void UpdatePostfix(HudManager __instance)
     {
-        if (!GameStates.IsModHost) return;
+        if (!AmongUsClient.Instance.AmHost) return;
         var player = PlayerControl.LocalPlayer;
         if (player == null) return;
         var TaskTextPrefix = "";
@@ -235,7 +235,7 @@ class SetHudActivePatch
     public static void Postfix(HudManager __instance, [HarmonyArgument(2)] bool isActive)
     {
         __instance.ReportButton.ToggleVisible(!GameStates.IsLobby && isActive);
-        if (!GameStates.IsModHost) return;
+        if (!AmongUsClient.Instance.AmHost) return;
         IsActive = isActive;
         if (GameStates.IsLobby) return;
         if (!isActive) return;
@@ -270,7 +270,7 @@ class TaskPanelBehaviourPatch
     public static void Postfix(TaskPanelBehaviour __instance)
     {
         if (GameStates.IsLobby) return; 
-        if (!GameStates.IsModHost) return;
+        if (!AmongUsClient.Instance.AmHost) return;
         PlayerControl player = PlayerControl.LocalPlayer;
 
         // 役職説明表示
