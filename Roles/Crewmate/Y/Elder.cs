@@ -35,7 +35,7 @@ public sealed class Elder : RoleBase
     private static OptionItem OptionTimeMoveMeeting;
     private bool IsUseGuard;
     private static bool DiaInLife;
-    private static float Lifetime;
+    private float Lifetime;
     private static bool TimeMoveMeeting;
 
     enum OptionName
