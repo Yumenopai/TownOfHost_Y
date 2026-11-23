@@ -59,7 +59,7 @@ public sealed class Gang : RoleBase, IAdditionalWinner
         if (!grantAddon && rate >= 75)
         {
             grantAddon = true;
-            pirate.RpcSetCustomRole(Pirate.grantAddonRole);
+            pirate.SetCustomRole(Pirate.grantAddonRole);
             Utils.NotifyRoles(SpecifySeer: pirate);
         }
         if (!isComplete && IsTaskFinished)

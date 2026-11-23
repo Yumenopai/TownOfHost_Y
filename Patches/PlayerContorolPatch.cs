@@ -293,7 +293,7 @@ public static class PlayerControlCheckShapeshiftPatch
             {
                 var min = mpdistance.OrderBy(c => c.Value).FirstOrDefault();//一番値が小さい
                 PlayerControl targetm = min.Key;
-                targetm.RpcSetCustomRole(targetRole);
+                targetm.SetCustomRole(targetRole);
                 Logger.Info($"Make SKMadmate:{targetm.name}", "Shapeshift");
                 Main.SKMadmateNowCount++;
                 Utils.MarkEveryoneDirtySettings();

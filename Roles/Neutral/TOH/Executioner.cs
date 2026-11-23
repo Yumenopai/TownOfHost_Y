@@ -88,7 +88,6 @@ public sealed class Executioner : RoleBase, IAdditionalWinner
         }
         var SelectedTarget = targetList[rand.Next(targetList.Count)];
         TargetId = SelectedTarget.PlayerId;
-        SendRPC();
         Logger.Info($"{Player.GetNameWithRole()}:{SelectedTarget.GetNameWithRole()}", "Executioner");
     }
     public override void OnDestroy()
@@ -100,22 +99,11 @@ public sealed class Executioner : RoleBase, IAdditionalWinner
             CustomRoleManager.OnMurderPlayerOthers.Remove(OnMurderPlayerOthers);
         }
     }
-    public void SendRPC()
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
 
-        using var sender = CreateSender(CustomRPC.SetExecutionerTarget);
-        sender.Writer.Write(TargetId);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        byte targetId = reader.ReadByte();
-        TargetId = targetId;
-    }
+
     public override void OnMurderPlayerAsTarget(MurderInfo _)
     {
         TargetId = byte.MaxValue;
-        SendRPC();
     }
     public static void OnMurderPlayerOthers(MurderInfo info)
     {
@@ -159,7 +147,7 @@ public sealed class Executioner : RoleBase, IAdditionalWinner
     }
     public void ChangeRole()
     {
-        Player.RpcSetCustomRole(ChangeRolesAfterTargetKilled);
+        Player.SetCustomRole(ChangeRolesAfterTargetKilled);
         Utils.NotifyRoles();
     }
 

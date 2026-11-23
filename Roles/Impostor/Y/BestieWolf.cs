@@ -136,7 +136,7 @@ public sealed class BestieWolf : RoleBase, IImpostor
             {
                 if (imp == Player) continue;//自身ではない
 
-                imp.RpcSetCustomRole(grantAddonRole[killCount]);
+                imp.SetCustomRole(grantAddonRole[killCount]);
             }
             killCount++;
         }

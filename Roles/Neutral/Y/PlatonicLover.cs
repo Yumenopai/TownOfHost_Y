@@ -93,8 +93,8 @@ public sealed class PlatonicLover : RoleBase, IKiller
         Logger.Info($"{killer.GetNameWithRole()} : 恋人を作った", "PlatonicLover");
 
         Lovers.playersList.Clear();
-        killer.RpcSetCustomRole(CustomRoles.Lovers);
-        target.RpcSetCustomRole(CustomRoles.Lovers);
+        killer.SetCustomRole(CustomRoles.Lovers);
+        target.SetCustomRole(CustomRoles.Lovers);
 
         Utils.NotifyRoles();
     }

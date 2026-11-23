@@ -80,13 +80,13 @@ static class CatPlayer
         switch (killer.GetCustomRole())
         {
             case CustomRoles.CCRedLeader:
-                target.RpcSetCustomRole(CustomRoles.CCRedCat);
+                target.SetCustomRole(CustomRoles.CCRedCat);
                 break;
             case CustomRoles.CCBlueLeader:
-                target.RpcSetCustomRole(CustomRoles.CCBlueCat);
+                target.SetCustomRole(CustomRoles.CCBlueCat);
                 break;
             case CustomRoles.CCYellowLeader:
-                target.RpcSetCustomRole(CustomRoles.CCYellowCat);
+                target.SetCustomRole(CustomRoles.CCYellowCat);
                 break;
         }
         NameColorManager.Add(killer.PlayerId, target.PlayerId);

@@ -113,10 +113,6 @@ public class PlayerState
     public void SetDead()
     {
         IsDead = true;
-        if (AmongUsClient.Instance.AmHost)
-        {
-            RPC.SendDeathReason(PlayerId, DeathReason);
-        }
     }
     public bool IsSuicide() { return DeathReason == CustomDeathReason.Suicide; }
     public TaskState GetTaskState() { return taskState; }

@@ -150,17 +150,8 @@ public sealed class SillySheriff : RoleBase, IKiller, ISchrodingerCatOwner
         ShotLimit = ShotLimitOpt.GetInt();
         Logger.Info($"{Utils.GetPlayerById(playerId)?.GetNameWithRole()} : 残り{ShotLimit}発", "SillySheriff");
     }
-    private void SendRPC()
-    {
-        using var sender = CreateSender(CustomRPC.SetSSheriffShotLimit);
-        sender.Writer.Write(ShotLimit);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetSSheriffShotLimit) return;
 
-        ShotLimit = reader.ReadInt32();
-    }
+
     public float CalculateKillCooldown() => CanUseKillButton() ? CurrentKillCooldown : 0f;
     public bool CanUseKillButton()
         => Player.IsAlive()
@@ -183,7 +174,6 @@ public sealed class SillySheriff : RoleBase, IKiller, ISchrodingerCatOwner
         }
         ShotLimit--;
         Logger.Info($"{killer.GetNameWithRole()} : 残り{ShotLimit}発", "SillySheriff");
-        SendRPC();
         int chance = IRandom.Instance.Next(1, 101);
         if ((CanBeKilledBy(target) && chance <= probability) || (!CanBeKilledBy(target) && chance > probability))
         {

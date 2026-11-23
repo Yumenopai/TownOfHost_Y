@@ -108,35 +108,9 @@ class Penguin : RoleBase, IImpostor
         Player.SyncSettings();
         Player.RpcResetAbilityCooldown();
     }
-    private void SendRPC()
-    {
-        using var sender = CreateSender(CustomRPC.PenguinSync);
 
-        sender.Writer.Write(AbductVictim?.PlayerId ?? 255);
-    }
 
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.PenguinSync) return;
 
-        var victim = reader.ReadByte();
-        if (victim == 255)
-        {
-            AbductVictim = null;
-            AbductTimer = 255f;
-            AbductStates.Remove(Player.PlayerId);
-        }
-        else
-        {
-            AbductVictim = Utils.GetPlayerById(victim);
-            AbductTimer = AbductTimerLimit;
-            AbductStates[Player.PlayerId] = new AbductState
-            {
-                VictimId = victim,
-                Timer = AbductTimer
-            };
-        }
-    }
 
     // ペンギン拉致られ中のターゲットからキルできるか falseはその後のキル処理をキャンセル
     public static bool CanKilledByTarget(PlayerControl pc)
@@ -161,7 +135,6 @@ class Penguin : RoleBase, IImpostor
             Timer = AbductTimer
         };
         PushShapeshiftCooldown();
-        SendRPC();
     }
 
     void RemoveVictim()
@@ -176,7 +149,6 @@ class Penguin : RoleBase, IImpostor
         AbductTimer = 255f;
         killScheduled = false;
         PushShapeshiftCooldown();
-        SendRPC();
     }
     public void OnCheckMurderAsKiller(MurderInfo info)
     {

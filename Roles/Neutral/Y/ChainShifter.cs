@@ -81,7 +81,7 @@ public sealed class ChainShifter : RoleBase
     }
     public override void Add()
     {
-        Player.RpcSetCustomRole(CustomRoles.ChainShifterAddon);
+        Player.SetCustomRole(CustomRoles.ChainShifterAddon);
     }
 
     public override void OverrideShowMainRoleText(ref Color roleColor, ref string roleText)

@@ -120,23 +120,11 @@ public sealed class SchrodingerCatKiller : RoleBase, IKiller, IAdditionalWinner,
         }
         return won.Value;
     }
-    public void RpcSetTeam(TeamType team)
+    public void SetTeam(TeamType team)
     {
         Team = team;
-        if (AmongUsClient.Instance.AmHost)
-        {
-            using var sender = CreateSender(CustomRPC.SetSchrodingerCatTeam);
-            sender.Writer.Write((byte)team);
-        }
     }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetSchrodingerCatTeam)
-        {
-            return;
-        }
-        Team = (TeamType)reader.ReadByte();
-    }
+
     public static Color GetCatColor(TeamType catType)
     {
         Color? color = catType switch
@@ -288,7 +276,7 @@ public sealed class SchrodingerCatKiller : RoleBase, IKiller, IAdditionalWinner,
                 NameColorManager.Add(pc.PlayerId, cat.PlayerId, Utils.GetRoleColorCode(ownerRole));
             }
         }
-        cat.RpcSetCustomRole(CustomRoles.SchrodingerCatKiller);
+        cat.SetCustomRole(CustomRoles.SchrodingerCatKiller);
         PlayerState.GetByPlayerId(cat.PlayerId).SetCountType(countType);
 
         var catRole = (SchrodingerCatKiller)cat.GetRoleClass();

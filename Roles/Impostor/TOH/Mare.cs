@@ -77,22 +77,12 @@ public sealed class Mare : RoleBase, IImpostor
         IsActivateKill = activate;
         if (AmongUsClient.Instance.AmHost)
         {
-            SendRPC();
             Player.MarkDirtySettings();
             Utils.NotifyRoles();
         }
     }
-    public void SendRPC()
-    {
-        using var sender = CreateSender(CustomRPC.MareSync);
-        sender.Writer.Write(IsActivateKill);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.MareSync) return;
 
-        IsActivateKill = reader.ReadBoolean();
-    }
+
 
     public override void OnFixedUpdate(PlayerControl player)
     {

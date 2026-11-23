@@ -174,12 +174,12 @@ public static class ChainShifterAddon
 
         //シフト確定
         PlayerState.GetByPlayerId(nowPlayer.PlayerId).RemoveSubRole(CustomRoles.ChainShifterAddon);
-        next.RpcSetCustomRole(CustomRoles.ChainShifterAddon);
+        next.SetCustomRole(CustomRoles.ChainShifterAddon);
         Logger.Info($"shift {nowPlayer.name} => {next?.name}", "ChainShifterAdd.ChainShift");
 
         if (nowPlayer.Is(CustomRoles.ChainShifter))
         {
-            nowPlayer.RpcSetCustomRole(ChainShifter.ShiftedRole);
+            nowPlayer.SetCustomRole(ChainShifter.ShiftedRole);
             Logger.Info($"roleChange {nowPlayer.name} => {ChainShifter.ShiftedRole}", "ChainShifterAdd.ChainShift");
         }
 

@@ -82,7 +82,7 @@ public sealed class Counselor : RoleBase
         {
             if (pc.GetRoleClass() is not Counselor counselor || !counselor.Reserved.Item1) return;
 
-            counselor.Reserved.Item2.RpcSetCustomRole(CustomRoles.Crewmate);
+            counselor.Reserved.Item2.SetCustomRole(CustomRoles.Crewmate);
             //if (ResetAddonChangeCrew)
             //    PlayerState.GetByPlayerId(counselor.Reserved.Item2.PlayerId).SubRoles.Clear();
         }

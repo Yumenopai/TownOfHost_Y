@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using HarmonyLib;
-using Hazel;
 using Il2CppSystem.Text;
 
 using AmongUs.GameOptions;
@@ -331,16 +330,6 @@ public static class CustomRoleManager
             case CustomRoles.InfoPoor: InfoPoor.Add(playerId); break;
             case CustomRoles.NonReport: NonReport.Add(playerId); break;
         }
-    }
-    /// <summary>
-    /// 受信したRPCから送信先を読み取ってRoleClassに配信する
-    /// </summary>
-    /// <param name="reader"></param>
-    /// <param name="rpcType"></param>
-    public static void DispatchRpc(MessageReader reader, CustomRPC rpcType)
-    {
-        var playerId = reader.ReadByte();
-        GetByPlayerId(playerId)?.ReceiveRPC(reader, rpcType);
     }
     //NameSystem
     public static HashSet<Func<PlayerControl, PlayerControl, bool, string>> MarkOthers = new();

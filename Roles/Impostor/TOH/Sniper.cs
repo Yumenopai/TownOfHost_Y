@@ -88,31 +88,9 @@ public sealed class Sniper : RoleBase, IImpostor
 
         Snipers.Add(this);
     }
-    private void SendRPC()
-    {
-        Logger.Info($"{Player.GetNameWithRole()}:SendRPC", "Sniper");
-        using var sender = CreateSender(CustomRPC.SniperSync);
 
-        var snList = ShotNotify;
-        sender.Writer.Write(snList.Count);
-        foreach (var sn in snList)
-        {
-            sender.Writer.Write(sn);
-        }
-    }
 
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SniperSync) return;
-        ShotNotify.Clear();
-        var count = reader.ReadInt32();
-        while (count > 0)
-        {
-            ShotNotify.Add(reader.ReadByte());
-            count--;
-        }
-        Logger.Info($"{Player.GetNameWithRole()}:ReceiveRPC", "Sniper");
-    }
+
     public bool CanUseKillButton()
     {
         return Player.IsAlive() && BulletCount <= 0;
@@ -246,7 +224,6 @@ public sealed class Sniper : RoleBase, IImpostor
                 snList.Add(otherPc.PlayerId);
                 Utils.NotifyRoles(SpecifySeer: otherPc);
             }
-            SendRPC();
             _ = new LateTask(
                 () =>
                 {
@@ -257,7 +234,6 @@ public sealed class Sniper : RoleBase, IImpostor
                         {
                             Utils.NotifyRoles(SpecifySeer: otherPc);
                         }
-                        SendRPC();
                     }
                 },
                 0.5f, "Sniper shot Notify"

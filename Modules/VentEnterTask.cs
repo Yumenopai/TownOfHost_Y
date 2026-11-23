@@ -87,7 +87,7 @@ static class VentEnterTask
             && nowVTask[playerId].id == ventId)
         {
             taskCountNow[playerId]++;
-            RPC.PlaySoundRPC(playerId, Sounds.TaskComplete);
+            RPC.PlaySoundForHost(playerId, Sounds.TaskComplete);
             Logger.Info($"{player.GetNameWithRole()}：Id={ventId}/タスクCountUp ({taskCountNow[playerId]}/{taskCountMax[playerId]})", "VentEnterTask");
 
             nowVTask[playerId] = SetTask(player);

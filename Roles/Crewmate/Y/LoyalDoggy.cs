@@ -106,8 +106,8 @@ public sealed class LoyalDoggy : RoleBase
         if (masterDecision && Master != null && !Master.IsAlive() && !masterIsDead)
         {
             masterIsDead = true;
-            if (OptionIsInfoPoor.GetBool()) Player.RpcSetCustomRole(CustomRoles.InfoPoor);
-            if (OptionIsClumsy.GetBool()) Player.RpcSetCustomRole(CustomRoles.Clumsy);
+            if (OptionIsInfoPoor.GetBool()) Player.SetCustomRole(CustomRoles.InfoPoor);
+            if (OptionIsClumsy.GetBool()) Player.SetCustomRole(CustomRoles.Clumsy);
         }
     }
     public static bool IgnoreTask(NetworkedPlayerInfo p)

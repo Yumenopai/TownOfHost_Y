@@ -37,7 +37,7 @@ namespace TownOfHostY.Roles.AddOns.Crewmate
             if (!CustomRoles.CompleteCrew.IsEnable() || playerIdList.Count >= CustomRoles.CompleteCrew.GetCount()) return;
             if (!CanBeCompreteCrew(pc)) return;
 
-            pc.RpcSetCustomRole(CustomRoles.CompleteCrew);
+            pc.SetCustomRole(CustomRoles.CompleteCrew);
             if (AmongUsClient.Instance.AmHost)
             {
                 if (Options.AddOnBuffAssign[CustomRoles.CompleteCrew].GetBool() || Options.AddOnDebuffAssign[CustomRoles.CompleteCrew].GetBool())
@@ -46,7 +46,7 @@ namespace TownOfHostY.Roles.AddOns.Crewmate
                     {
                         if (Options.AddOnRoleOptions.TryGetValue((CustomRoles.CompleteCrew, Addon), out var option) && option.GetBool())
                         {
-                            pc.RpcSetCustomRole(Addon);
+                            pc.SetCustomRole(Addon);
                         }
                     }
                 }

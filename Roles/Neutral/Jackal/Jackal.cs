@@ -148,7 +148,7 @@ namespace TownOfHostY.Roles.Neutral
                 if (pc.PlayerId == PlayerControl.LocalPlayer.PlayerId) sidekick.StartCoroutine(sidekick.CoSetRole(roleTypes, true));
                 else sidekick.RpcSetRoleDesync(roleTypes, pc.GetClientId());
             }
-            sidekick.RpcSetCustomRole(CustomRoles.JSidekick);
+            sidekick.SetCustomRole(CustomRoles.JSidekick);
 
             //サイドキック⇔ジャッカル色表示
             NameColorManager.Add(jackal.PlayerId, sidekick.PlayerId, jackal.GetRoleColorCode());

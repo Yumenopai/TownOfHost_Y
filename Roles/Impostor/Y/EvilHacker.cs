@@ -84,13 +84,11 @@ public sealed class EvilHacker : RoleBase, IImpostor
             {
                 var teleportPosition = GetTeleportPosition();
                 Player.SnapToTeleport(teleportPosition);
-                SendRPC(Player.PlayerId);
                 Utils.NotifyRoles();
 
                 _ = new LateTask(() =>
                     {
                         Player.SnapToTeleport(LastPosition);//元の位置へ。
-                        SendRPC(Player.PlayerId);
                         Utils.NotifyRoles();
 
                         // ターゲットの足止め解除
@@ -103,17 +101,7 @@ public sealed class EvilHacker : RoleBase, IImpostor
             }, 2.5f, "Warp");
         return true;
     }
-    private void SendRPC(byte targetId)
-    {
-        if (!AmongUsClient.Instance.AmHost) return;
-        using var sender = CreateSender(CustomRPC.EvilHackerWarpSync);
-        sender.Writer.Write(targetId);
-    }
 
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.EvilHackerWarpSync) return;
 
-        var targetId = reader.ReadByte();
-    }
+
 }

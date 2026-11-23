@@ -60,7 +60,7 @@ namespace TownOfHostY.Roles.AddOns.Crewmate
             if (!CustomRoles.Workhorse.IsPresent() || playerIdList.Count >= CustomRoles.Workhorse.GetRealCount()) return true;
             if (!IsAssignTarget(pc)) return true;
 
-            pc.RpcSetCustomRole(CustomRoles.Workhorse);
+            pc.SetCustomRole(CustomRoles.Workhorse);
             var taskState = pc.GetPlayerTaskState();
             taskState.AllTasksCount += NumLongTasks + NumShortTasks;
 

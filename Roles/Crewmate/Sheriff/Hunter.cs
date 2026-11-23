@@ -88,19 +88,8 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
         ShotLimit = ShotLimitOpt.GetInt();
         Logger.Info($"{GetPlayerById(playerId)?.GetNameWithRole()} : 残り{ShotLimit}発", "Hunter");
     }
-    private void SendRPC()
-    {
-        using var sender = CreateSender(CustomRPC.SetHunterShotLimit);
-        sender.Writer.Write(ShotLimit);
-        sender.Writer.Write(isImpostor);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetHunterShotLimit) return;
 
-        ShotLimit = reader.ReadInt32();
-        isImpostor = reader.ReadInt32();
-    }
+
     public float CalculateKillCooldown() => CanUseKillButton() ? CurrentKillCooldown : 0f;
     public bool CanUseKillButton()
         => Player.IsAlive()
@@ -132,7 +121,6 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
                     isImpostor = 0; break;
             }
 
-            SendRPC();
             NotifyRoles(SpecifySeer: killer);
             killer.ResetKillCooldown();
         }

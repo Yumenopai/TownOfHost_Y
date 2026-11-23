@@ -138,7 +138,7 @@ public sealed class Elder : RoleBase
         foreach (var player in crewPlayers)
         {
             // クルーメイトに変更
-            player.RpcSetCustomRole(CustomRoles.Crewmate);
+            player.SetCustomRole(CustomRoles.Crewmate);
         }
         // 役職変更を通知
         Utils.NotifyRoles(ForceLoop: true);
