@@ -74,10 +74,10 @@ namespace TownOfHostY
         }
 
         // Setter
-        public override void SetValue(int value, bool doSync = true)
+        public override void SetValue(int value, bool doSave)
         {
             int normalizedValue = value % 2 == 0 ? 0 : 1;
-            base.SetValue(normalizedValue, doSync);
+            base.SetValue(normalizedValue, doSave);
 
             // ScriptableObject 側も同期
             bool settingValue = normalizedValue != 0;

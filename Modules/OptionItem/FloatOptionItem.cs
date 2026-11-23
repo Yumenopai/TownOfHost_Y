@@ -52,9 +52,9 @@ namespace TownOfHostY
             => Rule.RepeatIndex(base.GetValue());
 
         // Setter
-        public override void SetValue(int value, bool doSync = true)
+        public override void SetValue(int value, bool doSave)
         {
-            base.SetValue(Rule.RepeatIndex(value), doSync);
+            base.SetValue(Rule.RepeatIndex(value), doSave);
         }
     }
 }
