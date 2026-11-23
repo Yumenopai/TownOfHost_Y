@@ -23,6 +23,17 @@ namespace TownOfHostY.Modules
         public static void SetDirtyToAll() =>
             AllSenders.OfType<PlayerGameOptionsSender>()
             .ToList().ForEach(sender => sender.SetDirty());
+        public static void SendPlayerGameOptions()
+        {
+            foreach (var sender in AllSenders.OfType<PlayerGameOptionsSender>().Where(sender => sender.AmValid()).ToList())
+            {
+                if (sender.IsDirty)
+                {
+                    sender.SendGameOptions();
+                }
+                sender.IsDirty = false;
+            }
+        }
 
         private IGameOptions cachedGameOptions = null;
         public override IGameOptions BasedGameOptions =>
@@ -106,6 +117,7 @@ namespace TownOfHostY.Modules
             }
 
             var opt = BasedGameOptions;
+            opt.SetInt(Int32OptionNames.NumEmergencyMeetings, player.RemainingEmergencies);
             AURoleOptions.SetOpt(opt);
             if (Roles.Impostor.NormalViper.RoleInfo.IsEnable)
                 AURoleOptions.ViperDissolveTime = Roles.Impostor.NormalViper.DissolveTime;

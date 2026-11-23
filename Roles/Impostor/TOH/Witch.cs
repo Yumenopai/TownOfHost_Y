@@ -69,42 +69,9 @@ namespace TownOfHostY.Roles.Impostor
             Player.AddDoubleTrigger();
 
         }
-        private void SendRPC(bool doSpell, byte target = 255)
-        {
-            using var sender = CreateSender(CustomRPC.WitchSync);
-            sender.Writer.Write(doSpell);
-            if (doSpell)
-            {
-                sender.Writer.Write(target);
-            }
-            else
-            {
-                sender.Writer.Write(IsSpellMode);
-            }
-        }
 
-        public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-        {
-            if (rpcType != CustomRPC.WitchSync) return;
 
-            var doSpel = reader.ReadBoolean();
-            if (doSpel)
-            {
-                var spelledId = reader.ReadByte();
-                if (spelledId == 255)
-                {
-                    SpelledPlayer.Clear();
-                }
-                else
-                {
-                    SpelledPlayer.Add(spelledId);
-                }
-            }
-            else
-            {
-                IsSpellMode = reader.ReadBoolean();
-            }
-        }
+
         public void SwitchSpellMode(bool kill)
         {
             bool needSwitch = false;
@@ -120,7 +87,6 @@ namespace TownOfHostY.Roles.Impostor
             if (needSwitch)
             {
                 IsSpellMode = !IsSpellMode;
-                SendRPC(false);
                 Utils.NotifyRoles(SpecifySeer: Player);
             }
         }
@@ -142,7 +108,6 @@ namespace TownOfHostY.Roles.Impostor
             if (!IsSpelled(target.PlayerId))
             {
                 SpelledPlayer.Add(target.PlayerId);
-                SendRPC(true, target.PlayerId);
                 //キルクールの適正化
                 Player.SetKillCooldown();
             }
@@ -185,9 +150,8 @@ namespace TownOfHostY.Roles.Impostor
             }
             //実行してもしなくても呪いはすべて解除
             SpelledPlayer.Clear();
-            if (AmongUsClient.Instance.AmHost)
-                SendRPC(true);
         }
+
         public static string GetMarkOthers(PlayerControl seer, PlayerControl seen = null, bool isForMeeting = false)
         {
             seen ??= seer;

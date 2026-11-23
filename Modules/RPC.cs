@@ -66,7 +66,6 @@ namespace TownOfHostY
                 case RpcCalls.SetName: //SetNameRPC
                     subReader.ReadUInt32();
                     string name = subReader.ReadString();
-                    if (subReader.BytesRemaining > 0 && subReader.ReadBoolean()) return false;
                     Logger.Info("名前変更:" + __instance.GetNameWithRole() + " => " + name, "SetName");
                     if (name.Length > 350 && AmongUsClient.Instance.AmHost)
                     {
@@ -160,113 +159,17 @@ namespace TownOfHostY
                 case CustomRPC.RequestRetryVersionCheck:
                     RPC.RpcVersionCheck();
                     break;
-                case CustomRPC.SyncCustomSettings:
-                    // 受信を無視する（ホスト専用に変更）
-                    // 受信データは読み捨てて reader を進める（整合性維持のため）
-                    try
-                    {
-                        int indexId = reader.ReadPackedInt32();
-                        int maxId = reader.ReadPackedInt32();
-                        for (var i = indexId; i < maxId; i++)
-                            _ = reader.ReadPackedInt32();
-                    }
-                    catch
-                    {
-                        // 読み取り失敗でも続行
-                    }
-
-                    // インポスター数が0に設定されていないかチェック
-                    if (AmongUsClient.Instance.AmHost)
-                    {
-                        var options = GameOptionsManager.Instance.CurrentGameOptions;
-                        if (options != null)
-                        {
-                            int numImpostors = options.GetInt(Int32OptionNames.NumImpostors);
-                            if (numImpostors <= 0)
-                            {
-                                Logger.Warn("インポスター数が0に設定されているため、1に修正します。", "SyncCustomSettings");
-                                options.SetInt(Int32OptionNames.NumImpostors, 1);
-                            }
-
-                            // プレイヤー移動速度が3.0xを超えていないかチェック
-                            float playerSpeed = options.GetFloat(FloatOptionNames.PlayerSpeedMod);
-                            if (playerSpeed > 3.0f)
-                            {
-                                Logger.Warn($"プレイヤー移動速度が3.0xを超えているため、3.0に修正します。(元の値: {playerSpeed})", "SyncCustomSettings");
-                                options.SetFloat(FloatOptionNames.PlayerSpeedMod, 3.0f);
-                            }
-                        }
-                    }
-                    break;
-                case CustomRPC.SetDeathReason:
-                    RPC.GetDeathReason(reader);
-                    break;
-                case CustomRPC.EndGame:
-                    RPC.EndGame(reader);
-                    break;
-                case CustomRPC.PlaySound:
-                    byte playerID = reader.ReadByte();
-                    Sounds sound = (Sounds)reader.ReadByte();
-                    RPC.PlaySound(playerID, sound);
-                    break;
-                case CustomRPC.SetCustomRole:
-                    byte CustomRoleTargetId = reader.ReadByte();
-                    CustomRoles role2 = (CustomRoles)reader.ReadPackedInt32();
-                    RPC.SetCustomRole(CustomRoleTargetId, role2);
-                    break;
-                case CustomRPC.SetNameColorData:
-                    NameColorManager.ReceiveRPC(reader);
-                    break;
-                case CustomRPC.SetRealKiller:
-                    byte targetId = reader.ReadByte();
-                    byte killerId = reader.ReadByte();
-                    RPC.SetRealKiller(targetId, killerId);
-                    break;
-                case CustomRPC.SyncPsychicResult:
-                    CustomRoleManager.DispatchRpc(reader, rpcType);
-                    break;
                 default:
-                    CustomRoleManager.DispatchRpc(reader, rpcType);
                     break;
             }
         }
     }
     static class RPC
     {
-        //SyncCustomSettingsRPC Sender
-        public static void SyncCustomSettingsRPC()
-        {
-            // ホスト専用モードにより無効化 
-            //if (!AmongUsClient.Instance.AmHost) return;
-
-            //int count = 0;
-            //MessageWriter writer = null;
-
-            //foreach (var co in OptionItem.AllOptions)
-            //{
-            //    if (count == 0 || count % 500 == 0)
-            //    {
-            //        if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
-            //        writer = AmongUsClient.Instance.StartRpcImmediately(
-            //            PlayerControl.LocalPlayer.NetId,
-            //            (byte)CustomRPC.SyncCustomSettings,
-            //            Hazel.SendOption.Reliable, -1);
-            //        writer.WritePacked(count);
-            //        writer.WritePacked(Math.Min(OptionItem.AllOptions.Count, count + 500));
-            //    }
-            //    writer.WritePacked(co.GetValue());
-            //    count++;
-            //}
-            //if (writer != null) AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
-        public static void PlaySoundRPC(byte PlayerID, Sounds sound)
+        public static void PlaySoundForHost(byte playerId, Sounds sound)
         {
             if (AmongUsClient.Instance.AmHost)
-                RPC.PlaySound(PlayerID, sound);
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PlaySound, Hazel.SendOption.Reliable, -1);
-            writer.Write(PlayerID);
-            writer.Write((byte)sound);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPC.PlaySound(playerId, sound);
         }
         public static void ExileAsync(PlayerControl player)
         {
@@ -295,33 +198,6 @@ namespace TownOfHostY
             );
         }
 
-        public static void SendDeathReason(byte playerId, CustomDeathReason deathReason)
-        {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetDeathReason, Hazel.SendOption.Reliable, -1);
-            writer.Write(playerId);
-            writer.Write((int)deathReason);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
-        public static void GetDeathReason(MessageReader reader)
-        {
-            var playerId = reader.ReadByte();
-            var deathReason = (CustomDeathReason)reader.ReadInt32();
-            var state = PlayerState.GetByPlayerId(playerId);
-            state.DeathReason = deathReason;
-            state.IsDead = true;
-        }
-
-        public static void EndGame(MessageReader reader)
-        {
-            try
-            {
-                CustomWinnerHolder.ReadFrom(reader);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error($"正常にEndGameを行えませんでした。\n{ex}", "EndGame", false);
-            }
-        }
         public static void PlaySound(byte playerID, Sounds sound)
         {
             if (PlayerControl.LocalPlayer.PlayerId == playerID)
@@ -336,27 +212,6 @@ namespace TownOfHostY
                         break;
                 }
             }
-        }
-        public static void SetCustomRole(byte targetId, CustomRoles role)
-        {
-            if (role < CustomRoles.StartAddon)
-            {
-
-                var roleClass = CustomRoleManager.GetByPlayerId(targetId);
-                if (roleClass != null)
-                {
-                    roleClass.Dispose();
-                }
-                PlayerState.GetByPlayerId(targetId).SetMainRole(role);
-                CustomRoleManager.CreateInstance(role, Utils.GetPlayerById(targetId));
-            }
-            else if (role > CustomRoles.StartAddon)
-            {
-                PlayerState.GetByPlayerId(targetId).SetSubRole(role);
-            }
-
-            HudManager.Instance.SetHudActive(true);
-            if (PlayerControl.LocalPlayer.PlayerId == targetId) RemoveDisableDevicesPatch.UpdateDisableDevices();
         }
         public static void SendRpcLogger(uint targetNetId, byte callId, int targetClientId = -1)
         {
@@ -386,11 +241,6 @@ namespace TownOfHostY
             state.RealKiller.Item1 = DateTime.Now;
             state.RealKiller.Item2 = killerId;
 
-            if (!AmongUsClient.Instance.AmHost) return;
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetRealKiller, Hazel.SendOption.Reliable, -1);
-            writer.Write(targetId);
-            writer.Write(killerId);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
         public static void ReportDeadBodyForced(this PlayerControl player, NetworkedPlayerInfo target)
         {

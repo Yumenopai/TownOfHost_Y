@@ -1436,7 +1436,6 @@ public static class Utils
             //seerが落ちているときに何もしない
             if (seer == null || seer.Data.Disconnected) continue;
 
-            //if (seer.IsModClient()) continue;
             string fontSize = isForMeeting ? "1.5" : Main.RoleTextSize.ToString();
             if (isForMeeting && (seer.GetClient().PlatformData.Platform is Platforms.Playstation or Platforms.Switch)) fontSize = "70%";
             logger.Info("NotifyRoles-Loop1-" + seer.GetNameWithRole() + ":START");
@@ -1546,7 +1545,7 @@ public static class Utils
             // ミーティングテキスト
             string name = MeetingDisplayText.AddTextForVanilla(seer, SelfName.ToString(), SelfSuffix.ToString(), SelfRoleName, isForMeeting);
             //適用
-            seer.RpcSetNamePrivate(name, true, force: NoCache);
+            seer.RpcSetNamePrivate(name, force: NoCache);
 
             //seerが死んでいる場合など、必要なときのみ第二ループを実行する
             if (seer.Data.IsDead //seerが死んでいる
@@ -1641,7 +1640,7 @@ public static class Utils
                     TargetName = MeetingDisplayText.AddTextForVanilla(target, TargetName, TargetSuffix.ToString(), TargetRoleText, isForMeeting);
 
                     //適用
-                    target.RpcSetNamePrivate(TargetName, true, seer, force: NoCache);
+                    target.RpcSetNamePrivate(TargetName, seer, force: NoCache);
 
                     logger.Info("NotifyRoles-Loop2-" + target.GetNameWithRole() + ":END");
                 }
@@ -1657,6 +1656,11 @@ public static class Utils
     {
         PlayerGameOptionsSender.SetDirtyToAll();
         GameOptionsSender.SendAllGameOptions();
+    }
+    public static void SyncPlayerSettings()
+    {
+        PlayerGameOptionsSender.SetDirtyToAll();
+        PlayerGameOptionsSender.SendPlayerGameOptions();
     }
     public static void AfterMeetingTasks()
     {

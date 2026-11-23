@@ -26,7 +26,7 @@ class EndGamePatch
             GameStates.InGame = false;
 
             Logger.Info("-----------ゲーム終了-----------", "Phase");
-            if (!GameStates.IsModHost) return;
+            if (!AmongUsClient.Instance.AmHost) return;
             SummaryText = new();
             foreach (var id in PlayerState.AllPlayerStates.Keys)
                 SummaryText[id] = Utils.SummaryTexts(id, false);
@@ -164,7 +164,7 @@ class SetEverythingUpPatch
         try
         {
             if (__instance == null) return;
-            if (!Main.playerVersion.ContainsKey(0)) return;
+            if (!AmongUsClient.Instance.AmHost) return;
             //#######################################
             //          ==勝利陣営表示==
             //#######################################

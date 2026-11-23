@@ -206,7 +206,6 @@ class ChangeRoleSettings
             Main.VisibleTasksCount = true;
             if (__instance.AmHost)
             {
-                RPC.SyncCustomSettingsRPC();
                 if (Options.CurrentGameMode == CustomGameMode.HideAndSeek)
                 {
                     Options.HideAndSeekKillDelayTimer = Options.KillDelay.GetFloat();
@@ -502,13 +501,6 @@ class SelectRolesPatch
             AssignCustomSubRolesDuplicatable(role, allPlayersbySub);
         }
 
-        foreach (var pair in PlayerState.AllPlayerStates)
-        {
-            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.GetNowMainRole());
-            foreach (var subRole in pair.Value.SubRoles)
-                ExtendedPlayerControl.RpcSetCustomRole(pair.Key, subRole);
-        }
-
         CustomRoleManager.CreateInstance();
         foreach (var pc in Main.AllPlayerControls)
         {
@@ -522,7 +514,7 @@ class SelectRolesPatch
                 foreach (var Addon in CustomRolesHelper.AllAddOnRoles)
                 {
                     if (Options.AddOnRoleOptions.TryGetValue((pc.GetCustomRole(), Addon), out var option) && option.GetBool())
-                        pc.RpcSetCustomRole(Addon);
+                        pc.SetCustomRole(Addon);
                 }
             }
 

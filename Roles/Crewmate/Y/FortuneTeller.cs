@@ -95,7 +95,7 @@ public sealed class FortuneTeller : RoleBase
             Logger.Info($"VoteForecastTarget NotForecast NoDeadBody player: {Player.name}, targetId: {targetId}", "FortuneTeller");
             return;
         }
-        if (MyTaskState.CompletedTasksCount < ForecastTaskTrigger) //占い可能タスク数
+        if (!TaskFinished()) //占い可能タスク数
         {
             Logger.Info($"VoteForecastTarget NotForecast LessTasks player: {Player.name}, targetId: {targetId}, task: {MyTaskState.CompletedTasksCount}/{ForecastTaskTrigger}", "FortuneTeller");
             return;
@@ -134,7 +134,7 @@ public sealed class FortuneTeller : RoleBase
     private int ForecastLimit => NumOfForecast - ForecastResult.Count;
     public override string GetProgressText(bool comms = false)
     {
-        if (MyTaskState.CompletedTasksCount < ForecastTaskTrigger) return string.Empty;
+        if (!TaskFinished()) return string.Empty;
         return ColorString(ForecastLimit > 0 ? RoleInfo.RoleColor : Color.gray, $"[{ForecastLimit}]");
     }
     public override string GetMark(PlayerControl seer, PlayerControl seen, bool isForMeeting = false)

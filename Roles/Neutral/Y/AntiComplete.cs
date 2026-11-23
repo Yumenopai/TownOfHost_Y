@@ -33,7 +33,7 @@ public sealed class AntiComplete : RoleBase
         KnowOption = OptionKnowOption.GetBool();
         KnowNotask = OptionKnowNotask.GetBool();
         KnowCompTask = OptionKnowCompTask.GetBool();
-        AddGuardCount = OptionKnowCompTask.GetInt();
+        AddGuardCount = OptionAddGuardCount.GetInt();
     }
 
     private static OptionItem OptionGuardCount;

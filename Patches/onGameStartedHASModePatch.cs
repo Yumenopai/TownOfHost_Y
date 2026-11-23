@@ -43,11 +43,6 @@ class SelectRolesHASModePatch
             SelectRolesPatch.AssignCustomRolesFromList(CustomRoles.HASFox, list);
             SelectRolesPatch.AssignCustomRolesFromList(CustomRoles.HASTroll, list);
         }
-        foreach (var pair in PlayerState.AllPlayerStates)
-        {
-            //RPCによる同期
-            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.GetNowMainRole());
-        }
         //色設定処理
         SetColorPatch.IsAntiGlitchDisabled = true;
 

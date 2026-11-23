@@ -70,7 +70,7 @@ public sealed class Escalationer : RoleBase, IImpostor
         {
             (var killer, var target) = info.AttemptTuple;
 
-            nowKillcool -= KillCoolDecrease;
+            nowKillcool = System.Math.Max(0f, nowKillcool - KillCoolDecrease);
             Logger.Info($"{killer.GetNameWithRole()}:キルクール減少:{nowKillcool}", "Escalationer");
             killer.ResetKillCooldown();
 

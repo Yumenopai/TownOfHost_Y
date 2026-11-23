@@ -47,4 +47,8 @@ public sealed class Express : RoleBase
         // スピード設定
         Main.AllPlayerSpeed[Player.PlayerId] = Speed;
     }
+    public override void OnDestroy()
+    {
+        Main.AllPlayerSpeed[Player.PlayerId] = Main.RealOptionsData.GetFloat(FloatOptionNames.PlayerSpeedMod);
+    }
 }

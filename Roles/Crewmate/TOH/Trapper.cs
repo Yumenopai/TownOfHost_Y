@@ -54,7 +54,7 @@ public sealed class Trapper : RoleBase
             Main.AllPlayerSpeed[killer.PlayerId] = tmpSpeed;
             ReportDeadBodyPatch.CannotReportList.Remove(killer.PlayerId);
             killer.MarkDirtySettings();
-            RPC.PlaySoundRPC(killer.PlayerId, Sounds.TaskComplete);
+            RPC.PlaySoundForHost(killer.PlayerId, Sounds.TaskComplete);
         }, BlockMoveTime, "Trapper BlockMove");
     }
 }

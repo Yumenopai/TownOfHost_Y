@@ -46,7 +46,7 @@ public sealed class EvilIgnition : RoleBase, IImpostor
     private static bool FalseIgnition;//オフなら使用回数減る
     private static bool IsCanBombTarget;
 
-    static int IgnitionCount;
+    int ignitionLimit;
     static bool OccurredBombed;
 
     [GameModuleInitializer]
@@ -66,14 +66,12 @@ public sealed class EvilIgnition : RoleBase, IImpostor
     }
     public override void Add()
     {
-        IgnitionCount = IgnitionMaxCount;
+        ignitionLimit = IgnitionMaxCount;
         Player.AddDoubleTrigger();
-
-        OccurredBombed = false;
     }
 
     public float CalculateKillCooldown() => KillCooldown;
-    public override string GetProgressText(bool comms = false) => Utils.ColorString(IgnitionCount > 0 ? Palette.ImpostorRed : Color.gray, $"[{IgnitionCount}]");
+    public override string GetProgressText(bool comms = false) => Utils.ColorString(ignitionLimit > 0 ? Palette.ImpostorRed : Color.gray, $"[{ignitionLimit}]");
     public static bool CanBombTarget()
     {
         if (Main.AllPlayerControls.Where(pc=> pc.Is(CustomRoles.EvilIgnition)).Any())
@@ -86,19 +84,22 @@ public sealed class EvilIgnition : RoleBase, IImpostor
     public void OnCheckMurderAsKiller(MurderInfo info)
     {
         if (!Is(info.AttemptKiller) || info.IsSuicide) return;
-        if (IgnitionCount <= 0) return;
+        if (ignitionLimit <= 0) return;
+        if (!info.CanKill) return;
 
         (var killer, var target) = info.AttemptTuple;
         info.CanKill = killer.CheckDoubleTrigger(target, () => { IgnitionKill(killer, target); });
     }
-    public static void IgnitionKill(PlayerControl killer, PlayerControl target)
+    private void IgnitionKill(PlayerControl killer, PlayerControl target)
     {
+        if (!killer.IsAlive() || !target.IsAlive()) return;
+
         var killerId = killer.PlayerId;
         var targetId = target.PlayerId;
 
         target.SetRealKiller(killer);
         killer.RpcMurderPlayer(target, true);
-        Logger.Info($"{killer.GetNameWithRole()}：着火 着火先→{target.GetNameWithRole()} || 残り{IgnitionCount}回", "EvilFire");
+        Logger.Info($"{killer.GetNameWithRole()}：着火 着火先→{target.GetNameWithRole()} || 残り{ignitionLimit}回", "EvilFire");
 
         //爆破処理はホストのみ
         if (AmongUsClient.Instance.AmHost)
@@ -117,11 +118,11 @@ public sealed class EvilIgnition : RoleBase, IImpostor
             }
             if (nearTarget.pc == null)
             {
-                if(!FalseIgnition) IgnitionCount--;
+                if(!FalseIgnition) ignitionLimit--;
             }
             else
             {
-                IgnitionCount--;
+                ignitionLimit--;
                 OccurredBombed = true;
                 Logger.Info($"{killer.GetNameWithRole()}：着火爆破 爆破先→{nearTarget.pc.GetNameWithRole()}", "EvilFire");
 

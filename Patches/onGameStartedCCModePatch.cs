@@ -82,11 +82,6 @@ class SelectRolesCCModePatch
             SetColorPatch.IsAntiGlitchDisabled = false;
         }
 
-        foreach (var pair in PlayerState.AllPlayerStates)
-        {
-            //RPCによる同期
-            ExtendedPlayerControl.RpcSetCustomRole(pair.Key, pair.Value.GetNowMainRole());
-        }
 
         foreach (var pc in Main.AllPlayerControls)
         {

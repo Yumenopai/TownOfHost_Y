@@ -208,7 +208,7 @@ namespace TownOfHostY
                 toggleOption.CheckMark.enabled = GetBool();
             }
         }
-        public virtual void SetValue(int afterValue, bool doSave, bool doSync = true)
+        public virtual void SetValue(int afterValue, bool doSave)
         {
             int beforeValue = CurrentValue;
             if (IsSingleValue)
@@ -222,12 +222,10 @@ namespace TownOfHostY
             {
                 GameOptionsMenuPatch.RefreshChildSettings();
             }
-            if (doSync)
-                SyncAllOptions();
             if (doSave)
                 OptionSaver.Save();
         }
-        public virtual void SetValue(int afterValue, bool doSync = true) => SetValue(afterValue, true, doSync);
+        public virtual void SetValue(int afterValue) => SetValue(afterValue, true);
 
         public void SetAllValues(int[] values) => AllValues = values; // プリセット読み込み専用
 
@@ -243,18 +241,6 @@ namespace TownOfHostY
             CurrentPreset = Math.Clamp(newPreset, 0, NumPresets - 1);
             foreach (var op in AllOptions)
                 op.Refresh();
-            SyncAllOptions();
-        }
-        public static void SyncAllOptions()
-        {
-            // 同期無効化: ホスト専用モードでは他プレイヤーへオプションを送信しない
-            //if (
-            //    Main.AllPlayerControls.Count() <= 1 ||
-            //    AmongUsClient.Instance.AmHost == false ||
-            //    PlayerControl.LocalPlayer == null
-            //) return;
-
-            //RPC.SyncCustomSettingsRPC();
         }
 
         // EventArgs

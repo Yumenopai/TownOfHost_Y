@@ -51,9 +51,9 @@ public sealed class CandleLighter : RoleBase
     private static int CountStartTime;
     private static bool TimeMoveMeeting;
 
-    private static float UpdateTime;
-    float ElapsedTime;
-    float lastSyncedVision = -1f;
+    private float UpdateTime;
+    private float ElapsedTime;
+    private float lastSyncedVision = -1f;
 
     private static void SetupOptionItem()
     {

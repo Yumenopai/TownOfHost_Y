@@ -188,7 +188,7 @@ public sealed class Pirate : RoleBase, IKiller
 
             if (AmongUsClient.Instance.AmHost)
             {
-                target.RpcSetCustomRole(CustomRoles.Gang);
+                target.SetCustomRole(CustomRoles.Gang);
                 target.GetPlayerTaskState().CompletedTasksCount = 0;
                 target.GetPlayerTaskState().AllTasksCount = target.Data.Tasks.Count;
                 target.Data.RpcSetTasks(Array.Empty<byte>()); //タスクを再配布

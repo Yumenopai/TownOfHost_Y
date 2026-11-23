@@ -51,7 +51,7 @@ namespace TownOfHostY
         }
 
         // Setter
-        public override void SetValue(int value, bool doSync = true)
+        public override void SetValue(int value, bool doSave)
         {
         }
     }

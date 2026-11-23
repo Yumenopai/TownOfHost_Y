@@ -57,17 +57,8 @@ public sealed class CursedWolf : RoleBase, IImpostor
         SpellCount = GuardSpellTimes;
         Logger.Info($"{Utils.GetPlayerById(playerId)?.GetNameWithRole()} : 残り{SpellCount}回", "CursedWolf");
     }
-    private void SendRPC()
-    {
-        using var sender = CreateSender(CustomRPC.SetCursedWolfSpellCount);
-        sender.Writer.Write(SpellCount);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetCursedWolfSpellCount) return;
 
-        SpellCount = reader.ReadInt32();
-    }
+
 
     public override bool OnCheckMurderAsTarget(MurderInfo info)
     {
@@ -80,7 +71,6 @@ public sealed class CursedWolf : RoleBase, IImpostor
         killer.RpcProtectedMurderPlayer(target);
         target.RpcProtectedMurderPlayer(target);
         SpellCount--;
-        SendRPC();
         Logger.Info($"{target.GetNameWithRole()} : 残り{SpellCount}回", "CursedWolf");
 
         //切り返す

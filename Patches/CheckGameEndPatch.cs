@@ -256,11 +256,6 @@ namespace TownOfHostY
                 }
             }
 
-            // CustomWinnerHolderの情報の同期
-            var winnerWriter = self.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.EndGame, SendOption.Reliable);
-            CustomWinnerHolder.WriteTo(winnerWriter);
-            self.FinishRpcImmediately(winnerWriter);
-
             // 蘇生を確実にゴーストロール設定の後に届けるための遅延
             yield return new WaitForSeconds(EndGameDelay);
 
@@ -383,14 +378,14 @@ namespace TownOfHostY
 
                     if (sender == null)
                     {
-                        target.RpcSetNamePrivate(text, true, pc, true);
+                        target.RpcSetNamePrivate(text, pc, true);
                     }
                     else
                     {
                         sender.AutoStartRpc(pc.NetId, (byte)RpcCalls.SetName, pc.GetClientId())
                             .Write(pc.Data.NetId)
                             .Write(text)
-                            .Write(true)
+                            .Write(false)
                             .EndRpc();
                     }
                 }

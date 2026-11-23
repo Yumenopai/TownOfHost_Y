@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
@@ -293,7 +292,7 @@ public static class PlayerControlCheckShapeshiftPatch
             {
                 var min = mpdistance.OrderBy(c => c.Value).FirstOrDefault();//一番値が小さい
                 PlayerControl targetm = min.Key;
-                targetm.RpcSetCustomRole(targetRole);
+                targetm.SetCustomRole(targetRole);
                 Logger.Info($"Make SKMadmate:{targetm.name}", "Shapeshift");
                 Main.SKMadmateNowCount++;
                 Utils.MarkEveryoneDirtySettings();
@@ -604,10 +603,23 @@ class ReportDeadBodyPatch
                 Logger.Info("使用可能ボタン回数が最大数を超えているため、ボタンはキャンセルされました。", "ReportDeadBody");
                 return false;
             }
-            else Options.UsedButtonCount++;
+        }
+
+        if (target == null && !__instance.AmOwner)
+        {
+            __instance.RemainingEmergencies--;
+        }
+
+        if (Options.SyncButtonMode.GetBool() && target == null)
+        {
+            Options.UsedButtonCount++;
             if (Options.SyncedButtonCount.GetFloat() == Options.UsedButtonCount)
             {
                 Logger.Info("使用可能ボタン回数が最大数に達しました。", "ReportDeadBody");
+                foreach (var pc in Main.AllPlayerControls)
+                {
+                    pc.RemainingEmergencies = 0;
+                }
             }
         }
 
@@ -625,7 +637,6 @@ class ReportDeadBodyPatch
             if (pc.IsAlive())
             {
                 state.IsBlackOut = true;
-                pc.MarkDirtySettings();
             }
 
             // 最終位置の部屋の取得・記憶
@@ -652,7 +663,7 @@ class ReportDeadBodyPatch
 
         Utils.NotifyRoles(isForMeeting: true, NoCache: true);
 
-        Utils.SyncAllSettings();
+        Utils.SyncPlayerSettings();
 
         if (ShapeKiller.DummyReportDeadBody(__instance, target)) return false;
 
@@ -664,14 +675,6 @@ class ReportDeadBodyPatch
         }
 
         return true;
-    }
-    public static async void ChangeLocalNameAndRevert(string name, int time)
-    {
-        //async Taskじゃ警告出るから仕方ないよね。
-        var revertName = PlayerControl.LocalPlayer.name;
-        PlayerControl.LocalPlayer.RpcSetNameEx(name);
-        await Task.Delay(time);
-        PlayerControl.LocalPlayer.RpcSetNameEx(revertName);
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.StartMeeting))]

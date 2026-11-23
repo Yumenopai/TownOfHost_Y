@@ -159,9 +159,8 @@ public static class OptionSerializer
             {
                 continue;
             }
-            option.SetValue(parsedModOptions.TryGetValue(option.Id, out var value) ? value : 0, false);
+            option.SetValue(parsedModOptions.TryGetValue(option.Id, out var value) ? value : 0, doSave: false);
         }
-        OptionItem.SyncAllOptions();
     }
     /// <summary>
     /// <see cref="GenerateVanillaOptionsString"/>で生成された形式の文字列を読み込んで適用します

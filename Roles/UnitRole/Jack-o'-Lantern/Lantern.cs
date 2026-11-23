@@ -76,7 +76,7 @@ public sealed class Lantern : RoleBase
             // 登録数が0なら通常クルーを割り当てる
             if (roleList.Count == 0)
             {
-                Player.RpcSetCustomRole(CustomRoles.Crewmate);
+                Player.SetCustomRole(CustomRoles.Crewmate);
                 Logger.Info($"{Player.GetNameWithRole()}：死亡者役職リストが0の為通常クルーを割り当てます", "Lantern");
             }
             else
@@ -143,7 +143,7 @@ public sealed class Lantern : RoleBase
                 }
                 break;
         }
-        player.RpcSetCustomRole(nextRole);
+        player.SetCustomRole(nextRole);
 
         //色表示
         NameColorManager.RemoveAll(player.PlayerId);

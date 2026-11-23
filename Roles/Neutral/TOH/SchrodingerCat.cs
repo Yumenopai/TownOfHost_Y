@@ -77,7 +77,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
     private TeamType _team = TeamType.None;
     /// <summary>
     /// 現在の所属陣営<br/>
-    /// 変更する際は特段の事情がない限り<see cref="RpcSetTeam"/>を使ってください
+    /// 変更する際は特段の事情がない限り<see cref="SetTeam"/>を使ってください
     /// </summary>
     public TeamType Team
     {
@@ -170,7 +170,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             var team = catOwner.SchrodingerCatChangeTo;
 
             catOwner.OnSchrodingerCatKill(this);
-            RpcSetTeam(team);
+            SetTeam(team);
             owner = catOwner;
 
             if (changeKiller)
@@ -283,7 +283,7 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
             candidates.Add(TeamType.Ogre);
         }
         var team = candidates[rand.Next(candidates.Count)];
-        RpcSetTeam(team);
+        SetTeam(team);
     }
     public bool CheckWin(ref CustomRoles winnerRole)
     {
@@ -305,23 +305,11 @@ public sealed class SchrodingerCat : RoleBase, IAdditionalWinner, IDeathReasonSe
         }
         return won.Value;
     }
-    public void RpcSetTeam(TeamType team)
+    public void SetTeam(TeamType team)
     {
         Team = team;
-        if (AmongUsClient.Instance.AmHost)
-        {
-            using var sender = CreateSender(CustomRPC.SetSchrodingerCatTeam);
-            sender.Writer.Write((byte)team);
-        }
     }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetSchrodingerCatTeam)
-        {
-            return;
-        }
-        Team = (TeamType)reader.ReadByte();
-    }
+
 
     // マッド属性化までの間マッド状態時に特別扱いするための応急処置的個別実装
     // マッドが属性化したらマッド状態のシュレ猫にマッド属性を付与することで削除

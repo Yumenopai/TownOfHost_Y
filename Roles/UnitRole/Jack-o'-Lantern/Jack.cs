@@ -53,6 +53,8 @@ public sealed class Jack : RoleBase, IImpostor
         var (killer, target) = info.AttemptTuple;
         info.DoKill = killer.CheckDoubleTrigger(target, () =>
         {
+            if (!killer.IsAlive() || !target.IsAlive()) return;
+
             target.SetRealKiller(killer);
             killer.RpcMurderPlayer(target, true);
 
@@ -65,7 +67,7 @@ public sealed class Jack : RoleBase, IImpostor
             if (target.Is(CustomRoleTypes.Crewmate))
             {
                 Logger.Info($"{killer.GetNameWithRole()}：役職消去→{target.GetNameWithRole()}", "Jack");
-                target.RpcSetCustomRole(CustomRoles.Crewmate);
+                target.SetCustomRole(CustomRoles.Crewmate);
 
                 // 表示更新
                 Utils.NotifyRoles(SpecifySeer: target);

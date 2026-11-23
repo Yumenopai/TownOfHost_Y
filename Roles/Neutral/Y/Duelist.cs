@@ -52,7 +52,7 @@ public sealed class Duelist : RoleBase, IAdditionalWinner
             {
                 numVotes = 0;//投票を見えなくする
                 var VotedForPC = Utils.GetPlayerById(sourceVotedForId);
-                VotedForPC.RpcSetCustomRole(CustomRoles.Archenemy);
+                VotedForPC.SetCustomRole(CustomRoles.Archenemy);
                 Archenemy = VotedForPC;
                 Utils.NotifyRoles();
             }

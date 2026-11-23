@@ -20,7 +20,7 @@ namespace TownOfHostY;
 
 static class ExtendedPlayerControl
 {
-    public static void RpcSetCustomRole(this PlayerControl player, CustomRoles role)
+    public static void SetCustomRole(this PlayerControl player, CustomRoles role)
     {
         if (player.GetCustomRole() == role) return;
 
@@ -52,20 +52,6 @@ static class ExtendedPlayerControl
                 }
             }
 
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCustomRole, Hazel.SendOption.Reliable, -1);
-            writer.Write(player.PlayerId);
-            writer.WritePacked((int)role);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
-    }
-    public static void RpcSetCustomRole(byte PlayerId, CustomRoles role)
-    {
-        if (AmongUsClient.Instance.AmHost)
-        {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetCustomRole, Hazel.SendOption.Reliable, -1);
-            writer.Write(PlayerId);
-            writer.WritePacked((int)role);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
     }
 
@@ -129,19 +115,7 @@ static class ExtendedPlayerControl
 
         return PlayerState.GetByPlayerId(player.PlayerId)?.CountType ?? CountTypes.None;
     }
-    public static void RpcSetNameEx(this PlayerControl player, string name)
-    {
-        foreach (var seer in Main.AllPlayerControls)
-        {
-            Main.LastNotifyNames[(player.PlayerId, seer.PlayerId)] = name;
-        }
-        HudManagerPatch.LastSetNameDesyncCount++;
-
-        Logger.Info($"Set:{player?.Data?.PlayerName}:{name} for All", "RpcSetNameEx");
-        player.RpcSetName(name);
-    }
-
-    public static void RpcSetNamePrivate(this PlayerControl player, string name, bool DontShowOnModdedClient = false, PlayerControl seer = null, bool force = false)
+    public static void RpcSetNamePrivate(this PlayerControl player, string name, PlayerControl seer = null, bool force = false)
     {
         //player: 名前の変更対象
         //seer: 上の変更を確認することができるプレイヤー
@@ -156,7 +130,13 @@ static class ExtendedPlayerControl
         HudManagerPatch.LastSetNameDesyncCount++;
         //Logger.Info($"Set:{player?.Data?.PlayerName}:{name.RemoveHtmlTags()} for {seer.GetNameWithRole()}", "RpcSetNamePrivate");
 
-        var clientId = seer.GetClientId();
+        var seerClient = seer.GetClient();
+        if (seerClient == null)
+        {
+            Logger.Warn($"RpcSetNamePrivate: 閲覧者の接続先が見つからないため送信を中止します (seer={seer.PlayerId}, target={player.PlayerId})", "RpcSetNamePrivate");
+            return;
+        }
+        var clientId = seerClient.Id;
         if (AmongUsClient.Instance.ClientId == clientId)
         {
             player.SetName(name);
@@ -165,7 +145,7 @@ static class ExtendedPlayerControl
         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)RpcCalls.SetName, Hazel.SendOption.Reliable, clientId);
         writer.Write(player.Data.NetId);
         writer.Write(name);
-        writer.Write(DontShowOnModdedClient);
+        writer.Write(false);
         AmongUsClient.Instance.FinishRpcImmediately(writer);
     }
     public static void RpcSetRoleDesync(this PlayerControl player, RoleTypes role, int clientId, bool canOverrideRole = false)
@@ -331,21 +311,6 @@ static class ExtendedPlayerControl
         AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
     }
 
-    /*public static void RpcBeKilled(this PlayerControl player, PlayerControl KilledBy = null) {
-        if(!AmongUsClient.Instance.AmHost) return;
-        byte KilledById;
-        if(KilledBy == null)
-            KilledById = byte.MaxValue;
-        else
-            KilledById = KilledBy.PlayerId;
-
-        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(player.NetId, (byte)CustomRPC.BeKilled, Hazel.SendOption.Reliable, -1);
-        writer.Write(player.PlayerId);
-        writer.Write(KilledById);
-        AmongUsClient.Instance.FinishRpcImmediately(writer);
-
-        RPC.BeKilled(player.PlayerId, KilledById);
-    }*/
     public static void MarkDirtySettings(this PlayerControl player)
     {
         PlayerGameOptionsSender.SetDirty(player.PlayerId);
@@ -585,7 +550,6 @@ static class ExtendedPlayerControl
         DestroyableSingleton<HudManager>.Instance.OpenMeetingRoom(reporter);
         reporter.RpcStartMeeting(target);
     }
-    public static bool IsModClient(this PlayerControl player) => Main.playerVersion.ContainsKey(player.PlayerId);
     ///<summary>
     ///プレイヤーのRoleBehaviourのGetPlayersInAbilityRangeSortedを実行し、戻り値を返します。
     ///</summary>

@@ -34,8 +34,8 @@ public sealed class Totocalcio : RoleBase, IKiller, IAdditionalWinner
         if (AllPlayer > 3) Coolrate = (FinalCoolDown - InitialCoolDown) / (AllPlayer - 3);
         else Coolrate = (FinalCoolDown - InitialCoolDown) / AllPlayer;
     }
-    public static PlayerControl BetTarget;
-    public static int BetTargetCount;
+    private byte betTargetId = byte.MaxValue;
+    private int betTargetCount;
 
     private static OptionItem OptionInitialCoolDown;
     private static OptionItem OptionFinalCoolDown;
@@ -66,26 +66,27 @@ public sealed class Totocalcio : RoleBase, IKiller, IAdditionalWinner
     public bool CheckWin(ref CustomRoles winnerRole)
     {
         if (!Player.IsAlive()) return false;
-        if (BetTarget == null) return false;
+        if (betTargetId == byte.MaxValue) return false;
+        var betTarget = Utils.GetPlayerById(betTargetId);
+        if (betTarget == null) return false;
 
         //トトカルチョ→トトカルチョの勝利連鎖は行わない
-        if (BetTarget.Is(CustomRoles.Totocalcio)) return false;
+        if (betTarget.Is(CustomRoles.Totocalcio)) return false;
 
-        return CustomWinnerHolder.WinnerIds.Contains(BetTarget.PlayerId) ||
-               CustomWinnerHolder.WinnerRoles.Any(team => BetTarget.Is(team));
+        return CustomWinnerHolder.WinnerIds.Contains(betTargetId) ||
+               CustomWinnerHolder.WinnerRoles.Any(team => betTarget.Is(team));
     }
     public override void Add()
     {
-        var playerId = Player.PlayerId;
-        BetTarget = null;
-        BetTargetCount = BetChangeCount + 1;
+        betTargetId = byte.MaxValue;
+        betTargetCount = BetChangeCount + 1;
     }
     public float CalculateKillCooldown()
     {
         float plusCool = Coolrate * (AllPlayer - Main.AllAlivePlayerControls.Count());
         return CanUseKillButton() ? InitialCoolDown + plusCool : 300f;
     }
-    public bool CanUseKillButton() => Player.IsAlive() && BetTargetCount > 0;
+    public bool CanUseKillButton() => Player.IsAlive() && betTargetCount > 0;
     public bool CanUseImpostorVentButton() => false;
     public override void ApplyGameOptions(IGameOptions opt) => opt.SetVision(false);
     public void OnCheckMurderAsKiller(MurderInfo info)
@@ -93,8 +94,8 @@ public sealed class Totocalcio : RoleBase, IKiller, IAdditionalWinner
         (var killer, var target) = info.AttemptTuple;
         // ガード持ちに関わらず能力発動する直接キル役職
 
-        BetTarget = target;
-        BetTargetCount--;
+        betTargetId = target.PlayerId;
+        betTargetCount--;
         killer.RpcProtectedMurderPlayer(target);
         Logger.Info($"{killer.GetNameWithRole()} : {target.GetRealName(Options.GetNameChangeModes() == NameChange.Crew)}に賭けた", "Totocalcio");
 
@@ -111,7 +112,7 @@ public sealed class Totocalcio : RoleBase, IKiller, IAdditionalWinner
     {
         //seenが省略の場合seer
         seen ??= seer;
-        if (BetTarget == seen) return Utils.ColorString(RoleInfo.RoleColor, "▲");
+        if (betTargetId == seen.PlayerId) return Utils.ColorString(RoleInfo.RoleColor, "▲");
 
         return string.Empty;
     }

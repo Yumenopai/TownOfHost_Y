@@ -122,37 +122,14 @@ public sealed class EvilTracker : RoleBase, IImpostor, IKillFlashSeeable, ISidek
     }
     public bool CanMakeSidekick() => CanCreateMadmate; // ISidekickable
 
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetEvilTrackerTarget) return;
 
-        var operation = (TargetOperation)reader.ReadByte();
-
-        switch (operation)
-        {
-            case TargetOperation.ReEnableTargeting: ReEnableTargeting(); break;
-            case TargetOperation.RemoveTarget: RemoveTarget(); break;
-            case TargetOperation.SetTarget: SetTarget(reader.ReadByte()); break;
-            default: Logger.Warn($"不明なオペレーション: {operation}", nameof(EvilTracker)); break;
-        }
-    }
     private void ReEnableTargeting()
     {
         CanSetTarget = true;
-        if (AmongUsClient.Instance.AmHost)
-        {
-            using var sender = CreateSender(CustomRPC.SetEvilTrackerTarget);
-            sender.Writer.Write((byte)TargetOperation.ReEnableTargeting);
-        }
     }
     private void RemoveTarget()
     {
         TargetId = byte.MaxValue;
-        if (AmongUsClient.Instance.AmHost)
-        {
-            using var sender = CreateSender(CustomRPC.SetEvilTrackerTarget);
-            sender.Writer.Write((byte)TargetOperation.RemoveTarget);
-        }
     }
     private void SetTarget(byte targetId)
     {
@@ -162,12 +139,6 @@ public sealed class EvilTracker : RoleBase, IImpostor, IKillFlashSeeable, ISidek
             CanSetTarget = false;
         }
         TargetArrow.Add(Player.PlayerId, targetId);
-        if (AmongUsClient.Instance.AmHost)
-        {
-            using var sender = CreateSender(CustomRPC.SetEvilTrackerTarget);
-            sender.Writer.Write((byte)TargetOperation.SetTarget);
-            sender.Writer.Write(targetId);
-        }
     }
 
     public override void ApplyGameOptions(IGameOptions opt)

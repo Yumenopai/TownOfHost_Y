@@ -87,37 +87,27 @@ public sealed class LoyalDoggy : RoleBase
             }
             else
             {
-                Master = Main.AllAlivePlayerControls.ElementAtOrDefault(IRandom.Instance.Next(0, Main.AllAlivePlayerControls.Count()));
-                Logger.Info($"マスターはランダムで選択({Player.GetNameWithRole()}) master:{Master.GetNameWithRole()}", "LoyalDoggy");
+                var candidates = Main.AllAlivePlayerControls.Where(pc => pc != Player).ToArray();
+                Master = candidates.Length == 0 ? null : candidates[IRandom.Instance.Next(candidates.Length)];
+                Logger.Info($"マスターはランダムで選択({Player.GetNameWithRole()}) master:{Master?.GetNameWithRole()}", "LoyalDoggy");
             }
             numVotes = 0;//投票を見えなくする
             masterDecision = true;
-            TargetArrow.Add(Player.PlayerId, Master.PlayerId);
-            SendRPC(Master.PlayerId);
+            if (Master != null)
+            {
+                TargetArrow.Add(Player.PlayerId, Master.PlayerId);
+            }
         }
         return (votedForId, numVotes, doVote);
-    }
-    private void SendRPC(byte masterId)
-    {
-        using var sender = CreateSender(CustomRPC.SetLoyalDoggyMaster);
-        sender.Writer.Write(masterId);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetLoyalDoggyMaster) return;
-        byte masterId = reader.ReadByte();
-        Master = Utils.GetPlayerById(masterId);
-        masterDecision = true;
-        TargetArrow.Add(Player.PlayerId, Master.PlayerId);
     }
 
     public override void AfterMeetingTasks()
     {
-        if (masterDecision && !Master.IsAlive() && !masterIsDead)
+        if (masterDecision && Master != null && !Master.IsAlive() && !masterIsDead)
         {
             masterIsDead = true;
-            if (OptionIsInfoPoor.GetBool()) Player.RpcSetCustomRole(CustomRoles.InfoPoor);
-            if (OptionIsClumsy.GetBool()) Player.RpcSetCustomRole(CustomRoles.Clumsy);
+            if (OptionIsInfoPoor.GetBool()) Player.SetCustomRole(CustomRoles.InfoPoor);
+            if (OptionIsClumsy.GetBool()) Player.SetCustomRole(CustomRoles.Clumsy);
         }
     }
     public static bool IgnoreTask(NetworkedPlayerInfo p)
@@ -129,7 +119,7 @@ public sealed class LoyalDoggy : RoleBase
         {
             if (!dog.masterDecision || dog.Player != pc) continue;
 
-            return !dog.Master.IsAlive();
+            return dog.Master != null && !dog.Master.IsAlive();
         }
         return false;
     }

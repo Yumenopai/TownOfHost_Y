@@ -137,7 +137,7 @@ public static class MeetingHudPatch
             MeetingVoteManager.Start();
 
             SoundManager.Instance.ChangeAmbienceVolume(0f);
-            if (!GameStates.IsModHost) return;
+            if (!AmongUsClient.Instance.AmHost) return;
             var myRole = PlayerControl.LocalPlayer.GetRoleClass();
             foreach (var pva in __instance.playerStates)
             {
@@ -267,7 +267,6 @@ public static class MeetingHudPatch
                         {
                             seen.RpcSetNamePrivate(
                                 seer == seen ? coloredName : seenName,
-                                true,
                                 seer);
                         }
                     }

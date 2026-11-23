@@ -113,10 +113,6 @@ public class PlayerState
     public void SetDead()
     {
         IsDead = true;
-        if (AmongUsClient.Instance.AmHost)
-        {
-            RPC.SendDeathReason(PlayerId, DeathReason);
-        }
     }
     public bool IsSuicide() { return DeathReason == CustomDeathReason.Suicide; }
     public TaskState GetTaskState() { return taskState; }
@@ -227,7 +223,6 @@ public static class GameStates
 {
     public static bool InGame = false;
     public static bool AlreadyDied = false;
-    public static bool IsModHost => PlayerControl.AllPlayerControls.ToArray().FirstOrDefault(x => x.PlayerId == 0 && x.IsModClient());
     public static bool IsLobby => AmongUsClient.Instance.GameState == AmongUsClient.GameStates.Joined;
     public static bool IsInGame => InGame;
     public static bool IsEnded => AmongUsClient.Instance.GameState == AmongUsClient.GameStates.Ended;

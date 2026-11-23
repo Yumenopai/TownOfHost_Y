@@ -133,7 +133,7 @@ public sealed class GrudgeSheriff : RoleBase
     public bool CanUseKillButton()
         => Player.IsAlive()
         && (CanKillAllAlive.GetBool() || GameStates.AlreadyDied)
-        && MyTaskState.CompletedTasksCount >= TaskTrigger
+        && (MyTaskState.CompletedTasksCount >= TaskTrigger || IsTaskFinished)
         && ShotLimit > 0;
 
     public override bool OnEnterVent(PlayerPhysics physics, int ventId)
@@ -162,6 +162,15 @@ public sealed class GrudgeSheriff : RoleBase
         {
             KillWaitPlayerSelect = null;
             KillWaitPlayer = null;
+            return;
+        }
+
+        if (!KillWaitPlayer.IsAlive())
+        {
+            KillWaitPlayerSelect = null;
+            KillWaitPlayer = null;
+            Player.MarkDirtySettings();
+            Utils.NotifyRoles(SpecifySeer: Player);
             return;
         }
 

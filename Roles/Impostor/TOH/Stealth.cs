@@ -121,17 +121,8 @@ public sealed class Stealth : RoleBase, IImpostor
     {
         logger.Info($"暗転させている部屋を{roomType?.ToString() ?? "null"}に設定");
         darkenedRoom = roomType;
-        using var sender = CreateSender(CustomRPC.StealthDarken);
-        sender.Writer.Write((byte?)roomType ?? byte.MaxValue);
     }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType == CustomRPC.StealthDarken)
-        {
-            var roomId = reader.ReadByte();
-            darkenedRoom = roomId == byte.MaxValue ? null : (SystemTypes)roomId;
-        }
-    }
+
     /// <summary>発生している暗転効果を解除</summary>
     private void ResetDarkenState()
     {

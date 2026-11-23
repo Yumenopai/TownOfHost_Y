@@ -1,5 +1,3 @@
-using Hazel;
-
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Crewmate;
 using TownOfHostY.Roles.Impostor;
@@ -63,45 +61,16 @@ namespace TownOfHostY
                 Logger.Info($"SameKeyAdd seerId: {seerId}, targetId: {targetId}, colorCode: {colorCode},", "NameColorManager");
             }
             state.TargetColorData[targetId] = colorCode;
-
-            SendRPC(seerId, targetId, colorCode);
         }
         public static void Remove(byte seerId, byte targetId)
         {
             var state = PlayerState.GetByPlayerId(seerId);
             if (!state.TargetColorData.ContainsKey(targetId)) return;
             state.TargetColorData.Remove(targetId);
-
-            SendRPC(seerId, targetId);
         }
         public static void RemoveAll(byte seerId)
         {
             PlayerState.GetByPlayerId(seerId).TargetColorData.Clear();
-
-            SendRPC(seerId);
-        }
-        private static void SendRPC(byte seerId, byte targetId = byte.MaxValue, string colorCode = "")
-        {
-            if (!AmongUsClient.Instance.AmHost) return;
-
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetNameColorData, SendOption.Reliable, -1);
-            writer.Write(seerId);
-            writer.Write(targetId);
-            writer.Write(colorCode);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
-        public static void ReceiveRPC(MessageReader reader)
-        {
-            byte seerId = reader.ReadByte();
-            byte targetId = reader.ReadByte();
-            string colorCode = reader.ReadString();
-
-            if (targetId == byte.MaxValue)
-                RemoveAll(seerId);
-            else if (colorCode == "")
-                Remove(seerId, targetId);
-            else
-                Add(seerId, targetId, colorCode);
         }
     }
 }

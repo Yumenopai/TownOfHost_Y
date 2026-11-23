@@ -228,7 +228,7 @@ public sealed class Potentialist : RoleBase
                 }
                 break;
         }
-        player.RpcSetCustomRole(nextRole);
+        player.SetCustomRole(nextRole);
 
         //色表示
         NameColorManager.RemoveAll(player.PlayerId);

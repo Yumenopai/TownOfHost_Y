@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Hazel;
-
 using TownOfHostY.Attributes;
 using TownOfHostY.Roles.Core;
 
@@ -75,51 +73,5 @@ namespace TownOfHostY
             winners.Add(winner);
         }
 
-        public static MessageWriter WriteTo(MessageWriter writer)
-        {
-            writer.WritePacked((int)WinnerTeam);
-
-            writer.WritePacked(AdditionalWinnerRoles.Count);
-            foreach (var wr in AdditionalWinnerRoles)
-                writer.WritePacked((int)wr);
-
-            writer.WritePacked(WinnerRoles.Count);
-            foreach (var wr in WinnerRoles)
-                writer.WritePacked((int)wr);
-
-            writer.WritePacked(WinnerIds.Count);
-            foreach (var id in WinnerIds)
-                writer.Write(id);
-
-            writer.WritePacked(CantWinPlayerIds.Count);
-            foreach (var id in CantWinPlayerIds)
-                writer.Write(id);
-
-            return writer;
-        }
-        public static void ReadFrom(MessageReader reader)
-        {
-            WinnerTeam = (CustomWinner)reader.ReadPackedInt32();
-
-            AdditionalWinnerRoles = new();
-            int AdditionalWinnerRolesCount = reader.ReadPackedInt32();
-            for (int i = 0; i < AdditionalWinnerRolesCount; i++)
-                AdditionalWinnerRoles.Add((CustomRoles)reader.ReadPackedInt32());
-
-            WinnerRoles = new();
-            int WinnerRolesCount = reader.ReadPackedInt32();
-            for (int i = 0; i < WinnerRolesCount; i++)
-                WinnerRoles.Add((CustomRoles)reader.ReadPackedInt32());
-
-            WinnerIds = new();
-            int WinnerIdsCount = reader.ReadPackedInt32();
-            for (int i = 0; i < WinnerIdsCount; i++)
-                WinnerIds.Add(reader.ReadByte());
-
-            CantWinPlayerIds = new();
-            int CantWinPlayerIdsCount = reader.ReadPackedInt32();
-            for (int i = 0; i < CantWinPlayerIdsCount; i++)
-                CantWinPlayerIds.Add(reader.ReadByte());
-        }
     }
 }

@@ -45,7 +45,7 @@ public sealed class Scavenger : RoleBase, IImpostor
     private static bool IsEatUpKillLimit;
     private static int LimitMaxCount;
 
-    static int limitCount = 15;
+    int limitCount = 15;
 
     private static void SetUpOptionItem()
     {
@@ -77,10 +77,13 @@ public sealed class Scavenger : RoleBase, IImpostor
     {
         if (!Is(info.AttemptKiller) || info.IsSuicide) return;
         if (!IsEatUpKillLimit || limitCount <= 0) return;
+        if (!info.CanKill) return;
 
         (var killer, var target) = info.AttemptTuple;
         info.CanKill = killer.CheckDoubleTrigger(target, () =>
         {
+            if (!killer.IsAlive() || !target.IsAlive()) return;
+
             var killerId = killer.PlayerId;
             var targetId = target.PlayerId;
 
