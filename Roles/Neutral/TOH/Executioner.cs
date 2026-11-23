@@ -123,6 +123,7 @@ public sealed class Executioner : RoleBase, IAdditionalWinner
         //seenが省略の場合seer
         seen ??= seer;
 
+        if (seer == null || seer.PlayerId != Player.PlayerId) return "";
         return TargetId == seen.PlayerId ? Utils.ColorString(RoleInfo.RoleColor, "♦") : "";
     }
     public override void OnExileWrapUp(NetworkedPlayerInfo exiled, ref bool DecidedWinner)

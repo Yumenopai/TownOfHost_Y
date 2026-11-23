@@ -130,7 +130,13 @@ static class ExtendedPlayerControl
         HudManagerPatch.LastSetNameDesyncCount++;
         //Logger.Info($"Set:{player?.Data?.PlayerName}:{name.RemoveHtmlTags()} for {seer.GetNameWithRole()}", "RpcSetNamePrivate");
 
-        var clientId = seer.GetClientId();
+        var seerClient = seer.GetClient();
+        if (seerClient == null)
+        {
+            Logger.Warn($"RpcSetNamePrivate: 閲覧者の接続先が見つからないため送信を中止します (seer={seer.PlayerId}, target={player.PlayerId})", "RpcSetNamePrivate");
+            return;
+        }
+        var clientId = seerClient.Id;
         if (AmongUsClient.Instance.ClientId == clientId)
         {
             player.SetName(name);
