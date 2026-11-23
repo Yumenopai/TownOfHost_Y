@@ -136,6 +136,10 @@ public static class GameOptionsMenuPatch
 
                         optionBehaviour.SetClickMask(__instance.ButtonClickMask);
                         optionBehaviour.SetUpFromData(baseGameSetting, 20);
+                        if (optionBehaviour is StringOption stringOption)
+                        {
+                            SetupCustomStringButtons(stringOption, option);
+                        }
                         ModGameOptionsMenu.OptionList.TryAdd(optionBehaviour, index);
                         //Logger.Info($"{option.Name}, {index}", "OptionList.TryAdd");
                         break;
@@ -150,6 +154,10 @@ public static class GameOptionsMenuPatch
 
                         optionBehaviour.SetClickMask(__instance.ButtonClickMask);
                         optionBehaviour.SetUpFromData(baseGameSetting, 20);
+                        if (optionBehaviour is NumberOption numberOption)
+                        {
+                            SetupCustomNumberButtons(numberOption, option);
+                        }
                         ModGameOptionsMenu.OptionList.TryAdd(optionBehaviour, index);
                         //Logger.Info($"{option.Name}, {index}", "OptionList.TryAdd");
                         break;
@@ -276,6 +284,92 @@ public static class GameOptionsMenuPatch
             valueBox.localScale += new Vector3(0.2f, 0f, 0f);
 
             optionBehaviour.transform.FindChild(valueTMPName).localPosition += new Vector3(-0.3f, 0f, 0f);
+        }
+    }
+
+    private static void SetupCustomNumberButtons(NumberOption numberOption, OptionItem option)
+    {
+        var plusButton = numberOption.transform.FindChild("PlusButton")?.GetComponent<PassiveButton>();
+        var minusButton = numberOption.transform.FindChild("MinusButton")?.GetComponent<PassiveButton>();
+        if (plusButton == null || minusButton == null) return;
+
+        plusButton.OnClick = new();
+        minusButton.OnClick = new();
+        plusButton.OnClick.AddListener((System.Action)(() => ChangeNumberOption(numberOption, option, 1)));
+        minusButton.OnClick.AddListener((System.Action)(() => ChangeNumberOption(numberOption, option, -1)));
+    }
+
+    private static void SetupCustomStringButtons(StringOption stringOption, OptionItem option)
+    {
+        var plusButton = stringOption.transform.FindChild("PlusButton")?.GetComponent<PassiveButton>();
+        var minusButton = stringOption.transform.FindChild("MinusButton")?.GetComponent<PassiveButton>();
+        if (plusButton == null || minusButton == null) return;
+
+        plusButton.OnClick = new();
+        minusButton.OnClick = new();
+        plusButton.OnClick.AddListener((System.Action)(() => ChangeStringOption(stringOption, option, 1)));
+        minusButton.OnClick.AddListener((System.Action)(() => ChangeStringOption(stringOption, option, -1)));
+    }
+
+    private static void ChangeStringOption(StringOption stringOption, OptionItem option, int direction)
+    {
+        if (stringOption == null || option == null) return;
+
+        var shift = Input.GetKey(KeyCode.LeftShift);
+        var nextValue = option.GetValue() + direction * (shift ? 5 : 1);
+        if (shift)
+        {
+            var maxIndex = option switch
+            {
+                StringOptionItem stringItem => stringItem.Selections.Length - 1,
+                PresetOptionItem => OptionItem.NumPresets - 1,
+                BooleanOptionItem => 1,
+                _ => nextValue,
+            };
+            nextValue = Mathf.Clamp(nextValue, 0, maxIndex);
+        }
+
+        option.SetValue(nextValue);
+        stringOption.ValueText.text = option.GetString();
+
+        if (option is PresetOptionItem)
+        {
+            UpdateSettings();
+            GameSettingMenuPatch.NotifyPresetChanged();
+        }
+        else if (option.Name == "GameMode")
+        {
+            UpdateSettings();
+        }
+        else if (option.Children.Count > 0)
+        {
+            RefreshChildSettings();
+        }
+    }
+
+    private static void ChangeNumberOption(NumberOption numberOption, OptionItem option, int direction)
+    {
+        if (numberOption == null || option == null) return;
+
+        var shift = Input.GetKey(KeyCode.LeftShift);
+        var stepCount = shift ? 4 : 1;
+        var nextValue = option.GetValue() + direction * stepCount;
+        if (shift)
+        {
+            var maxIndex = option switch
+            {
+                IntegerOptionItem integerOption => integerOption.Rule.GetNearestIndex(integerOption.Rule.MaxValue),
+                FloatOptionItem floatOption => floatOption.Rule.GetNearestIndex(floatOption.Rule.MaxValue),
+                _ => nextValue,
+            };
+            nextValue = Mathf.Clamp(nextValue, 0, maxIndex);
+        }
+        option.SetValue(nextValue);
+        numberOption.ValueText.text = NumberOptionPatch.GetValueString(numberOption, numberOption.Value, option);
+
+        if (option.Children.Count > 0)
+        {
+            RefreshChildSettings();
         }
     }
 
@@ -626,38 +720,6 @@ public static class NumberOptionPatch
         if (item == null) return value.ToString(__instance.FormatString);
         return item.GetString();
     }
-    [HarmonyPatch(nameof(NumberOption.Increase)), HarmonyPrefix]
-    public static bool IncreasePrefix(NumberOption __instance)
-    {
-        // Shift押しながらの値更新
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            __instance.Value = Mathf.Clamp(__instance.Value + (__instance.Increment * 4), __instance.ValidRange.min, __instance.ValidRange.max);
-            return true;
-        }
-
-        if (__instance.Value == __instance.ValidRange.max)
-        {
-            __instance.Value = __instance.ValidRange.min - __instance.Increment;
-        }
-        return true;
-    }
-    [HarmonyPatch(nameof(NumberOption.Decrease)), HarmonyPrefix]
-    public static bool DecreasePrefix(NumberOption __instance)
-    {
-        // Shift押しながらの値更新
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            __instance.Value = Mathf.Clamp(__instance.Value - (__instance.Increment * 4), __instance.ValidRange.min, __instance.ValidRange.max);
-            return true;
-        }
-
-        if (__instance.Value == __instance.ValidRange.min)
-        {
-            __instance.Value = __instance.ValidRange.max + __instance.Increment;
-        }
-        return true;
-    }
 }
 [HarmonyPatch(typeof(StringOption))]
 public static class StringOptionPatch
@@ -731,58 +793,6 @@ public static class StringOptionPatch
                     __instance.ValueText.text = booleanOptionItem.GetString();
                 }
             }
-            return false;
-        }
-        return true;
-    }
-    [HarmonyPatch(nameof(StringOption.Increase)), HarmonyPrefix]
-    public static bool IncreasePrefix(StringOption __instance)
-    {
-        // Shift押しながらの値更新
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            __instance.Value = __instance.Value + 5;
-            // 超えている場合は最大値
-            if (__instance.Value > __instance.Values.Length - 1)
-            {
-                __instance.Value = __instance.Values.Length - 1;
-            }
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
-            return false;
-        }
-
-        if (__instance.Value == __instance.Values.Length - 1)
-        {
-            __instance.Value = 0;
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
-            return false;
-        }
-        return true;
-    }
-    [HarmonyPatch(nameof(StringOption.Decrease)), HarmonyPrefix]
-    public static bool DecreasePrefix(StringOption __instance)
-    {
-        // Shift押しながらの値更新
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            __instance.Value = __instance.Value - 5;
-            // 超えている場合は最小値
-            if (__instance.Value < 0)
-            {
-                __instance.Value = 0;
-            }
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
-            return false;
-        }
-
-        if (__instance.Value == 0)
-        {
-            __instance.Value = __instance.Values.Length - 1;
-            __instance.UpdateValue();
-            __instance.OnValueChanged.Invoke(__instance);
             return false;
         }
         return true;
