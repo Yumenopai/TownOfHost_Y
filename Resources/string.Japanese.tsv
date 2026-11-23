@@ -292,7 +292,7 @@ ElderInfo	まだ若者には負けんわい
 NormalDetectiveInfo	情報収集。殺人事件解決。
 NormalJudgeInfo	会議で裁きを下そう。
 	
-CustomCrewmateInfoLong	[クルー陣営]\nホストによって設定された属性の能力をもつクルーメイト。
+CustomCrewmateInfoLong	ホストが設定した属性を持つクルーメイト。
 NiceWatcherInfoLong	(クルー陣営):\n全員の投票先を見ることができる。
 BaitInfoLong	(クルー陣営):\nキルされた時に、自身をキルした人に\n強制的にセルフレポートさせる事ができる。
 LighterInfoLong	(クルー陣営):\n条件を満たすと、自分の視界を広げることができる。
@@ -306,9 +306,9 @@ TrapperInfoLong	(クルー陣営):\nキルされると、キルした人を数�
 DictatorInfoLong	(クルー陣営):\n会議中に誰かに投票をすると、会議を強制終了させて投票先を吊る事ができる。\n投票したタイミングでディクテーターは死ぬ。
 SeerInfoLong	(クルー陣営):\nプレイヤーが死亡するごとに、シーアはキルフラッシュを見ることができる。
 TimeManagerInfoLong	(クルー陣営):\nタスクを終わらせるごとに会議時間が延びる。死亡すると会議時間は元に戻る。
-BakeryInfoLong	[クルー陣営]\n生存中、会議はじめにパン屋についてのコメントが流れる。レアコメントあり。\n低確率(設定)で試合途中、第三陣営に変化する。
-NBakeryInfoLong	[ニュートラル]\n覚醒して第三陣営になった。\n人殺しに目覚め、食べると死亡するパンを開発した。覚醒パン屋が生存中、会議を挟む毎にランダムなプレイヤーに毒入りパンを提供する。そのプレイヤーはパン屋をそのターンに追放しない限り、会議終了時に死亡する。\n覚醒パン屋はパン配布で人数を減らしていき、インポスターorクルーの人数での勝利条件が満たされた時、生存していると単独勝利する。
-HunterInfoLong	[クルー陣営]\n誰に向かってでもキルできる。()内回数キル可能。あくまでクルー陣営なのでタイミングは考えよう。タスクはもっていない。\n「キルした時敵陣営かどうかわかる」設定がオンの時、インポスターをキルした時、自身の名前に◎が付く。第三陣営をキルした時、自身の名前に▽が付く。
+BakeryInfoLong	自身が生存している間、会議が始まる度にパンを振る舞い、自動でメッセージを流す。
+NBakeryInfoLong	第三陣営に覚醒した。\n自身が生存している間、会議が始まる度に毒入りパンをランダムの船員1人に提供する。覚醒パン屋を追放しなければ、会議終了時に渡された船員は毒死する。\nインポスターまたはクルーの人数による勝利条件達成時、覚醒パン屋が生存していると乗っ取って単独勝利する。
+HunterInfoLong	相手をキルできる。タスクなし。
 TaskManagerInfoLong	(タスクマネージャー)[クルー陣営]\n全員の合計タスク完了数が分かる(役職名横()にて)。
 RainbowInfoLong	[クルー陣営]\n自分の役職名がカラフル。また、自分の体の色が1秒ごとに変わる。自分の全員から自分がにじいろスターだということが分かる。
 NekomataInfoLong	[クルー陣営]\n自身が吊られた際、ランダムな1人を道連れにする。
@@ -851,8 +851,11 @@ SillySheriffKillMotion	キルする時のモーション
 MotionNone	動かずにキルする
 SillySheriffSuicideMotion	自爆する時のモーション
 MotionKilled	相手がキルする
-HunterKnowTargetIsImpostor	キルした時、敵陣営かどうか分かる
-HunterKnowTargetMadIsImpostor	マッドメイトはインポスター判定で表示する
+HunterKnowTargetIsImpostor	キルした時、相手の陣営がわかる
+HunterKnowTargetMadmate	マッドメイトの表示陣営
+ShowMarkTypeMadIsInpostor	インポスター
+ShowMarkTypeMadIsMadmate	マッド
+ShowMarkTypeMadIsCrewmate	クルー
 BakeryChangeChances	ニュートラルに変化する確率
 ExpressSpeed	スピード
 TaskmanagerSeeNowtask	会議時以外でもタスク数が見える
