@@ -185,7 +185,7 @@ public sealed class SillySheriff : RoleBase, IKiller, ISchrodingerCatOwner
         Logger.Info($"{killer.GetNameWithRole()} : 残り{ShotLimit}発", "SillySheriff");
         SendRPC();
         int chance = IRandom.Instance.Next(1, 101);
-        if ((CanBeKilledBy(target) && chance <= probability) || (!CanBeKilledBy(target) && chance >= probability))
+        if ((CanBeKilledBy(target) && chance <= probability) || (!CanBeKilledBy(target) && chance > probability))
         {
             //自殺処理
             switch (nowSuicideMotion)
