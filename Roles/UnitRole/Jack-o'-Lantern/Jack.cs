@@ -53,6 +53,8 @@ public sealed class Jack : RoleBase, IImpostor
         var (killer, target) = info.AttemptTuple;
         info.DoKill = killer.CheckDoubleTrigger(target, () =>
         {
+            if (!killer.IsAlive() || !target.IsAlive()) return;
+
             target.SetRealKiller(killer);
             killer.RpcMurderPlayer(target, true);
 

@@ -109,6 +109,16 @@ public sealed class GrudgeCharger : RoleBase, IImpostor
         if (KillWaitPlayer == null) return;
         if (!Player.IsAlive()) return;
 
+        if (!KillWaitPlayer.IsAlive())
+        {
+            TargetArrow.Remove(Player.PlayerId, KillWaitPlayer.PlayerId);
+            KillWaitPlayer = null;
+            Player.MarkDirtySettings();
+            Player.RpcResetAbilityCooldown();
+            Utils.NotifyRoles(SpecifySeer: Player);
+            return;
+        }
+
         if (killLimit <= 0) return;
 
         Vector2 GCpos = Player.transform.position; //GCの位置
@@ -129,7 +139,7 @@ public sealed class GrudgeCharger : RoleBase, IImpostor
             }
 
             killThisTurn = true;
-            Player.MarkDirtySettings();
+            Player.SyncSettings();
             Player.RpcResetAbilityCooldown();
             killThisTurn = false;
         }
