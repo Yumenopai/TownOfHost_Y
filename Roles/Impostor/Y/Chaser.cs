@@ -108,10 +108,18 @@ public sealed class Chaser : RoleBase, IImpostor, ISidekickable
         // 戻る時間後の処理
         _ = new LateTask(() =>
         {
+            if (Player == null || !Player.IsAlive() || !GameStates.IsInTask)
+            {
+                MyState.CanUseMovingPlatform = true;
+                lastTransformPosition = default;
+                return;
+            }
+
             // もし梯子を使っている場合
             if (Player.MyPhysics.Animations.IsPlayingAnyLadderAnimation())
             {
                 Logger.Info($"梯子を使っていたため元の位置に戻れませんでした。", "Chaser");
+                MyState.CanUseMovingPlatform = true;
                 return;
             }
 
