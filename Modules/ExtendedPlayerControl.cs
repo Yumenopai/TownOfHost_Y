@@ -115,18 +115,6 @@ static class ExtendedPlayerControl
 
         return PlayerState.GetByPlayerId(player.PlayerId)?.CountType ?? CountTypes.None;
     }
-    public static void RpcSetNameEx(this PlayerControl player, string name)
-    {
-        foreach (var seer in Main.AllPlayerControls)
-        {
-            Main.LastNotifyNames[(player.PlayerId, seer.PlayerId)] = name;
-        }
-        HudManagerPatch.LastSetNameDesyncCount++;
-
-        Logger.Info($"Set:{player?.Data?.PlayerName}:{name} for All", "RpcSetNameEx");
-        player.RpcSetName(name);
-    }
-
     public static void RpcSetNamePrivate(this PlayerControl player, string name, PlayerControl seer = null, bool force = false)
     {
         //player: 名前の変更対象

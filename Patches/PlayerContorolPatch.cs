@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
@@ -676,14 +675,6 @@ class ReportDeadBodyPatch
         }
 
         return true;
-    }
-    public static async void ChangeLocalNameAndRevert(string name, int time)
-    {
-        //async Taskじゃ警告出るから仕方ないよね。
-        var revertName = PlayerControl.LocalPlayer.name;
-        PlayerControl.LocalPlayer.RpcSetNameEx(name);
-        await Task.Delay(time);
-        PlayerControl.LocalPlayer.RpcSetNameEx(revertName);
     }
 }
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.StartMeeting))]
