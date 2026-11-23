@@ -604,10 +604,23 @@ class ReportDeadBodyPatch
                 Logger.Info("使用可能ボタン回数が最大数を超えているため、ボタンはキャンセルされました。", "ReportDeadBody");
                 return false;
             }
-            else Options.UsedButtonCount++;
+        }
+
+        if (target == null && !__instance.AmOwner)
+        {
+            __instance.RemainingEmergencies--;
+        }
+
+        if (Options.SyncButtonMode.GetBool() && target == null)
+        {
+            Options.UsedButtonCount++;
             if (Options.SyncedButtonCount.GetFloat() == Options.UsedButtonCount)
             {
                 Logger.Info("使用可能ボタン回数が最大数に達しました。", "ReportDeadBody");
+                foreach (var pc in Main.AllPlayerControls)
+                {
+                    pc.RemainingEmergencies = 0;
+                }
             }
         }
 
@@ -625,7 +638,6 @@ class ReportDeadBodyPatch
             if (pc.IsAlive())
             {
                 state.IsBlackOut = true;
-                pc.MarkDirtySettings();
             }
 
             // 最終位置の部屋の取得・記憶
@@ -652,7 +664,7 @@ class ReportDeadBodyPatch
 
         Utils.NotifyRoles(isForMeeting: true, NoCache: true);
 
-        Utils.SyncAllSettings();
+        Utils.SyncPlayerSettings();
 
         if (ShapeKiller.DummyReportDeadBody(__instance, target)) return false;
 

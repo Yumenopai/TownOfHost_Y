@@ -1658,6 +1658,11 @@ public static class Utils
         PlayerGameOptionsSender.SetDirtyToAll();
         GameOptionsSender.SendAllGameOptions();
     }
+    public static void SyncPlayerSettings()
+    {
+        PlayerGameOptionsSender.SetDirtyToAll();
+        PlayerGameOptionsSender.SendPlayerGameOptions();
+    }
     public static void AfterMeetingTasks()
     {
         foreach (var pc in Main.AllAlivePlayerControls)
