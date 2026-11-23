@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using Hazel;
-using UnityEngine;
 using AmongUs.GameOptions;
-
+using Hazel;
 using TownOfHostY.Roles.Core;
 using TownOfHostY.Roles.Core.Interfaces;
-
-using static TownOfHostY.Utils;
 using TownOfHostY.Roles.Neutral;
+using UnityEngine;
+using static TownOfHostY.Roles.Impostor.Witch;
+using static TownOfHostY.Utils;
 
 namespace TownOfHostY.Roles.Crewmate;
 public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
@@ -35,8 +34,9 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
     {
         ShotLimit = ShotLimitOpt.GetInt();
         CurrentKillCooldown = KillCooldown.GetFloat();
-        KnowTargetMadIsImpostor = OpKnowTargetMadIsImpostor.GetBool();
-        isImpostor = 0;
+        KnowTargetRoleType = OptionKnowTargetRoleType.GetBool();
+        KnowTargetMadmate = (ShowMarkTypeMadmate)OptionKnowTargetMadmate.GetValue();
+        showTargetRoleType = null;
     }
 
     private static OptionItem KillCooldown;
@@ -44,9 +44,11 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
     private static OptionItem CanKillAllAlive;
     public static OptionItem IsInfoPoor;
     public static OptionItem IsClumsy;
-    private static OptionItem KnowTargetIsImpostor;
-    private static OptionItem OpKnowTargetMadIsImpostor;
-    private static bool KnowTargetMadIsImpostor;
+    private static OptionItem OptionKnowTargetRoleType;
+    private static OptionItem OptionKnowTargetMadmate;
+
+    private static bool KnowTargetRoleType;
+    private static ShowMarkTypeMadmate KnowTargetMadmate;
 
     enum OptionName
     {
@@ -55,16 +57,20 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
         SheriffIsInfoPoor,
         SheriffIsClumsy,
         HunterKnowTargetIsImpostor,
-        HunterKnowTargetMadIsImpostor,
+        HunterKnowTargetMadmate,
     }
     public static Dictionary<CustomRoles, OptionItem> KillTargetOptions = new();
     public int ShotLimit = 0;
     public float CurrentKillCooldown = 30;
-    int isImpostor = 0;
-    public static readonly string[] KillOption =
+    private CustomRoleTypes? showTargetRoleType = null;
+
+    public enum ShowMarkTypeMadmate
     {
-        "SheriffCanKillAll", "SheriffCanKillSeparately"
+        ShowMarkTypeMadIsInpostor,
+        ShowMarkTypeMadIsMadmate,
+        ShowMarkTypeMadIsCrewmate,
     };
+
 
     public SchrodingerCat.TeamType SchrodingerCatChangeTo => SchrodingerCat.TeamType.Crew;
 
@@ -77,30 +83,17 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
         CanKillAllAlive = BooleanOptionItem.Create(RoleInfo, 12, OptionName.SheriffCanKillAllAlive, true, false);
         IsInfoPoor = BooleanOptionItem.Create(RoleInfo, 15, OptionName.SheriffIsInfoPoor, false, false);
         IsClumsy = BooleanOptionItem.Create(RoleInfo, 16, OptionName.SheriffIsClumsy, false, false);
-        KnowTargetIsImpostor = BooleanOptionItem.Create(RoleInfo, 13, OptionName.HunterKnowTargetIsImpostor, true, false);
-        OpKnowTargetMadIsImpostor = BooleanOptionItem.Create(RoleInfo, 14, OptionName.HunterKnowTargetMadIsImpostor, true, false, KnowTargetIsImpostor);
+        OptionKnowTargetRoleType = BooleanOptionItem.Create(RoleInfo, 13, OptionName.HunterKnowTargetIsImpostor, true, false);
+        OptionKnowTargetMadmate = StringOptionItem.Create(RoleInfo, 14, OptionName.HunterKnowTargetMadmate, EnumHelper.GetAllNames<ShowMarkTypeMadmate>(), 0, false, OptionKnowTargetRoleType);
     }
     public override void Add()
     {
         var playerId = Player.PlayerId;
         CurrentKillCooldown = KillCooldown.GetFloat();
-        isImpostor = 0;
+        showTargetRoleType = null;
         ShotLimit = ShotLimitOpt.GetInt();
-        Logger.Info($"{GetPlayerById(playerId)?.GetNameWithRole()} : 残り{ShotLimit}発", "Hunter");
     }
-    private void SendRPC()
-    {
-        using var sender = CreateSender(CustomRPC.SetHunterShotLimit);
-        sender.Writer.Write(ShotLimit);
-        sender.Writer.Write(isImpostor);
-    }
-    public override void ReceiveRPC(MessageReader reader, CustomRPC rpcType)
-    {
-        if (rpcType != CustomRPC.SetHunterShotLimit) return;
 
-        ShotLimit = reader.ReadInt32();
-        isImpostor = reader.ReadInt32();
-    }
     public float CalculateKillCooldown() => CanUseKillButton() ? CurrentKillCooldown : 0f;
     public bool CanUseKillButton()
         => Player.IsAlive()
@@ -113,30 +106,50 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
     }
     public void OnMurderPlayerAsKiller(MurderInfo info)
     {
-        if (Is(info.AttemptKiller) && !info.IsSuicide)
+        if (!Is(info.AttemptKiller) || info.IsSuicide)
         {
-            (var killer, var target) = info.AttemptTuple;
-            ShotLimit--;
+            return;
+        }
 
-            switch(target.GetCustomRole().GetCustomRoleTypes())
+        (var killer, var target) = info.AttemptTuple;
+
+        ShotLimit--;
+
+        if (KnowTargetRoleType)
+        {
+            var targetRoleType = target.GetCustomRole().GetCustomRoleTypes();
+
+            if (showTargetRoleType == CustomRoleTypes.Madmate)
             {
-                case CustomRoleTypes.Impostor:
-                    isImpostor = 1; break;
-                case CustomRoleTypes.Madmate:
-                    if(KnowTargetMadIsImpostor) isImpostor = 1;
-                    else isImpostor = 0;
-                    break;
-                case CustomRoleTypes.Neutral:
-                    isImpostor = 2; break;
-                default:
-                    isImpostor = 0; break;
+                switch (KnowTargetMadmate)
+                {
+                    case ShowMarkTypeMadmate.ShowMarkTypeMadIsInpostor:
+                        showTargetRoleType = CustomRoleTypes.Impostor;
+                        break;
+                    case ShowMarkTypeMadmate.ShowMarkTypeMadIsMadmate:
+                        showTargetRoleType = CustomRoleTypes.Madmate;
+                        break;
+                    case ShowMarkTypeMadmate.ShowMarkTypeMadIsCrewmate:
+                        showTargetRoleType = CustomRoleTypes.Crewmate;
+                        break;
+                }
+            }
+            else
+            {
+                showTargetRoleType = targetRoleType;
             }
 
-            SendRPC();
+            Logger.Info($"ハンターキルによる陣営探知 {target.name} ({targetRoleType}, show:{showTargetRoleType})", "Hunter");
+
             NotifyRoles(SpecifySeer: killer);
-            killer.ResetKillCooldown();
         }
     }
+
+    public override void OnStartMeeting()
+    {
+        showTargetRoleType = null;
+    }
+
     public override string GetProgressText(bool comms = false) => ColorString(CanUseKillButton() ? Color.yellow : Color.gray, $"〈{ShotLimit}〉");
 
     public override string GetMark(PlayerControl seer, PlayerControl seen, bool isForMeeting = false)
@@ -144,19 +157,30 @@ public sealed class Hunter : RoleBase, IKiller, ISchrodingerCatOwner
         //seenが省略の場合seer
         seen ??= seer;
 
-        if (seen == seer && KnowTargetIsImpostor.GetBool())
+        if (seen != seer || !KnowTargetRoleType)
         {
-            if (isImpostor == 1)
-                return ColorString(RoleInfo.RoleColor, "◎");
-            if (isImpostor == 2)
-                return ColorString(RoleInfo.RoleColor, "▽");
+            return string.Empty;
         }
-        return string.Empty;
+
+        string mark = "";
+        switch (showTargetRoleType)
+        {
+            case CustomRoleTypes.Impostor:
+                mark = "<color=#ff1919>Ⓘ</color>";
+                break;
+            case CustomRoleTypes.Madmate:
+                mark = "<color=#ff4500>Ⓜ</color>";
+                break;
+            case CustomRoleTypes.Crewmate:
+                mark = "<color=#7ee6e6>Ⓒ</color>";
+                break;
+            case CustomRoleTypes.Neutral:
+                mark = "<color=#ffa500>Ⓝ</color>";
+                break;
+        }
+        return mark;
     }
-    public override void OnStartMeeting()
-    {
-        isImpostor = 0;
-    }
+
     public void OnSchrodingerCatKill(SchrodingerCat schrodingerCat)
     {
         if (SchrodingerCat.ConsumeBullet)
